@@ -1040,8 +1040,12 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   // Rows play INSIDE the drawer (Miles: "it should just play inside of the
   // specialty tab when i push play, just expands" — no jump to Selected Work).
   // One expanded row at a time = the only <video> mounted in the drawer.
-  const [openRow, setOpenRow] = useState(null); // keyed by reel title
+  const [openRow, setOpenRow] = useState(null); // keyed by tier-prefixed reel title
   const toggleRow = (t) => setOpenRow(cur => (cur === t ? null : t));
+  // Navin structure (Miles's call): in big drawers, events are the rows —
+  // one row per body of work, tap to unfold its brief + reels. Space for
+  // per-event descriptions (Workfront briefs) lives in ALBUM_BLURBS.
+  const [openAlbum, setOpenAlbum] = useState(null);
   // Album groups (order of first appearance) — Spotify artist-page style.
   const groups = [];
   rows.forEach(h => {
@@ -1153,14 +1157,47 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
         </div>
         {popular && popular.map((h, i) => renderRow(h, i, "pop:"))}
         {popular && (
-          <>
-            <div style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1, padding: "22px 8px 8px", borderBottom: `1px solid ${C.border}` }}>
-              ALL EVENTS · {rows.length} REELS{yearSpan ? ` · ${yearSpan}` : ""}
-            </div>
-            {chipsEl}
-          </>
+          <div style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1, padding: "22px 8px 8px", borderBottom: `1px solid ${C.border}` }}>
+            ALL EVENTS · {rows.length} REELS{yearSpan ? ` · ${yearSpan}` : ""}
+          </div>
         )}
-        {groups.map((g) => (
+        {popular ? groups.map((g, gi) => {
+          const gOpen = openAlbum === g.album;
+          const gPlays = g.rows.reduce((s, h) => s + playsNum(h.reel.plays), 0);
+          const gTop = [...g.rows].sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays))[0];
+          return (
+          <div key={g.album} data-album={g.album} style={{ scrollMarginTop: 12 }}>
+            <div role="button" tabIndex={0} aria-expanded={gOpen}
+              onClick={() => setOpenAlbum(cur => (cur === g.album ? null : g.album))}
+              onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpenAlbum(cur => (cur === g.album ? null : g.album)); } }}
+              onMouseEnter={e => e.currentTarget.style.background = gOpen ? "rgba(30,215,96,0.06)" : "rgba(255,255,255,0.05)"}
+              onMouseLeave={e => e.currentTarget.style.background = gOpen ? "rgba(30,215,96,0.06)" : "transparent"}
+              style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "12px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s", background: gOpen ? "rgba(30,215,96,0.06)" : "transparent" }}>
+              <span style={{ fontFamily: F, fontSize: 13, color: gOpen ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center" }}>{gi + 1}</span>
+              <span style={{ width: 44, height: 44, borderRadius: 6, overflow: "hidden", background: "#111" }}>
+                <img src={thumbOf(gTop.reel)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+              </span>
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 700, color: gOpen ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{g.album}</span>
+                <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{g.rows.length} {g.rows.length === 1 ? "reel" : "reels"} · {fmtPlays(gPlays)} plays</span>
+              </span>
+              <span aria-hidden="true" style={{ display: "inline-flex", transform: gOpen ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.3s", color: gOpen ? C.mint : C.gray }}>
+                <IcPlay s={11} c={gOpen ? C.mint : C.gray} />
+              </span>
+            </div>
+            <div style={{ display: "grid", gridTemplateRows: gOpen ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
+              <div style={{ overflow: "hidden" }}>
+                {gOpen && (
+                  <div style={{ padding: "2px 0 10px 26px" }}>
+                    {ALBUM_BLURBS[g.album] && <div style={{ fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.7)", lineHeight: 1.55, padding: "4px 8px 8px", borderLeft: `3px solid ${C.mint}`, marginLeft: 8, paddingLeft: 12 }}>{ALBUM_BLURBS[g.album]}</div>}
+                    {g.rows.map((h, i) => renderRow(h, i, "alb:"))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          );
+        }) : groups.map((g) => (
         <div key={g.album}>
         {g.album && (
           <div data-album={g.album} style={{ padding: "16px 8px 6px", scrollMarginTop: 12 }}>
