@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 
 const C = {
-  bg: "#0A0A0A", mint: "#0FE07C", pink: "#FF6B9D",
+  bg: "#0A0A0A", mint: "#1ED760", pink: "#FF6B9D",
   white: "#FFFFFF", gray: "#888888", darkGray: "#1A1A1A",
   glass: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.08)",
 };
@@ -52,7 +52,7 @@ const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+
 const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
 const GRADS = [
-  ["#0C4A2E", "#0FE07C"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
+  ["#0C4A2E", "#1ED760"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
 ];
 const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, ${GRADS[i % GRADS.length][1]})`;
 
@@ -626,7 +626,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
       style={{
         display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
         padding: "8px 12px", borderRadius: 8, cursor: "pointer",
-        background: h ? "rgba(255,255,255,0.07)" : active ? "rgba(93,232,197,0.06)" : "transparent",
+        background: h ? "rgba(255,255,255,0.07)" : active ? "rgba(30,215,96,0.06)" : "transparent",
         transition: "background 0.15s",
       }}>
       <span style={{ fontFamily: F, fontSize: 13, color: C.gray, textAlign: "center" }}>
@@ -693,7 +693,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
         {cur && (
           <a className="sp-ig-link" href={cur.postUrl} target="_blank" rel="noopener noreferrer"
             style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
-            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(93,232,197,0.3)"; }}
+            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(30,215,96,0.3)"; }}
             onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
           >Open on Instagram ↗</a>
         )}
@@ -880,7 +880,7 @@ function SetListRow({ cap, i, open, onToggle }) {
         style={{
           display: "grid", gridTemplateColumns: "34px 48px minmax(0,1fr) auto", gap: 14, alignItems: "center",
           padding: "14px 16px", cursor: "pointer",
-          background: open ? "rgba(15,224,124,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
+          background: open ? "rgba(30,215,96,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
           transition: "background 0.2s",
         }}>
         <span style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
@@ -950,7 +950,7 @@ function ShelfCard({ ev }) {
       style={{
         textDecoration: "none", flexShrink: 0, width: 200, scrollSnapAlign: "start",
         background: h ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.03)",
-        border: `1px solid ${h ? "rgba(93,232,197,0.25)" : C.border}`, borderRadius: 14, padding: 14,
+        border: `1px solid ${h ? "rgba(30,215,96,0.25)" : C.border}`, borderRadius: 14, padding: 14,
         transform: h ? "translateY(-5px)" : "none", transition: "all 0.25s", display: "block",
       }}>
       <span style={{ display: "block", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", background: gradFor(ev.idx), position: "relative" }}>
@@ -1019,7 +1019,7 @@ function WhatIDoCards() {
               transition: "all 0.3s", display: "flex", flexDirection: "column", gap: 12,
               height: "100%", cursor: "pointer",
             }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(93,232,197,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(93,232,197,0.06)`; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(30,215,96,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(30,215,96,0.06)`; }}
               onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
             >
               <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
@@ -1200,10 +1200,10 @@ export default function Portfolio() {
                 style={{
                   fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
                   display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
-                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
+                  border: "1px solid rgba(30,215,96,0.3)", padding: "10px 24px", borderRadius: 100,
                   transition: "background 0.2s",
                 }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(30,215,96,0.1)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >View Resume →</a>
             </div>
