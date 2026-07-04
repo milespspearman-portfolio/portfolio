@@ -71,6 +71,14 @@ const EVENT_ROLES = {
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
 };
+// External production partners per playlist — Miles's locked map (Jul 4),
+// Audrey pattern: share the agency. Only Miles-confirmed credits appear.
+const EVENT_PARTNERS = {
+  "’24 MAX Miami": "T13",
+  "’25 Summit Vegas": "T13",
+  "’25 MAX London": "Addison Interactive",
+  "’25 MAX LA": "Addison Interactive",
+};
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
 const handlesOf = (ev) => [...new Set(ev.reels.map(r => r.sub.split(" · ")[0]))].join(", ");
 
@@ -966,7 +974,7 @@ function WorkPlayer() {
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{handlesOf(viewing)} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays{viewing.window ? ` · ${viewing.window}` : ""}</p>
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{handlesOf(viewing)} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
                 </div>
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
