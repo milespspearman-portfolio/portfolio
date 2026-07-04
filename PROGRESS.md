@@ -1,5 +1,19 @@
 # Portfolio Site — Progress Log
 
+## ⏸ ROUND 9 — IN FLIGHT (Jul 4, ~02:00) — resume here
+
+Miles's round-9 asks, state at pause:
+1. **Green STILL too pale** (3rd flag; #5DE8C5→#14E39A wasn't enough). Next: bump `C.mint` more vivid/green (candidate ~#0FE07C; Spotify's own is #1ED760 — stay distinct). Also update: `GRADS[0][1]` (#14E39A literal) + HeroCard hover border `rgba(20,227,154,0.45)`. NOT DONE YET.
+2. **Card reassignments** (data in `capabilities`, files in `public/cards/`):
+   - Directing & Coaching → best **Kelley O'Hara** frame (person on camera; card copy says "professional athlete"). 
+   - Video Production → **MAX London PARK SPIT-TAKE** moment (Miles is sure it exists; first agent scanned only fonts+recap at 4s — now have all 4 London reels dense).
+   - Content Strategy → most **EYE-CATCHING** frame across Mansa / Dave Werner / Bowen (Miles: "be you... mansa, dave and bowen").
+   - Hosting keeps Fonts Creator f_03 (already shipped).
+3. **Candidate frames EXTRACTED** to scratchpad (dies with session!): `cardframes2/{kelley 10, castle, firefly, recap-dense, fonts-dense, bowen 20}` = 167 imgs + older `cardframes/{dave-werner, mansa}`. Re-extract in ~60s if gone (from `portfolio-site/public/reels`): `ffmpeg -y -i <mp4> -vf "fps=1/3,scale=360:-2" -q:v 6 out/f_%02d.jpg` (fps=1/2 for the 4 MAX-London reels).
+4. **Next action queued:** launch ONE sonnet vision agent → 3 picks (spit-take, Kelley, eye-catching BeYou) with face-center-y %s → re-extract picks hi-res (`-ss <(N-1)/fps> -vf scale=720:-2` → `public/cards/`) → update `imgPos` in `capabilities` → build → commit.
+5. **Figma**: Miles connected his Figma + gave the Unofficial Spotify Design System file (`eL9fpJVwiuiGoCkZYnZJHd`, node 12-1339, dev mode). UNCHECKED — try figma MCP tools (ToolSearch "figma"); if auth works, harvest spacing/type tokens for the design pass. Palette stays Miles's.
+6. **8 commits local, UNPUSHED** — Miles runs `git push origin main`.
+
 One line per shipped round + what a subagent can sharpen next. Full state/rules: `CLAUDE.md`. All commits local until Miles pushes (`git push origin main`).
 
 ## Shipped (Jul 4, 2026 — one session)
