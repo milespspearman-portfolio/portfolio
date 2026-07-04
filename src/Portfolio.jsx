@@ -20,6 +20,24 @@ function useInView(t = 0.08) {
   return [ref, v];
 }
 
+// Play every <video> inside `ref` only while the container is on screen —
+// muted autoplay tiles otherwise burn CPU/battery off-screen. Shared by the
+// opening wall AND the restored hero row (both hold ~16 looping videos).
+function usePlayWhenVisible(ref, threshold = 0.05) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => {
+      el.querySelectorAll("video").forEach(v => {
+        if (entry.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+        else v.pause();
+      });
+    }, { threshold });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref, threshold]);
+}
+
 function FadeIn({ children, delay = 0, style = {} }) {
   const [ref, v] = useInView();
   return <div ref={ref} style={{ opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`, ...style }}>{children}</div>;
@@ -326,22 +344,25 @@ function HeroCard({ reel, i }) {
   );
 }
 
+// Restored hero row of playing cards (below the stat badges). Shares the
+// viewport-pause hook with the opening wall so its videos don't run off-screen.
+function HeroRow() {
+  const rowRef = useRef(null);
+  usePlayWhenVisible(rowRef);
+  return (
+    <div ref={rowRef} style={{ overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "16px clamp(24px, 5vw, 80px)" }}>
+        {heroReels.map((reel, i) => <HeroCard key={`row-${reel.postUrl}`} reel={reel} i={i} />)}
+      </div>
+    </div>
+  );
+}
+
 // Full-viewport opening: the work plays behind the words.
 function OpeningWall() {
   const wrapRef = useRef(null);
   // Play the wall only while it's on screen — 16 muted videos otherwise burn CPU.
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([entry]) => {
-      el.querySelectorAll("video").forEach(v => {
-        if (entry.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
-        else v.pause();
-      });
-    }, { threshold: 0.05 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  usePlayWhenVisible(wrapRef);
   return (
     <section ref={wrapRef} style={{ position: "relative", minHeight: "100svh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {/* video collage backdrop */}
@@ -815,11 +836,7 @@ export default function Portfolio() {
             </div>
           </FadeIn>
           <FadeIn delay={0.55} style={{ marginTop: 52 }}>
-            <div style={{ overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "16px clamp(24px, 5vw, 80px)" }}>
-                {heroReels.map((reel, i) => <HeroCard key={`row-${reel.postUrl}`} reel={reel} i={i} />)}
-              </div>
-            </div>
+            <HeroRow />
           </FadeIn>
         </section>
 
