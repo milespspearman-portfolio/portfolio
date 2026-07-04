@@ -22,7 +22,7 @@ Spotify Web Player skeuomorph: "Your Library" sidebar = 12 playlists (events/cam
 
 ## 3. Environment knowledge
 
-- **No git credentials in Claude's shell** (https prompts fail "Device not configured", no SSH key, no gh CLI; auto-mode classifier blocks credential probing — don't retry that). Miles pushes from his own Terminal.
+- **Git push:** originally NO credentials in Claude's shell (https prompts fail "Device not configured"; don't credential-probe — classifier blocks it). Miles may have since run `gh auth login` + `gh auth setup-git` — TEST FIRST with `git push --dry-run origin main`; if it succeeds, push at Miles-approved checkpoints; if it fails, Miles pushes from his own Terminal.
 - Dev preview: `.claude/launch.json` at `~/Downloads/Claude/` → server name `portfolio-dev`, port 5173, runs `npm --prefix portfolio-site run dev`.
 - Thumbs pipeline: `ffmpeg -ss 1 -frames:v 1 -vf scale=480:-2` per mp4, mirrored path `.mp4→.jpg` under `public/thumbs/`.
 - Path convention: data keeps Miles's local `~/Downloads/...` strings verbatim; `srcOf()/thumbOf()` map them to `/reels/` + `/thumbs/` at render.
