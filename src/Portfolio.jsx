@@ -70,7 +70,7 @@ const EVENT_ROLES = {
   "NAB 2025": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
   "Evergreen Producing": "Produced",
-  "Behind the Vision": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
+  "Behind the Product": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
 };
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
@@ -215,9 +215,9 @@ const portfolio = [
   },
   // ——— Personal / Off the Clock ———
   {
-    event: "Behind the Vision",
+    event: "Behind the Product",
     reels: [
-      { title: "Behind the Vision", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
+      { title: "Behind the Product", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
     ],
   },
   {
@@ -227,9 +227,23 @@ const portfolio = [
       { title: "In Walked Bud", sub: "@milesmusicmedia · 1.6K likes · Apr 6, 2026", plays: "25.8K", mp4: "/reels/2026/Miles-Music-Media/In-Walked-Bud_4.6.26.mp4", postUrl: "https://www.instagram.com/p/DWxVESoDCR5/" },
       { title: "Ornithology", sub: "@milesmusicmedia · 1.2K likes · Apr 21, 2026", plays: "20.6K", mp4: "/reels/2026/Miles-Music-Media/Ornithology_4.21.26.mp4", postUrl: "https://www.instagram.com/p/DXaB8HAkn42/" },
       { title: "Donna Lee", sub: "@milesmusicmedia · 1.3K likes · Feb 22, 2026", plays: "20K", mp4: "/reels/2026/Miles-Music-Media/Donna-Lee_2.22.26.mp4", postUrl: "https://www.instagram.com/p/DVDOzkiCOJ7/" },
+      { title: "Don't Forget to Follow @milesmusicmedia", sub: "@milesmusicmedia · 1.8K likes · May 26, 2026", plays: "19.5K", mp4: "/reels/2026/Miles-Music-Media/Dont-Forget-to-Follow-Milesmusicmedia_5.26.26.mp4", postUrl: "https://www.instagram.com/p/DYy-G16IFKZ/" },
       { title: "Confirmation", sub: "@milesmusicmedia · 1.1K likes · Mar 12, 2026", plays: "18.9K", mp4: "/reels/2026/Miles-Music-Media/Confirmation_3.12.26.mp4", postUrl: "https://www.instagram.com/p/DVxcAn_jWt3/" },
       { title: "Contrafacts", sub: "@milesmusicmedia · 824 likes · Apr 4, 2026", plays: "15.4K", mp4: "/reels/2026/Miles-Music-Media/Contrafacts_4.4.26.mp4", postUrl: "https://www.instagram.com/p/DWsh2AHCF1z/" },
       { title: "Miles Davis Might Be a Thief (Four)", sub: "@milesmusicmedia · 823 likes · Mar 5, 2026", plays: "13.1K", mp4: "/reels/2026/Miles-Music-Media/Miles-Davis-Might-Be-a-Thief_3.5.26.mp4", postUrl: "https://www.instagram.com/p/DVfdB5aDRDA/" },
+      { title: "What's the Difference Between the", sub: "@milesmusicmedia · 860 likes · Mar 9, 2026", plays: "13.1K", mp4: "/reels/2026/Miles-Music-Media/Whats-the-Difference-Between-the_3.9.26.mp4", postUrl: "https://www.instagram.com/p/DVp_PjbiHwO/" },
+      { title: "Now Watch Again What Color Was", sub: "@milesmusicmedia · 421 likes · May 2, 2026", plays: "7.3K", mp4: "/reels/2026/Miles-Music-Media/Now-Watch-Again-What-Color-was_5.2.26.mp4", postUrl: "https://www.instagram.com/p/DX03tWKORZB/" },
+      { title: "Ornithology Was Written by a Trumpet", sub: "@milesmusicmedia · 367 likes · Apr 21, 2026", plays: "6.7K", mp4: "/reels/2026/Miles-Music-Media/Ornithology-was-Written-by-a-Trumpet_4.21.26.mp4", postUrl: "https://www.instagram.com/p/DXaBNKyEoDF/" },
+      { title: "Guess Who I've Been Listening", sub: "@milesmusicmedia · 301 likes · May 29, 2026", plays: "5.8K", mp4: "/reels/2026/Miles-Music-Media/Guess-Who-Ive-Been-Listening_5.29.26.mp4", postUrl: "https://www.instagram.com/p/DY8JAhlvSX_/" },
+      { title: "Miles Davis Might Be a Thief", sub: "@milesmusicmedia · 393 likes · Mar 4, 2026", plays: "5.7K", mp4: "/reels/2026/Miles-Music-Media/Miles-Davis-Might-Be-a-Thief_3.4.26.mp4", postUrl: "https://www.instagram.com/p/DVd7SiIlCid/" },
+      { title: "Have You Ever Just Binged Research", sub: "@milesmusicmedia · 248 likes · Apr 12, 2026", plays: "5.2K", mp4: "/reels/2026/Miles-Music-Media/Have-You-Ever-Just-Binged-Research_4.12.26.mp4", postUrl: "https://www.instagram.com/p/DXBii0_DhKB/" },
+      { title: "You Either Love the Tune or", sub: "@milesmusicmedia · 394 likes · Feb 23, 2026", plays: "5.1K", mp4: "/reels/2026/Miles-Music-Media/You-Either-Love-the-Tune-or_2.23.26.mp4", postUrl: "https://www.instagram.com/p/DVFcFplCAHW/" },
+      { title: "Sonny Rollins to Pay Tribute Rest", sub: "@milesmusicmedia · 379 likes · May 27, 2026", plays: "4.6K", mp4: "/reels/2026/Miles-Music-Media/Sonny-Rollins-to-Pay-Tribute-Rest_5.27.26.mp4", postUrl: "https://www.instagram.com/p/DY0p3nZoWrp/" },
+      { title: "Bruh First Time Playing a Transcription", sub: "@milesmusicmedia · 208 likes · May 25, 2026", plays: "4.4K", mp4: "/reels/2026/Miles-Music-Media/Bruh-First-Time-Playing-a-Transcription_5.25.26.mp4", postUrl: "https://www.instagram.com/p/DYxliOySZLr/" },
+      { title: "Ear Training Is the Most Underrated", sub: "@milesmusicmedia · 87 likes · Mar 11, 2026", plays: "4.4K", mp4: "/reels/2026/Miles-Music-Media/Ear-Training-is-the-Most-Underrated_3.11.26.mp4", postUrl: "https://www.instagram.com/p/DVutESTiEm-/" },
+      { title: "Happy Jazz History Month More to", sub: "@milesmusicmedia · 248 likes · Apr 2, 2026", plays: "4.1K", mp4: "/reels/2026/Miles-Music-Media/Happy-Jazz-History-Month-More-to_4.2.26.mp4", postUrl: "https://www.instagram.com/p/DWnr7lKiI15/" },
+      { title: "Back in New York I Had", sub: "@milesmusicmedia · 114 likes · Mar 4, 2026", plays: "4K", mp4: "/reels/2026/Miles-Music-Media/Back-in-New-York-I-Had_3.4.26.mp4", postUrl: "https://www.instagram.com/p/DVc0W4SCFnI/" },
+      { title: "Confirmation Is a Beast but Hopefully", sub: "@milesmusicmedia · 301 likes · Mar 14, 2026", plays: "4K", mp4: "/reels/2026/Miles-Music-Media/Confirmation-is-a-Beast-but-Hopefully_3.14.26.mp4", postUrl: "https://www.instagram.com/p/DV2e_-DiJf7/" },
     ],
   },
 ];
@@ -254,7 +268,7 @@ const heroReels = (() => {
   portfolio.forEach((ev, e) => ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })));
   flat.sort((a, b) => playsNum(b.plays) - playsNum(a.plays));
   const top = flat.slice(0, 12);
-  ["Fonts Creator Game", "Behind the Vision", "Happy 100th Birthday Miles Davis", "Donna Lee"].forEach(t => {
+  ["Fonts Creator Game", "Behind the Product", "Happy 100th Birthday Miles Davis", "Donna Lee"].forEach(t => {
     const x = flat.find(f => f.title === t);
     if (x && !top.includes(x)) top.push(x);
   });
@@ -308,6 +322,59 @@ const setList = capabilities.map(c => {
 
 const skills = ["Video Production", "On-Camera Hosting", "Executive Interviews", "Event Coverage", "Short-Form Content", "TikTok Strategy", "Instagram Reels", "YouTube Shorts", "Premiere Pro", "After Effects", "Brandwatch", "Sprinklr", "Creative Briefs", "Influencer Management", "DSLR + Mobile"];
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
+
+// "About the Artist" swipe stack — one word at a time, always swiping the same
+// direction: the labels come and go, the person stays.
+const SWIPE_WORDS = ["Creative", "Producer", "Host", "Director", "Teammate"];
+function SwipeWord() {
+  const [tick, setTick] = useState(0);
+  useEffect(() => { const t = setInterval(() => setTick(v => v + 1), 2200); return () => clearInterval(t); }, []);
+  const idx = tick % SWIPE_WORDS.length;
+  const prev = (idx + SWIPE_WORDS.length - 1) % SWIPE_WORDS.length;
+  return (
+    <span style={{ position: "relative", display: "inline-block", overflow: "hidden", verticalAlign: "bottom" }}>
+      {tick > 0 && (
+        <span key={`out${tick}`} style={{ position: "absolute", left: 0, top: 0, whiteSpace: "nowrap", animation: "swipeOut 0.5s cubic-bezier(0.55,0,0.45,1) both" }}>
+          {SWIPE_WORDS[prev]}
+        </span>
+      )}
+      <span key={`in${tick}`} style={{ display: "inline-block", whiteSpace: "nowrap", animation: tick > 0 ? "swipeIn 0.5s cubic-bezier(0.55,0,0.45,1) both" : "none" }}>
+        {SWIPE_WORDS[idx]}
+      </span>
+    </span>
+  );
+}
+
+// Scroll-triggered count-up; the number is DERIVED (TOTAL_PLAYS), never typed.
+function PlaysCounter() {
+  const ref = useRef(null);
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    let started = false;
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting || started) return;
+      started = true; io.disconnect();
+      const t0 = performance.now(), dur = 1600;
+      const step = (t) => {
+        const p = Math.min(1, (t - t0) / dur);
+        setVal(Math.round(TOTAL_PLAYS * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} style={{ margin: "0 0 28px" }}>
+      <span style={{ fontFamily: F, fontSize: "clamp(40px, 5.5vw, 64px)", fontWeight: 800, color: C.mint, lineHeight: 1, letterSpacing: -1.5 }}>{fmtPlays(val)}</span>
+      <span style={{ fontFamily: F, display: "block", marginTop: 6, fontSize: 13, fontWeight: 600, color: C.gray, letterSpacing: 0.3 }}>
+        cumulative plays · {TOTAL_REELS} videos · inside and outside of work
+      </span>
+    </div>
+  );
+}
 
 // ===== MARQUEE =====
 function Marquee() {
@@ -471,9 +538,6 @@ function OpeningWall() {
           Producer<span style={{ color: C.mint }}>.</span><br />
           <span style={{ color: "#F5C518" }}>Musician.</span>
         </h1>
-        <p style={{ fontFamily: F, fontSize: "clamp(15px, 1.8vw, 19px)", color: "rgba(255,255,255,0.82)", margin: "22px 0 0", fontWeight: 500 }}>
-          {TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} cumulative plays · inside and outside of work
-        </p>
         <span style={{ display: "inline-flex", marginTop: 34, animation: "cuebounce 1.8s ease-in-out infinite", fontFamily: F, fontSize: 13, fontWeight: 600, color: C.gray, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 18px", background: "rgba(10,10,10,0.6)" }}>↓ scroll</span>
       </div>
     </section>
@@ -694,7 +758,7 @@ function WorkPlayer() {
               <div className="sp-side-list">
                 {eventStats.map(ev => (
                   <Fragment key={ev.event}>
-                    {ev.event === "Behind the Vision" && (
+                    {ev.event === "Behind the Product" && (
                       <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
                         <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>Off the Clock</span>
                         <span style={{ flex: 1, height: 1, background: C.border }} />
@@ -931,6 +995,8 @@ export default function Portfolio() {
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
         @keyframes cuebounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+        @keyframes swipeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-110%); opacity: 0; } }
+        @keyframes swipeIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @media (max-width: 900px) { .wall-card:nth-child(n+9) { display: none; } }
         .sp-shell { scroll-margin-top: 84px; }
         .sp-body { display: flex; align-items: stretch; height: 640px; }
@@ -978,6 +1044,10 @@ export default function Portfolio() {
               border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
             }}>
               <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>About the Artist</span>
+              <h2 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(34px, 4.5vw, 58px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
+                <SwipeWord /><span style={{ color: C.mint }}>.</span>
+              </h2>
+              <PlaysCounter />
               <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
                 I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC (3.94 GPA) — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
               </p>
@@ -1025,8 +1095,8 @@ export default function Portfolio() {
           <FadeIn delay={0.3}>
             <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = `0 0 60px ${C.mint}30`; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
             >View My LinkedIn →</a>
           </FadeIn>
           <FadeIn delay={0.45} style={{ marginTop: 52 }}>
@@ -1093,8 +1163,8 @@ export default function Portfolio() {
           <FadeIn delay={0.2}>
             <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = `0 0 70px ${C.mint}45`; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
             >Connect on LinkedIn →</a>
           </FadeIn>
           <FadeIn delay={0.3}>
