@@ -24,3 +24,6 @@ Build these in src/Portfolio.jsx AFTER the Opus writer commits its descriptions 
 
 ## Review gate (all Opus)
 R1 copy-editor (new descriptions + any copy) → R2 design-judge (composition, About tile, wall, vs Navin) → R3 mobile-design (375px + touch, armed with MOBILE-BEST-PRACTICES.md). Apply, verify lookups + build, push, then chat-handoff doc.
+
+## 4. Scroll-dissolve opening (Miles Jul 4)
+As the user scrolls the opening wall: the "Creative. Producer. Musician." triad EVAPORATES (opacity 1→0 over ~1 viewport of scroll), and around the midpoint (passing "Producer") the wall's dim veil LIFTS (currently ~0.55 → ~0.12) so the reels brighten to full and become clearly tappable. Reels don't move — only text fades + veil lifts. Scroll-linked, transform/opacity only, rAF-throttled (no layout thrash). `prefers-reduced-motion` → skip the scrub, reels just show. mobile-design (R3) verifies scroll perf on phone (scroll-linked effects are the #1 jank source — reference MOBILE-BEST-PRACTICES.md). design-judge (R2) tunes the exact veil floor + fade curve.
