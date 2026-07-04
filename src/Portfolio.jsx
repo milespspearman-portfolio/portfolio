@@ -260,6 +260,9 @@ const eventStats = portfolio.map((ev, i) => {
 });
 const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
 const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
+// Likes live inside each reel's sub string ("· 1.8K likes ·") — derived, never typed
+const likesNum = (sub) => { const m = sub.match(/([\d.]+K|[\d.]+M|\d+) likes/i); return m ? playsNum(m[1]) : 0; };
+const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a + likesNum(r.sub), 0), 0);
 const highlights = [...eventStats].sort((a, b) => b.totalPlays - a.totalPlays).slice(0, 4);
 
 // Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
@@ -345,10 +348,11 @@ function SwipeWord() {
   );
 }
 
-// Scroll-triggered count-up; the number is DERIVED (TOTAL_PLAYS), never typed.
+// Scroll-triggered count-up stack, styled after Miles's EOY deck: number in
+// red, descriptor beside it. Every number is DERIVED from the data, never typed.
 function PlaysCounter() {
   const ref = useRef(null);
-  const [val, setVal] = useState(0);
+  const [p, setP] = useState(0); // eased 0..1 progress shared by all rows
   useEffect(() => {
     const el = ref.current; if (!el) return;
     let started = false;
@@ -357,21 +361,28 @@ function PlaysCounter() {
       started = true; io.disconnect();
       const t0 = performance.now(), dur = 1600;
       const step = (t) => {
-        const p = Math.min(1, (t - t0) / dur);
-        setVal(Math.round(TOTAL_PLAYS * (1 - Math.pow(1 - p, 3))));
-        if (p < 1) requestAnimationFrame(step);
+        const x = Math.min(1, (t - t0) / dur);
+        setP(1 - Math.pow(1 - x, 3));
+        if (x < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
     }, { threshold: 0.5 });
     io.observe(el);
     return () => io.disconnect();
   }, []);
+  const rows = [
+    [fmtPlays(Math.round(TOTAL_PLAYS * p)), "plays"],
+    [fmtPlays(Math.round(TOTAL_LIKES * p)), "likes"],
+    [String(Math.round(TOTAL_REELS * p)), "videos"],
+  ];
   return (
-    <div ref={ref} style={{ margin: "0 0 28px" }}>
-      <span style={{ fontFamily: F, fontSize: "clamp(40px, 5.5vw, 64px)", fontWeight: 800, color: C.mint, lineHeight: 1, letterSpacing: -1.5 }}>{fmtPlays(val)}</span>
-      <span style={{ fontFamily: F, display: "block", marginTop: 6, fontSize: 13, fontWeight: 600, color: C.gray, letterSpacing: 0.3 }}>
-        cumulative plays · {TOTAL_REELS} videos · inside and outside of work
-      </span>
+    <div ref={ref} style={{ margin: "0 0 32px" }}>
+      {rows.map(([num, label]) => (
+        <div key={label} style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 4 }}>
+          <span style={{ fontFamily: F, fontSize: "clamp(30px, 4vw, 46px)", fontWeight: 800, color: "#FA0F00", lineHeight: 1.2, letterSpacing: -1, minWidth: "3.2ch" }}>{num}</span>
+          <span style={{ fontFamily: F, fontSize: "clamp(22px, 2.8vw, 32px)", fontWeight: 700, color: C.white, lineHeight: 1.2 }}>{label}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -945,6 +956,45 @@ function SetList() {
   );
 }
 
+// ===== WHAT I DO — cards play the reel that backs each capability and
+// deep-link into that topic's playlist in the Work player (ms-play). =====
+function WhatIDoCards() {
+  const gridRef = useRef(null);
+  usePlayWhenVisible(gridRef); // reels only play while the section is on screen
+  return (
+    <div ref={gridRef} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
+      {setList.map((c, i) => (
+        <FadeIn key={i} delay={i * 0.1}>
+          <a href="#work"
+            onClick={() => { if (c.reelIdx) window.dispatchEvent(new CustomEvent("ms-play", { detail: c.reelIdx })); }}
+            style={{ textDecoration: "none", display: "block", height: "100%" }}>
+            <div style={{
+              background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              border: `1px solid ${C.border}`, borderRadius: 16, padding: 28,
+              transition: "all 0.3s", display: "flex", flexDirection: "column", gap: 12,
+              height: "100%", cursor: "pointer",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(93,232,197,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(93,232,197,0.06)`; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
+                {c.mp4
+                  ? <video src={srcOf(c)} poster={c.img} muted loop playsInline preload="metadata"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }}
+                      onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
+                  : <img src={c.img} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />}
+              </div>
+              <h4 style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, margin: 0 }}>{c.title}</h4>
+              <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.6, margin: 0, flex: 1 }}>{c.body}</p>
+              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, marginTop: 8 }}>{c.linkLabel}</span>
+            </div>
+          </a>
+        </FadeIn>
+      ))}
+    </div>
+  );
+}
+
 // ===== NAV =====
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -1123,30 +1173,7 @@ export default function Portfolio() {
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Services</span>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
-            {capabilities.map((c, i) => (
-              <FadeIn key={i} delay={i * 0.1}>
-                <a href={c.linkUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "block", height: "100%" }}>
-                  <div style={{
-                    background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-                    border: `1px solid ${C.border}`, borderRadius: 16, padding: 28,
-                    transition: "all 0.3s", display: "flex", flexDirection: "column", gap: 12,
-                    height: "100%", cursor: "pointer",
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(93,232,197,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(93,232,197,0.06)`; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
-                  >
-                    <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
-                      <img src={c.img} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
-                    </div>
-                    <h4 style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, margin: 0 }}>{c.title}</h4>
-                    <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.6, margin: 0, flex: 1 }}>{c.body}</p>
-                    <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, marginTop: 8 }}>{c.linkLabel}</span>
-                  </div>
-                </a>
-              </FadeIn>
-            ))}
-          </div>
+          <WhatIDoCards />
         </section>
 
         {/* ===== CTA ===== */}
