@@ -1,6 +1,8 @@
 # Portfolio Site — Progress Log
 
-## ⏸ ROUND 9 — IN FLIGHT (Jul 4, ~02:00) — resume here
+## ✅ ROUND 9 — SHIPPED (commits `6fc19e0`→`0cb6f69`): opening wall (16 live muted videos under "Creative. Producer. Musician." — his triad, my layout), mint→#0FE07C, card frames finalized (park mid-sip / Kelley / Mansa red — spit-take literally doesn't exist in sampled frames of all 4 London reels). Figma connected+verified (view seat), token harvest deferred to design pass. 11 commits UNPUSHED.
+
+## (superseded in-flight notes below — kept for context)
 
 Miles's round-9 asks, state at pause:
 1. **Green STILL too pale** (3rd flag; #5DE8C5→#14E39A wasn't enough). Next: bump `C.mint` more vivid/green (candidate ~#0FE07C; Spotify's own is #1ED760 — stay distinct). Also update: `GRADS[0][1]` (#14E39A literal) + HeroCard hover border `rgba(20,227,154,0.45)`. NOT DONE YET.
