@@ -230,24 +230,35 @@ const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
 const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
 const highlights = [...eventStats].sort((a, b) => b.totalPlays - a.totalPlays).slice(0, 4);
 
+// Hero carousel: top reels by plays, plus MAX London (Miles's pick)
+const heroReels = (() => {
+  const flat = [];
+  portfolio.forEach((ev, e) => ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })));
+  flat.sort((a, b) => playsNum(b.plays) - playsNum(a.plays));
+  const top = flat.slice(0, 10);
+  const fonts = flat.find(x => x.title === "Fonts Creator Game");
+  if (fonts && !top.includes(fonts)) top.push(fonts);
+  return top;
+})();
+
 const capabilities = [
   {
-    icon: "🎙", title: "On-Camera Hosting & Presenting",
+    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 25%", title: "On-Camera Hosting & Presenting",
     body: "Event activations, brand segments, interviews, and live hosting — comfortable on camera and on a stage.",
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Watch: Summit Hot Takes →",
   },
   {
-    icon: "🎬", title: "Video Production",
+    img: "/cards/video-production.jpg", imgPos: "50% 25%", title: "Video Production",
     body: "Shoot, edit, and publish — mobile and DSLR, same-day turnaround, from product demos to executive interviews.",
     linkUrl: "https://www.instagram.com/reel/DCUlhpMAWvB/", linkLabel: "Watch: Premiere Pro Demo →",
   },
   {
-    icon: "📊", title: "Content Strategy",
+    img: "/cards/content-strategy.jpg", imgPos: "50% 25%", title: "Content Strategy",
     body: "Data-driven concepts backed by social listening and platform analytics — every video starts with a reason to exist.",
     linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Watch: Firefly Informational →",
   },
   {
-    icon: "🎯", title: "Directing & On-Camera Coaching",
+    img: "/cards/directing-coaching.jpg", imgPos: "50% 25%", title: "Directing & On-Camera Coaching",
     body: "I make people who aren't natural on camera look great — writing talking tracks, asking questions multiple ways, pulling the right sound bites whether it's an exec or a professional athlete.",
     linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Watch: Sneaks Interview →",
   },
@@ -277,6 +288,48 @@ function Marquee() {
   );
 }
 
+// ===== HERO REEL CAROUSEL =====
+function HeroCard({ reel }) {
+  const [h, setH] = useState(false);
+  const open = () => {
+    const work = document.getElementById("work");
+    if (work) work.scrollIntoView({ behavior: "smooth" });
+    window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: reel.e, r: reel.r } }));
+  };
+  return (
+    <button onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      aria-label={`Play ${reel.title}`}
+      style={{
+        position: "relative", width: 138, height: 232, borderRadius: 14, overflow: "hidden", flexShrink: 0,
+        border: `1px solid ${h ? "rgba(20,227,154,0.45)" : C.border}`, padding: 0, cursor: "pointer",
+        background: "#111", transform: h ? "translateY(-6px) scale(1.02)" : "none", transition: "all 0.25s",
+      }}>
+      <img src={thumbOf(reel)} alt="" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} onError={e => { e.target.style.display = "none"; }} />
+      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 45%, rgba(10,10,10,0.92))" }} />
+      <span style={{ position: "absolute", left: 10, right: 10, bottom: 9, textAlign: "left" }}>
+        <span style={{ display: "block", fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, marginTop: 3 }}>▶ {reel.plays} plays</span>
+      </span>
+      <span style={{
+        position: "absolute", top: "38%", left: "50%", transform: `translate(-50%,-50%) scale(${h ? 1 : 0.6})`,
+        width: 44, height: 44, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center",
+        justifyContent: "center", opacity: h ? 1 : 0, transition: "all 0.2s", boxShadow: `0 6px 24px ${C.mint}50`,
+      }}><IcPlay s={15} /></span>
+    </button>
+  );
+}
+
+function HeroReelStrip() {
+  const doubled = [...heroReels, ...heroReels];
+  return (
+    <div style={{ overflow: "hidden", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 6%, black 94%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 6%, black 94%, transparent)" }}>
+      <div className="hero-strip" style={{ display: "flex", gap: 14, width: "max-content", padding: "8px clamp(24px, 5vw, 80px)", animation: "heroloop 55s linear infinite" }}>
+        {doubled.map((reel, i) => <HeroCard key={`${reel.postUrl}-${i}`} reel={reel} />)}
+      </div>
+    </div>
+  );
+}
+
 // ===== WORK — Spotify-pattern library player =====
 
 function Thumb({ reel, size = 44, radius = 6 }) {
@@ -285,7 +338,7 @@ function Thumb({ reel, size = 44, radius = 6 }) {
     <div style={{ width: size, height: size, borderRadius: radius, overflow: "hidden", flexShrink: 0, background: "linear-gradient(135deg, #16302A, #0D1F2E)", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {failed
         ? <IcPlay s={Math.round(size * 0.3)} c="rgba(255,255,255,0.35)" />
-        : <img src={thumbOf(reel)} alt="" loading="lazy" onError={() => setFailed(true)} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
+        : <img src={thumbOf(reel)} alt="" loading="lazy" onError={() => setFailed(true)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />}
     </div>
   );
 }
@@ -311,7 +364,7 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
         transition: "background 0.15s",
       }}>
       <span style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
-        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
@@ -362,7 +415,7 @@ function HighlightCard({ ev, onOpen }) {
         transform: h ? "translateY(-4px)" : "none", transition: "all 0.25s", fontFamily: F, width: "100%",
       }}>
       <span style={{ width: 56, height: 56, borderRadius: 10, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
-        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 15, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
@@ -448,6 +501,13 @@ function WorkPlayer() {
 
   const playTrack = (e, r) => { setVidErr(false); setProg(0); setDur(0); setTrack({ e, r }); };
 
+  // Hero carousel / capability cards dispatch ms-play to deep-link into the library
+  useEffect(() => {
+    const h = (ev) => { setLibIdx(ev.detail.e); setVidErr(false); setProg(0); setDur(0); setTrack({ e: ev.detail.e, r: ev.detail.r }); };
+    window.addEventListener("ms-play", h);
+    return () => window.removeEventListener("ms-play", h);
+  }, []);
+
   // Single <video> is the source of truth; on track change, load + play.
   useEffect(() => {
     const v = vidRef.current;
@@ -500,7 +560,7 @@ function WorkPlayer() {
             <main className="sp-main">
               <div style={{ padding: "28px 24px 20px", display: "flex", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, ${GRADS[viewing.idx % GRADS.length][0]}, rgba(13,13,13,0) 96%)` }}>
                 <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), overflow: "hidden", boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>
-                  <img src={viewing.cover} alt="" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  <img src={viewing.cover} alt="" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
                 </span>
                 <div style={{ minWidth: 0 }}>
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
@@ -631,6 +691,8 @@ export default function Portfolio() {
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
+        @keyframes heroloop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .hero-strip:hover { animation-play-state: paused; }
         .sp-shell { scroll-margin-top: 84px; }
         .sp-body { display: flex; align-items: stretch; height: 640px; }
         .sp-side { width: 280px; min-width: 280px; border-right: 1px solid ${C.border}; display: flex; flex-direction: column; }
@@ -712,6 +774,9 @@ export default function Portfolio() {
               ))}
             </div>
           </FadeIn>
+          <FadeIn delay={0.55} style={{ marginTop: 52 }}>
+            <HeroReelStrip />
+          </FadeIn>
         </section>
 
         {/* ===== WHAT I DO — clickable cards ===== */}
@@ -733,7 +798,9 @@ export default function Portfolio() {
                     onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(93,232,197,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(93,232,197,0.06)`; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
                   >
-                    <span style={{ fontSize: 28 }}>{c.icon}</span>
+                    <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
+                      <img src={c.img} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
+                    </div>
                     <h4 style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, margin: 0 }}>{c.title}</h4>
                     <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.6, margin: 0, flex: 1 }}>{c.body}</p>
                     <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, marginTop: 8 }}>{c.linkLabel}</span>
