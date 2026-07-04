@@ -323,10 +323,13 @@ function HeroCard({ reel, i }) {
       aria-label={`Play ${reel.title}`}
       style={{
         position: "relative", height: `clamp(170px, ${vh}vh, 300px)`, aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", flexShrink: 0,
-        border: `1px solid ${h ? `${C.mint}73` : C.border}`, padding: 0, cursor: "pointer",
-        background: "#111", boxShadow: "0 16px 48px rgba(0,0,0,0.45)",
-        transform: h ? "translateY(-8px) scale(1.04) rotate(0deg)" : `rotate(${TILTS[i % TILTS.length]}deg)`,
-        transition: "all 0.3s", zIndex: h ? 3 : 1,
+        border: `1px solid ${h ? `${C.mint}A6` : C.border}`, padding: 0, cursor: "pointer",
+        background: "#111",
+        boxShadow: h ? `0 26px 70px rgba(0,0,0,0.55), 0 0 0 1px ${C.mint}40, 0 10px 40px ${C.mint}33` : "0 16px 48px rgba(0,0,0,0.45)",
+        // Magnet: the hovered card straightens (rotate 0), lifts, and scales up.
+        transform: h ? "translateY(-10px) scale(1.06) rotate(0deg)" : `rotate(${TILTS[i % TILTS.length]}deg)`,
+        transition: "transform 0.32s cubic-bezier(0.22,1,0.36,1), box-shadow 0.32s ease, border-color 0.32s ease",
+        zIndex: h ? 5 : 1,
       }}>
       <video src={srcOf(reel)} poster={thumbOf(reel)} muted loop playsInline autoPlay preload="metadata"
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
@@ -358,16 +361,86 @@ function HeroRow() {
   );
 }
 
+// Parallax depth per card — alternating so neighbours drift at different rates
+// (the depth illusion). Deterministic, spread ~0.35 (back) .. ~1.35 (front).
+const depthFor = (i) => 0.55 + ((i * 37) % 100) / 100; // 0.55 .. 1.55, pseudo-random but stable
+
 // Full-viewport opening: the work plays behind the words.
+// THE HEADLINE ACT — cursor-driven parallax on the wall (transform-only,
+// requestAnimationFrame-throttled, no layout thrash) + per-card magnet in HeroCard.
+// Touch / no-hover pointers skip the pointer effects entirely.
 function OpeningWall() {
   const wrapRef = useRef(null);
+  const collageRef = useRef(null);
+  const cardRefs = useRef([]);
   // Play the wall only while it's on screen — 16 muted videos otherwise burn CPU.
   usePlayWhenVisible(wrapRef);
+
+  // Cursor parallax: pointer position drives a per-card translate, applied
+  // imperatively to each wrapper's style (never React state) so 60fps pointer
+  // moves cause zero re-renders and no layout thrash — transform only, on GPU.
+  useEffect(() => {
+    const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!fine.matches || reduce.matches) return; // touch / reduced-motion: no parallax
+
+    const el = wrapRef.current;
+    if (!el) return;
+    const target = { x: 0, y: 0 };  // where the pointer wants the cards
+    const cur = { x: 0, y: 0 };     // eased current offset
+    let raf = 0;
+    let running = false;
+
+    const MAXX = 26, MAXY = 16; // px budget at the deepest layer
+
+    const frame = () => {
+      // ease toward target for a soft, springy follow
+      cur.x += (target.x - cur.x) * 0.09;
+      cur.y += (target.y - cur.y) * 0.09;
+      cardRefs.current.forEach((node, i) => {
+        if (!node) return;
+        const d = depthFor(i);
+        node.style.transform = `translate3d(${(cur.x * MAXX * d).toFixed(2)}px, ${(cur.y * MAXY * d).toFixed(2)}px, 0)`;
+      });
+      // keep running until we've essentially reached the target
+      if (Math.abs(target.x - cur.x) > 0.001 || Math.abs(target.y - cur.y) > 0.001) {
+        raf = requestAnimationFrame(frame);
+      } else {
+        running = false;
+      }
+    };
+    const kick = () => { if (!running) { running = true; raf = requestAnimationFrame(frame); } };
+
+    const onMove = (e) => {
+      const w = window.innerWidth || 1, h = window.innerHeight || 1;
+      // normalize to [-1, 1] around screen center; negate so cards drift AWAY
+      // from the cursor (subject leans in, background parallaxes out)
+      target.x = -((e.clientX / w) * 2 - 1);
+      target.y = -((e.clientY / h) * 2 - 1);
+      kick();
+    };
+    const onLeave = () => { target.x = 0; target.y = 0; kick(); };
+
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
+    return () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section ref={wrapRef} style={{ position: "relative", minHeight: "100svh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {/* video collage backdrop */}
-      <div style={{ position: "absolute", inset: "-6% -5%", display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center", justifyContent: "center", alignContent: "center", transform: "rotate(-3deg)" }}>
-        {heroReels.map((reel, i) => <HeroCard key={reel.postUrl} reel={reel} i={i} />)}
+      <div ref={collageRef} style={{ position: "absolute", inset: "-6% -5%", display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center", justifyContent: "center", alignContent: "center", transform: "rotate(-3deg)" }}>
+        {heroReels.map((reel, i) => (
+          // Parallax layer: rAF writes translate3d here; HeroCard owns hover/tilt
+          // on its own element, so the two transforms never fight.
+          <div key={reel.postUrl} ref={n => { cardRefs.current[i] = n; }} style={{ flexShrink: 0, willChange: "transform" }}>
+            <HeroCard reel={reel} i={i} />
+          </div>
+        ))}
       </div>
       {/* dim so type owns the frame */}
       <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.52) 0%, rgba(10,10,10,0.86) 100%)", pointerEvents: "none" }} />
@@ -377,7 +450,7 @@ function OpeningWall() {
         <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
           Creative<span style={{ color: C.mint }}>.</span><br />
           Producer<span style={{ color: C.mint }}>.</span><br />
-          <span style={{ color: "#FFD447" }}>Musician.</span>
+          <span style={{ color: "#F5C518" }}>Musician.</span>
         </h1>
         <p style={{ fontFamily: F, fontSize: "clamp(15px, 1.8vw, 19px)", color: "rgba(255,255,255,0.82)", margin: "22px 0 0", fontWeight: 500 }}>
           {TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} cumulative plays · inside and outside of work
