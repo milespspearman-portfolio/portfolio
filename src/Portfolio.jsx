@@ -199,9 +199,9 @@ const portfolio = [
   {
     event: "Evergreen Producing",
     reels: [
-      { title: "Dave Employee Comms Interview", sub: "@adobelife · 26K likes · Aug 18, 2025", plays: "1.9M", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Dave-Werner_8.18.25.mp4", postUrl: "https://www.instagram.com/p/DNgTb3hthgJ/" },
-      { title: "Bowen Employee Comms Interview", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
-      { title: "Mansa Employee Comms Interview", sub: "@adobelife · 6.5K likes · Aug 20, 2025", plays: "809.5K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mansa_8.20.25.mp4", postUrl: "https://www.instagram.com/p/DNlh970un2W/" },
+      { title: "Dave Werner Employee Spotlight", sub: "@adobelife · 26K likes · Aug 18, 2025", plays: "1.9M", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Dave-Werner_8.18.25.mp4", postUrl: "https://www.instagram.com/p/DNgTb3hthgJ/" },
+      { title: "Bowen Wang Employee Spotlight", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
+      { title: "Manasa Hari Employee Spotlight", sub: "@adobelife · 6.5K likes · Aug 20, 2025", plays: "809.5K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mansa_8.20.25.mp4", postUrl: "https://www.instagram.com/p/DNlh970un2W/" },
       { title: "Russell", sub: "@adobe · 2.8K likes · May 4, 2026", plays: "143.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Russell_5.4.26.mp4", postUrl: "https://www.instagram.com/p/DX7hTuSErBK/" },
       { title: "Artist Spotlight: Aaron Gonzalez", sub: "@adobe · 268 likes · May 5, 2026", plays: "16.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Artist-Spotlight-Aaron-Gonzalez_5.5.26.mp4", postUrl: "https://www.instagram.com/p/DX9u5N4gPbd/" },
       { title: "Be You: Em Siegel", sub: "@adobe · 337 likes · May 11, 2026", plays: "0", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Em-Siegel_5.11.26.mp4", postUrl: "https://www.instagram.com/p/DYNfjdwkYSU/" },
@@ -351,7 +351,7 @@ const CAPABILITY_REEL_TITLE = {
   "On-Camera Hosting": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
   "Content Strategy, Concept to Published": "Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
   "Directing & On-Camera Coaching": "Kelley O'Hara",                               // MAX 2025 LA
-  "Producing: Talent Marketing & Employee Comms": "Dave Employee Comms Interview", // Evergreen Producing — 1.9M
+  "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
 };
 const setList = capabilities.map(c => {
   const idx = reelIndexByTitle(CAPABILITY_REEL_TITLE[c.title]);
@@ -385,13 +385,21 @@ const SPECIALTY_REELS = {
     "Kelley O'Hara",
   ],
   "Producing: Talent Marketing & Employee Comms": [
-    "Dave Employee Comms Interview",
-    "Mansa Employee Comms Interview",
+    "Dave Werner Employee Spotlight",
+    "Manasa Hari Employee Spotlight",
     "“Coolest Job” Series",
-    "Bowen Employee Comms Interview",
+    "Bowen Wang Employee Spotlight",
     "San Jose Semaphore",
     "Be You: Imran",
   ],
+};
+// Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
+// trimmed) or Miles's own words; more land with the Workfront ingest. Rows with
+// no entry fall back to the reel's on-record `role` field. NEVER invent entries.
+const REEL_DESCS = {
+  "Dave Werner Employee Spotlight": "Meet Dave Werner, Senior Staff Designer in our Video and Animation team. From designs that help bring animated characters to life to performing in local theatre productions, Dave's creativity thrives both inside and outside of work.",
+  "Manasa Hari Employee Spotlight": "Meet Manasa Hari, Software Development Engineer at Adobe. From building features for Adobe's Real-Time Customer Data Platform to performing as a singer and dancer, Manasa brings creativity, discipline, and stage presence into everything she does.",
+  "Bowen Wang Employee Spotlight": "Meet Bowen Wang, Manager of Machine Learning at Adobe. From developing AI models that help marketers understand performance to crafting projects in his woodworking shop, Bowen thrives on creativity and problem-solving.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
@@ -974,8 +982,9 @@ function PlaylistShelf() {
 }
 
 // ===== WHAT I DO — cards open the Specialty Drawer (Navin pattern): proof index
-// with numbered Highlights; the Work player stays the only place video plays with
-// sound. Card bodies moved verbatim INTO the drawer (no message repetition). =====
+// with numbered Highlights. Rows expand and play IN the drawer (Miles's call,
+// supersedes the zero-video drawer rule); one expanded row = one mounted video.
+// Card bodies moved verbatim INTO the drawer (no message repetition). =====
 function SpecialtyDrawer({ cap, onClose }) {
   const [closing, setClosing] = useState(false);
   const close = () => { setClosing(true); setTimeout(onClose, 250); };
@@ -988,12 +997,11 @@ function SpecialtyDrawer({ cap, onClose }) {
   }, []);
   const rows = specialtyHighlights[cap.title] || [];
   const proofPlays = rows.reduce((s, h) => s + playsNum(h.reel.plays), 0);
-  const playRow = (h) => {
-    const work = document.getElementById("work");
-    if (work) work.scrollIntoView({ behavior: "smooth" });
-    window.dispatchEvent(new CustomEvent("ms-play", { detail: h.idx }));
-    close();
-  };
+  // Rows play INSIDE the drawer (Miles: "it should just play inside of the
+  // specialty tab when i push play, just expands" — no jump to Selected Work).
+  // One expanded row at a time = the only <video> mounted in the drawer.
+  const [openRow, setOpenRow] = useState(null);
+  const toggleRow = (i) => setOpenRow(cur => (cur === i ? null : i));
   return (
     <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
       <aside role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
@@ -1016,7 +1024,7 @@ function SpecialtyDrawer({ cap, onClose }) {
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "center", margin: "16px 0 20px" }}>
           {rows.length > 0 && (
-            <button onClick={() => playRow(rows[0])} aria-label={cap.linkLabel}
+            <button onClick={() => toggleRow(openRow === null ? 0 : openRow)} aria-label={cap.linkLabel}
               style={{ width: 48, height: 48, borderRadius: "50%", border: "none", background: C.mint, color: C.bg, display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: `0 6px 24px ${C.mint}35`, flexShrink: 0 }}>
               <IcPlay s={17} />
             </button>
@@ -1031,24 +1039,48 @@ function SpecialtyDrawer({ cap, onClose }) {
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1 }}>HIGHLIGHTS</span>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray }}>PLAYS</span>
         </div>
-        {rows.map((h, i) => (
-          <div key={h.reel.title + i} role="button" tabIndex={0}
-            onClick={() => playRow(h)}
-            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playRow(h); } }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-            style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s" }}>
-            <span style={{ fontFamily: F, fontSize: 13, color: C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center" }}>{i + 1}</span>
+        {rows.map((h, i) => {
+          const open = openRow === i;
+          const desc = REEL_DESCS[h.reel.title] || h.reel.role || "";
+          return (
+          <div key={h.reel.title + i}>
+          <div role="button" tabIndex={0} aria-expanded={open}
+            onClick={() => toggleRow(i)}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRow(i); } }}
+            onMouseEnter={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "rgba(255,255,255,0.05)"}
+            onMouseLeave={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "transparent"}
+            style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s", background: open ? "rgba(30,215,96,0.06)" : "transparent" }}>
+            <span style={{ fontFamily: F, fontSize: 13, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+              {open ? <EqBars /> : i + 1}
+            </span>
             <span style={{ width: 44, height: 44, borderRadius: 6, overflow: "hidden", background: "#111" }}>
               <img src={thumbOf(h.reel)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
             </span>
             <span style={{ minWidth: 0 }}>
-              <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.reel.title}</span>
+              <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.reel.title}</span>
               <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{h.handle}{h.when ? ` · ${h.when}` : ""}</span>
             </span>
             <span style={{ fontFamily: F, fontSize: 13, color: C.mint, fontVariantNumeric: "tabular-nums" }}>{h.reel.plays}</span>
           </div>
-        ))}
+          {/* Expanded: the reel plays HERE, with its own description below */}
+          <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
+            <div style={{ overflow: "hidden" }}>
+              {open && (
+                <div style={{ padding: "10px 8px 18px 82px" }}>
+                  <video src={srcOf(h.reel)} poster={thumbOf(h.reel)} controls autoPlay playsInline preload="metadata"
+                    style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
+                    onError={e => { e.currentTarget.style.display = "none"; }} />
+                  {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
+                  <a href={h.reel.postUrl} target="_blank" rel="noreferrer"
+                    style={{ display: "inline-block", fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
+                    Open on Instagram ↗</a>
+                </div>
+              )}
+            </div>
+          </div>
+          </div>
+          );
+        })}
         <p style={{ fontFamily: F, fontSize: 14, color: "rgba(255,255,255,0.82)", lineHeight: 1.65, margin: "20px 0 0", borderLeft: `3px solid ${C.mint}`, paddingLeft: 16 }}>{cap.body}</p>
       </aside>
     </div>
