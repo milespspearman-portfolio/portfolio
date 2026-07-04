@@ -593,7 +593,7 @@ function HeroCard({ reel, i }) {
     <button className="wall-card" onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       aria-label={`Play ${reel.title}`}
       style={{
-        position: "relative", height: `clamp(170px, ${vh}vh, 300px)`, aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", flexShrink: 0,
+        position: "relative", height: `clamp(150px, ${vh}vh, 230px)`, aspectRatio: "1 / 1", borderRadius: 14, overflow: "hidden", flexShrink: 0,
         border: `1px solid ${h ? `${C.mint}A6` : C.border}`, padding: 0, cursor: "pointer",
         background: "#111",
         boxShadow: h ? `0 26px 70px rgba(0,0,0,0.55), 0 0 0 1px ${C.mint}40, 0 10px 40px ${C.mint}33` : "0 16px 48px rgba(0,0,0,0.45)",
@@ -620,16 +620,27 @@ function HeroCard({ reel, i }) {
   );
 }
 
-// Restored hero row of playing cards (below the stat badges). Shares the
-// viewport-pause hook with the opening wall so its videos don't run off-screen.
+// Two hero rows (Miles Jul 4): square album-art tiles in twin infinite
+// marquees drifting left, different speeds for depth. Hover pauses a row so
+// the magnet/click still work. Sets are duplicated for a seamless -50% loop.
+function HeroMarqueeRow({ reels, duration, offset }) {
+  return (
+    <div style={{ overflow: "hidden", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
+      <div className="hero-marquee" style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "10px 0", animationDuration: `${duration}s` }}>
+        {[0, 1].map(copy => reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} />))}
+      </div>
+    </div>
+  );
+}
 function HeroRow() {
   const rowRef = useRef(null);
   usePlayWhenVisible(rowRef);
+  const rowA = heroReels.filter((_, i) => i % 2 === 0);
+  const rowB = heroReels.filter((_, i) => i % 2 === 1);
   return (
-    <div ref={rowRef} style={{ overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "16px clamp(24px, 5vw, 80px)" }}>
-        {heroReels.map((reel, i) => <HeroCard key={`row-${reel.postUrl}`} reel={reel} i={i} />)}
-      </div>
+    <div ref={rowRef}>
+      <HeroMarqueeRow reels={rowA} duration={70} offset={0} />
+      <HeroMarqueeRow reels={rowB} duration={95} offset={1} />
     </div>
   );
 }
@@ -1405,6 +1416,9 @@ export default function Portfolio() {
         @keyframes cuebounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         @keyframes swipeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-110%); opacity: 0; } }
         @keyframes swipeIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes heroloop { to { transform: translateX(-50%); } }
+        .hero-marquee { animation-name: heroloop; animation-timing-function: linear; animation-iteration-count: infinite; }
+        .hero-marquee:hover { animation-play-state: paused; }
         @keyframes drawerFade { from { opacity: 0; } }
         @keyframes drawerIn { from { transform: translateX(100%); } }
         @keyframes sheetIn { from { transform: translateY(100%); } }
@@ -1491,6 +1505,13 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
+        {/* ===== HERO ROW — the playing cards, twin marquees between About and WIWON ===== */}
+        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
+          <FadeIn>
+            <HeroRow />
+          </FadeIn>
+        </section>
+
         {/* ===== WHAT I'M WORKING ON NOW ===== */}
         <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
           <FadeIn>
@@ -1517,13 +1538,6 @@ export default function Portfolio() {
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
           <WhatIDoCards />
-        </section>
-
-        {/* ===== HERO ROW — the playing cards, bridging the shelves into Work ===== */}
-        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
-          <FadeIn>
-            <HeroRow />
-          </FadeIn>
         </section>
 
         {/* ===== WORK — 3 visual grid buckets ===== */}
