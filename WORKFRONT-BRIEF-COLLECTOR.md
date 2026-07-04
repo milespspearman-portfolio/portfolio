@@ -6,8 +6,9 @@
 
 For each project card below, search Workfront for the matching project/request (names may differ from playlist names — post dates and reel titles are your matching keys; per-reel rows list them). Fill `**Found:**` lines verbatim from the record, with the Workfront project name and any doc/ID as your source note. If a field has no record, write `NOT IN RECORD` — never infer or estimate. One rule set:
 
-- **DO collect:** the ask/brief as written; shoot dates and delivery dates; Miles's role as recorded; named external partners/agencies/vendors; deliverable counts (asked vs shipped); approvals chain facts (who signed off); any awards/recognition tied to the project.
-- **DO NOT collect:** budget figures, spend, rate cards, internal KPI targets, unreleased product info, legal/HR notes. These cannot be published (NDA) and must not enter this file.
+- **DO collect:** the ask/brief as written; shoot dates and delivery dates; Miles's role as recorded; named external partners/agencies/vendors (**priority on the event projects and the producing/evergreen work — Miles wants the specific partner per project**); deliverable counts (asked vs shipped); approvals chain facts (who signed off); any awards/recognition tied to the project.
+- **BUDGET — collect but mark `[PRIVATE — Miles prep only]`:** budget/spend per project goes on the Found line WITH that tag. It is for Miles's own interview talking points and will NEVER be published on the site. Anything tagged PRIVATE stays out of all site copy.
+- **DO NOT collect:** rate cards, internal KPI targets, unreleased product info, legal/HR notes.
 - Quote, don't summarize. Short verbatim beats a clean paraphrase.
 
 ## What the answers are for (context, not instructions)
@@ -21,6 +22,8 @@ Portfolio site shows each project as a Spotify playlist. Header will gain an Aud
 Known from public data: 9 reels · 4.0M total plays · posted Mar 20, 2025 – Apr 2, 2025 · top reel: "Summit ’25: Acrobat Escape Room" (2.6M plays, @adobeacrobat).
 
 1. **Brief / the ask, as written in the record:**
+   **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
    **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
@@ -57,6 +60,8 @@ Known from public data: 9 reels · 6.0M total plays · posted Oct 31, 2025 – F
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -92,6 +97,8 @@ Known from public data: 4 reels · 525.6K total plays · posted Apr 26, 2025 –
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -121,6 +128,8 @@ Per-reel keys (for matching, and for any per-video brief worth grabbing):
 Known from public data: 11 reels · 2.0M total plays · posted Oct 9, 2024 – Jan 8, 2025 · top reel: "Project Watercolor Master: Adobe Researcher Sneaks Interview" (1M plays, @adobe).
 
 1. **Brief / the ask, as written in the record:**
+   **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
    **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
@@ -159,6 +168,8 @@ Known from public data: 4 reels · 1.8M total plays · posted Apr 16, 2024 – A
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -189,6 +200,8 @@ Known from public data: 3 reels · 963.4K total plays · posted Apr 16, 2025 –
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -217,6 +230,8 @@ Per-reel keys (for matching, and for any per-video brief worth grabbing):
 Known from public data: 3 reels · 2.8M total plays · posted Sep 17, 2024 – Sep 18, 2024 · top reel: "Premiere Pro AI: Emoji Reactions" (1.5M plays, @adobevideo).
 
 1. **Brief / the ask, as written in the record:**
+   **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
    **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
@@ -247,6 +262,8 @@ Known from public data: 1 reel · 27.9K total plays · posted Jun 26, 2026 · to
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -273,6 +290,8 @@ Per-reel keys (for matching, and for any per-video brief worth grabbing):
 Known from public data: 12 reels · 3.3M total plays · posted Aug 18, 2025 – Jun 18, 2026 · top reel: "Dave Employee Comms Interview" (1.9M plays, @adobelife).
 
 1. **Brief / the ask, as written in the record:**
+   **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
    **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
@@ -312,6 +331,8 @@ Known from public data: 2 reels · 1.6M total plays · posted Sep 12, 2024 – N
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -340,6 +361,8 @@ Known from public data: 1 reel · 5.5K total plays · posted Jul 7, 2022 · top 
 
 1. **Brief / the ask, as written in the record:**
    **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
+   **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
 3. **Miles's role, as recorded:**
@@ -366,6 +389,8 @@ Per-reel keys (for matching, and for any per-video brief worth grabbing):
 Known from public data: 1 reel · 425.9K total plays · posted Dec 4, 2024 · top reel: "TacoBell x Upworthy Feature" (425.9K plays, @upworthy).
 
 1. **Brief / the ask, as written in the record:**
+   **Found:**
+1b. **Budget/spend `[PRIVATE — Miles prep only, never published]`:**
    **Found:**
 2. **Production window — shoot dates + delivery date:**
    **Found:**
