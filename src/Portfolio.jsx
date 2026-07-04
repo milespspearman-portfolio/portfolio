@@ -190,12 +190,15 @@ const portfolio = [
       { title: "NAB 2025 Event Coverage", sub: "@adobevideo · 155 likes · Apr 17, 2025", plays: "39.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/NAB-General-Event-Coverage-Interviews_4.17.25.mp4", postUrl: "https://www.instagram.com/p/DIkB_V8STy1/" },
     ],
   },
-  {
-    event: "Cannes",
-    reels: [
-      { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
-    ],
-  },
+  // Cannes pulled Jul 4 per Miles ("just take out cannes for now, i post
+  // production producing on it but now it just looks weird") — restore by
+  // uncommenting when the story around it is right.
+  // {
+  //   event: "Cannes",
+  //   reels: [
+  //     { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
+  //   ],
+  // },
   {
     event: "Evergreen Producing",
     reels: [
@@ -255,7 +258,7 @@ const portfolio = [
 const LIBRARY_OF = {
   "MAX Miami 2024": "Events", "MAX 2025 LA": "Events", "MAX London 2025": "Events",
   "Adobe Summit 2025": "Events", "NAB 2024": "Events", "NAB 2025": "Events",
-  "IBC 2024": "Events", "Cannes": "Events",
+  "IBC 2024": "Events", // Cannes pulled Jul 4 (Miles)
   "Evergreen Producing": "Evergreen", "Employee & Always On": "Evergreen", "Upworthy": "Evergreen", "UC": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
