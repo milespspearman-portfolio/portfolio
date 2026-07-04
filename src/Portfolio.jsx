@@ -862,8 +862,42 @@ export default function Portfolio() {
         {/* ===== OPENING WALL ===== */}
         <OpeningWall />
 
-        {/* ===== HERO ===== */}
-        <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "120px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
+        {/* ===== ABOUT ===== */}
+        <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
+          <FadeIn>
+            <div style={{
+              maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
+            }}>
+              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>About</span>
+              <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
+                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC (3.94 GPA) — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {skills.map(s => (
+                  <span key={s} style={{
+                    fontFamily: F, fontSize: 12, fontWeight: 500, color: C.white,
+                    background: "rgba(93,232,197,0.08)", border: "1px solid rgba(93,232,197,0.15)",
+                    padding: "6px 14px", borderRadius: 100, whiteSpace: "nowrap",
+                  }}>{s}</span>
+                ))}
+              </div>
+              <a href="/Miles-Spearman-Resume.pdf" download="Miles-Spearman-Resume.pdf"
+                style={{
+                  fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
+                  display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
+                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+              >Download Resume ↓</a>
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* ===== ADOBE CHAPTER INTRO (formerly the landing hero) ===== */}
+        <section style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "100px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
           <div style={{ position: "absolute", top: "12%", right: "5%", width: 500, height: 500, background: `radial-gradient(circle, ${C.mint}06, transparent 70%)`, pointerEvents: "none" }} />
           <FadeIn>
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 20, display: "block" }}>
@@ -913,6 +947,19 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
+        {/* ===== WORK — 3 visual grid buckets ===== */}
+        <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
+          <FadeIn>
+            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
+            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
+          </FadeIn>
+
+          <WorkPlayer />
+
+          <div style={{ marginTop: 64 }}><Marquee /></div>
+        </section>
+
         {/* ===== WHAT I DO — clickable cards ===== */}
         <section id="services" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
           <FadeIn>
@@ -943,53 +990,6 @@ export default function Portfolio() {
               </FadeIn>
             ))}
           </div>
-        </section>
-
-        {/* ===== ABOUT ===== */}
-        <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
-          <FadeIn>
-            <div style={{
-              maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-              border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
-            }}>
-              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>About</span>
-              <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
-                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC (3.94 GPA) — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {skills.map(s => (
-                  <span key={s} style={{
-                    fontFamily: F, fontSize: 12, fontWeight: 500, color: C.white,
-                    background: "rgba(93,232,197,0.08)", border: "1px solid rgba(93,232,197,0.15)",
-                    padding: "6px 14px", borderRadius: 100, whiteSpace: "nowrap",
-                  }}>{s}</span>
-                ))}
-              </div>
-              <a href="/Miles-Spearman-Resume.pdf" download="Miles-Spearman-Resume.pdf"
-                style={{
-                  fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
-                  display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
-                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
-                  transition: "background 0.2s",
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >Download Resume ↓</a>
-            </div>
-          </FadeIn>
-        </section>
-
-        {/* ===== WORK — 3 visual grid buckets ===== */}
-        <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
-          <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
-            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
-          </FadeIn>
-
-          <WorkPlayer />
-
-          <div style={{ marginTop: 64 }}><Marquee /></div>
         </section>
 
         {/* ===== CTA ===== */}
