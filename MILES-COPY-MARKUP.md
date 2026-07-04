@@ -184,6 +184,14 @@ These titles are the first words of each reel's caption, cut mid-sentence by the
 
 ## C. What I Do cards — title, body, and link label per card
 
+> **Miles (from chat, Jul 4 — verbatim notes; taxonomy NOT final, he's deciding whether his labels live on the playlists or on What I Do):**
+> - Card 1: "on camera hosting & directing (need to change to directing not presenting)" — ✅ APPLIED in code Jul 4.
+> - "Creative Directing & Hosting — Every video you see of me in these adobe videos I have pitched the concepts and created the script"
+> - "Producing: copy what audrey did, where we share the agency, share the work, share the brief, share the production window (how long it took). Semaphore, Directing & On Camera Coaching"
+> - "In-House — Talent Marketing & Employee Comms"
+> - Open question (his words): "I'm playing tug of war — i need to determine if my labels are going to be the ones for the playlists or the ones under what i do, so i can accurately describe them."
+> Card bodies below stay pending until his taxonomy call.
+
 Compressed from `research/WHAT-I-DO-COPY-PROPOSALS.md` (full reasoning lives there). Each card shows its backing reel's caption so you can judge copy against content. Recommended picks are marked ★. Titles marked (HIS) are your own words.
 
 ### Card 1 — Hosting · backing reel: "Summit '25: Acrobat Escape Room" (2.6M plays · DHb0O45vPtj)

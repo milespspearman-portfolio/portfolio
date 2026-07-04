@@ -299,7 +299,7 @@ const heroReels = (() => {
 
 const capabilities = [
   {
-    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Presenting",
+    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Directing",
     body: "Event activations, brand segments, interviews, and live hosting — comfortable on camera and on a stage.",
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Watch: Summit Hot Takes →",
   },
@@ -332,7 +332,7 @@ const reelIndexByTitle = (title) => {
 };
 // Which portfolio reel backs each capability card, by that reel's exact title.
 const CAPABILITY_REEL_TITLE = {
-  "On-Camera Hosting & Presenting": "Summit ’25: Acrobat Escape Room",     // Adobe Summit 2025 — 2.6M, the one most people know him by
+  "On-Camera Hosting & Directing": "Summit ’25: Acrobat Escape Room",     // Adobe Summit 2025 — 2.6M, the one most people know him by
   "Video Production": "MAX London Recap",                                  // MAX London 2025
   "Content Strategy": "Mansa Employee Comms Interview",                    // Evergreen Producing (moved from MAX LA per Miles)
   "Directing & On-Camera Coaching": "Kelley O'Hara",                       // MAX 2025 LA
