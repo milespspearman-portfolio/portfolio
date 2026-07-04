@@ -1061,7 +1061,7 @@ function Nav() {
     }}>
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {[["Services", "#services"], ["About", "#about"], ["Work", "#work"]].map(([label, href]) => (
+        {[["Work", "#work"], ["What I Do", "#services"], ["About", "#about"]].map(([label, href]) => (
           <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
             onMouseEnter={e => e.target.style.color = C.white}
             onMouseLeave={e => e.target.style.color = C.gray}
@@ -1149,32 +1149,9 @@ export default function Portfolio() {
         {/* ===== PLAYLIST SHELF ===== */}
         <PlaylistShelf />
 
-        {/* ===== ADOBE CHAPTER INTRO (formerly the landing hero) ===== */}
-        <section style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "100px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
-          <div style={{ position: "absolute", top: "12%", right: "5%", width: 500, height: 500, background: `radial-gradient(circle, ${C.mint}06, transparent 70%)`, pointerEvents: "none" }} />
+        {/* ===== HERO ROW — the playing cards, bridging the shelves into Work ===== */}
+        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
           <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 20, display: "block" }}>
-              Content Creator & Social Producer
-            </span>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(36px, 5.5vw, 72px)", fontWeight: 800, color: C.white, lineHeight: 1.05, margin: "0 0 24px 0", maxWidth: 820, letterSpacing: -1.5 }}>
-              The creative behind Adobe's social — from strategy to feed.
-            </h2>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <p style={{ fontFamily: F, fontSize: "clamp(16px, 1.8vw, 20px)", color: C.gray, lineHeight: 1.6, margin: "0 0 40px 0", maxWidth: 600 }}>
-              Social Producer & Creator at Adobe Brand. I build short-form content systems that turn cultural moments into measurable growth.
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.3}>
-            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
-            >View My LinkedIn →</a>
-          </FadeIn>
-          <FadeIn delay={0.45} style={{ marginTop: 52 }}>
             <HeroRow />
           </FadeIn>
         </section>
@@ -1204,7 +1181,13 @@ export default function Portfolio() {
               </h2>
               <PlaysCounter />
               <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
-                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
+                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC — the music background shows up in how I think about rhythm, pacing, and storytelling. And yeah, I'm also a{" "}
+                <a href="#work"
+                  onClick={() => { const e = portfolio.findIndex(ev => ev.event === "Miles Music Media"); if (e !== -1) window.dispatchEvent(new CustomEvent("ms-play", { detail: { e, r: 0 } })); }}
+                  style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55`, cursor: "pointer" }}
+                  onMouseEnter={ev => ev.target.style.borderBottomColor = C.mint}
+                  onMouseLeave={ev => ev.target.style.borderBottomColor = `${C.mint}55`}
+                >professional trumpet player</a> in San Francisco.
               </p>
               <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
                 style={{
