@@ -59,13 +59,13 @@ const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, $
 // What Miles did on each playlist's videos — his words, retag per playlist as needed
 const EVENT_ROLES = {
   "Side Projects": "Created, produced & hosted",
-  "IBC 2024": "Concepted, scripted, hosted & creatively directed",
-  "MAX Miami 2024": "Concepted, scripted, hosted & creatively directed",
-  "NAB 2024": "Concepted, scripted, hosted & creatively directed",
-  "Adobe Summit 2025": "Concepted, scripted, hosted & creatively directed",
-  "MAX 2025 LA": "Created, produced & hosted",
-  "MAX London 2025": "Concepted, scripted, hosted & creatively directed",
-  "NAB 2025": "Concepted, scripted, hosted & creatively directed",
+  "’24 IBC Amsterdam": "Concepted, scripted, hosted & creatively directed",
+  "’24 MAX Miami": "Concepted, scripted, hosted & creatively directed",
+  "’24 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
+  "’25 Summit Vegas": "Concepted, scripted, hosted & creatively directed",
+  "’25 MAX LA": "Created, produced & hosted",
+  "’25 MAX London": "Concepted, scripted, hosted & creatively directed",
+  "’25 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
   "Evergreen Producing": "Produced",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
@@ -100,7 +100,7 @@ const portfolio = [
   },
 
   {
-    event: "IBC 2024",
+    event: "’24 IBC Amsterdam",
     reels: [
       { title: "Premiere Pro AI: Emoji Reactions", sub: "@adobevideo · 2K likes · Sep 17, 2024", plays: "1.5M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/IBC-2024/Emoji-Reactions-to-Premiere-Pro-AI-Features_9.17.24.mp4", postUrl: "https://www.instagram.com/p/DAB_Fb0BUWZ/" },
       { title: "IBC Premiere Pro Release (Customer Interviews)", sub: "@adobevideo · 724 likes · Sep 17, 2024", plays: "570.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/IBC-2024/Premiere-Pro-Real-Life-Features_9.17.24.mp4", postUrl: "https://www.instagram.com/p/DACI4I7O8GK/" },
@@ -108,7 +108,7 @@ const portfolio = [
     ],
   },
   {
-    event: "MAX Miami 2024",
+    event: "’24 MAX Miami",
     reels: [
       { title: "Project Watercolor Master: Adobe Researcher Sneaks Interview", sub: "@adobe · 1.8K likes · Oct 9, 2024", plays: "1M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Watercolor-Master-Sneaks-Interview_10.9.24.mp4", postUrl: "https://www.instagram.com/p/DA6zD2MA7Jh/" },
       { title: "Project Type Lab: Adobe Researcher Sneaks Interview", sub: "@adobe · 415 likes · Oct 10, 2024", plays: "111.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Project-Type-Lab-Sneaks-Interview_10.10.24.mp4", postUrl: "https://www.instagram.com/p/DA9EA1Mh0uv/" },
@@ -124,7 +124,7 @@ const portfolio = [
     ],
   },
   {
-    event: "NAB 2024",
+    event: "’24 NAB Vegas",
     reels: [
       { title: "NAB ’24: Emoji Reaction Interviews", sub: "@adobevideo · 1.9K likes · Apr 16, 2024", plays: "350.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Emoji-Reaction-Interviews_4.16.24.mp4", postUrl: "https://www.instagram.com/p/C51y-zEKwAr/" },
       { title: "NAB ’24: Premiere Pro AI Announcement Reactions", sub: "@adobevideo · 4.7K likes · Apr 18, 2024", plays: "1.4M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Premiere-Pro-AI-Feature-Interviews_4.18.24.mp4", postUrl: "https://www.instagram.com/p/C56vDmUBrJI/" },
@@ -134,7 +134,7 @@ const portfolio = [
   },
 
   {
-    event: "Adobe Summit 2025",
+    event: "’25 Summit Vegas",
     reels: [
       { title: "Adobe Summit ’25: Coca-Cola Activation", sub: "@adobe · 1.5K likes · Mar 20, 2025", plays: "350.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Coca-Cola-Activation-Interview_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHZsBK7qAht/" },
       { title: "Over & Under AI Enterprise Activity", sub: "@adobe · 1.4K likes · Mar 20, 2025", plays: "711.8K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Over-Under-AI-Enterprise-Activity_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHbh4advyRR/" },
@@ -148,7 +148,7 @@ const portfolio = [
     ],
   },
   {
-    event: "MAX 2025 LA",
+    event: "’25 MAX LA",
     reels: [
       { title: "Acrobat Booth", sub: "@adobeacrobat · 1.3K likes · Oct 31, 2025", plays: "1.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat-Booth_10.31.25.mp4", postUrl: "https://www.instagram.com/p/DQe3K4Zjpv9/" },
       { title: "Acrobat", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
@@ -162,7 +162,7 @@ const portfolio = [
     ],
   },
   {
-    event: "MAX London 2025",
+    event: "’25 MAX London",
     reels: [
       { title: "MAX London Recap", sub: "@adobe · 690 likes · Apr 26, 2025", plays: "58.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/MAX-London-Event-Recap_4.26.25.mp4", postUrl: "https://www.instagram.com/p/DI7IQhWM2L3/" },
       { title: "’25 MAX London Arches of Inspiration", sub: "@adobe · 188 likes · Apr 28, 2025", plays: "18.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Castle-Illustrator-Game_4.28.25.mp4", postUrl: "https://www.instagram.com/p/DJAQvZFp_Tl/" },
@@ -171,7 +171,7 @@ const portfolio = [
     ],
   },
   {
-    event: "NAB 2025",
+    event: "’25 NAB Vegas",
     reels: [
       { title: "Premiere Pro 2025 Releases", sub: "@adobevideo · 951 likes · Apr 16, 2025", plays: "839.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/Premiere-Pro-Releases-2025-Interviews_4.16.25.mp4", postUrl: "https://www.instagram.com/p/DIhgGMSs2jJ/" },
       { title: "Generative Extend Demo", sub: "@adobevideo · 289 likes · Apr 17, 2025", plays: "84.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/Generative-Extend-Activity_4.17.25.mp4", postUrl: "https://www.instagram.com/p/DIjjpFOMwm2/" },
@@ -246,9 +246,9 @@ const portfolio = [
 
 // Miles's three libraries — every playlist belongs to exactly one.
 const LIBRARY_OF = {
-  "MAX Miami 2024": "Events", "MAX 2025 LA": "Events", "MAX London 2025": "Events",
-  "Adobe Summit 2025": "Events", "NAB 2024": "Events", "NAB 2025": "Events",
-  "IBC 2024": "Events", // Cannes pulled Jul 4 (Miles)
+  "’24 MAX Miami": "Events", "’25 MAX LA": "Events", "’25 MAX London": "Events",
+  "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
+  "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Evergreen Producing": "Evergreen", "Side Projects": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
@@ -310,19 +310,19 @@ const capabilities = [
     img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Producing",
     meta: "Adobe MAX · Summit · NAB · 2024–Present",
     body: "One-off influencer posts don't scale, so I concepted a repeatable hosted sizzle format for Adobe's flagship events. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera. Created 9 posts over a 3 day event, published between March 20 and April 2, including a Ken Jeong interview and the Acrobat Escape Room at 2.6M plays.",
-    linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: Adobe Summit 2025 →",
+    linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: ’25 Summit Vegas →",
   },
   {
     img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy, Concept to Published",
     meta: "IBC · MAX · Summit · 2024–2026",
     body: "“Make the Firefly Video product release fun” was my brief. So as a creative producer on this piece, I built content strategy with PMMs, PR, and editorial, then wrote the scripts myself. The proof is a format: emoji reactions, 1.5M at IBC 2024, repeated at NAB and Summit.",
-    linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Play: IBC 2024 →",
+    linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Play: ’24 IBC Amsterdam →",
   },
   {
     img: "/cards/directing-coaching.jpg", imgPos: "50% 32%", title: "Directing & On-Camera Coaching",
     meta: "Adobe MAX · Summit · @adobelife · 2025–2026",
     body: "At MAX 2025 in LA I coached James Gunn, Mark Rober, and Kelley O'Hara on camera. That meant coordinating with strategy and our Adobe Brand studio team to craft talking tracks: I wrote the words, got them approved, then made sure we delivered them in our 10 minute time slot. The Rober reel sits at 2.2M plays.",
-    linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Play: MAX 2025 LA →",
+    linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Play: ’25 MAX LA →",
   },
   {
     img: "/cards/video-production.jpg", imgPos: "50% 28%", title: "Producing: Talent Marketing & Employee Comms",
@@ -369,28 +369,28 @@ const SPECIALTY_REELS = {
   // album are on-camera-evident selections, listed in chat for his pruning.
   // NAB '26 album pending: no reels in data yet (see REELS-TO-ADD).
   "On-Camera Hosting & Producing": [
-    { t: "Project Watercolor Master: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
-    { t: "Adobe MAX Day 1 Vibe", album: "MAX ’24" },
-    { t: "Adobe MAX 2024: In-Office MAX Trivia", album: "MAX ’24" },
-    { t: "Project Type Lab: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
-    { t: "Animations & Presets: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
-    { t: "Summit ’25: Acrobat Escape Room", album: "Summit ’25" },
-    { t: "Over & Under AI Enterprise Activity", album: "Summit ’25" },
-    { t: "Adobe Summit ’25: Coca-Cola Activation", album: "Summit ’25" },
-    { t: "Summit ’25: Hosted Event Recap", album: "Summit ’25" },
-    { t: "“Describe Your Job” Interviews", album: "Summit ’25" },
-    { t: "Summit ’25: Ken Jeong Interview", album: "Summit ’25" },
-    { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "Summit ’25" },
-    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Summit ’25" },
-    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Summit ’25" },
-    { t: "Premiere Pro 2025 Releases", album: "NAB ’25" },
-    { t: "Generative Extend Demo", album: "NAB ’25" },
-    { t: "NAB 2025 Event Coverage", album: "NAB ’25" },
-    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX ’25" },
-    { t: "MAX London Recap", album: "MAX London ’25" },
-    { t: "Fonts Creator Game", album: "MAX London ’25" },
-    { t: "’25 MAX London Arches of Inspiration", album: "MAX London ’25" },
-    { t: "Summit 2026 Recap", album: "Summit ’26" },
+    { t: "Project Watercolor Master: Adobe Researcher Sneaks Interview", album: "’24 MAX Miami" },
+    { t: "Adobe MAX Day 1 Vibe", album: "’24 MAX Miami" },
+    { t: "Adobe MAX 2024: In-Office MAX Trivia", album: "’24 MAX Miami" },
+    { t: "Project Type Lab: Adobe Researcher Sneaks Interview", album: "’24 MAX Miami" },
+    { t: "Animations & Presets: Adobe Researcher Sneaks Interview", album: "’24 MAX Miami" },
+    { t: "Summit ’25: Acrobat Escape Room", album: "’25 Summit Vegas" },
+    { t: "Over & Under AI Enterprise Activity", album: "’25 Summit Vegas" },
+    { t: "Adobe Summit ’25: Coca-Cola Activation", album: "’25 Summit Vegas" },
+    { t: "Summit ’25: Hosted Event Recap", album: "’25 Summit Vegas" },
+    { t: "“Describe Your Job” Interviews", album: "’25 Summit Vegas" },
+    { t: "Summit ’25: Ken Jeong Interview", album: "’25 Summit Vegas" },
+    { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "’25 Summit Vegas" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "’25 Summit Vegas" },
+    { t: "Summit ’25: Sneaks Emoji Reactions", album: "’25 Summit Vegas" },
+    { t: "Premiere Pro 2025 Releases", album: "’25 NAB Vegas" },
+    { t: "Generative Extend Demo", album: "’25 NAB Vegas" },
+    { t: "NAB 2025 Event Coverage", album: "’25 NAB Vegas" },
+    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "’25 MAX LA" },
+    { t: "MAX London Recap", album: "’25 MAX London" },
+    { t: "Fonts Creator Game", album: "’25 MAX London" },
+    { t: "’25 MAX London Arches of Inspiration", album: "’25 MAX London" },
+    { t: "Summit 2026 Recap", album: "’26 Summit Vegas" },
   ],
   // Strategy albums = FORMATS, not events (Miles + recruiter consolidation,
   // Jul 4): repeatability across shows IS the concept-to-published story.
@@ -421,11 +421,11 @@ const SPECIALTY_REELS = {
   // and all the be you content as well too, along with the coolest job."
   // Em Siegel joined once her real count landed (50.7K via Apify, Jul 4).
   "Directing & On-Camera Coaching": [
-    { t: "Mark Rober", album: "MAX ’25" },
-    { t: "James Gunn", album: "MAX ’25" },
-    { t: "Kelley O'Hara", album: "MAX ’25" },
-    { t: "Jessica Williams", album: "MAX ’25" },
-    { t: "Summit ’25: Ken Jeong Interview", album: "Summit ’25" },
+    { t: "Mark Rober", album: "’25 MAX LA" },
+    { t: "James Gunn", album: "’25 MAX LA" },
+    { t: "Kelley O'Hara", album: "’25 MAX LA" },
+    { t: "Jessica Williams", album: "’25 MAX LA" },
+    { t: "Summit ’25: Ken Jeong Interview", album: "’25 Summit Vegas" },
     { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
     { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
     { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
@@ -449,8 +449,8 @@ const SPECIALTY_REELS = {
     { t: "Amanda Valenzuela Employee Spotlight", album: "Be You · Season 2" },
     { t: "Em Siegel Employee Spotlight", album: "Be You · Season 3" },
     { t: "Imran Idzqandar Employee Spotlight", album: "Be You · Season 3" },
-    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX 2025 LA" },
-    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Adobe Summit 2025" },
+    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "’25 MAX LA" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "’25 Summit Vegas" },
     { t: "Coolest Job: Eric", album: "Coolest Job · Summit ’26" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job · Summit ’26" },
     { t: "Navin’s Coolest Job", album: "Coolest Job · MAX ’25" },
