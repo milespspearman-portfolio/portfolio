@@ -910,7 +910,8 @@ function WorkPlayer() {
   const [playing, setPlaying] = useState(false);
   const [prog, setProg] = useState(0);
   const [dur, setDur] = useState(0);
-  const [muted, setMuted] = useState(false);
+  // Start muted (Miles Jul 4): autoplay never surprises with sound; the bar unmutes and it sticks.
+  const [muted, setMuted] = useState(true);
   const [vidErr, setVidErr] = useState(false);
   const vidRef = useRef(null);
   const shellRef = useRef(null);
@@ -1231,7 +1232,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
       <div style={{ overflow: "hidden" }}>
         {open && (
           <div style={{ padding: "10px 8px 18px 82px" }}>
-            <video src={srcOf(h.reel)} poster={thumbOf(h.reel)} controls autoPlay playsInline preload="metadata"
+            <video src={srcOf(h.reel)} poster={thumbOf(h.reel)} controls autoPlay muted playsInline preload="metadata"
               style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
               onError={e => { e.currentTarget.style.display = "none"; }} />
             {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
