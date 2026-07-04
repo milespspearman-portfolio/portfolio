@@ -1519,9 +1519,6 @@ export default function Portfolio() {
           <WhatIDoCards />
         </section>
 
-        {/* ===== PLAYLIST SHELF ===== */}
-        <PlaylistShelf />
-
         {/* ===== HERO ROW — the playing cards, bridging the shelves into Work ===== */}
         <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
           <FadeIn>
@@ -1541,6 +1538,10 @@ export default function Portfolio() {
 
           <div style={{ marginTop: 64 }}><Marquee /></div>
         </section>
+
+        {/* ===== PLAYLIST SHELF ===== */}
+        <PlaylistShelf />
+
 
         {/* ===== CTA ===== */}
         <section style={{ padding: "100px clamp(24px, 5vw, 80px)", textAlign: "center", position: "relative" }}>
