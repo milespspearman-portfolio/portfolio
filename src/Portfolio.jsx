@@ -248,6 +248,16 @@ const portfolio = [
   },
 ];
 
+// Most recent projects first (Miles's call) — Off the Clock stays pinned last.
+const OFF_THE_CLOCK = new Set(["Behind the Product", "Miles Music Media"]);
+const reelDate = (r) => Date.parse(r.sub.split(" · ").pop()) || 0;
+portfolio.sort((a, b) => {
+  const ao = OFF_THE_CLOCK.has(a.event), bo = OFF_THE_CLOCK.has(b.event);
+  if (ao !== bo) return ao ? 1 : -1;
+  if (ao && bo) return 0; // keep authored Off the Clock order
+  return Math.max(...b.reels.map(reelDate)) - Math.max(...a.reels.map(reelDate));
+});
+
 // Derived stats (computed from the data above, never hand-typed)
 const eventStats = portfolio.map((ev, i) => {
   const top = [...ev.reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
@@ -263,7 +273,6 @@ const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
 // Likes live inside each reel's sub string ("· 1.8K likes ·") — derived, never typed
 const likesNum = (sub) => { const m = sub.match(/([\d.]+K|[\d.]+M|\d+) likes/i); return m ? playsNum(m[1]) : 0; };
 const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a + likesNum(r.sub), 0), 0);
-const highlights = [...eventStats].sort((a, b) => b.totalPlays - a.totalPlays).slice(0, 4);
 
 // Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
 const heroReels = (() => {
@@ -323,7 +332,6 @@ const setList = capabilities.map(c => {
   return { ...c, reelIdx: idx, mp4: idx ? portfolio[idx.e].reels[idx.r].mp4 : null };
 });
 
-const skills = ["Video Production", "On-Camera Hosting", "Executive Interviews", "Event Coverage", "Short-Form Content", "TikTok Strategy", "Instagram Reels", "YouTube Shorts", "Premiere Pro", "After Effects", "Brandwatch", "Sprinklr", "Creative Briefs", "Influencer Management", "DSLR + Mobile"];
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
 
 // "About the Artist" swipe stack — one word at a time, always swiping the same
@@ -630,32 +638,6 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
   );
 }
 
-function HighlightCard({ ev, onOpen }) {
-  const [h, setH] = useState(false);
-  return (
-    <button onClick={onOpen} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        border: `1px solid ${h ? "rgba(93,232,197,0.25)" : C.border}`, borderRadius: 14, padding: 16, cursor: "pointer",
-        background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", gap: 14, textAlign: "left",
-        transform: h ? "translateY(-4px)" : "none", transition: "all 0.25s", fontFamily: F, width: "100%",
-      }}>
-      <span style={{ width: 56, height: 56, borderRadius: 10, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
-        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-      </span>
-      <span style={{ minWidth: 0, flex: 1 }}>
-        <span style={{ display: "block", fontSize: 15, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-        <span style={{ display: "block", fontSize: 12, color: C.gray, marginTop: 3 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
-      </span>
-      <span style={{
-        width: 40, height: 40, borderRadius: "50%", background: C.mint, flexShrink: 0,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        opacity: h ? 1 : 0, transform: h ? "scale(1)" : "scale(0.8)", transition: "all 0.2s",
-        boxShadow: `0 4px 20px ${C.mint}40`,
-      }}><IcPlay s={15} /></span>
-    </button>
-  );
-}
-
 function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute }) {
   const pct = dur ? (prog / dur) * 100 : 0;
   return (
@@ -749,13 +731,6 @@ function WorkPlayer() {
 
   return (
     <>
-      {/* Highlights — entry point into the library */}
-      <FadeIn>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 250px), 1fr))", gap: 14, marginBottom: 28 }}>
-          {highlights.map(ev => <HighlightCard key={ev.event} ev={ev} onOpen={() => openEvent(ev.idx)} />)}
-        </div>
-      </FadeIn>
-
       {/* Player shell */}
       <FadeIn>
         <div ref={shellRef} className="sp-shell" style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden", background: "#0D0D0D", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
@@ -956,6 +931,67 @@ function SetList() {
   );
 }
 
+// ===== PLAYLIST SHELF — Your Library as a Navin-style cover-card carousel =====
+function ShelfCard({ ev }) {
+  const [h, setH] = useState(false);
+  return (
+    <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: 0 } }))}
+      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        textDecoration: "none", flexShrink: 0, width: 200, scrollSnapAlign: "start",
+        background: h ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.03)",
+        border: `1px solid ${h ? "rgba(93,232,197,0.25)" : C.border}`, borderRadius: 14, padding: 14,
+        transform: h ? "translateY(-5px)" : "none", transition: "all 0.25s", display: "block",
+      }}>
+      <span style={{ display: "block", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", background: gradFor(ev.idx), position: "relative" }}>
+        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
+        <span style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
+      </span>
+      <span style={{ display: "block", marginTop: 12, fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
+      <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
+    </a>
+  );
+}
+
+function PlaylistShelf() {
+  const rowRef = useRef(null);
+  const scroll = (d) => rowRef.current && rowRef.current.scrollBy({ left: d * 600, behavior: "smooth" });
+  return (
+    <section style={{ padding: "36px 0 24px clamp(24px, 5vw, 80px)" }}>
+      <FadeIn>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "clamp(24px, 5vw, 80px)", marginBottom: 18 }}>
+          <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3 }}>Your Library</span>
+          <div style={{ display: "flex", gap: 8 }}>
+            {[["‹", -1], ["›", 1]].map(([glyph, d]) => (
+              <button key={glyph} onClick={() => scroll(d)} aria-label={d < 0 ? "Scroll playlists left" : "Scroll playlists right"}
+                style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.04)", color: C.white, fontFamily: F, fontSize: 18, cursor: "pointer", lineHeight: 1, transition: "background 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+              >{glyph}</button>
+            ))}
+          </div>
+        </div>
+      </FadeIn>
+      <FadeIn delay={0.1}>
+        <div ref={rowRef} className="shelf-row" style={{ display: "flex", gap: 16, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 8, paddingRight: "clamp(24px, 5vw, 80px)" }}>
+          {eventStats.map(ev => (
+            <Fragment key={ev.event}>
+              {ev.event === "Behind the Product" && (
+                <div style={{ alignSelf: "stretch", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: "0 6px", flexShrink: 0 }}>
+                  <span style={{ width: 1, flex: 1, background: C.border }} />
+                  <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, writingMode: "vertical-rl" }}>Off the Clock</span>
+                  <span style={{ width: 1, flex: 1, background: C.border }} />
+                </div>
+              )}
+              <ShelfCard ev={ev} />
+            </Fragment>
+          ))}
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
 // ===== WHAT I DO — cards play the reel that backs each capability and
 // deep-link into that topic's playlist in the Work player (ms-play). =====
 function WhatIDoCards() {
@@ -1049,6 +1085,8 @@ export default function Portfolio() {
         @keyframes swipeIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @media (max-width: 900px) { .wall-card:nth-child(n+9) { display: none; } }
         .sp-shell { scroll-margin-top: 84px; }
+        .shelf-row { scrollbar-width: none; }
+        .shelf-row::-webkit-scrollbar { display: none; }
         .sp-body { display: flex; align-items: stretch; height: 640px; }
         .sp-side { width: 280px; min-width: 280px; border-right: 1px solid ${C.border}; display: flex; flex-direction: column; }
         .sp-side-list { flex: 1; overflow-y: auto; padding: 4px 8px 12px; display: flex; flex-direction: column; gap: 2px; }
@@ -1086,43 +1124,21 @@ export default function Portfolio() {
         {/* ===== OPENING WALL ===== */}
         <OpeningWall />
 
-        {/* ===== ABOUT ===== */}
-        <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
+        {/* ===== WHAT I'M WORKING ON NOW ===== */}
+        <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
           <FadeIn>
-            <div style={{
-              maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-              border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
-            }}>
-              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>About the Artist</span>
-              <h2 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(34px, 4.5vw, 58px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
-                <SwipeWord /><span style={{ color: C.mint }}>.</span>
-              </h2>
-              <PlaysCounter />
-              <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
-                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC (3.94 GPA) — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
+            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
+              <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
+              <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
+                At Adobe, I lead creator and community social for the Brand team. Right now that means running the influencer-hosted sizzle format I built for Adobe MAX and Summit, and owning Creator Camp end to end, giving product marketing a direct window into how real pros use Adobe's tools.
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {skills.map(s => (
-                  <span key={s} style={{
-                    fontFamily: F, fontSize: 12, fontWeight: 500, color: C.white,
-                    background: "rgba(93,232,197,0.08)", border: "1px solid rgba(93,232,197,0.15)",
-                    padding: "6px 14px", borderRadius: 100, whiteSpace: "nowrap",
-                  }}>{s}</span>
-                ))}
-              </div>
-              <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
-                style={{
-                  fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
-                  display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
-                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
-                  transition: "background 0.2s",
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >View Resume →</a>
+              <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
             </div>
           </FadeIn>
         </section>
+
+        {/* ===== PLAYLIST SHELF ===== */}
+        <PlaylistShelf />
 
         {/* ===== ADOBE CHAPTER INTRO (formerly the landing hero) ===== */}
         <section style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "100px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
@@ -1165,6 +1181,34 @@ export default function Portfolio() {
           <WorkPlayer />
 
           <div style={{ marginTop: 64 }}><Marquee /></div>
+        </section>
+
+        {/* ===== ABOUT ===== */}
+        <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
+          <FadeIn>
+            <div style={{
+              maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
+            }}>
+              <h2 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
+                About the <SwipeWord /><span style={{ color: C.mint }}>.</span>
+              </h2>
+              <PlaysCounter />
+              <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
+                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
+              </p>
+              <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
+                style={{
+                  fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
+                  display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
+                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+              >View Resume →</a>
+            </div>
+          </FadeIn>
         </section>
 
         {/* ===== WHAT I DO — clickable cards ===== */}
