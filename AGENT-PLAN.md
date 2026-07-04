@@ -32,6 +32,11 @@ After Miles pushes: Chrome agent on the Vercel URL — 3 reels play (one per yea
 ### 7. Figma design-fidelity pass (connected & verified — account milespspearman, view seat)
 Unofficial Spotify Design System file `eL9fpJVwiuiGoCkZYnZJHd` node 12-1339. `get_variable_defs`/`get_design_context` → harvest spacing/type/radius tokens; apply ONLY layout polish, never Spotify's colors (Miles's palette locked).
 
+### 7b. Field-scan follow-ups (research/FIELD-SCAN-CD-PRODUCER-PORTFOLIOS.md, Miles-gated)
+- Brand/client logo-name strip — the field's universal trust signal; derive from data already on site (@adobe/@photoshop/@adobevideo/@adobeacrobat/@adobelife/@adobecreativecloud/@adobefirefly/@upworthy + marquee's NFL/NWSL/Taco Bell/Gatorade). Placement idea: under the Adobe-intro badges.
+- One case-study framing sentence per playlist (goal/why-it-existed) — Miles writes or approves each; add a `context` field rendered under the playlist header.
+- KEEP (differentiators per scan): per-video play counts, jazz Off the Clock section — do not "normalize" these away.
+
 ### 8. Known debt
 - Hero row videos lack viewport pause (see §3).
 - `EVENT_ROLES` defaults unverified by Miles for the 12 Adobe playlists (résumé-grade claims).
