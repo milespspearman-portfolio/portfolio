@@ -230,14 +230,16 @@ const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
 const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
 const highlights = [...eventStats].sort((a, b) => b.totalPlays - a.totalPlays).slice(0, 4);
 
-// Hero carousel: top reels by plays, plus MAX London (Miles's pick)
+// Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
 const heroReels = (() => {
   const flat = [];
   portfolio.forEach((ev, e) => ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })));
   flat.sort((a, b) => playsNum(b.plays) - playsNum(a.plays));
-  const top = flat.slice(0, 10);
-  const fonts = flat.find(x => x.title === "Fonts Creator Game");
-  if (fonts && !top.includes(fonts)) top.push(fonts);
+  const top = flat.slice(0, 12);
+  ["Fonts Creator Game", "Behind the Vision", "Happy 100th Birthday Miles Davis", "Donna Lee"].forEach(t => {
+    const x = flat.find(f => f.title === t);
+    if (x && !top.includes(x)) top.push(x);
+  });
   return top;
 })();
 
@@ -248,17 +250,17 @@ const capabilities = [
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Watch: Summit Hot Takes →",
   },
   {
-    img: "/cards/video-production.jpg", imgPos: "50% 29%", title: "Video Production",
+    img: "/cards/video-production.jpg", imgPos: "50% 28%", title: "Video Production",
     body: "Shoot, edit, and publish — mobile and DSLR, same-day turnaround, from product demos to executive interviews.",
     linkUrl: "https://www.instagram.com/reel/DCUlhpMAWvB/", linkLabel: "Watch: Premiere Pro Demo →",
   },
   {
-    img: "/cards/content-strategy.jpg", imgPos: "50% 28%", title: "Content Strategy",
+    img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy",
     body: "Data-driven concepts backed by social listening and platform analytics — every video starts with a reason to exist.",
     linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Watch: Firefly Informational →",
   },
   {
-    img: "/cards/directing-coaching.jpg", imgPos: "50% 35%", title: "Directing & On-Camera Coaching",
+    img: "/cards/directing-coaching.jpg", imgPos: "50% 32%", title: "Directing & On-Camera Coaching",
     body: "I make people who aren't natural on camera look great — writing talking tracks, asking questions multiple ways, pulling the right sound bites whether it's an exec or a professional athlete.",
     linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Watch: Sneaks Interview →",
   },
@@ -297,12 +299,12 @@ function HeroCard({ reel, i }) {
     if (work) work.scrollIntoView({ behavior: "smooth" });
     window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: reel.e, r: reel.r } }));
   };
-  const tall = [236, 208, 250, 218][i % 4];
+  const vh = [26, 21, 30, 23][i % 4];
   return (
-    <button onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+    <button className="wall-card" onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       aria-label={`Play ${reel.title}`}
       style={{
-        position: "relative", width: Math.round(tall * 0.5625), height: tall, borderRadius: 14, overflow: "hidden", flexShrink: 0,
+        position: "relative", height: `clamp(170px, ${vh}vh, 300px)`, aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", flexShrink: 0,
         border: `1px solid ${h ? `${C.mint}73` : C.border}`, padding: 0, cursor: "pointer",
         background: "#111", boxShadow: "0 16px 48px rgba(0,0,0,0.45)",
         transform: h ? "translateY(-8px) scale(1.04) rotate(0deg)" : `rotate(${TILTS[i % TILTS.length]}deg)`,
@@ -324,9 +326,10 @@ function HeroCard({ reel, i }) {
   );
 }
 
-function HeroReelStrip() {
+// Full-viewport opening: the work plays behind the words.
+function OpeningWall() {
   const wrapRef = useRef(null);
-  // Play the wall only while the hero is on screen — 11 muted videos otherwise burn CPU.
+  // Play the wall only while it's on screen — 16 muted videos otherwise burn CPU.
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -340,11 +343,27 @@ function HeroReelStrip() {
     return () => io.disconnect();
   }, []);
   return (
-    <div ref={wrapRef} style={{ overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
-      <div className="hero-strip" style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "16px clamp(24px, 5vw, 80px)", animation: "herodrift 60s ease-in-out infinite alternate" }}>
+    <section ref={wrapRef} style={{ position: "relative", minHeight: "100svh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {/* video collage backdrop */}
+      <div style={{ position: "absolute", inset: "-6% -5%", display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center", justifyContent: "center", alignContent: "center", transform: "rotate(-3deg)" }}>
         {heroReels.map((reel, i) => <HeroCard key={reel.postUrl} reel={reel} i={i} />)}
       </div>
-    </div>
+      {/* dim so type owns the frame */}
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.52) 0%, rgba(10,10,10,0.86) 100%)", pointerEvents: "none" }} />
+      {/* the words */}
+      <div style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none" }}>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 4, display: "block", marginBottom: 18 }}>Miles Spearman — San Francisco</span>
+        <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
+          Creative<span style={{ color: C.mint }}>.</span><br />
+          Producer<span style={{ color: C.mint }}>.</span><br />
+          <span style={{ color: C.pink }}>Musician.</span>
+        </h1>
+        <p style={{ fontFamily: F, fontSize: "clamp(15px, 1.8vw, 19px)", color: "rgba(255,255,255,0.82)", margin: "22px 0 0", fontWeight: 500 }}>
+          Inside and outside of work — every card behind this text is playing.
+        </p>
+        <span style={{ display: "inline-flex", marginTop: 34, animation: "cuebounce 1.8s ease-in-out infinite", fontFamily: F, fontSize: 13, fontWeight: 600, color: C.gray, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 18px", background: "rgba(10,10,10,0.6)" }}>↓ scroll</span>
+      </div>
+    </section>
   );
 }
 
@@ -709,8 +728,8 @@ export default function Portfolio() {
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
-        @keyframes herodrift { 0% { transform: translateX(0); } 100% { transform: translateX(min(0px, calc(100vw - 100% - 2 * clamp(24px, 5vw, 80px)))); } }
-        .hero-strip:hover { animation-play-state: paused; }
+        @keyframes cuebounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+        @media (max-width: 900px) { .wall-card:nth-child(n+9) { display: none; } }
         .sp-shell { scroll-margin-top: 84px; }
         .sp-body { display: flex; align-items: stretch; height: 640px; }
         .sp-side { width: 280px; min-width: 280px; border-right: 1px solid ${C.border}; display: flex; flex-direction: column; }
@@ -745,6 +764,9 @@ export default function Portfolio() {
         }} />
 
         <Nav />
+
+        {/* ===== OPENING WALL ===== */}
+        <OpeningWall />
 
         {/* ===== HERO ===== */}
         <section style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", padding: "120px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
@@ -791,9 +813,6 @@ export default function Portfolio() {
                 </div>
               ))}
             </div>
-          </FadeIn>
-          <FadeIn delay={0.55} style={{ marginTop: 52 }}>
-            <HeroReelStrip />
           </FadeIn>
         </section>
 
