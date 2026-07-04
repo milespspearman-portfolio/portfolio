@@ -1,5 +1,18 @@
 # Portfolio Site — Progress Log
 
+## 🔄 HANDOFF POINT (Jul 4 ~03:30) — fresh session starts HERE
+Read CLAUDE.md + AGENT-PLAN.md too. State: opening wall (parallax + hover-spotlight `bd9678a`), gold #F5C518, page order triad→About→Adobe-intro→Work→WhatIDo, Off the Clock live. ~18 commits UNPUSHED (Miles pushes; no git creds in Claude shell).
+
+**In flight when this session ended (check their disk output/commits):**
+- Title-apply agent: applying Miles's hand-edited TITLE-PROPOSALS.md Proposed column to `portfolio` titles (skip TBD rows, sync CAPABILITY_REEL_TITLE + heroReels lookups). Should self-commit. If no commit exists, re-run per this spec.
+- Freelancer-scan agent: reading ~/Downloads/Freelancer_List.xlsx, finding each producer/CD portfolio → research/FREELANCER-LIST-PORTFOLIO-SCAN.md. If doc absent, re-run.
+
+**Miles's open decisions (do NOT build until he says):**
+1. What I Do concept: HE hasn't picked. Latest rec (mine): B "Editorial Split" with A's hover-video panels (recruiters skim, don't click); C "Set List" plumbing already committed (inert) if he prefers it. research/WHAT-I-DO-CONCEPTS.md has all three.
+2. OWED: adversarial "challenge pass" on current page order/design vs the freelancer-scan findings — Miles explicitly wants the current layout ARGUED AGAINST using real peer-portfolio data once the scan doc exists.
+3. Case-study lines (research/COPY-PATTERNS-CASE-STUDY.md) — his markup pending.
+4. Role lines verification, Be You seasons, YouTube 199K placement, logo strip (AGENT-PLAN §7b).
+
 ## ✅ ROUND 9 — SHIPPED (commits `6fc19e0`→`0cb6f69`): opening wall (16 live muted videos under "Creative. Producer. Musician." — his triad, my layout), mint→#0FE07C, card frames finalized (park mid-sip / Kelley / Mansa red — spit-take literally doesn't exist in sampled frames of all 4 London reels). Figma connected+verified (view seat), token harvest deferred to design pass. 11 commits UNPUSHED.
 
 ## (superseded in-flight notes below — kept for context)
