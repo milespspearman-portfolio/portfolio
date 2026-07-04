@@ -146,7 +146,7 @@ const portfolio = [
     reels: [
       { title: "Adobe Summit ’25: Coca-Cola Activation", sub: "@adobe · 1.5K likes · Mar 20, 2025", plays: "350.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Coca-Cola-Activation-Interview_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHZsBK7qAht/" },
       { title: "Over & Under AI Enterprise Activity", sub: "@adobe · 1.4K likes · Mar 20, 2025", plays: "711.8K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Over-Under-AI-Enterprise-Activity_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHbh4advyRR/" },
-      { title: "Summit ’25: Acrobat Escape Room", sub: "@adobeacrobat · 7K likes · Mar 20, 2025", plays: "2.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Adobe-Acrobat-Escape-Room-Activity_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHb0O45vPtj/" },
+      { title: "’25 Summit Acrobat Escape Room", sub: "@adobeacrobat · 7K likes · Mar 20, 2025", plays: "2.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Adobe-Acrobat-Escape-Room-Activity_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHb0O45vPtj/" },
       { title: "“Describe Your Job” Interviews", sub: "@adobe · 318 likes · Mar 21, 2025", plays: "72.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Describe-Your-Job-Interview_3.21.25.mp4", postUrl: "https://www.instagram.com/p/DHef1x_M1uJ/" },
       { title: "Summit ’25: Coolest Job @Adobe S1", sub: "@adobelife · 684 likes · Mar 25, 2025", plays: "28.8K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Talent-Marketing-Best-Job_3.25.25.mp4", postUrl: "https://www.instagram.com/p/DHor6j0vyYS/" },
       { title: "Summit ’25: Sneaks Emoji Reactions", sub: "@adobe · 291 likes · Mar 26, 2025", plays: "23.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Adobe-Summit-Reactions-Recap_3.26.25.mp4", postUrl: "https://www.instagram.com/p/DHq_NIfo-wC/" },
@@ -160,11 +160,11 @@ const portfolio = [
     reels: [
       { title: "Acrobat Booth", sub: "@adobeacrobat · 1.3K likes · Oct 31, 2025", plays: "1.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat-Booth_10.31.25.mp4", postUrl: "https://www.instagram.com/p/DQe3K4Zjpv9/" },
       { title: "Acrobat", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
-      { title: "James Gunn", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
+      { title: "James Gunn’s Filmmaking Assignment", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
       { title: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", sub: "@adobelife · 30.5K likes · Nov 14, 2025", plays: "747.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Coolest-Job_11.14.25.mp4", postUrl: "https://www.instagram.com/p/DRC8V6JAkO1/" },
       { title: "Kelley O'Hara x NWSL x Adobe", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
-      { title: "Mark Rober", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
-      { title: "Jessica Williams", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
+      { title: "Mark Rober’s Creator Assignment", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
+      { title: "Jessica Williams’ Creator Assignment", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
       { title: "Navin’s Coolest Job", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
       { title: "Sarah Shen’s Coolest Job", sub: "@adobe · 198 likes · Feb 20, 2026", plays: "35.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Firefly-Coolest-Job-Deep-Dives-Sarah_2.20.26.mp4", postUrl: "https://www.instagram.com/p/DU9ZnA-D_Xu/" },
     ],
@@ -352,7 +352,7 @@ const reelIndexByTitle = (title) => {
 };
 // Which portfolio reel backs each capability card, by that reel's exact title.
 const CAPABILITY_REEL_TITLE = {
-  "On-Camera Hosting & Producing": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
+  "On-Camera Hosting & Producing": "’25 Summit Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
   "Content Strategy, Concept to Published": "Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
   "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
@@ -382,7 +382,7 @@ const SPECIALTY_REELS = {
     { t: "Adobe MAX 2024: In-Office MAX Trivia", album: "’24 MAX Miami" },
     { t: "Project Type Lab: Adobe Researcher Sneaks Interview", album: "’24 MAX Miami" },
     { t: "Animations & Presets: Adobe Researcher Sneaks Interview", album: "’24 MAX Miami" },
-    { t: "Summit ’25: Acrobat Escape Room", album: "’25 Summit Vegas" },
+    { t: "’25 Summit Acrobat Escape Room", album: "’25 Summit Vegas" },
     { t: "Over & Under AI Enterprise Activity", album: "’25 Summit Vegas" },
     { t: "Adobe Summit ’25: Coca-Cola Activation", album: "’25 Summit Vegas" },
     { t: "Summit ’25: Hosted Event Recap", album: "’25 Summit Vegas" },
@@ -409,7 +409,7 @@ const SPECIALTY_REELS = {
     { t: "Premiere Pro AI: Emoji Reactions", album: "Emoji Reactions" },
     { t: "Event Recap Reactions: Sneaks in One Emoji", album: "Emoji Reactions" },
     { t: "Summit ’25: Sneaks Emoji Reactions", album: "Emoji Reactions" },
-    { t: "Summit ’25: Acrobat Escape Room", album: "Games & Activations" },
+    { t: "’25 Summit Acrobat Escape Room", album: "Games & Activations" },
     { t: "Over & Under AI Enterprise Activity", album: "Games & Activations" },
     { t: "Fonts Creator Game", album: "Games & Activations" },
     { t: "Adobe MAX 2024: In-Office MAX Trivia", album: "Games & Activations" },
@@ -429,10 +429,10 @@ const SPECIALTY_REELS = {
   // and all the be you content as well too, along with the coolest job."
   // Em Siegel joined once her real count landed (50.7K via Apify, Jul 4).
   "Directing & On-Camera Coaching": [
-    { t: "Mark Rober", album: "’25 MAX LA" },
-    { t: "James Gunn", album: "’25 MAX LA" },
+    { t: "Mark Rober’s Creator Assignment", album: "’25 MAX LA" },
+    { t: "James Gunn’s Filmmaking Assignment", album: "’25 MAX LA" },
     { t: "Kelley O'Hara x NWSL x Adobe", album: "’25 MAX LA" },
-    { t: "Jessica Williams", album: "’25 MAX LA" },
+    { t: "Jessica Williams’ Creator Assignment", album: "’25 MAX LA" },
     { t: "Summit ’25: Ken Jeong Interview", album: "’25 Summit Vegas" },
     { t: "Dave Werner Employee Spotlight", album: "Employee Spotlights · Season 1" },
     { t: "Manasa Hari Employee Spotlight", album: "Employee Spotlights · Season 1" },
@@ -632,7 +632,7 @@ function HeroCard({ reel, i }) {
 // reactions, activations, celebrations. Curated titles, indices derived.
 const FUN_ROW_TITLES = [
   "Summit ’25: Ken Jeong Interview",
-  "Summit ’25: Acrobat Escape Room",
+  "’25 Summit Acrobat Escape Room",
   "Fonts Creator Game",
   "Adobe MAX Day 1 Vibe",
   "Adobe MAX 2024: In-Office MAX Trivia",
