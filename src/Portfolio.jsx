@@ -365,32 +365,36 @@ const setList = capabilities.map(c => {
 // Acrobat Booth + both NAB ’24 reaction reels (on-camera confirm, hosting),
 // Watercolor Sneaks (meta-date conflict, directing), Jessica Williams (not
 // claimed in card copy). Cannes stays out everywhere, standing rule.
+// Each row carries an `album` — the body of work it belongs to (Miles's series/
+// season map where one exists, the event playlist otherwise). Rows group under
+// album sub-headers in the drawer, Spotify artist-page style.
 const SPECIALTY_REELS = {
   "On-Camera Hosting": [
-    "Summit ’25: Acrobat Escape Room",
-    "Summit ’25: Hosted Event Recap",
-    "Summit ’25: Ken Jeong Interview",
-    "Summit ’25: Escalator ‘Hot’ Takes",
+    { t: "Summit ’25: Acrobat Escape Room", album: "Adobe Summit 2025" },
+    { t: "Summit ’25: Hosted Event Recap", album: "Adobe Summit 2025" },
+    { t: "Summit ’25: Ken Jeong Interview", album: "Adobe Summit 2025" },
+    { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "Adobe Summit 2025" },
   ],
   "Content Strategy, Concept to Published": [
-    "Premiere Pro AI: Emoji Reactions",
-    "Summit ’25: Acrobat Escape Room",
-    "“Coolest Job” Series",
-    "Over & Under AI Enterprise Activity",
-    "Summit ’25: Sneaks Emoji Reactions",
+    { t: "Premiere Pro AI: Emoji Reactions", album: "IBC 2024" },
+    { t: "Summit ’25: Acrobat Escape Room", album: "Adobe Summit 2025" },
+    { t: "Over & Under AI Enterprise Activity", album: "Adobe Summit 2025" },
+    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Adobe Summit 2025" },
+    { t: "“Coolest Job” Series", album: "Coolest Job" },
   ],
   "Directing & On-Camera Coaching": [
-    "Mark Rober",
-    "James Gunn",
-    "Kelley O'Hara",
+    { t: "Mark Rober", album: "MAX 2025 LA" },
+    { t: "James Gunn", album: "MAX 2025 LA" },
+    { t: "Kelley O'Hara", album: "MAX 2025 LA" },
   ],
   "Producing: Talent Marketing & Employee Comms": [
-    "Dave Werner Employee Spotlight",
-    "Manasa Hari Employee Spotlight",
-    "“Coolest Job” Series",
-    "Bowen Wang Employee Spotlight",
-    "San Jose Semaphore",
-    "Be You: Imran",
+    { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Be You: Imran", album: "Be You · Season 3" },
+    { t: "“Coolest Job” Series", album: "Coolest Job" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
+    { t: "San Jose Semaphore", album: "Evergreen Producing" },
   ],
 };
 // Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
@@ -403,11 +407,11 @@ const REEL_DESCS = {
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
-  (SPECIALTY_REELS[c.title] || []).map(t => {
+  (SPECIALTY_REELS[c.title] || []).map(({ t, album }) => {
     const idx = reelIndexByTitle(t);
     if (!idx) return null;
     const reel = portfolio[idx.e].reels[idx.r];
-    return { idx, reel, event: portfolio[idx.e].event, handle: reel.sub.split(" · ")[0], when: monthYear(reel) };
+    return { idx, reel, album, event: portfolio[idx.e].event, handle: reel.sub.split(" · ")[0], when: monthYear(reel) };
   }).filter(Boolean),
 ]));
 
@@ -1000,8 +1004,15 @@ function SpecialtyDrawer({ cap, onClose }) {
   // Rows play INSIDE the drawer (Miles: "it should just play inside of the
   // specialty tab when i push play, just expands" — no jump to Selected Work).
   // One expanded row at a time = the only <video> mounted in the drawer.
-  const [openRow, setOpenRow] = useState(null);
-  const toggleRow = (i) => setOpenRow(cur => (cur === i ? null : i));
+  const [openRow, setOpenRow] = useState(null); // keyed by reel title
+  const toggleRow = (t) => setOpenRow(cur => (cur === t ? null : t));
+  // Album groups (order of first appearance) — Spotify artist-page style.
+  const groups = [];
+  rows.forEach(h => {
+    const g = groups[groups.length - 1];
+    if (g && g.album === h.album) g.rows.push(h);
+    else groups.push({ album: h.album, rows: [h] });
+  });
   return (
     <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
       <aside role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
@@ -1022,16 +1033,14 @@ function SpecialtyDrawer({ cap, onClose }) {
             <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{rows.length} proof reels · {fmtPlays(proofPlays)} plays</span>
           </div>
         </div>
-        <div style={{ display: "flex", gap: 12, alignItems: "center", margin: "16px 0 20px" }}>
+        <div style={{ display: "flex", gap: 16, alignItems: "flex-start", margin: "16px 0 20px" }}>
           {rows.length > 0 && (
-            <button onClick={() => toggleRow(openRow === null ? 0 : openRow)} aria-label={cap.linkLabel}
+            <button onClick={() => toggleRow(openRow === null ? rows[0].reel.title : openRow)} aria-label={cap.linkLabel}
               style={{ width: 48, height: 48, borderRadius: "50%", border: "none", background: C.mint, color: C.bg, display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: `0 6px 24px ${C.mint}35`, flexShrink: 0 }}>
               <IcPlay s={17} />
             </button>
           )}
-          <a href={cap.linkUrl} target="_blank" rel="noreferrer"
-            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 600, color: C.white, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 16px", textDecoration: "none", background: "rgba(255,255,255,0.04)" }}>
-            Open on Instagram ↗</a>
+          <p style={{ fontFamily: F, fontSize: 13.5, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: 0, borderLeft: `3px solid ${C.mint}`, paddingLeft: 14 }}>{cap.body}</p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "0 8px 8px", borderBottom: `1px solid ${C.border}` }}>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, textAlign: "center" }}>#</span>
@@ -1039,14 +1048,19 @@ function SpecialtyDrawer({ cap, onClose }) {
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1 }}>HIGHLIGHTS</span>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray }}>PLAYS</span>
         </div>
-        {rows.map((h, i) => {
-          const open = openRow === i;
+        {groups.map((g) => (
+        <div key={g.album}>
+        {g.album && (
+          <div style={{ fontFamily: F, fontSize: 11, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5, padding: "16px 8px 6px" }}>{g.album}</div>
+        )}
+        {g.rows.map((h, i) => {
+          const open = openRow === h.reel.title;
           const desc = REEL_DESCS[h.reel.title] || h.reel.role || "";
           return (
           <div key={h.reel.title + i}>
           <div role="button" tabIndex={0} aria-expanded={open}
-            onClick={() => toggleRow(i)}
-            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRow(i); } }}
+            onClick={() => toggleRow(h.reel.title)}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRow(h.reel.title); } }}
             onMouseEnter={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "rgba(255,255,255,0.05)"}
             onMouseLeave={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "transparent"}
             style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s", background: open ? "rgba(30,215,96,0.06)" : "transparent" }}>
@@ -1081,7 +1095,8 @@ function SpecialtyDrawer({ cap, onClose }) {
           </div>
           );
         })}
-        <p style={{ fontFamily: F, fontSize: 14, color: "rgba(255,255,255,0.82)", lineHeight: 1.65, margin: "20px 0 0", borderLeft: `3px solid ${C.mint}`, paddingLeft: 16 }}>{cap.body}</p>
+        </div>
+        ))}
       </aside>
     </div>
   );
