@@ -1,10 +1,40 @@
 # Portfolio Site — Progress Log
 
-## 🔄 HANDOFF POINT (Jul 4 ~mid-day session) — fresh session starts HERE
+## 🔄 HANDOFF POINT — fresh session starts HERE
+**Created:** Jul 4, 2026 · **Last updated:** Jul 4, 2026 (end of session 2, written at 90% context)
 
-**FIRST READS, in order: CLAUDE.md → this block → AGENT-PLAN.md → COPY-PRINCIPLES.md** (7 checks + the new "Resume & LinkedIn alignment" rules; ALL copy work runs through both).
+**FIRST READS, in order: CLAUDE.md → this block → COPY-PRINCIPLES.md.** (AGENT-PLAN.md is now PARTIALLY STALE — where it disagrees with this block, this block wins.) All copy work runs through COPY-PRINCIPLES (7 checks + Resume & LinkedIn alignment rules).
 
-**Pushed live through `96f6864`.** gh push works from Claude's shell. Vercel auto-deploys main (~60s).
+**Live through `c51ed9a`** — gh push works; Vercel auto-deploys main (~60s). Prod URL: `gh api repos/milespspearman-portfolio/portfolio/deployments` → statuses[0].environment_url (deployment-hash URLs can be auth-walled; find the public alias).
+
+### 0. Single most important rule
+Two background agents were IN FLIGHT when this session ended. **Check their output exists before doing anything else; re-run only what's missing. Do NOT redo today's shipped work (§done below).**
+1. **spotify-shell prototype agent** — full Navin-style app shell on branch `spotify-shell`, opens a DRAFT PR (Vercel comments the preview URL). CHECK: `git branch -a | grep spotify-shell` + `gh pr list`. Miles SAW a working preview mid-build (sidebar nav+grouped library, search bar, bottom "Press play — 82 reels" bar) so the build got far. If branch/PR absent, re-run from the plan file `~/.claude/plans/composed-booping-salamander.md` Phase 2 + these mid-flight additions: accent = ACTUAL Spotify green #1ED760; Recognition item reads "Be Genuine CMO Global Marketing **Award** Q4 2025" (Reward was his typo); Navin fidelity screenshots at `~/Downloads/Screenshot 2026-07-04 at 4.27.46 AM.png`, `…4.20.32 AM.png`, `…4.14.47 AM.png` (sidebar logo row, SHOW ALL affordances, bottom-bar "Let's Talk · email" right side — don't invent an email); PR body must note main drifted past the branch point.
+2. **QA sweep agent** — prod verify + mobile 375px + Lighthouse → `research/QA-PROD-MOBILE-PERF.md`. If the doc is absent, re-run (spec: prod URL via gh deployments, click a shelf card → video plays on prod, mobile full-scroll layout breaks, Lighthouse perf+a11y desktop/mobile, findings as BLOCKER/BAD/POLISH).
+
+### 1. Miles's queue (waiting on HIM — nudge, don't build)
+1. **`MILES-COPY-MARKUP.md` (repo root) — his big one.** Every open copy item with each reel's verbatim IG caption + blank **Miles:** lines: 14 jazz slug-titles, Adobe TBD/LOW titles, What I Do card copy, WIWON paragraph rewrite, stale CTA "10K+" line, award display format. When he returns it: apply EVERYTHING in one pass through the copy gate. Caption-sourced flags inside: "Mansa" is really **Manasa Hari**; the miles.spearman reel's cover art says "BEHIND THE POST with Miles, EP. 1" (vs site "Behind the Product" — he picks canonical, row A15); Summit Over/Under caption = AI-study stats game.
+2. **Shell worth-it verdict** once he opens the PR's Vercel preview. Merge-and-reconcile / iterate / kill — his call. Main drifted after the branch cut (Adobe intro killed, nav reorder, Spotify green, closer) — reconcile on merge.
+
+### 2. Tomorrow's build queue (his asks, not yet built)
+1. **Wall ring composition** — his ask: reels SURROUND "Creative. Producer. Musician." with a clear center so attention pulls middle. "Curious if that would be a better design choice — if not, keep how it is" → build behind judgment, compare, show him. Session ended mid-start.
+2. **Create the design-judge agent** — his explicit ask ("add a design agent… so we are always thinking of designing"). Write `~/Downloads/Claude/.claude/agents/design-judge.md`: verdict-first design critic loaded with his taste record (Spotify green #1ED760 after 3 pale mints, red #FA0F00 stat numbers from his EOY deck, gold #F5C518 Musician, kills fake/pale/message-repetition, likes real video + play-count proof + organized detail + restraint, Navin reference). The Write was interrupted by session wrap, NOT rejected on merits — reconfirm in one line, then create and use it on the wall-ring question.
+3. QA fixes per the findings doc (hero-row viewport pause = known perf debt, likely top item).
+4. Logo strip (challenge-pass BUILD verdict, AGENT-PLAN §7b) — still greenlit-in-principle, unbuilt.
+5. Standing decisions still open: Be You seasons, YouTube 199K placement, role-line verification (Cannes/"hosted" flags in COPY-INPUTS §5), Summit-2026-own-playlist question, case-study `context` lines (research/COPY-PATTERNS-CASE-STUDY.md, his markup pending).
+
+### 3. Shipped today — session 2, Jul 4 (all pushed, don't redo; details in round notes below + git log `3865924..c51ed9a`)
+Titles applied + Dave/Bowen/Mansa→Evergreen · copy-inputs fold (8 rules in COPY-PRINCIPLES) · 50-portfolio freelancer scan + challenge pass · stat badges KILLED · resume = View (new tab) · About = "About the {swipe-word}." (Creative/Producer/Host/Director/Teammate) · red EOY-style stat stack (23.6M plays / 171.1K likes / 82 videos, all derived incl. TOTAL_LIKES) · Off the Clock = ALL @milesmusicmedia reels ≥4K (21 jazz; 14 new mp4s+thumbs in public/) · playlist renames: Behind the Vision→Behind the Product→**"Miles.Spearman"** (reel title still "Behind the Product") · three libraries **Events / Evergreen / Off The Clock** as shelf rows + sidebar headers (LIBRARY_OF map; UC+Upworthy in Evergreen, Miles approved) · newest-first sort · What I Do cards play their reels + click deep-links to playlist (IG links dead) · WIWON card (resume-drafted copy, [MILES: edit me]) + LinkedIn button under it · Adobe-intro section KILLED (his 7th-time doubt; HeroRow now bridges shelves→Work) · nav = Work · What I Do · About · Connect · closer = "And yeah, I'm also a professional trumpet player in San Francisco." with green link on "professional trumpet player" → plays MMM playlist · **accent = ACTUAL Spotify green #1ED760** (supersedes every mint; "stay distinct from Spotify" rule DEAD) · MILES-COPY-MARKUP.md built (26/27 rows with real captions).
+
+### 4. New env/tool knowledge (session 2)
+- Jazz captions: vidiq profile tool caps at ~6 reels, NO pagination — use `~/Downloads/Claude/milesmusicmedia-chatsweep/data/apify-enriched_2026-07-03.json` (all 21 by shortcode). Adobe captions: `~/Downloads/Claude/miles-portfolio-reels/PORTFOLIO-LINKS.md` blockquotes.
+- Preview screenshots of the wall render BLACK (video compositing) — verify via preview_inspect / innerText evals instead.
+- Writing files via python/bash invalidates Edit-tool freshness — Read once before the next Edit.
+- LibreOffice mangles TITLE-PROPOSALS tables (escaped `#`, curly quotes, double spaces) — his cell edits win; collapse whitespace, normalize ’ quotes, flag suspect facts (the "MAX 2025" year flag paid off).
+- `.claude/launch.json` has autoPort + vite reads PORT env — second session's dev server coexists fine.
+- Old handoff said "no git creds" — DEAD: gh auth works, push after every landed commit.
+
+## (older session-2 notes below — SUPERSEDED by the handoff block above, kept as history)
 
 **DONE this session (don't redo):**
 - **Miles's title markup APPLIED** (`3865924`): ~40 retitles from his hand-edited TITLE-PROPOSALS.md; Kelley O'Hara fix; TBD rows skipped; untouched LOW rows keep current title. Per his "NOT MAX" notes, **Dave Werner / Bowen / Mansa reels MOVED from MAX 2025 LA → Evergreen Producing** (now 9 + 12 reels, stats re-derive, verified in browser: playback from new slot works, 0 console errors). "SUMMIT 2026" → "Summit 2026 Recap", parked LAST in Evergreen pending his "where are these?" answer (data has only that one Summit-2026 reel; say the word and it becomes its own playlist). CAPABILITY_REEL_TITLE synced.
