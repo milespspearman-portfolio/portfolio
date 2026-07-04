@@ -1551,7 +1551,7 @@ export default function Portfolio() {
             <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
               <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
               <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
-                At Adobe, I work as a producer and creative on the Social Creative Studio team. Right now that means running our in-house productions, whether that's mocking up talking tracks for execs, interviewing employees, or creating AI films. I stay busy creating videos that tap into culture for Adobe.
+                At Adobe, I run in-house productions for the Social Creative Studio team: talking tracks for execs, employee interviews, and creator spotlights. Right now I'm also deep in post production on our Cannes social work. All of it is video that taps into our audience's culture and shows how Adobe's tools empower people to create.
               </p>
               <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
             </div>
