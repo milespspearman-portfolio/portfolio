@@ -370,10 +370,17 @@ const setList = capabilities.map(c => {
 // album sub-headers in the drawer, Spotify artist-page style.
 const SPECIALTY_REELS = {
   "On-Camera Hosting": [
+    // ALL 9 Summit 2025 reels — Miles's ruling Jul 4 ("ALL Adobe Summit 2025 should be part of the Hosting one")
     { t: "Summit ’25: Acrobat Escape Room", album: "Adobe Summit 2025" },
+    { t: "Over & Under AI Enterprise Activity", album: "Adobe Summit 2025" },
+    { t: "Adobe Summit ’25: Coca-Cola Activation", album: "Adobe Summit 2025" },
     { t: "Summit ’25: Hosted Event Recap", album: "Adobe Summit 2025" },
+    { t: "“Describe Your Job” Interviews", album: "Adobe Summit 2025" },
     { t: "Summit ’25: Ken Jeong Interview", album: "Adobe Summit 2025" },
     { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "Adobe Summit 2025" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Adobe Summit 2025" },
+    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Adobe Summit 2025" },
+    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX 2025 LA" }, // Miles: into Hosting; he said album "MAX Miami" — data says Nov 2025 = MAX LA, flagged in chat
   ],
   "Content Strategy, Concept to Published": [
     { t: "Premiere Pro AI: Emoji Reactions", album: "IBC 2024" },
