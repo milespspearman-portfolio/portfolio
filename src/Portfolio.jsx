@@ -67,7 +67,7 @@ const EVENT_ROLES = {
   "’25 MAX London": "Concepted, scripted, hosted & creatively directed",
   "’25 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
-  "Evergreen Producing": "Produced",
+  "In-House Production": "Produced",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
 };
@@ -188,7 +188,7 @@ const portfolio = [
   //   ],
   // },
   {
-    event: "Evergreen Producing",
+    event: "In-House Production", groupBy: "year-channel",
     reels: [
       { title: "Firefly Interview Demo", sub: "@adobevideo · 979 likes · Sep 12, 2024", plays: "728.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Firefly-Interview-Demo_9.12.24.mp4", postUrl: "https://www.instagram.com/p/C_0rxmZPxif/" },
       { title: "Creative Cloud for Students Black Friday Discount", sub: "@adobe · 439 likes · Nov 30, 2024", plays: "831.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Students-Black-Friday-Discount_11.30.24.mp4", postUrl: "https://www.instagram.com/p/DDAM0ZNCvo2/" },
@@ -249,7 +249,7 @@ const LIBRARY_OF = {
   "’24 MAX Miami": "Events", "’25 MAX LA": "Events", "’25 MAX London": "Events",
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
-  "Evergreen Producing": "Evergreen", "Side Projects": "Evergreen",
+  "In-House Production": "Evergreen", "Side Projects": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
 const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
@@ -328,7 +328,7 @@ const capabilities = [
     img: "/cards/video-production.jpg", imgPos: "50% 28%", title: "Producing: Talent Marketing & Employee Comms",
     meta: "@adobelife · 2025–2026",
     body: "Talent marketing at Adobe means making employees the story. I produced and creatively directed the Dave interview feature in-house, and it hit 1.9M plays on @adobelife. On the San Jose Semaphore piece I handled directing and on-camera coaching.",
-    linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: Evergreen Producing →",
+    linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: In-House Production →",
   },
 ];
 
@@ -439,7 +439,7 @@ const SPECIALTY_REELS = {
     { t: "Coolest Job: Tongyu", album: "Coolest Job" },
     { t: "Navin’s Coolest Job", album: "Coolest Job" },
     { t: "Sarah Shen’s Coolest Job", album: "Coolest Job" },
-    { t: "San Jose Semaphore", album: "Evergreen" },
+    { t: "San Jose Semaphore", album: "In-House" },
   ],
   "Producing: Talent Marketing & Employee Comms": [
     { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
@@ -455,7 +455,7 @@ const SPECIALTY_REELS = {
     { t: "Coolest Job: Tongyu", album: "Coolest Job · Summit ’26" },
     { t: "Navin’s Coolest Job", album: "Coolest Job · MAX ’25" },
     { t: "Sarah Shen’s Coolest Job", album: "Coolest Job · MAX ’25" },
-    { t: "San Jose Semaphore", album: "Evergreen Producing" },
+    { t: "San Jose Semaphore", album: "In-House Production" },
     { t: "Intern Day Creative Cloud", album: "Intern Day ’25" },
   ],
 };
@@ -952,7 +952,36 @@ function WorkPlayer() {
                   <span style={{ fontFamily: F, fontSize: 11, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase" }}>Title</span>
                   <span style={{ fontFamily: F, fontSize: 11, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase" }}>Plays</span>
                 </div>
-                {viewing.reels.map((r, i) => (
+                {viewing.groupBy === "year-channel" ? (() => {
+                  // Miles's In-House layout: year (desc) -> channel sections,
+                  // all derived from each reel's sub string. Numbering restarts
+                  // per channel; original indices keep playback wiring intact.
+                  const byYear = new Map();
+                  viewing.reels.forEach((r, i) => {
+                    const y = new Date(reelDate(r)).getFullYear() || 0;
+                    const h = r.sub.split(" · ")[0];
+                    if (!byYear.has(y)) byYear.set(y, new Map());
+                    const ch = byYear.get(y);
+                    if (!ch.has(h)) ch.set(h, []);
+                    ch.get(h).push({ r, i });
+                  });
+                  return [...byYear.entries()].sort((a, b) => b[0] - a[0]).map(([year, channels]) => (
+                    <div key={year}>
+                      <div style={{ fontFamily: F, fontSize: 13, fontWeight: 800, color: C.white, letterSpacing: 1, padding: "18px 12px 2px" }}>{year || "Undated"}</div>
+                      {[...channels.entries()].map(([handle, items]) => (
+                        <div key={handle}>
+                          <div style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.mint, letterSpacing: 1, padding: "10px 12px 4px" }}>{handle}</div>
+                          {items.map(({ r, i }, n) => (
+                            <TrackRow key={r.postUrl} reel={r} i={n}
+                              active={!!track && track.e === viewing.idx && track.r === i}
+                              playing={playing}
+                              onPlay={() => playTrack(viewing.idx, i)} />
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  ));
+                })() : viewing.reels.map((r, i) => (
                   <TrackRow key={r.postUrl} reel={r} i={i}
                     active={!!track && track.e === viewing.idx && track.r === i}
                     playing={playing}
