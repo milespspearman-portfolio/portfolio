@@ -2,7 +2,7 @@
 
 Every push already deploys permanently on Vercel (dashboard → Deployments = full visual history; every old deployment stays clickable). This ledger names the milestones as git tags so any revision is one command away: `git checkout R2` to look, `git checkout main` to come back.
 
-**Convention:** tag a new R# at every session close or before any big visual swing. `git tag -a R4 -m "what it is" && git push origin R4`, add a row here.
+**Convention:** tag a new R# at every session close or before any big visual swing, then run the recruiter-lens agent on it (60-second hiring-manager screen -> SHIP-READY or ranked fixes) before calling the revision final. `git tag -a R4 -m "what it is" && git push origin R4`, add a row here.
 
 | Tag | Commit | Date | What it is |
 |---|---|---|---|
