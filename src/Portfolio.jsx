@@ -307,7 +307,7 @@ const capabilities = [
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: Adobe Summit 2025 →",
   },
   {
-    img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy, Concept to Script",
+    img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy, Concept to Published",
     meta: "IBC · NAB · Summit · 2024–2025",
     body: "“Make the Firefly Video product release fun” was my brief. So as a creative producer on this piece, I built content strategy with PMMs, PR, and editorial, then wrote the scripts myself. The proof is a format: emoji reactions, 1.5M at IBC 2024, repeated at NAB and Summit.",
     linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Play: IBC 2024 →",
@@ -339,7 +339,7 @@ const reelIndexByTitle = (title) => {
 // Which portfolio reel backs each capability card, by that reel's exact title.
 const CAPABILITY_REEL_TITLE = {
   "On-Camera Hosting": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
-  "Content Strategy, Concept to Script": "Premiere Pro AI: Emoji Reactions",       // IBC 2024 — 1.5M, the repeatable format
+  "Content Strategy, Concept to Published": "Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
   "Directing & On-Camera Coaching": "Kelley O'Hara",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Employee Comms Interview", // Evergreen Producing — 1.9M
 };
@@ -1068,7 +1068,7 @@ function Nav() {
     }}>
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {[["Work", "#work"], ["What I Do", "#services"], ["About", "#about"]].map(([label, href]) => (
+        {[["Work", "#work"], ["Career Specialties", "#services"], ["About", "#about"]].map(([label, href]) => (
           <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
             onMouseEnter={e => e.target.style.color = C.white}
             onMouseLeave={e => e.target.style.color = C.gray}
@@ -1221,7 +1221,7 @@ export default function Portfolio() {
         <section id="services" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
           <FadeIn>
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Services</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>Career Specialties</h2>
           </FadeIn>
           <WhatIDoCards />
         </section>
