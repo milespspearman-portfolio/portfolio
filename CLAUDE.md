@@ -40,3 +40,4 @@ Spotify Web Player skeuomorph: "Your Library" sidebar = 12 playlists (events/cam
 - Capabilities card links still point at IG posts — "keep link" read literally; only change if Miles asks.
 - `plays: "0"` rows display "0" — data verbatim rule.
 - One `<video>` element ever; element is playback source of truth.
+- **Round 3 (Jul 4):** emoji playlist icons KILLED ("looks fake") — playlist art = real video frame: `cover` on eventStats = thumb of that playlist's TOP-PLAYED reel, shown in sidebar/highlights/header (gradient behind as load fallback). CTA "Connect on LinkedIn →" button pink → mint #14E39A (Miles: keep copy "Let's make something.", restyle only); pink stays as ambient glow + gradient accents. EVENT_ICONS const deleted.

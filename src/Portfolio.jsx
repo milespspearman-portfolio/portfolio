@@ -33,11 +33,6 @@ const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; retur
 const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
 const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
-const EVENT_ICONS = {
-  "UC": "🎓", "Employee & Always On": "📱", "IBC 2024": "📡", "MAX Miami 2024": "🌴",
-  "NAB 2024": "🎲", "Upworthy": "💛", "Adobe Summit 2025": "📊", "MAX 2025 LA": "🎬",
-  "MAX London 2025": "🎡", "NAB 2025": "🎥", "Cannes": "🎞", "Evergreen Producing": "🌲",
-};
 const GRADS = [
   ["#0C4A33", "#14E39A"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
 ];
@@ -201,12 +196,15 @@ const portfolio = [
 ];
 
 // Derived stats (computed from the data above, never hand-typed)
-const eventStats = portfolio.map((ev, i) => ({
-  ...ev, idx: i,
-  icon: EVENT_ICONS[ev.event] || "🎬",
-  role: EVENT_ROLES[ev.event] || "",
-  totalPlays: ev.reels.reduce((s, r) => s + playsNum(r.plays), 0),
-}));
+const eventStats = portfolio.map((ev, i) => {
+  const top = [...ev.reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
+  return {
+    ...ev, idx: i,
+    cover: thumbOf(top), // playlist art = frame from its top-played reel
+    role: EVENT_ROLES[ev.event] || "",
+    totalPlays: ev.reels.reduce((s, r) => s + playsNum(r.plays), 0),
+  };
+});
 const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
 const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
 const highlights = [...eventStats].sort((a, b) => b.totalPlays - a.totalPlays).slice(0, 4);
@@ -291,7 +289,9 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
         background: active ? "rgba(255,255,255,0.08)" : h ? "rgba(255,255,255,0.04)" : "transparent",
         transition: "background 0.15s",
       }}>
-      <span style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: gradFor(ev.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{ev.icon}</span>
+      <span style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
+        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+      </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
         <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
@@ -340,7 +340,9 @@ function HighlightCard({ ev, onOpen }) {
         background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", gap: 14, textAlign: "left",
         transform: h ? "translateY(-4px)" : "none", transition: "all 0.25s", fontFamily: F, width: "100%",
       }}>
-      <span style={{ width: 56, height: 56, borderRadius: 10, flexShrink: 0, background: gradFor(ev.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }}>{ev.icon}</span>
+      <span style={{ width: 56, height: 56, borderRadius: 10, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
+        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+      </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 15, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
         <span style={{ display: "block", fontSize: 12, color: C.gray, marginTop: 3 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
@@ -468,7 +470,9 @@ function WorkPlayer() {
             {/* Detail panel — album view */}
             <main className="sp-main">
               <div style={{ padding: "28px 24px 20px", display: "flex", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, ${GRADS[viewing.idx % GRADS.length][0]}, rgba(13,13,13,0) 96%)` }}>
-                <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 52, boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>{viewing.icon}</span>
+                <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), overflow: "hidden", boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>
+                  <img src={viewing.cover} alt="" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </span>
                 <div style={{ minWidth: 0 }}>
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
@@ -770,9 +774,9 @@ export default function Portfolio() {
           </FadeIn>
           <FadeIn delay={0.2}>
             <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, background: C.pink, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.pink}25` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = `0 0 70px ${C.pink}35`; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = `0 0 50px ${C.pink}25`; }}
+              style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = `0 0 70px ${C.mint}45`; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
             >Connect on LinkedIn →</a>
           </FadeIn>
           <FadeIn delay={0.3}>
