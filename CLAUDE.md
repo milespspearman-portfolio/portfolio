@@ -52,7 +52,7 @@ Rules for ALL agents: read CLAUDE.md first; locked copy stays verbatim; data fac
 ## 5. Decision log (don't undo)
 
 - IG iframe embeds KILLED (fragile) — never reintroduce; mp4s are local files by design.
-- Mint = #14E39A now (Miles overrode his own locked #5DE8C5).
+- Accent green history: #5DE8C5 → #14E39A → #0FE07C → **#1ED760 (actual Spotify green, Miles's Jul 4 call — "i would like the spotify green"; the old stay-distinct-from-Spotify rule is dead).**
 - Capabilities card links still point at IG posts — "keep link" read literally; only change if Miles asks.
 - `plays: "0"` rows display "0" — data verbatim rule.
 - One `<video>` element ever; element is playback source of truth.
