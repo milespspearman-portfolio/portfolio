@@ -593,7 +593,7 @@ function HeroCard({ reel, i }) {
     <button className="wall-card" onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       aria-label={`Play ${reel.title}`}
       style={{
-        position: "relative", height: `clamp(150px, ${vh}vh, 230px)`, aspectRatio: "1 / 1", borderRadius: 14, overflow: "hidden", flexShrink: 0,
+        position: "relative", height: `clamp(170px, ${vh}vh, 300px)`, aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", flexShrink: 0,
         border: `1px solid ${h ? `${C.mint}A6` : C.border}`, padding: 0, cursor: "pointer",
         background: "#111",
         boxShadow: h ? `0 26px 70px rgba(0,0,0,0.55), 0 0 0 1px ${C.mint}40, 0 10px 40px ${C.mint}33` : "0 16px 48px rgba(0,0,0,0.45)",
