@@ -124,7 +124,7 @@ const portfolio = [
       { title: "Adobe MAX Day 1 Vibe", sub: "@adobe · 897 likes · Oct 15, 2024", plays: "183.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Grabbing-the-Vibe-of-Adobe-MAX-Day-1_10.15.24.mp4", postUrl: "https://www.instagram.com/p/DBKMzc2v1M5/" },
       { title: "Interactive Event Activation Coverage", sub: "@adobecreativecloud · 586 likes · Oct 17, 2024", plays: "57.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Interactive-Event-Activation-Coverage_10.17.24.mp4", postUrl: "https://www.instagram.com/p/DBOzrP1IsyY/" },
       { title: "Event Recap Reactions: Sneaks in One Emoji", sub: "@adobe · 683 likes · Oct 17, 2024", plays: "47.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Reaction-to-SNEAKS-in-One-Emoji_10.17.24.mp4", postUrl: "https://www.instagram.com/p/DBPd7jKvT9p/" },
-      { title: "Defining a Creative Video Interview Collage", sub: "@adobecreativecloud · 446 likes · Oct 18, 2024", plays: "0", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Defining-a-Creative-Video-Interview-Collage_10.18.24.mp4", postUrl: "https://www.instagram.com/p/DBSAnTctwG3/" },
+      { title: "Defining a Creative Video Interview Collage", sub: "@adobecreativecloud · 446 likes · Oct 18, 2024", plays: "41.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Defining-a-Creative-Video-Interview-Collage_10.18.24.mp4", postUrl: "https://www.instagram.com/p/DBSAnTctwG3/" },
       { title: "Photoshop Feature Demo", sub: "@photoshop · 1.1K likes · Nov 4, 2024", plays: "82.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Photoshop-Interview-Demo_11.4.24.mp4", postUrl: "https://www.instagram.com/p/DB9foJNJh8L/" },
       { title: "Premiere Pro Demo", sub: "@adobevideo · 335 likes · Nov 13, 2024", plays: "233.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Premiere-Pro-Interview-Demo_11.13.24.mp4", postUrl: "https://www.instagram.com/p/DCUlhpMAWvB/" },
       { title: "Adobe x Gatorade Collaboration @AdobeMAX", sub: "@adobe · 544 likes · Jan 8, 2025", plays: "52.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-Miami-2024/Gatorade-Activation-Partnership-Video_1.8.25.mp4", postUrl: "https://www.instagram.com/p/DElERFPtRwq/" },
@@ -199,12 +199,15 @@ const portfolio = [
   {
     event: "Evergreen Producing",
     reels: [
+      { title: "Intern Day Creative Cloud", sub: "@adobecreativecloud · 201 likes · Jul 31, 2025", plays: "28.1K", mp4: "/reels/2025/Evergreen-Producing/Intern-Day-Creative-Cloud_7.31.25.mp4", postUrl: "https://www.instagram.com/reel/DMyLF09uG1i/" },
       { title: "Dave Werner Employee Spotlight", sub: "@adobelife · 26K likes · Aug 18, 2025", plays: "1.9M", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Dave-Werner_8.18.25.mp4", postUrl: "https://www.instagram.com/p/DNgTb3hthgJ/" },
       { title: "Bowen Wang Employee Spotlight", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
       { title: "Manasa Hari Employee Spotlight", sub: "@adobelife · 6.5K likes · Aug 20, 2025", plays: "809.5K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mansa_8.20.25.mp4", postUrl: "https://www.instagram.com/p/DNlh970un2W/" },
+      { title: "Amanda Valenzuela Employee Spotlight", sub: "@adobe · 753 likes · Feb 9, 2026", plays: "171.4K", mp4: "/reels/2026/Evergreen-Producing/Amanda-Valenzuela-Employee-Spotlight_2.9.26.mp4", postUrl: "https://www.instagram.com/reel/DUjGBECDvM9/" },
+      { title: "Gizem Dal Employee Spotlight", sub: "@adobelife · 115 likes · Mar 4, 2026", plays: "5.2K", mp4: "/reels/2026/Evergreen-Producing/Gizem-Dal-Employee-Spotlight_3.4.26.mp4", postUrl: "https://www.instagram.com/reel/DVe1rvOE2ME/" },
       { title: "Russell", sub: "@adobe · 2.8K likes · May 4, 2026", plays: "143.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Russell_5.4.26.mp4", postUrl: "https://www.instagram.com/p/DX7hTuSErBK/" },
       { title: "Artist Spotlight: Aaron Gonzalez", sub: "@adobe · 268 likes · May 5, 2026", plays: "16.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Artist-Spotlight-Aaron-Gonzalez_5.5.26.mp4", postUrl: "https://www.instagram.com/p/DX9u5N4gPbd/" },
-      { title: "Em Siegel Employee Spotlight", sub: "@adobe · 337 likes · May 11, 2026", plays: "0", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Em-Siegel_5.11.26.mp4", postUrl: "https://www.instagram.com/p/DYNfjdwkYSU/" },
+      { title: "Em Siegel Employee Spotlight", sub: "@adobe · 337 likes · May 11, 2026", plays: "50.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Em-Siegel_5.11.26.mp4", postUrl: "https://www.instagram.com/p/DYNfjdwkYSU/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Brand Intelligence B2B Interview", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
@@ -419,7 +422,7 @@ const SPECIALTY_REELS = {
   ],
   // Directing expanded per Miles Jul 4: "i did on camera coaching with ken jeong,
   // and all the be you content as well too, along with the coolest job."
-  // Em Siegel held until her real play count lands (0-plays never enters a proof list).
+  // Em Siegel joined once her real count landed (50.7K via Apify, Jul 4).
   "Directing & On-Camera Coaching": [
     { t: "Mark Rober", album: "MAX ’25" },
     { t: "James Gunn", album: "MAX ’25" },
@@ -429,6 +432,9 @@ const SPECIALTY_REELS = {
     { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
     { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
     { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Gizem Dal Employee Spotlight", album: "Be You · Season 2" },
+    { t: "Amanda Valenzuela Employee Spotlight", album: "Be You · Season 2" },
+    { t: "Em Siegel Employee Spotlight", album: "Be You · Season 3" },
     { t: "Imran Idzqandar Employee Spotlight", album: "Be You · Season 3" },
     { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "Coolest Job" },
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
@@ -440,12 +446,16 @@ const SPECIALTY_REELS = {
     { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
     { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
     { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Gizem Dal Employee Spotlight", album: "Be You · Season 2" },
+    { t: "Amanda Valenzuela Employee Spotlight", album: "Be You · Season 2" },
+    { t: "Em Siegel Employee Spotlight", album: "Be You · Season 3" },
     { t: "Imran Idzqandar Employee Spotlight", album: "Be You · Season 3" },
     { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX 2025 LA" },
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "Adobe Summit 2025" },
     { t: "Coolest Job: Eric", album: "Coolest Job · Summit ’26" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job · Summit ’26" },
     { t: "San Jose Semaphore", album: "Evergreen Producing" },
+    { t: "Intern Day Creative Cloud", album: "Intern Day ’25" },
   ],
 };
 // Lens-specific row descriptions — the same reel carries a DIFFERENT line per
@@ -465,6 +475,9 @@ const REEL_DESCS = {
   "Dave Werner Employee Spotlight": "Meet Dave Werner, Senior Staff Designer in our Video and Animation team. From designs that help bring animated characters to life to performing in local theatre productions, Dave's creativity thrives both inside and outside of work.",
   "Manasa Hari Employee Spotlight": "Meet Manasa Hari, Software Development Engineer at Adobe. From building features for Adobe's Real-Time Customer Data Platform to performing as a singer and dancer, Manasa brings creativity, discipline, and stage presence into everything she does.",
   "Bowen Wang Employee Spotlight": "Meet Bowen Wang, Manager of Machine Learning at Adobe. From developing AI models that help marketers understand performance to crafting projects in his woodworking shop, Bowen thrives on creativity and problem-solving.",
+  "Gizem Dal Employee Spotlight": "Meet Gizem Dal, Graphic Software Engineer at Adobe and drummer.",
+  "Amanda Valenzuela Employee Spotlight": "Meet Amanda Valenzuela, Business Development Representative at Adobe and a multi-disciplinary artist.",
+  "Intern Day Creative Cloud": "Welcome to Adobe Intern Day! From real-world projects to exclusive perks, here's what building your future with us gets you.",
 };
 // Album blurbs — the Audrey square per album section. Miles's words or
 // gate-passed lines drafted from Workfront briefs. Renders under the album

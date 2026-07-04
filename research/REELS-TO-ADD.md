@@ -9,16 +9,16 @@ Living doc. Chrome/Google research appends finds here; reels graduate into the `
 | Season 1 | Dave Werner Employee Spotlight | ✅ (1.9M, Aug 18 2025) |
 | Season 1 | Manasa Hari Employee Spotlight | ✅ (809.5K, Aug 20 2025) |
 | Season 1 | Bowen Wang Employee Spotlight | ✅ (233.9K, Aug 19 2025) |
-| Season 2 | Gizem Dal Employee Spotlight | ✅ FOUND (reel DVe1rvOE2ME, Mar 4 2026, 5.2K plays) — awaiting Miles go to add |
-| Season 2 | Amanda Valenzuela Employee Spotlight | ✅ FOUND (reel DUjGBECDvM9, Feb 9 2026, ~350K plays) — awaiting Miles go to add |
-| Season 3 | Em Siegel Employee Spotlight (renamed in code Jul 4) | ✅ (plays pending Miles's insights, May 11 2026) |
-| Season 3 | Imran Idzqandar Employee Spotlight (renamed in code Jul 4) | ✅ ⚠️ site says 28.4K but @adobe grid tile shows ~281K — possible 10× slip, Miles verify in insights |
+| Season 2 | Gizem Dal Employee Spotlight | ✅ ADDED Jul 4 (5.2K, audio verified) |
+| Season 2 | Amanda Valenzuela Employee Spotlight | ✅ ADDED Jul 4 (171.4K real per scrape; the ~350K grid read was wrong) |
+| Season 3 | Em Siegel Employee Spotlight | ✅ plays fixed: 50.7K (scrape, Jul 4) |
+| Season 3 | Imran Idzqandar Employee Spotlight (renamed in code Jul 4) | ✅ fixed to 281K (Miles confirmed Jul 4) |
 
 Other targets (Miles, Jul 4):
 
 | Target | Destination | In data? |
 |---|---|---|
-| Intern Day Creative Cloud | Producing: Talent Marketing drawer (+ its home playlist TBD) | ✅ FOUND (reel DMyLF09uG1i, @adobecreativecloud, Jul 31 2025) — awaiting Miles go to add |
+| Intern Day Creative Cloud | Producing: Talent Marketing drawer (+ its home playlist TBD) | ✅ ADDED Jul 4 (28.1K, Evergreen Producing playlist + Producing drawer) |
 | NAB ’26 hosting reels | On-Camera Hosting & Producing drawer, album NAB ’26 (Miles's layout has the album, zero reels in data) | ❌ FIND — candidate: his YouTube 199K outlier "what's going on with @AdobeVideo at #NAB2026?" (YyvrjaG2kBw, Apr 19 2026; YouTube not IG, Miles decides) |
 
 Nomenclature rule (Miles, Jul 4): employee-comms interview reels are titled "{Full Name} Employee Spotlight". Full names come from the published captions ("Meet {Name}, {role} at Adobe"), never guessed.
