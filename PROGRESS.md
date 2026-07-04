@@ -1,6 +1,15 @@
 # Portfolio Site — Progress Log
 
-## 🔄 HANDOFF POINT (Jul 4 ~03:30) — fresh session starts HERE
+## 🔄 HANDOFF POINT (Jul 4 ~03:30, updated ~04:00) — fresh session starts HERE
+
+**FIRST READS, in order: CLAUDE.md → this block → AGENT-PLAN.md → COPY-PRINCIPLES.md** (the 7-check copy gate; ALL copy work runs through it).
+
+**Copy-inputs job (Miles-ordered, before writing/applying ANY case-study lines):**
+1. Pull the most relevant claude.ai chats: LinkedIn strategy (spearmmp acct, `linkedin-strategy-chatsweep/` + its Project) and resume-work chats — use the deep-chat-archive skill/API recipe (org f63a9189, conversations API, NOT DOM). Fold LinkedIn findings into COPY-PRINCIPLES.md.
+2. Check Miles's downloaded resumes: `~/Downloads/*.pdf` resume versions (e.g. Miles_Spearman_Resume_Microsoft*.pdf) + resume-tailoring skill outputs — extract how his real resume phrases roles/metrics; site role lines + case-study lines must agree with resume claims (one voice everywhere).
+3. THEN apply approved case-study lines (research/COPY-PATTERNS-CASE-STUDY.md) through the 7 checks.
+
+**PUSH NOW WORKS from Claude's shell** (gh auth done Jul 4). Remote = live through `2edde26`. Push after every landed agent commit.
 Read CLAUDE.md + AGENT-PLAN.md too. State: opening wall (parallax + hover-spotlight `bd9678a`), gold #F5C518, page order triad→About→Adobe-intro→Work→WhatIDo, Off the Clock live. ~18 commits UNPUSHED (Miles pushes; no git creds in Claude shell).
 
 **In flight when this session ended (check their disk output/commits):**
