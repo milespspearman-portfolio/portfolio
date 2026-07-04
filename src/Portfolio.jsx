@@ -297,26 +297,32 @@ const heroReels = (() => {
   return top;
 })();
 
+// Card copy = Miles's own words (Jul 4 picks), fact-checked against the
+// portfolio array; meta lines are Navin-style (events · years), facts only.
 const capabilities = [
   {
-    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Directing",
-    body: "Event activations, brand segments, interviews, and live hosting — comfortable on camera and on a stage.",
-    linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Watch: Summit Hot Takes →",
+    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting",
+    meta: "Adobe Summit · MAX · NAB · IBC · 2024–Present",
+    body: "One-off influencer posts don't scale, so I concepted a repeatable hosted sizzle format for Adobe's flagship events. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera. Created 9 posts over a 3 day event, published between March 20 and April 2, including a Ken Jeong interview and the Acrobat Escape Room at 2.6M plays.",
+    linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: Adobe Summit 2025 →",
   },
   {
-    img: "/cards/video-production.jpg", imgPos: "50% 28%", title: "Video Production",
-    body: "Shoot, edit, and publish on mobile and DSLR. Same-day for event coverage, full prep for executive shoots.",
-    linkUrl: "https://www.instagram.com/reel/DCUlhpMAWvB/", linkLabel: "Watch: Premiere Pro Demo →",
-  },
-  {
-    img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy",
-    body: "Data-driven concepts backed by social listening and platform analytics — every video starts with a reason to exist.",
-    linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Watch: Firefly Informational →",
+    img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy, Concept to Script",
+    meta: "IBC · NAB · Summit · 2024–2025",
+    body: "“Make the Firefly Video product release fun” was my brief. So as a creative producer on this piece, I built content strategy with PMMs, PR, and editorial, then wrote the scripts myself. The proof is a format: emoji reactions, 1.5M at IBC 2024, repeated at NAB and Summit.",
+    linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Play: IBC 2024 →",
   },
   {
     img: "/cards/directing-coaching.jpg", imgPos: "50% 32%", title: "Directing & On-Camera Coaching",
-    body: "I make people who aren't natural on camera look great — writing talking tracks, asking questions multiple ways, pulling the right sound bites whether it's an exec or a professional athlete.",
-    linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Watch: Sneaks Interview →",
+    meta: "Adobe MAX · Summit · 2025–2026",
+    body: "At MAX 2025 in LA I coached James Gunn, Mark Rober, and Kelley O'Hara on camera. That meant coordinating with strategy and our Adobe Brand studio team to craft talking tracks: I wrote the words, got them approved, then made sure we delivered them in our 10 minute time slot. The Rober reel sits at 2.2M plays.",
+    linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Play: MAX 2025 LA →",
+  },
+  {
+    img: "/cards/video-production.jpg", imgPos: "50% 28%", title: "Producing: Talent Marketing & Employee Comms",
+    meta: "@adobelife · 2025–2026",
+    body: "Talent marketing at Adobe means making employees the story. I produced and creatively directed the Dave interview feature in-house, and it hit 1.9M plays on @adobelife. On the San Jose Semaphore piece I handled directing and on-camera coaching.",
+    linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: Evergreen Producing →",
   },
 ];
 
@@ -332,10 +338,10 @@ const reelIndexByTitle = (title) => {
 };
 // Which portfolio reel backs each capability card, by that reel's exact title.
 const CAPABILITY_REEL_TITLE = {
-  "On-Camera Hosting & Directing": "Summit ’25: Acrobat Escape Room",     // Adobe Summit 2025 — 2.6M, the one most people know him by
-  "Video Production": "MAX London Recap",                                  // MAX London 2025
-  "Content Strategy": "Mansa Employee Comms Interview",                    // Evergreen Producing (moved from MAX LA per Miles)
-  "Directing & On-Camera Coaching": "Kelley O'Hara",                       // MAX 2025 LA
+  "On-Camera Hosting": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
+  "Content Strategy, Concept to Script": "Premiere Pro AI: Emoji Reactions",       // IBC 2024 — 1.5M, the repeatable format
+  "Directing & On-Camera Coaching": "Kelley O'Hara",                               // MAX 2025 LA
+  "Producing: Talent Marketing & Employee Comms": "Dave Employee Comms Interview", // Evergreen Producing — 1.9M
 };
 const setList = capabilities.map(c => {
   const idx = reelIndexByTitle(CAPABILITY_REEL_TITLE[c.title]);
@@ -1029,6 +1035,7 @@ function WhatIDoCards() {
                       onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
                   : <img src={c.img} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />}
               </div>
+              {c.meta && <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5 }}>{c.meta}</span>}
               <h4 style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, margin: 0 }}>{c.title}</h4>
               <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.6, margin: 0, flex: 1 }}>{c.body}</p>
               <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, marginTop: 8 }}>{c.linkLabel}</span>

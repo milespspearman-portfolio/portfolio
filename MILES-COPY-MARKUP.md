@@ -191,6 +191,8 @@ These titles are the first words of each reel's caption, cut mid-sentence by the
 > - "In-House — Talent Marketing & Employee Comms"
 > - Open question (his words): "I'm playing tug of war — i need to determine if my labels are going to be the ones for the playlists or the ones under what i do, so i can accurately describe them."
 > Card bodies below stay pending until his taxonomy call.
+>
+> **✅ RESOLVED Jul 4 (in-chat picks, all applied in code — supersedes the option rows below):** 4-card Audrey scheme shipped. Titles: On-Camera Hosting / Content Strategy, Concept to Script / Directing & On-Camera Coaching / Producing: Talent Marketing & Employee Comms. Bodies = Miles's own merged texts (fact-fixed: Escape Room alone at 2.6M, 3-day-event beat kept, 9 posts Mar 20–Apr 2). Navin-style meta lines added. Link labels = "Play: {playlist} →". Backing reels: Escape Room / IBC Emoji Reactions / Kelley O'Hara / Dave 1.9M. "Video Production" card retired (claim lives in card bodies + resume).
 
 Compressed from `research/WHAT-I-DO-COPY-PROPOSALS.md` (full reasoning lives there). Each card shows its backing reel's caption so you can judge copy against content. Recommended picks are marked ★. Titles marked (HIS) are your own words.
 
