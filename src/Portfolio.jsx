@@ -308,11 +308,6 @@ const setList = capabilities.map(c => {
 
 const skills = ["Video Production", "On-Camera Hosting", "Executive Interviews", "Event Coverage", "Short-Form Content", "TikTok Strategy", "Instagram Reels", "YouTube Shorts", "Premiere Pro", "After Effects", "Brandwatch", "Sprinklr", "Creative Briefs", "Influencer Management", "DSLR + Mobile"];
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
-const statBadges = [
-  { number: "50+", label: "videos/month", detail: "across 8 Adobe priority channels" },
-  { number: "7", label: "global events", detail: "MAX, MAX London, Summit, IBC, NAB & more" },
-  { number: "250+", label: "videos in 4 months", detail: "script to publish at Branded agency" },
-];
 
 // ===== MARQUEE =====
 function Marquee() {
@@ -982,7 +977,7 @@ export default function Portfolio() {
               maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
             }}>
-              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>About</span>
+              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>About the Artist</span>
               <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
                 I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC (3.94 GPA) — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
               </p>
@@ -995,7 +990,7 @@ export default function Portfolio() {
                   }}>{s}</span>
                 ))}
               </div>
-              <a href="/Miles-Spearman-Resume.pdf" download="Miles-Spearman-Resume.pdf"
+              <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
                 style={{
                   fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
                   display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
@@ -1004,7 +999,7 @@ export default function Portfolio() {
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >Download Resume ↓</a>
+              >View Resume →</a>
             </div>
           </FadeIn>
         </section>
@@ -1034,28 +1029,7 @@ export default function Portfolio() {
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
             >View My LinkedIn →</a>
           </FadeIn>
-          <FadeIn delay={0.45} style={{ marginTop: 56 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
-              {statBadges.map((b, i) => (
-                <div key={i} style={{
-                  background: C.glass, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-                  border: `1px solid ${C.border}`, borderRadius: 16, padding: "16px 24px",
-                  display: "inline-flex", flexDirection: "column", gap: 4,
-                  transition: "transform 0.3s, border-color 0.3s", cursor: "default",
-                  animation: `float ${3 + i * 0.5}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.3}s`,
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = C.mint; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; }}
-                >
-                  <span style={{ fontFamily: F, fontSize: 28, fontWeight: 700, color: C.mint, lineHeight: 1 }}>{b.number}</span>
-                  <span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.white, lineHeight: 1.2 }}>{b.label}</span>
-                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, lineHeight: 1.3 }}>{b.detail}</span>
-                </div>
-              ))}
-            </div>
-          </FadeIn>
-          <FadeIn delay={0.55} style={{ marginTop: 52 }}>
+          <FadeIn delay={0.45} style={{ marginTop: 52 }}>
             <HeroRow />
           </FadeIn>
         </section>
