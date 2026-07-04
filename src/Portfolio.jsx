@@ -620,9 +620,33 @@ function HeroCard({ reel, i }) {
   );
 }
 
-// Two hero rows (Miles Jul 4): square album-art tiles in twin infinite
-// marquees drifting left, different speeds for depth. Hover pauses a row so
-// the magnet/click still work. Sets are duplicated for a seamless -50% loop.
+// Fun row set (Miles Jul 4: "focus on fun emotion and happiness") — games,
+// reactions, activations, celebrations. Curated titles, indices derived.
+const FUN_ROW_TITLES = [
+  "Summit ’25: Ken Jeong Interview",
+  "Summit ’25: Acrobat Escape Room",
+  "Fonts Creator Game",
+  "Adobe MAX Day 1 Vibe",
+  "Adobe MAX 2024: In-Office MAX Trivia",
+  "Summit ’25: Escalator ‘Hot’ Takes",
+  "Over & Under AI Enterprise Activity",
+  "Adobe Summit ’25: Coca-Cola Activation",
+  "Adobe x Gatorade Collaboration @AdobeMAX",
+  "TacoBell x Upworthy Feature",
+  "’25 MAX London Arches of Inspiration",
+  "Intern Day Creative Cloud",
+  "Happy 100th Birthday Miles Davis",
+];
+const funReels = (() => {
+  const flat = [];
+  portfolio.forEach((ev, e) => ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i })));
+  return FUN_ROW_TITLES.map(t => flat.find(f => f.title === t)).filter(Boolean);
+})();
+
+// Hero marquee rows (Miles Jul 4): square album-art tiles drifting left in an
+// infinite loop. Hover pauses the row so the magnet/click still work. Sets are
+// duplicated for a seamless -50% loop. Two placements: top row (biggest plays,
+// About -> WIWON) and fun row (emotion picks, What I Do -> Selected Work).
 function HeroMarqueeRow({ reels, duration, offset }) {
   return (
     <div style={{ overflow: "hidden", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
@@ -632,15 +656,12 @@ function HeroMarqueeRow({ reels, duration, offset }) {
     </div>
   );
 }
-function HeroRow() {
+function HeroRow({ reels = heroReels, duration = 80 }) {
   const rowRef = useRef(null);
   usePlayWhenVisible(rowRef);
-  const rowA = heroReels.filter((_, i) => i % 2 === 0);
-  const rowB = heroReels.filter((_, i) => i % 2 === 1);
   return (
     <div ref={rowRef}>
-      <HeroMarqueeRow reels={rowA} duration={70} offset={0} />
-      <HeroMarqueeRow reels={rowB} duration={95} offset={1} />
+      <HeroMarqueeRow reels={reels} duration={duration} offset={0} />
     </div>
   );
 }
@@ -1538,6 +1559,13 @@ export default function Portfolio() {
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
           <WhatIDoCards />
+        </section>
+
+        {/* ===== FUN ROW — emotion picks bridging What I Do into Selected Work ===== */}
+        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
+          <FadeIn>
+            <HeroRow reels={funReels} duration={90} />
+          </FadeIn>
         </section>
 
         {/* ===== WORK — 3 visual grid buckets ===== */}
