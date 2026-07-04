@@ -70,7 +70,7 @@ const EVENT_ROLES = {
   "NAB 2025": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
   "Evergreen Producing": "Produced",
-  "Behind the Product": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
+  "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
 };
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
@@ -215,12 +215,6 @@ const portfolio = [
   },
   // ——— Personal / Off the Clock ———
   {
-    event: "Behind the Product",
-    reels: [
-      { title: "Behind the Product", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
-    ],
-  },
-  {
     event: "Miles Music Media",
     reels: [
       { title: "Happy 100th Birthday Miles Davis", sub: "@milesmusicmedia · 3.7K likes · May 25, 2026", plays: "40K", mp4: "/reels/2026/Miles-Music-Media/Happy-100th-Birthday-Miles-Davis_5.25.26.mp4", postUrl: "https://www.instagram.com/p/DYwEdpmIGwt/" },
@@ -246,15 +240,31 @@ const portfolio = [
       { title: "Confirmation Is a Beast but Hopefully", sub: "@milesmusicmedia · 301 likes · Mar 14, 2026", plays: "4K", mp4: "/reels/2026/Miles-Music-Media/Confirmation-is-a-Beast-but-Hopefully_3.14.26.mp4", postUrl: "https://www.instagram.com/p/DV2e_-DiJf7/" },
     ],
   },
+  {
+    event: "Miles.Spearman",
+    reels: [
+      { title: "Behind the Product", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
+    ],
+  },
 ];
 
-// Most recent projects first (Miles's call) — Off the Clock stays pinned last.
-const OFF_THE_CLOCK = new Set(["Behind the Product", "Miles Music Media"]);
+// Miles's three libraries — every playlist belongs to exactly one.
+const LIBRARY_OF = {
+  "MAX Miami 2024": "Events", "MAX 2025 LA": "Events", "MAX London 2025": "Events",
+  "Adobe Summit 2025": "Events", "NAB 2024": "Events", "NAB 2025": "Events",
+  "IBC 2024": "Events", "Cannes": "Events",
+  "Evergreen Producing": "Evergreen", "Employee & Always On": "Evergreen", "Upworthy": "Evergreen", "UC": "Evergreen",
+  "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
+};
+const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
+
+// Library order first, most recent projects first within each (Miles's call).
+// Off The Clock keeps his authored order: Miles Music Media, then Miles.Spearman.
 const reelDate = (r) => Date.parse(r.sub.split(" · ").pop()) || 0;
 portfolio.sort((a, b) => {
-  const ao = OFF_THE_CLOCK.has(a.event), bo = OFF_THE_CLOCK.has(b.event);
-  if (ao !== bo) return ao ? 1 : -1;
-  if (ao && bo) return 0; // keep authored Off the Clock order
+  const la = LIB_ORDER.indexOf(LIBRARY_OF[a.event]), lb = LIB_ORDER.indexOf(LIBRARY_OF[b.event]);
+  if (la !== lb) return la - lb;
+  if (LIBRARY_OF[a.event] === "Off The Clock") return 0; // authored order
   return Math.max(...b.reels.map(reelDate)) - Math.max(...a.reels.map(reelDate));
 });
 
@@ -744,9 +754,9 @@ function WorkPlayer() {
               <div className="sp-side-list">
                 {eventStats.map(ev => (
                   <Fragment key={ev.event}>
-                    {ev.event === "Behind the Product" && (
+                    {(ev.idx === 0 || LIBRARY_OF[eventStats[ev.idx - 1].event] !== LIBRARY_OF[ev.event]) && (
                       <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
-                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>Off the Clock</span>
+                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{LIBRARY_OF[ev.event]}</span>
                         <span style={{ flex: 1, height: 1, background: C.border }} />
                       </div>
                     )}
@@ -953,17 +963,17 @@ function ShelfCard({ ev }) {
   );
 }
 
-function PlaylistShelf() {
+function ShelfRow({ title, items }) {
   const rowRef = useRef(null);
   const scroll = (d) => rowRef.current && rowRef.current.scrollBy({ left: d * 600, behavior: "smooth" });
   return (
-    <section style={{ padding: "36px 0 24px clamp(24px, 5vw, 80px)" }}>
+    <div style={{ marginBottom: 34 }}>
       <FadeIn>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "clamp(24px, 5vw, 80px)", marginBottom: 18 }}>
-          <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3 }}>Your Library</span>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "clamp(24px, 5vw, 80px)", marginBottom: 16 }}>
+          <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3 }}>{title}</span>
           <div style={{ display: "flex", gap: 8 }}>
             {[["‹", -1], ["›", 1]].map(([glyph, d]) => (
-              <button key={glyph} onClick={() => scroll(d)} aria-label={d < 0 ? "Scroll playlists left" : "Scroll playlists right"}
+              <button key={glyph} onClick={() => scroll(d)} aria-label={`Scroll ${title} ${d < 0 ? "left" : "right"}`}
                 style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.04)", color: C.white, fontFamily: F, fontSize: 18, cursor: "pointer", lineHeight: 1, transition: "background 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
                 onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
@@ -972,22 +982,21 @@ function PlaylistShelf() {
           </div>
         </div>
       </FadeIn>
-      <FadeIn delay={0.1}>
+      <FadeIn delay={0.08}>
         <div ref={rowRef} className="shelf-row" style={{ display: "flex", gap: 16, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 8, paddingRight: "clamp(24px, 5vw, 80px)" }}>
-          {eventStats.map(ev => (
-            <Fragment key={ev.event}>
-              {ev.event === "Behind the Product" && (
-                <div style={{ alignSelf: "stretch", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: "0 6px", flexShrink: 0 }}>
-                  <span style={{ width: 1, flex: 1, background: C.border }} />
-                  <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, writingMode: "vertical-rl" }}>Off the Clock</span>
-                  <span style={{ width: 1, flex: 1, background: C.border }} />
-                </div>
-              )}
-              <ShelfCard ev={ev} />
-            </Fragment>
-          ))}
+          {items.map(ev => <ShelfCard key={ev.event} ev={ev} />)}
         </div>
       </FadeIn>
+    </div>
+  );
+}
+
+function PlaylistShelf() {
+  return (
+    <section style={{ padding: "36px 0 12px clamp(24px, 5vw, 80px)" }}>
+      {LIB_ORDER.map(lib => (
+        <ShelfRow key={lib} title={`${lib} Library`} items={eventStats.filter(ev => LIBRARY_OF[ev.event] === lib)} />
+      ))}
     </section>
   );
 }
