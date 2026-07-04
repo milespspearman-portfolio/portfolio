@@ -2,6 +2,10 @@
 
 Living doc. Chrome/Google research appends finds here; reels graduate into the `portfolio` array (with mp4 download + thumb) when Miles says go. Started Jul 4, 2026 from his Be You season mapping.
 
+## 🔴 ACTIVE MANDATE (Miles, Jul 4 — the Workfront unlock)
+**1. Populate found links NOW:** Laura Garcia mural (545K, DRQpeMIjeCw, Producer-role per Workfront "Building Murals SJ & SF") is FOUND + confirmed — add it (title e.g. "Laura Garcia Mural Spotlight", In-House Production playlist). Awaiting only Miles's playlist/title call.
+**2. Hunt the missing brands:** Workfront surfaced 10+ shipped brand-name video projects NOT on the site (NFL, NWSL, GSW, Parsons, Adobe Voices Exec, Photoshop Archives, Marvel Wakanda, Video CPro, Iliza backstage). Full ranked list + search hints + Miles's open questions = `research/MISSING-VIDEOS.md`. The site is at 84; his true output is 100+. **Claude should be actively driving this hunt, not waiting.** Ask Miles the MISSING-VIDEOS §"open questions" (which are on-camera video, which handle, which are public), then Chrome-hunt → one Apify batch → folder + thumb + Notion per [[apify-reel-download-rule]].
+
 ## Miles's Be You season map (his words, Jul 4 — playlist regroup happens after Workfront ingest)
 
 | Season | Reel | In data? |
