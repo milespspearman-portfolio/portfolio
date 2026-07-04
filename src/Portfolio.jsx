@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Fragment } from "react";
+import { useState, useEffect, useRef, Fragment, memo } from "react";
 
 const C = {
   bg: "#0A0A0A", mint: "#0FE07C", pink: "#FF6B9D",
@@ -648,8 +648,11 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
   );
 }
 
-function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute }) {
+function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute, rest }) {
   const pct = dur ? (prog / dur) * 100 : 0;
+  // `rest` (an eventStats entry) = resting state for the always-visible shell
+  // bar: before any track it shows the first playlist + an armed play button.
+  const canPlay = !!cur || !!rest;
   return (
     <div className="sp-bar" style={{ borderTop: `1px solid ${C.border}`, background: "rgba(10,10,10,0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", padding: "10px 16px", display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", alignItems: "center", gap: 12 }}>
       {/* Left: track + "artist" */}
@@ -662,6 +665,16 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
               <p style={{ fontFamily: F, fontSize: 11.5, color: C.gray, margin: "2px 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{eventName}</p>
             </div>
           </>
+        ) : rest ? (
+          <>
+            <span style={{ width: 48, height: 48, borderRadius: 8, flexShrink: 0, background: gradFor(rest.idx), overflow: "hidden" }}>
+              <img src={rest.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
+            </span>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontFamily: F, fontSize: 13.5, fontWeight: 600, color: C.white, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{rest.event}</p>
+              <p style={{ fontFamily: F, fontSize: 11.5, color: C.gray, margin: "2px 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Press play — {TOTAL_REELS} reels in the library</p>
+            </div>
+          </>
         ) : (
           <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Pick a reel — {TOTAL_REELS} in the library</p>
         )}
@@ -670,9 +683,9 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <button onClick={() => onStep(-1)} disabled={!cur} aria-label="Previous reel" style={{ background: "none", border: "none", cursor: cur ? "pointer" : "default", opacity: cur ? 0.85 : 0.3, padding: 4 }}><IcPrev /></button>
-          <button onClick={onToggle} disabled={!cur} aria-label={playing ? "Pause" : "Play"}
-            style={{ width: 36, height: 36, borderRadius: "50%", background: cur ? C.mint : "rgba(255,255,255,0.15)", border: "none", cursor: cur ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s" }}
-            onMouseEnter={e => { if (cur) e.currentTarget.style.transform = "scale(1.08)"; }}
+          <button onClick={onToggle} disabled={!canPlay} aria-label={playing ? "Pause" : "Play"}
+            style={{ width: 36, height: 36, borderRadius: "50%", background: canPlay ? C.mint : "rgba(255,255,255,0.15)", border: "none", cursor: canPlay ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s" }}
+            onMouseEnter={e => { if (canPlay) e.currentTarget.style.transform = "scale(1.08)"; }}
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
             {playing ? <IcPause s={13} /> : <IcPlay s={13} />}
           </button>
@@ -702,7 +715,11 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
   );
 }
 
-function WorkPlayer() {
+// All player state lives in this hook (lifted out of WorkPlayer) so the app
+// shell can mount the transport bar at the frame bottom while the single
+// <video> element stays inside the Work section. One <video> ever — the
+// element remains the playback source of truth.
+function useWorkPlayerState() {
   const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.event === "MAX 2025 LA")));
   const [track, setTrack] = useState(null); // { e, r } indices into portfolio
   const [playing, setPlaying] = useState(false);
@@ -711,10 +728,8 @@ function WorkPlayer() {
   const [muted, setMuted] = useState(false);
   const [vidErr, setVidErr] = useState(false);
   const vidRef = useRef(null);
-  const shellRef = useRef(null);
 
   const cur = track ? portfolio[track.e].reels[track.r] : null;
-  const viewing = eventStats[libIdx];
 
   const playTrack = (e, r) => { setVidErr(false); setProg(0); setDur(0); setTrack({ e, r }); };
 
@@ -734,10 +749,45 @@ function WorkPlayer() {
     if (p && p.catch) p.catch(() => {});
   }, [track]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const toggle = () => { const v = vidRef.current; if (!v || !cur) return; if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); };
+  const toggle = () => {
+    if (!track) { setLibIdx(0); playTrack(0, 0); return; } // resting shell bar: play arms the first playlist
+    const v = vidRef.current; if (!v) return;
+    if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause();
+  };
   const step = (d) => { if (!track) return; const list = portfolio[track.e].reels; const n = track.r + d; if (n >= 0 && n < list.length) playTrack(track.e, n); };
   const seek = (ev) => { const v = vidRef.current; if (!v || !dur) return; const rect = ev.currentTarget.getBoundingClientRect(); v.currentTime = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width)) * dur; };
-  const openEvent = (i) => { setLibIdx(i); if (shellRef.current) shellRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); };
+
+  return { libIdx, setLibIdx, track, playing, setPlaying, prog, setProg, dur, setDur, muted, setMuted, vidErr, setVidErr, vidRef, cur, playTrack, toggle, step, seek };
+}
+
+// Grouped "Your Library" rows (Events / Evergreen / Off The Clock headers +
+// SideRow per playlist). Shared by WorkPlayer's internal sidebar and the app
+// shell's left sidebar — `items` may be a filtered subset of eventStats.
+function LibraryList({ items, activeIdx, playingIdx, onRow }) {
+  return (
+    <div className="sp-side-list">
+      {items.map((ev, i) => (
+        <Fragment key={ev.event}>
+          {(i === 0 || LIBRARY_OF[items[i - 1].event] !== LIBRARY_OF[ev.event]) && (
+            <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
+              <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{LIBRARY_OF[ev.event]}</span>
+              <span style={{ flex: 1, height: 1, background: C.border }} />
+            </div>
+          )}
+          <SideRow ev={ev} active={ev.idx === activeIdx} isSourceOfAudio={ev.idx === playingIdx} onClick={() => onRow(ev)} />
+        </Fragment>
+      ))}
+    </div>
+  );
+}
+
+// `player` = useWorkPlayerState() lifted by the page. `inShell` drops the
+// internal sidebar + bottom bar (the app shell promotes both to the frame).
+function WorkPlayer({ player, inShell }) {
+  const { libIdx, setLibIdx, track, playing, setPlaying, setProg, setDur, muted, setMuted, vidErr, setVidErr, vidRef, cur, playTrack, toggle, step, seek, prog, dur } = player;
+  const shellRef = useRef(null);
+
+  const viewing = eventStats[libIdx];
 
   return (
     <>
@@ -745,26 +795,16 @@ function WorkPlayer() {
       <FadeIn>
         <div ref={shellRef} className="sp-shell" style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden", background: "#0D0D0D", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
           <div className="sp-body">
-            {/* Sidebar — Your Library */}
-            <aside className="sp-side">
-              <div style={{ padding: "16px 16px 10px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                <span style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white }}>Your Library</span>
-                <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays</span>
-              </div>
-              <div className="sp-side-list">
-                {eventStats.map(ev => (
-                  <Fragment key={ev.event}>
-                    {(ev.idx === 0 || LIBRARY_OF[eventStats[ev.idx - 1].event] !== LIBRARY_OF[ev.event]) && (
-                      <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
-                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{LIBRARY_OF[ev.event]}</span>
-                        <span style={{ flex: 1, height: 1, background: C.border }} />
-                      </div>
-                    )}
-                    <SideRow ev={ev} active={ev.idx === libIdx} isSourceOfAudio={!!track && track.e === ev.idx && playing} onClick={() => setLibIdx(ev.idx)} />
-                  </Fragment>
-                ))}
-              </div>
-            </aside>
+            {/* Sidebar — Your Library (the app shell promotes this to the frame) */}
+            {!inShell && (
+              <aside className="sp-side">
+                <div style={{ padding: "16px 16px 10px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                  <span style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white }}>Your Library</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays</span>
+                </div>
+                <LibraryList items={eventStats} activeIdx={libIdx} playingIdx={track && playing ? track.e : -1} onRow={ev => setLibIdx(ev.idx)} />
+              </aside>
+            )}
 
             {/* Detail panel — album view */}
             <main className="sp-main">
@@ -840,12 +880,14 @@ function WorkPlayer() {
             )}
           </div>
 
-          <PlayerBar
-            cur={cur}
-            eventName={cur ? `${cur.sub.split(" · ")[0]} · ${portfolio[track.e].event}` : ""}
-            playing={playing} prog={prog} dur={dur} muted={muted}
-            onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
-          />
+          {!inShell && (
+            <PlayerBar
+              cur={cur}
+              eventName={cur ? `${cur.sub.split(" · ")[0]} · ${portfolio[track.e].event}` : ""}
+              playing={playing} prog={prog} dur={dur} muted={muted}
+              onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
+            />
+          )}
         </div>
       </FadeIn>
     </>
@@ -1077,8 +1119,208 @@ function Nav() {
   );
 }
 
+// ===== PAGE SECTIONS =====
+// Extracted so the classic page (<901px) and the Spotify app shell (≥901px)
+// compose the SAME components — locked copy lives in exactly one place.
+// memo(): player state (prog ticks ~4×/s) lives at the page root now, so
+// prop-less sections bail out of those re-renders entirely.
+
+const Grain = memo(function Grain() {
+  return (
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 9999, opacity: 0.035,
+      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+    }} />
+  );
+});
+
+const WorkingOnNow = memo(function WorkingOnNow() {
+  return (
+    <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
+      <FadeIn>
+        <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
+          <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
+          <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
+            At Adobe, I lead creator and community social for the Brand team. Right now that means running the influencer-hosted sizzle format I built for Adobe MAX and Summit, and owning Creator Camp end to end, giving product marketing a direct window into how real pros use Adobe's tools.
+          </p>
+          <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
+        </div>
+      </FadeIn>
+    </section>
+  );
+});
+
+const AdobeIntro = memo(function AdobeIntro() {
+  return (
+    <section style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "100px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
+      <div style={{ position: "absolute", top: "12%", right: "5%", width: 500, height: 500, background: `radial-gradient(circle, ${C.mint}06, transparent 70%)`, pointerEvents: "none" }} />
+      <FadeIn>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 20, display: "block" }}>
+          Content Creator & Social Producer
+        </span>
+      </FadeIn>
+      <FadeIn delay={0.1}>
+        <h2 style={{ fontFamily: F, fontSize: "clamp(36px, 5.5vw, 72px)", fontWeight: 800, color: C.white, lineHeight: 1.05, margin: "0 0 24px 0", maxWidth: 820, letterSpacing: -1.5 }}>
+          The creative behind Adobe's social — from strategy to feed.
+        </h2>
+      </FadeIn>
+      <FadeIn delay={0.2}>
+        <p style={{ fontFamily: F, fontSize: "clamp(16px, 1.8vw, 20px)", color: C.gray, lineHeight: 1.6, margin: "0 0 40px 0", maxWidth: 600 }}>
+          Social Producer & Creator at Adobe Brand. I build short-form content systems that turn cultural moments into measurable growth.
+        </p>
+      </FadeIn>
+      <FadeIn delay={0.3}>
+        <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+          style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
+          onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
+          onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
+        >View My LinkedIn →</a>
+      </FadeIn>
+      <FadeIn delay={0.45} style={{ marginTop: 52 }}>
+        <HeroRow />
+      </FadeIn>
+    </section>
+  );
+});
+
+function WorkSection({ player, inShell }) {
+  return (
+    <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
+      <FadeIn>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
+        <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
+        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
+      </FadeIn>
+
+      <WorkPlayer player={player} inShell={inShell} />
+
+      <div style={{ marginTop: 64 }}><Marquee /></div>
+    </section>
+  );
+}
+
+const AboutSection = memo(function AboutSection() {
+  return (
+    <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
+      <FadeIn>
+        <div style={{
+          maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+          border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
+        }}>
+          <h2 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
+            About the <SwipeWord /><span style={{ color: C.mint }}>.</span>
+          </h2>
+          <PlaysCounter />
+          <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
+            I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
+          </p>
+          <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
+            style={{
+              fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
+              display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
+              border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
+              transition: "background 0.2s",
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          >View Resume →</a>
+        </div>
+      </FadeIn>
+    </section>
+  );
+});
+
+const ServicesSection = memo(function ServicesSection() {
+  return (
+    <section id="services" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
+      <FadeIn>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Services</span>
+        <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
+      </FadeIn>
+      <WhatIDoCards />
+    </section>
+  );
+});
+
+const CTASection = memo(function CTASection() {
+  return (
+    <section id="connect" style={{ padding: "100px clamp(24px, 5vw, 80px)", textAlign: "center", position: "relative" }}>
+      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 500, height: 500, background: `radial-gradient(circle, ${C.pink}08, transparent 70%)`, pointerEvents: "none" }} />
+      <FadeIn>
+        <h2 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 16px 0", letterSpacing: -0.5 }}>Let's make something.</h2>
+      </FadeIn>
+      <FadeIn delay={0.1}>
+        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 auto 40px", maxWidth: 500 }}>
+          Currently open to new opportunities in social production, content creation, and executive communications.
+        </p>
+      </FadeIn>
+      <FadeIn delay={0.2}>
+        <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+          style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
+          onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
+          onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
+        >Connect on LinkedIn →</a>
+      </FadeIn>
+      <FadeIn delay={0.3}>
+        <p style={{ fontFamily: F, fontSize: 13, margin: "28px 0 0" }}>
+          <a href="https://www.instagram.com/milesmusicmedia" target="_blank" rel="noopener noreferrer"
+            style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+            onMouseEnter={e => e.target.style.color = C.mint}
+            onMouseLeave={e => e.target.style.color = C.gray}
+          >Off the clock: 🎷 @milesmusicmedia — my jazz content, 10K+ views per reel ↗</a>
+        </p>
+      </FadeIn>
+    </section>
+  );
+});
+
+const SiteFooter = memo(function SiteFooter() {
+  return (
+    <footer style={{ padding: "32px clamp(24px, 5vw, 80px)", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
+      <span style={{ fontFamily: F, fontSize: 12, color: C.gray }}>© 2026 Miles Spearman</span>
+    </footer>
+  );
+});
+
+// ===== CLASSIC PAGE — the existing layout, unchanged (serves <901px) =====
+function ClassicPage({ player }) {
+  return (
+    <div style={{ background: C.bg, minHeight: "100vh", color: C.white }}>
+      <Grain />
+      <Nav />
+
+      {/* ===== OPENING WALL ===== */}
+      <OpeningWall />
+
+      {/* ===== WHAT I'M WORKING ON NOW ===== */}
+      <WorkingOnNow />
+
+      {/* ===== PLAYLIST SHELF ===== */}
+      <PlaylistShelf />
+
+      {/* ===== ADOBE CHAPTER INTRO (formerly the landing hero) ===== */}
+      <AdobeIntro />
+
+      {/* ===== WORK ===== */}
+      <WorkSection player={player} />
+
+      {/* ===== ABOUT ===== */}
+      <AboutSection />
+
+      {/* ===== WHAT I DO — clickable cards ===== */}
+      <ServicesSection />
+
+      {/* ===== CTA ===== */}
+      <CTASection />
+
+      {/* ===== FOOTER ===== */}
+      <SiteFooter />
+    </div>
+  );
+}
+
 // ===== MAIN =====
 export default function Portfolio() {
+  const player = useWorkPlayerState();
   return (
     <>
       <style>{`
@@ -1122,147 +1364,7 @@ export default function Portfolio() {
         a:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
       `}</style>
 
-      <div style={{ background: C.bg, minHeight: "100vh", color: C.white }}>
-        {/* Film grain */}
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 9999, opacity: 0.035,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }} />
-
-        <Nav />
-
-        {/* ===== OPENING WALL ===== */}
-        <OpeningWall />
-
-        {/* ===== WHAT I'M WORKING ON NOW ===== */}
-        <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
-          <FadeIn>
-            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
-              <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
-              <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
-                At Adobe, I lead creator and community social for the Brand team. Right now that means running the influencer-hosted sizzle format I built for Adobe MAX and Summit, and owning Creator Camp end to end, giving product marketing a direct window into how real pros use Adobe's tools.
-              </p>
-              <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
-            </div>
-          </FadeIn>
-        </section>
-
-        {/* ===== PLAYLIST SHELF ===== */}
-        <PlaylistShelf />
-
-        {/* ===== ADOBE CHAPTER INTRO (formerly the landing hero) ===== */}
-        <section style={{ display: "flex", flexDirection: "column", justifyContent: "center", padding: "100px clamp(24px, 5vw, 80px) 60px", position: "relative" }}>
-          <div style={{ position: "absolute", top: "12%", right: "5%", width: 500, height: 500, background: `radial-gradient(circle, ${C.mint}06, transparent 70%)`, pointerEvents: "none" }} />
-          <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 20, display: "block" }}>
-              Content Creator & Social Producer
-            </span>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(36px, 5.5vw, 72px)", fontWeight: 800, color: C.white, lineHeight: 1.05, margin: "0 0 24px 0", maxWidth: 820, letterSpacing: -1.5 }}>
-              The creative behind Adobe's social — from strategy to feed.
-            </h2>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <p style={{ fontFamily: F, fontSize: "clamp(16px, 1.8vw, 20px)", color: C.gray, lineHeight: 1.6, margin: "0 0 40px 0", maxWidth: 600 }}>
-              Social Producer & Creator at Adobe Brand. I build short-form content systems that turn cultural moments into measurable growth.
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.3}>
-            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
-            >View My LinkedIn →</a>
-          </FadeIn>
-          <FadeIn delay={0.45} style={{ marginTop: 52 }}>
-            <HeroRow />
-          </FadeIn>
-        </section>
-
-        {/* ===== WORK — 3 visual grid buckets ===== */}
-        <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
-          <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
-            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
-          </FadeIn>
-
-          <WorkPlayer />
-
-          <div style={{ marginTop: 64 }}><Marquee /></div>
-        </section>
-
-        {/* ===== ABOUT ===== */}
-        <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
-          <FadeIn>
-            <div style={{
-              maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-              border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
-            }}>
-              <h2 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
-                About the <SwipeWord /><span style={{ color: C.mint }}>.</span>
-              </h2>
-              <PlaysCounter />
-              <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
-                I'm a social producer and content creator at Adobe Brand in San Francisco — I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC — the music background shows up in how I think about rhythm, pacing, and storytelling. And yes, you will see me out in the city performing around San Francisco.
-              </p>
-              <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
-                style={{
-                  fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
-                  display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
-                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
-                  transition: "background 0.2s",
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-              >View Resume →</a>
-            </div>
-          </FadeIn>
-        </section>
-
-        {/* ===== WHAT I DO — clickable cards ===== */}
-        <section id="services" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
-          <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Services</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
-          </FadeIn>
-          <WhatIDoCards />
-        </section>
-
-        {/* ===== CTA ===== */}
-        <section style={{ padding: "100px clamp(24px, 5vw, 80px)", textAlign: "center", position: "relative" }}>
-          <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 500, height: 500, background: `radial-gradient(circle, ${C.pink}08, transparent 70%)`, pointerEvents: "none" }} />
-          <FadeIn>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 16px 0", letterSpacing: -0.5 }}>Let's make something.</h2>
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 auto 40px", maxWidth: 500 }}>
-              Currently open to new opportunities in social production, content creation, and executive communications.
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.2}>
-            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
-            >Connect on LinkedIn →</a>
-          </FadeIn>
-          <FadeIn delay={0.3}>
-            <p style={{ fontFamily: F, fontSize: 13, margin: "28px 0 0" }}>
-              <a href="https://www.instagram.com/milesmusicmedia" target="_blank" rel="noopener noreferrer"
-                style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
-                onMouseEnter={e => e.target.style.color = C.mint}
-                onMouseLeave={e => e.target.style.color = C.gray}
-              >Off the clock: 🎷 @milesmusicmedia — my jazz content, 10K+ views per reel ↗</a>
-            </p>
-          </FadeIn>
-        </section>
-
-        {/* ===== FOOTER ===== */}
-        <footer style={{ padding: "32px clamp(24px, 5vw, 80px)", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
-          <span style={{ fontFamily: F, fontSize: 12, color: C.gray }}>© 2026 Miles Spearman</span>
-        </footer>
-      </div>
+      <ClassicPage player={player} />
     </>
   );
 }
