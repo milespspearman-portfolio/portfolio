@@ -38,6 +38,21 @@ function usePlayWhenVisible(ref, threshold = 0.05) {
   }, [ref, threshold]);
 }
 
+// Layout fork: ≥901px renders the full-viewport Spotify app shell, ≤900px
+// keeps the classic page flow (901 so the CSS max-width:900 mobile rules and
+// the shell never overlap at exactly 900px).
+function useMediaQuery(q) {
+  const [m, setM] = useState(() => window.matchMedia(q).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(q);
+    const h = (e) => setM(e.matches);
+    mq.addEventListener("change", h);
+    setM(mq.matches);
+    return () => mq.removeEventListener("change", h);
+  }, [q]);
+  return m;
+}
+
 function FadeIn({ children, delay = 0, style = {} }) {
   const [ref, v] = useInView();
   return <div ref={ref} style={{ opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`, ...style }}>{children}</div>;
@@ -484,7 +499,9 @@ const depthFor = (i) => 0.55 + ((i * 37) % 100) / 100; // 0.55 .. 1.55, pseudo-r
 // THE HEADLINE ACT — cursor-driven parallax on the wall (transform-only,
 // requestAnimationFrame-throttled, no layout thrash) + per-card magnet in HeroCard.
 // Touch / no-hover pointers skip the pointer effects entirely.
-function OpeningWall() {
+// `compact` (app shell): ~70vh inside the main pane so the full-height opener
+// doesn't fight the shell chrome — Miles's signature opener, kept as Home.
+function OpeningWall({ compact }) {
   const wrapRef = useRef(null);
   const collageRef = useRef(null);
   const cardRefs = useRef([]);
@@ -546,7 +563,7 @@ function OpeningWall() {
   }, []);
 
   return (
-    <section ref={wrapRef} style={{ position: "relative", minHeight: "100svh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <section ref={wrapRef} style={{ position: "relative", minHeight: compact ? "70vh" : "100svh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {/* video collage backdrop */}
       <div ref={collageRef} style={{ position: "absolute", inset: "-6% -5%", display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center", justifyContent: "center", alignContent: "center", transform: "rotate(-3deg)" }}>
         {heroReels.map((reel, i) => (
@@ -648,7 +665,25 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
   );
 }
 
-function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute, rest }) {
+function PlayerBar({ cur, eventName, playing, muted, onToggle, onStep, onMute, vidRef, rest }) {
+  // Progress/duration live HERE, subscribed straight to the <video> element —
+  // timeupdate ticks ~4×/s and must re-render only this bar, never the page
+  // tree above it (that jank cancels in-flight smooth scrolls in the shell).
+  const [prog, setProg] = useState(0);
+  const [dur, setDur] = useState(0);
+  useEffect(() => {
+    const v = vidRef ? vidRef.current : null;
+    setProg(v && cur ? v.currentTime || 0 : 0);
+    setDur(v && cur ? v.duration || 0 : 0);
+    if (!v || !cur) return;
+    const t = () => setProg(v.currentTime || 0);
+    const d = () => setDur(v.duration || 0);
+    v.addEventListener("timeupdate", t);
+    v.addEventListener("loadedmetadata", d);
+    v.addEventListener("durationchange", d);
+    return () => { v.removeEventListener("timeupdate", t); v.removeEventListener("loadedmetadata", d); v.removeEventListener("durationchange", d); };
+  }, [cur, vidRef]);
+  const onSeek = (ev) => { const v = vidRef ? vidRef.current : null; if (!v || !dur) return; const rect = ev.currentTarget.getBoundingClientRect(); v.currentTime = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width)) * dur; };
   const pct = dur ? (prog / dur) * 100 : 0;
   // `rest` (an eventStats entry) = resting state for the always-visible shell
   // bar: before any track it shows the first playlist + an armed play button.
@@ -723,19 +758,17 @@ function useWorkPlayerState() {
   const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.event === "MAX 2025 LA")));
   const [track, setTrack] = useState(null); // { e, r } indices into portfolio
   const [playing, setPlaying] = useState(false);
-  const [prog, setProg] = useState(0);
-  const [dur, setDur] = useState(0);
   const [muted, setMuted] = useState(false);
   const [vidErr, setVidErr] = useState(false);
   const vidRef = useRef(null);
 
   const cur = track ? portfolio[track.e].reels[track.r] : null;
 
-  const playTrack = (e, r) => { setVidErr(false); setProg(0); setDur(0); setTrack({ e, r }); };
+  const playTrack = (e, r) => { setVidErr(false); setTrack({ e, r }); };
 
   // Hero carousel / capability cards dispatch ms-play to deep-link into the library
   useEffect(() => {
-    const h = (ev) => { setLibIdx(ev.detail.e); setVidErr(false); setProg(0); setDur(0); setTrack({ e: ev.detail.e, r: ev.detail.r }); };
+    const h = (ev) => { setLibIdx(ev.detail.e); setVidErr(false); setTrack({ e: ev.detail.e, r: ev.detail.r }); };
     window.addEventListener("ms-play", h);
     return () => window.removeEventListener("ms-play", h);
   }, []);
@@ -755,9 +788,8 @@ function useWorkPlayerState() {
     if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause();
   };
   const step = (d) => { if (!track) return; const list = portfolio[track.e].reels; const n = track.r + d; if (n >= 0 && n < list.length) playTrack(track.e, n); };
-  const seek = (ev) => { const v = vidRef.current; if (!v || !dur) return; const rect = ev.currentTarget.getBoundingClientRect(); v.currentTime = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width)) * dur; };
 
-  return { libIdx, setLibIdx, track, playing, setPlaying, prog, setProg, dur, setDur, muted, setMuted, vidErr, setVidErr, vidRef, cur, playTrack, toggle, step, seek };
+  return { libIdx, setLibIdx, track, playing, setPlaying, muted, setMuted, vidErr, setVidErr, vidRef, cur, playTrack, toggle, step };
 }
 
 // Grouped "Your Library" rows (Events / Evergreen / Off The Clock headers +
@@ -784,7 +816,7 @@ function LibraryList({ items, activeIdx, playingIdx, onRow }) {
 // `player` = useWorkPlayerState() lifted by the page. `inShell` drops the
 // internal sidebar + bottom bar (the app shell promotes both to the frame).
 function WorkPlayer({ player, inShell }) {
-  const { libIdx, setLibIdx, track, playing, setPlaying, setProg, setDur, muted, setMuted, vidErr, setVidErr, vidRef, cur, playTrack, toggle, step, seek, prog, dur } = player;
+  const { libIdx, setLibIdx, track, playing, setPlaying, muted, setMuted, vidErr, setVidErr, vidRef, cur, playTrack, toggle, step } = player;
   const shellRef = useRef(null);
 
   const viewing = eventStats[libIdx];
@@ -859,8 +891,6 @@ function WorkPlayer({ player, inShell }) {
                     onClick={toggle}
                     onPlay={() => setPlaying(true)}
                     onPause={() => setPlaying(false)}
-                    onTimeUpdate={e => setProg(e.target.currentTime)}
-                    onLoadedMetadata={e => setDur(e.target.duration)}
                     onEnded={() => step(1)}
                     onError={() => { setVidErr(true); setPlaying(false); }}
                     style={{ width: "100%", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", cursor: "pointer", display: "block" }}
@@ -884,8 +914,8 @@ function WorkPlayer({ player, inShell }) {
             <PlayerBar
               cur={cur}
               eventName={cur ? `${cur.sub.split(" · ")[0]} · ${portfolio[track.e].event}` : ""}
-              playing={playing} prog={prog} dur={dur} muted={muted}
-              onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
+              playing={playing} muted={muted} vidRef={vidRef}
+              onToggle={toggle} onStep={step} onMute={() => setMuted(m => !m)}
             />
           )}
         </div>
@@ -1318,8 +1348,182 @@ function ClassicPage({ player }) {
   );
 }
 
+// ===== RECOGNITION (app shell) — Navin-style left-border card, one item =====
+const RecognitionSection = memo(function RecognitionSection() {
+  return (
+    <section id="recognition" style={{ padding: "40px clamp(24px, 5vw, 80px) 8px" }}>
+      <FadeIn>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 16, display: "block" }}>Recognition</span>
+        <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "22px 30px" }}>
+          <h3 style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, margin: "0 0 6px" }}>Be Genuine CMO Global Marketing Award Q4 2025</h3>
+          <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: 0 }}>Adobe · Q4 2025</p>
+        </div>
+      </FadeIn>
+    </section>
+  );
+});
+
+// ===== SPOTIFY APP SHELL (desktop ≥901px) =====
+// Full-viewport app frame: fixed left sidebar (nav + Your Library) + one
+// scrollable main pane + the persistent transport bar at the frame bottom.
+// Same palette, same data, same locked copy — only the chrome is new.
+
+const IcHome = ({ s = 19, c = "currentColor" }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5" /><path d="M5.5 9.7V20a1 1 0 001 1h11a1 1 0 001-1V9.7" /></svg>
+);
+const IcGridWork = ({ s = 19, c = "currentColor" }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.4" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.4" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.4" /><path d="M15.5 15.5l4 2.5-4 2.5z" fill={c} stroke="none" /></svg>
+);
+const IcUser = ({ s = 19, c = "currentColor" }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6" /><path d="M4.8 20.2c1.6-3.4 4.1-4.7 7.2-4.7s5.6 1.3 7.2 4.7" /></svg>
+);
+const IcSend = ({ s = 19, c = "currentColor" }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 3L10.5 13.5" /><path d="M21 3l-6.8 18-3.7-7.5L3 9.8z" /></svg>
+);
+const IcSearch = ({ s = 16, c = C.gray }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5L21 21" /></svg>
+);
+
+function ShellNavRow({ label, Icon, onClick }) {
+  const [h, setH] = useState(false);
+  return (
+    <button onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", padding: "9px 10px", background: "transparent", border: "none", borderRadius: 8, cursor: "pointer", color: h ? C.white : C.gray, textAlign: "left", transition: "color 0.15s" }}>
+      <Icon />
+      <span style={{ fontFamily: F, fontSize: 14.5, fontWeight: 700 }}>{label}</span>
+    </button>
+  );
+}
+
+function HistoryBtn({ glyph, label, onClick }) {
+  return (
+    <button onClick={onClick} aria-label={label} title={label}
+      style={{ width: 32, height: 32, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(0,0,0,0.45)", color: C.white, fontFamily: F, fontSize: 18, lineHeight: 1, cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: 2, transition: "background 0.2s" }}
+      onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
+      onMouseLeave={e => e.currentTarget.style.background = "rgba(0,0,0,0.45)"}
+    >{glyph}</button>
+  );
+}
+
+function ShellApp({ player }) {
+  const mainRef = useRef(null);
+  const [query, setQuery] = useState("");
+
+  // Live filter for the sidebar library: playlist OR reel title substring,
+  // case-insensitive; empty query = the full library.
+  const q = query.trim().toLowerCase();
+  const visible = q
+    ? eventStats.filter(ev => ev.event.toLowerCase().includes(q) || ev.reels.some(r => r.title.toLowerCase().includes(q)))
+    : eventStats;
+
+  const scrollTop = () => { if (mainRef.current) mainRef.current.scrollTo({ top: 0, behavior: "smooth" }); };
+  const scrollToId = (id) => { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  // Sidebar playlist click = play track 1 of it and bring the player on screen.
+  // Scroll is deferred two frames: the ms-play re-render mounts the Now Playing
+  // pane, and an in-flight smooth scroll would be cancelled by that layout work.
+  const openPlaylist = (ev) => {
+    window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: 0 } }));
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToId("work")));
+  };
+
+  return (
+    <div className="app-shell">
+      <Grain />
+      <div className="shell-cols">
+        {/* ===== LEFT SIDEBAR — nav + Your Library ===== */}
+        <aside className="shell-side">
+          <div className="shell-panel" style={{ padding: "16px 12px 8px", flexShrink: 0 }}>
+            <button onClick={scrollTop} style={{ background: "none", border: "none", cursor: "pointer", padding: "0 10px 12px", display: "block", textAlign: "left" }}>
+              <span style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5 }}>Miles Spearman</span>
+            </button>
+            <nav aria-label="Site">
+              <ShellNavRow label="Home" Icon={IcHome} onClick={scrollTop} />
+              <ShellNavRow label="Work" Icon={IcGridWork} onClick={() => scrollToId("work")} />
+              <ShellNavRow label="About" Icon={IcUser} onClick={() => scrollToId("about")} />
+              <ShellNavRow label="Connect" Icon={IcSend} onClick={() => scrollToId("connect")} />
+            </nav>
+          </div>
+          <div className="shell-panel shell-lib">
+            <div style={{ padding: "14px 16px 8px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8, flexShrink: 0 }}>
+              <span style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white }}>Your Library</span>
+              <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays</span>
+            </div>
+            {visible.length > 0 ? (
+              <LibraryList items={visible} activeIdx={player.libIdx} playingIdx={player.track && player.playing ? player.track.e : -1} onRow={openPlaylist} />
+            ) : (
+              <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, padding: "14px 16px", lineHeight: 1.5 }}>No playlists or reels match “{query.trim()}”.</p>
+            )}
+          </div>
+        </aside>
+
+        {/* ===== MAIN PANE — the one scroll container ===== */}
+        <main className="shell-main" ref={mainRef}>
+          <div className="shell-topbar">
+            <HistoryBtn glyph="‹" label="Back to top" onClick={scrollTop} />
+            <HistoryBtn glyph="›" label="Forward to the player" onClick={() => scrollToId("work")} />
+            <div style={{ position: "relative", width: "min(400px, 42vw)" }}>
+              <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", display: "flex", pointerEvents: "none" }}><IcSearch /></span>
+              <input
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="What do you want to play?"
+                aria-label="Search the library"
+                style={{ width: "100%", fontFamily: F, fontSize: 13.5, color: C.white, background: "rgba(255,255,255,0.07)", border: `1px solid ${C.border}`, borderRadius: 100, padding: "10px 16px 10px 40px", outline: "none", transition: "border-color 0.2s" }}
+                onFocus={e => e.target.style.borderColor = "rgba(15,224,124,0.45)"}
+                onBlur={e => e.target.style.borderColor = C.border}
+              />
+            </div>
+            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+              style={{ marginLeft: "auto", fontFamily: F, fontSize: 13, fontWeight: 700, color: C.bg, background: C.mint, padding: "9px 22px", borderRadius: 100, textDecoration: "none", whiteSpace: "nowrap", transition: "background 0.2s, color 0.2s" }}
+              onMouseEnter={e => { e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; }}
+              onMouseLeave={e => { e.target.style.background = C.mint; e.target.style.color = C.bg; }}
+            >Let's Connect</a>
+          </div>
+
+          {/* ===== HOME / OPENING WALL (compact inside the pane) ===== */}
+          <OpeningWall compact />
+
+          {/* ===== WHAT I'M WORKING ON NOW ===== */}
+          <WorkingOnNow />
+
+          {/* ===== PLAYLIST SHELF ===== */}
+          <PlaylistShelf />
+
+          {/* ===== WORK — player (sidebar + bar live on the frame) ===== */}
+          <WorkSection player={player} inShell />
+
+          {/* ===== RECOGNITION ===== */}
+          <RecognitionSection />
+
+          {/* ===== ABOUT ===== */}
+          <AboutSection />
+
+          {/* ===== WHAT I DO ===== */}
+          <ServicesSection />
+
+          {/* ===== CTA ===== */}
+          <CTASection />
+
+          {/* ===== FOOTER ===== */}
+          <SiteFooter />
+        </main>
+      </div>
+
+      {/* ===== PERSISTENT TRANSPORT BAR — same component, promoted to the frame ===== */}
+      <PlayerBar
+        cur={player.cur}
+        rest={eventStats[0]}
+        eventName={player.cur ? `${player.cur.sub.split(" · ")[0]} · ${portfolio[player.track.e].event}` : ""}
+        playing={player.playing} muted={player.muted} vidRef={player.vidRef}
+        onToggle={player.toggle} onStep={player.step} onMute={() => player.setMuted(m => !m)}
+      />
+    </div>
+  );
+}
+
 // ===== MAIN =====
 export default function Portfolio() {
+  const desktop = useMediaQuery("(min-width: 901px)");
   const player = useWorkPlayerState();
   return (
     <>
@@ -1362,9 +1566,19 @@ export default function Portfolio() {
         ::-webkit-scrollbar-track { background: ${C.bg}; }
         ::-webkit-scrollbar-thumb { background: ${C.darkGray}; border-radius: 3px; }
         a:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
+        /* ===== Spotify app shell (desktop ≥901px) ===== */
+        .app-shell { position: fixed; inset: 0; display: flex; flex-direction: column; background: ${C.bg}; color: ${C.white}; }
+        .shell-cols { flex: 1; min-height: 0; display: flex; gap: 8px; padding: 8px 8px 0; }
+        .shell-side { width: 260px; min-width: 260px; display: flex; flex-direction: column; gap: 8px; }
+        .shell-panel { background: #0D0D0D; border: 1px solid ${C.border}; border-radius: 12px; }
+        .shell-lib { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+        .shell-main { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; overflow-anchor: none; position: relative; background: #0D0D0D; border: 1px solid ${C.border}; border-radius: 12px; }
+        .shell-main section { scroll-margin-top: 72px; }
+        .shell-topbar { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 10px; padding: 10px 20px; background: rgba(13,13,13,0.72); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid ${C.border}; border-radius: 12px 12px 0 0; }
+        .shell-topbar input::placeholder { color: ${C.gray}; }
       `}</style>
 
-      <ClassicPage player={player} />
+      {desktop ? <ShellApp player={player} /> : <ClassicPage player={player} />}
     </>
   );
 }
