@@ -1,6 +1,25 @@
 # Portfolio Site — Progress Log
 
-## 🔄 HANDOFF POINT — fresh session starts HERE
+## 🔄 HANDOFF POINT — fresh session starts HERE (session 3, Jul 4 late)
+**FIRST READS: CLAUDE.md → this block → COPY-PRINCIPLES.md.** The session-2 block below is HISTORY — this block supersedes it.
+
+### Shipped session 3 (commits `88d57a9`→`c13db92`, verify pushed: `git status -sb`)
+What I Do rebuilt as Audrey cards (Miles's own bodies, fact-checked; titles: On-Camera Hosting / Content Strategy, Concept to Published / Directing & On-Camera Coaching / Producing: Talent Marketing & Employee Comms) · Navin-style meta lines · **SPECIALTY DRAWER shipped** (card click → right drawer / mobile bottom sheet: proof-reel Highlights with derived sub-lines, Play→Work player, card body verbatim below list; `SPECIALTY_REELS` map in Portfolio.jsx; design-judge + recruiter-lens both verdicted BUILD; anatomy in research/NAVIN-PATTERN-ANATOMY.md) · derived posting windows in playlist headers (`fmtWindow`) · hero eyebrow "Social Creative Producer @Adobe | San Francisco" · exec/quick-turn body fix · stale 10K CTA line removed · heading stays "What I Do" (Career Specialties tried + reverted, his call — don't relitigate) · dead SetList deleted · WORKFRONT-BRIEF-COLLECTOR.md built (repo + ~/Downloads copy; budget=PRIVATE prep-only, partners prioritized) · research/UNTAPPED-LEVERAGE.md (15 ranked items).
+
+### THE STANDING PROMISE to Miles (he asked "can I trust you'll finish this")
+When he returns with the filled WORKFRONT-BRIEF-COLLECTOR.md:
+1. **Ingest it**: every Found line flows into playlist headers (brief line + shoot window + partner credits) THROUGH the copy gate (7 checks + alignment rules). `[PRIVATE]`-tagged budget lines NEVER touch site copy — they're his interview prep; park them in a research doc he can read before interviews.
+2. **IG Chrome research**: he says more video links exist to find on his Instagram once Workfront names the projects — use claude-in-chrome on instagram.com (adobe handles + his accounts), match Workfront project names → find missing public reels → add to `portfolio` array with real data. NO Apify scraping (he said so twice).
+3. Apply his H1–H4 held-row answers (MILES-COPY-MARKUP §C) + the two real play counts he owes from IG insights ("Defining a Creative Video Interview Collage", "Be You: Em Siegel" — both `plays:"0"` because his export had blanks).
+4. Re-run recruiter-lens after ingest; re-run the QA sweep (died twice this session, never delivered research/QA-PROD-MOBILE-PERF.md).
+
+### Miles's queue (nudge, don't build)
+Push (session ended 10 ahead) · run the Workfront collector on his other account · H1–H4 answers · 2 real play counts · MILES-COPY-MARKUP rows (mostly still blank) · spotify-shell worth-it verdict (draft PR #1, Vercel preview in PR comments).
+
+### Watch-outs
+Card posters on cards 2/4 still show old art until autoplay (design-pass item) · card 1 title = bare "On-Camera Hosting" (his "& Directing" ask superseded by the overlap fix — flag if he asks) · drawer bodies moved OFF card faces (one-tap revert if he misses them) · another chat's dev server may hold the folder (launch.json has autoPort).
+
+## (older) 🔄 session-2 handoff — SUPERSEDED by the block above
 **Created:** Jul 4, 2026 · **Last updated:** Jul 4, 2026 (end of session 2, written at 90% context)
 
 **FIRST READS, in order: CLAUDE.md → this block → COPY-PRINCIPLES.md.** (AGENT-PLAN.md is now PARTIALLY STALE — where it disagrees with this block, this block wins.) All copy work runs through COPY-PRINCIPLES (7 checks + Resume & LinkedIn alignment rules).
