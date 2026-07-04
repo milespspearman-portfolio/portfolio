@@ -58,12 +58,10 @@ const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, $
 
 // What Miles did on each playlist's videos — his words, retag per playlist as needed
 const EVENT_ROLES = {
-  "UC": "Created, produced & hosted",
-  "Employee & Always On": "Concepted, scripted, hosted & creatively directed",
+  "Side Projects": "Created, produced & hosted",
   "IBC 2024": "Concepted, scripted, hosted & creatively directed",
   "MAX Miami 2024": "Concepted, scripted, hosted & creatively directed",
   "NAB 2024": "Concepted, scripted, hosted & creatively directed",
-  "Upworthy": "Created, produced & hosted",
   "Adobe Summit 2025": "Concepted, scripted, hosted & creatively directed",
   "MAX 2025 LA": "Created, produced & hosted",
   "MAX London 2025": "Concepted, scripted, hosted & creatively directed",
@@ -94,18 +92,13 @@ const IcVol = ({ s = 16, c = C.gray, muted = false }) => (
 
 const portfolio = [
   {
-    event: "UC",
+    event: "Side Projects",
     reels: [
       { title: "@UofCincy Social", sub: "@uofcincy · 621 likes · Jul 7, 2022", plays: "5.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2022/UC/UC_7.7.22.mp4", postUrl: "https://www.instagram.com/p/CfuYwU7J0Zv/" },
+      { title: "TacoBell x Upworthy Feature", sub: "@upworthy · 6.6K likes · Dec 4, 2024", plays: "425.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Upworthy/Upworthy_12.4.24.mp4", postUrl: "https://www.instagram.com/p/DDKtoQgSz8q/" },
     ],
   },
-  {
-    event: "Employee & Always On",
-    reels: [
-      { title: "Firefly Interview Demo", sub: "@adobevideo · 979 likes · Sep 12, 2024", plays: "728.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Firefly-Interview-Demo_9.12.24.mp4", postUrl: "https://www.instagram.com/p/C_0rxmZPxif/" },
-      { title: "Creative Cloud for Students Black Friday Discount", sub: "@adobe · 439 likes · Nov 30, 2024", plays: "831.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Students-Black-Friday-Discount_11.30.24.mp4", postUrl: "https://www.instagram.com/p/DDAM0ZNCvo2/" },
-    ],
-  },
+
   {
     event: "IBC 2024",
     reels: [
@@ -139,12 +132,7 @@ const portfolio = [
       { title: "NAB ’24: Day-in-the-Life Recap", sub: "@adobevideo · 160 likes · Apr 23, 2024", plays: "11.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Day-in-the-Life-Event-Recap_4.23.24.mp4", postUrl: "https://www.instagram.com/p/C6HqT-KLF9R/" },
     ],
   },
-  {
-    event: "Upworthy",
-    reels: [
-      { title: "TacoBell x Upworthy Feature", sub: "@upworthy · 6.6K likes · Dec 4, 2024", plays: "425.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Upworthy/Upworthy_12.4.24.mp4", postUrl: "https://www.instagram.com/p/DDKtoQgSz8q/" },
-    ],
-  },
+
   {
     event: "Adobe Summit 2025",
     reels: [
@@ -202,6 +190,8 @@ const portfolio = [
   {
     event: "Evergreen Producing",
     reels: [
+      { title: "Firefly Interview Demo", sub: "@adobevideo · 979 likes · Sep 12, 2024", plays: "728.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Firefly-Interview-Demo_9.12.24.mp4", postUrl: "https://www.instagram.com/p/C_0rxmZPxif/" },
+      { title: "Creative Cloud for Students Black Friday Discount", sub: "@adobe · 439 likes · Nov 30, 2024", plays: "831.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Students-Black-Friday-Discount_11.30.24.mp4", postUrl: "https://www.instagram.com/p/DDAM0ZNCvo2/" },
       { title: "Intern Day Creative Cloud", sub: "@adobecreativecloud · 201 likes · Jul 31, 2025", plays: "28.1K", mp4: "/reels/2025/Evergreen-Producing/Intern-Day-Creative-Cloud_7.31.25.mp4", postUrl: "https://www.instagram.com/reel/DMyLF09uG1i/" },
       { title: "Dave Werner Employee Spotlight", sub: "@adobelife · 26K likes · Aug 18, 2025", plays: "1.9M", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Dave-Werner_8.18.25.mp4", postUrl: "https://www.instagram.com/p/DNgTb3hthgJ/" },
       { title: "Bowen Wang Employee Spotlight", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
@@ -259,7 +249,7 @@ const LIBRARY_OF = {
   "MAX Miami 2024": "Events", "MAX 2025 LA": "Events", "MAX London 2025": "Events",
   "Adobe Summit 2025": "Events", "NAB 2024": "Events", "NAB 2025": "Events",
   "IBC 2024": "Events", // Cannes pulled Jul 4 (Miles)
-  "Evergreen Producing": "Evergreen", "Employee & Always On": "Evergreen", "Upworthy": "Evergreen", "UC": "Evergreen",
+  "Evergreen Producing": "Evergreen", "Side Projects": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
 const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
@@ -424,6 +414,8 @@ const SPECIALTY_REELS = {
     { t: "Coolest Job: Tongyu", album: "Coolest Job" },
     { t: "Navin’s Coolest Job", album: "Coolest Job" },
     { t: "Sarah Shen’s Coolest Job", album: "Coolest Job" },
+    { t: "Firefly Interview Demo", album: "Always On" },
+    { t: "Creative Cloud for Students Black Friday Discount", album: "Always On" },
   ],
   // Directing expanded per Miles Jul 4: "i did on camera coaching with ken jeong,
   // and all the be you content as well too, along with the coolest job."
