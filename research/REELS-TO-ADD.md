@@ -14,6 +14,12 @@ Living doc. Chrome/Google research appends finds here; reels graduate into the `
 | Season 3 | Be You: Em Siegel | ✅ (plays pending Miles's insights, May 11 2026) |
 | Season 3 | Be You: Imran | ✅ (28.4K, May 27 2026) |
 
+Other targets (Miles, Jul 4):
+
+| Target | Destination | In data? |
+|---|---|---|
+| Intern Day Creative Cloud | Producing: Talent Marketing drawer (+ its home playlist TBD) | ❌ FIND (likely @adobecreativecloud or @adobelife) |
+
 Nomenclature rule (Miles, Jul 4): employee-comms interview reels are titled "{Full Name} Employee Spotlight". Full names come from the published captions ("Meet {Name}, {role} at Adobe"), never guessed.
 
 ## Completeness checksum (Miles, Jul 4)

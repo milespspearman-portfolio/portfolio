@@ -199,7 +199,7 @@ These titles are the first words of each reel's caption, cut mid-sentence by the
 > - H1. "Acrobat Booth" (1.6M) + "NAB ’24: Premiere Pro AI Announcement Reactions" (1.4M) + "NAB ’24: Emoji Reaction Interviews" (350.4K) into **On-Camera Hosting** — only if you're visibly on camera in them. **Miles:**
 > - H2. NAB ’24 rows in **Content Strategy** drawer: your card says the format "ran again at NAB" but NAB ’24 (Apr) predates IBC (Sep 2024). Drop the rows, or reword ("started at NAB, scaled at IBC")? **Miles:**
 > - H3. "Project Watercolor Master: Adobe Researcher Sneaks Interview" (1M, Oct 2024) into **Directing & Coaching** — needs the card meta extended to 2024. **Miles:**
-> - H4. "Jessica Williams" (264.3K) into **Directing & Coaching** — not named in your card copy. **Miles:**
+> - H4. "Jessica Williams" (264.3K) into **Directing & Coaching** — ✅ RESOLVED Jul 4: Miles confirmed in chat ("we also forgot jessica williams for max 2025 la"). Added.
 
 Compressed from `research/WHAT-I-DO-COPY-PROPOSALS.md` (full reasoning lives there). Each card shows its backing reel's caption so you can judge copy against content. Recommended picks are marked ★. Titles marked (HIS) are your own words.
 

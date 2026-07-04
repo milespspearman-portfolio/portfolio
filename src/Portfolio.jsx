@@ -386,6 +386,7 @@ const SPECIALTY_REELS = {
     { t: "Mark Rober", album: "MAX 2025 LA" },
     { t: "James Gunn", album: "MAX 2025 LA" },
     { t: "Kelley O'Hara", album: "MAX 2025 LA" },
+    { t: "Jessica Williams", album: "MAX 2025 LA" }, // Miles confirmed in chat Jul 4 (was held row H4)
   ],
   "Producing: Talent Marketing & Employee Comms": [
     { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
