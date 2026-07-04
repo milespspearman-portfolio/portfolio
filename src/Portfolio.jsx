@@ -120,7 +120,7 @@ const portfolio = [
       { title: "Project Watercolor Master: Adobe Researcher Sneaks Interview", sub: "@adobe · 1.8K likes · Oct 9, 2024", plays: "1M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Watercolor-Master-Sneaks-Interview_10.9.24.mp4", postUrl: "https://www.instagram.com/p/DA6zD2MA7Jh/" },
       { title: "Project Type Lab: Adobe Researcher Sneaks Interview", sub: "@adobe · 415 likes · Oct 10, 2024", plays: "111.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Project-Type-Lab-Sneaks-Interview_10.10.24.mp4", postUrl: "https://www.instagram.com/p/DA9EA1Mh0uv/" },
       { title: "Animations & Presets: Adobe Researcher Sneaks Interview", sub: "@adobe · 381 likes · Oct 11, 2024", plays: "51.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Animations-Presets-Sneaks-Interview_10.11.24.mp4", postUrl: "https://www.instagram.com/p/DA_f8ShPIDZ/" },
-      { title: "Adobe MAX 2025: In-Office MAX Trivia", sub: "@adobe · 917 likes · Oct 11, 2024", plays: "143K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/In-Office-Event-Trivia_10.11.24.mp4", postUrl: "https://www.instagram.com/p/DA_xlkkJYTb/" },
+      { title: "Adobe MAX 2024: In-Office MAX Trivia", sub: "@adobe · 917 likes · Oct 11, 2024", plays: "143K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/In-Office-Event-Trivia_10.11.24.mp4", postUrl: "https://www.instagram.com/p/DA_xlkkJYTb/" },
       { title: "Adobe MAX Day 1 Vibe", sub: "@adobe · 897 likes · Oct 15, 2024", plays: "183.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Grabbing-the-Vibe-of-Adobe-MAX-Day-1_10.15.24.mp4", postUrl: "https://www.instagram.com/p/DBKMzc2v1M5/" },
       { title: "Interactive Event Activation Coverage", sub: "@adobecreativecloud · 586 likes · Oct 17, 2024", plays: "57.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Interactive-Event-Activation-Coverage_10.17.24.mp4", postUrl: "https://www.instagram.com/p/DBOzrP1IsyY/" },
       { title: "Event Recap Reactions: Sneaks in One Emoji", sub: "@adobe · 683 likes · Oct 17, 2024", plays: "47.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Reaction-to-SNEAKS-in-One-Emoji_10.17.24.mp4", postUrl: "https://www.instagram.com/p/DBPd7jKvT9p/" },
@@ -177,7 +177,7 @@ const portfolio = [
     event: "MAX London 2025",
     reels: [
       { title: "MAX London Recap", sub: "@adobe · 690 likes · Apr 26, 2025", plays: "58.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/MAX-London-Event-Recap_4.26.25.mp4", postUrl: "https://www.instagram.com/p/DI7IQhWM2L3/" },
-      { title: "Illustrator Castle Game", sub: "@adobe · 188 likes · Apr 28, 2025", plays: "18.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Castle-Illustrator-Game_4.28.25.mp4", postUrl: "https://www.instagram.com/p/DJAQvZFp_Tl/" },
+      { title: "’25 MAX London Arches of Inspiration", sub: "@adobe · 188 likes · Apr 28, 2025", plays: "18.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Castle-Illustrator-Game_4.28.25.mp4", postUrl: "https://www.instagram.com/p/DJAQvZFp_Tl/" },
       { title: "Fonts Creator Game", sub: "@adobe · 1.4K likes · Apr 28, 2025", plays: "425K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Fonts-Creator-Game_4.28.25.mp4", postUrl: "https://www.instagram.com/p/DJAQxdstxfx/" },
       { title: "Firefly Explainer", sub: "@adobefirefly · 278 likes · Apr 29, 2025", plays: "24K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Firefly-Informational_4.29.25.mp4", postUrl: "https://www.instagram.com/p/DJC2KUPPwh3/" },
     ],
@@ -375,7 +375,7 @@ const SPECIALTY_REELS = {
   "On-Camera Hosting & Producing": [
     { t: "Project Watercolor Master: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
     { t: "Adobe MAX Day 1 Vibe", album: "MAX ’24" },
-    { t: "Adobe MAX 2025: In-Office MAX Trivia", album: "MAX ’24" },
+    { t: "Adobe MAX 2024: In-Office MAX Trivia", album: "MAX ’24" },
     { t: "Project Type Lab: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
     { t: "Animations & Presets: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
     { t: "Summit ’25: Acrobat Escape Room", album: "Summit ’25" },
@@ -393,7 +393,7 @@ const SPECIALTY_REELS = {
     { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX ’25" },
     { t: "MAX London Recap", album: "MAX London ’25" },
     { t: "Fonts Creator Game", album: "MAX London ’25" },
-    { t: "Illustrator Castle Game", album: "MAX London ’25" },
+    { t: "’25 MAX London Arches of Inspiration", album: "MAX London ’25" },
     { t: "Summit 2026 Recap", album: "Summit ’26" },
   ],
   "Content Strategy, Concept to Published": [
