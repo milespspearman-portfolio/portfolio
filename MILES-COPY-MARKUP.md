@@ -194,6 +194,13 @@ These titles are the first words of each reel's caption, cut mid-sentence by the
 >
 > **✅ RESOLVED Jul 4 (in-chat picks, all applied in code — supersedes the option rows below):** 4-card Audrey scheme shipped. Titles: On-Camera Hosting / Content Strategy, Concept to Script / Directing & On-Camera Coaching / Producing: Talent Marketing & Employee Comms. Bodies = Miles's own merged texts (fact-fixed: Escape Room alone at 2.6M, 3-day-event beat kept, 9 posts Mar 20–Apr 2). Navin-style meta lines added. Link labels = "Play: {playlist} →". Backing reels: Escape Room / IBC Emoji Reactions / Kelley O'Hara / Dave 1.9M. "Video Production" card retired (claim lives in card bodies + resume).
 
+> **🗄 SPECIALTY DRAWER shipped Jul 4 (Navin pattern; both agents verdicted BUILD).** Card click now opens a right drawer (mobile: bottom sheet): specialty header + meta, Play + Instagram, numbered Highlights (proof reels, sub-lines 100% derived: @handle · Mon YYYY · plays), then the card body verbatim below. Card faces slimmed to media + meta + title + "Highlights →" (bodies MOVED into drawers — say the word to also keep them on cards). Dead SetList accordion deleted.
+> **Rows HELD pending your confirm (recruiter flags):**
+> - H1. "Acrobat Booth" (1.6M) + "NAB ’24: Premiere Pro AI Announcement Reactions" (1.4M) + "NAB ’24: Emoji Reaction Interviews" (350.4K) into **On-Camera Hosting** — only if you're visibly on camera in them. **Miles:**
+> - H2. NAB ’24 rows in **Content Strategy** drawer: your card says the format "ran again at NAB" but NAB ’24 (Apr) predates IBC (Sep 2024). Drop the rows, or reword ("started at NAB, scaled at IBC")? **Miles:**
+> - H3. "Project Watercolor Master: Adobe Researcher Sneaks Interview" (1M, Oct 2024) into **Directing & Coaching** — needs the card meta extended to 2024. **Miles:**
+> - H4. "Jessica Williams" (264.3K) into **Directing & Coaching** — not named in your card copy. **Miles:**
+
 Compressed from `research/WHAT-I-DO-COPY-PROPOSALS.md` (full reasoning lives there). Each card shows its backing reel's caption so you can judge copy against content. Recommended picks are marked ★. Titles marked (HIS) are your own words.
 
 ### Card 1 — Hosting · backing reel: "Summit '25: Acrobat Escape Room" (2.6M plays · DHb0O45vPtj)

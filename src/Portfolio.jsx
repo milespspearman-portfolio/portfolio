@@ -358,6 +358,51 @@ const setList = capabilities.map(c => {
   return { ...c, reelIdx: idx, mp4: idx ? portfolio[idx.e].reels[idx.r].mp4 : null };
 });
 
+// ===== SPECIALTY DRAWER data — reels that PROVE each specialty, cross-playlist,
+// by EXACT reel title (indices derived, never hardcoded). Row sub-lines are 100%
+// DERIVED (handle + month/year from the reel's own sub string): no verbs, no new
+// résumé claims. Rows HELD pending Miles's confirm (see MILES-COPY-MARKUP §C):
+// Acrobat Booth + both NAB ’24 reaction reels (on-camera confirm, hosting),
+// Watercolor Sneaks (meta-date conflict, directing), Jessica Williams (not
+// claimed in card copy). Cannes stays out everywhere, standing rule.
+const SPECIALTY_REELS = {
+  "On-Camera Hosting": [
+    "Summit ’25: Acrobat Escape Room",
+    "Summit ’25: Hosted Event Recap",
+    "Summit ’25: Ken Jeong Interview",
+    "Summit ’25: Escalator ‘Hot’ Takes",
+  ],
+  "Content Strategy, Concept to Published": [
+    "Premiere Pro AI: Emoji Reactions",
+    "Summit ’25: Acrobat Escape Room",
+    "“Coolest Job” Series",
+    "Over & Under AI Enterprise Activity",
+    "Summit ’25: Sneaks Emoji Reactions",
+  ],
+  "Directing & On-Camera Coaching": [
+    "Mark Rober",
+    "James Gunn",
+    "Kelley O'Hara",
+  ],
+  "Producing: Talent Marketing & Employee Comms": [
+    "Dave Employee Comms Interview",
+    "Mansa Employee Comms Interview",
+    "“Coolest Job” Series",
+    "Bowen Employee Comms Interview",
+    "San Jose Semaphore",
+    "Be You: Imran",
+  ],
+};
+const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
+const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
+  (SPECIALTY_REELS[c.title] || []).map(t => {
+    const idx = reelIndexByTitle(t);
+    if (!idx) return null;
+    const reel = portfolio[idx.e].reels[idx.r];
+    return { idx, reel, event: portfolio[idx.e].event, handle: reel.sub.split(" · ")[0], when: monthYear(reel) };
+  }).filter(Boolean),
+]));
+
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
 
 // "About the Artist" swipe stack — one word at a time, always swiping the same
@@ -868,95 +913,6 @@ function WorkPlayer() {
   );
 }
 
-// ===== WHAT I DO — "The Set List" (concept C) =====
-// A Spotify-style numbered track list that rhymes with the Work player below.
-// Accordion: one row open at a time (first open by default). Only the OPEN row
-// mounts a <video> (one playing video in the section, max) — collapsed rows show
-// their /cards/*.jpg still. Clicking the link label deep-links into the Work
-// player via ms-play. All capability copy is verbatim.
-const num2 = (n) => String(n + 1).padStart(2, "0");
-
-function SetListRow({ cap, i, open, onToggle }) {
-  const [h, setH] = useState(false);
-  const playInWork = (e) => {
-    e.stopPropagation();
-    if (!cap.reelIdx) return; // no mapped reel: fall through to the IG link
-    e.preventDefault();
-    const work = document.getElementById("work");
-    if (work) work.scrollIntoView({ behavior: "smooth" });
-    window.dispatchEvent(new CustomEvent("ms-play", { detail: cap.reelIdx }));
-  };
-  return (
-    <div style={{ borderBottom: `1px solid ${C.border}` }}>
-      {/* Collapsed row: number · thumb · title · action */}
-      <div role="button" tabIndex={0} aria-expanded={open}
-        onClick={onToggle}
-        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); } }}
-        onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-        style={{
-          display: "grid", gridTemplateColumns: "34px 48px minmax(0,1fr) auto", gap: 14, alignItems: "center",
-          padding: "14px 16px", cursor: "pointer",
-          background: open ? "rgba(30,215,96,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
-          transition: "background 0.2s",
-        }}>
-        <span style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-          {open ? <EqBars /> : num2(i)}
-        </span>
-        <span style={{ width: 48, height: 48, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "#111" }}>
-          <img src={cap.img} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: cap.imgPos, display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-        </span>
-        <span style={{ minWidth: 0 }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: 15.5, fontWeight: 700, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{cap.title}</span>
-        </span>
-        {/* Right action: link label (wide) collapses to a play/expand glyph on narrow via CSS */}
-        <span className="setlist-action" style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span className="setlist-linklabel" onClick={playInWork} role="link" tabIndex={0}
-            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playInWork(e); } }}
-            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 600, color: h || open ? C.mint : C.gray, whiteSpace: "nowrap", transition: "color 0.2s" }}>{cap.linkLabel}</span>
-          <span aria-hidden="true" style={{ display: "inline-flex", transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.3s", color: open ? C.mint : C.gray }}>
-            <IcPlay s={11} c={open ? C.mint : C.gray} />
-          </span>
-        </span>
-      </div>
-      {/* Expanded panel: grid-rows 0fr->1fr (CSS-only height animation, no JS measure) */}
-      <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
-        <div style={{ overflow: "hidden" }}>
-          <div className="setlist-panel" style={{ display: "flex", gap: 20, padding: open ? "6px 16px 22px 84px" : "0 16px 0 84px", alignItems: "flex-start", transition: "padding 0.35s ease" }}>
-            {/* Only the OPEN row mounts the video element (one playing video max) */}
-            {open && cap.mp4 && (
-              <video src={srcOf(cap)} poster={thumbOf(cap)} muted loop playsInline autoPlay preload="metadata"
-                className="setlist-video"
-                style={{ width: 150, aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", flexShrink: 0, boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }} />
-            )}
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <p style={{ fontFamily: F, fontSize: 14, color: "rgba(255,255,255,0.82)", lineHeight: 1.65, margin: "0 0 16px" }}>{cap.body}</p>
-              <button onClick={playInWork}
-                style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: C.bg, background: C.mint, border: "none", padding: "10px 22px", borderRadius: 100, cursor: "pointer", boxShadow: `0 6px 24px ${C.mint}35`, transition: "transform 0.15s" }}
-                onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
-                onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>{cap.linkLabel}</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SetList() {
-  const [openIdx, setOpenIdx] = useState(0); // first row open by default
-  const wrapRef = useRef(null);
-  // Pause the one open-row video when the section scrolls off-screen.
-  usePlayWhenVisible(wrapRef);
-  return (
-    <div ref={wrapRef} style={{ border: `1px solid ${C.border}`, borderRadius: 16, overflow: "hidden", background: "#0D0D0D" }}>
-      {setList.map((cap, i) => (
-        <SetListRow key={cap.title} cap={cap} i={i} open={openIdx === i}
-          onToggle={() => setOpenIdx(cur => cur === i ? -1 : i)} />
-      ))}
-    </div>
-  );
-}
-
 // ===== PLAYLIST SHELF — Your Library as a Navin-style cover-card carousel =====
 function ShelfCard({ ev }) {
   const [h, setH] = useState(false);
@@ -1017,43 +973,125 @@ function PlaylistShelf() {
   );
 }
 
-// ===== WHAT I DO — cards play the reel that backs each capability and
-// deep-link into that topic's playlist in the Work player (ms-play). =====
+// ===== WHAT I DO — cards open the Specialty Drawer (Navin pattern): proof index
+// with numbered Highlights; the Work player stays the only place video plays with
+// sound. Card bodies moved verbatim INTO the drawer (no message repetition). =====
+function SpecialtyDrawer({ cap, onClose }) {
+  const [closing, setClosing] = useState(false);
+  const close = () => { setClosing(true); setTimeout(onClose, 250); };
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") close(); };
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, []);
+  const rows = specialtyHighlights[cap.title] || [];
+  const proofPlays = rows.reduce((s, h) => s + playsNum(h.reel.plays), 0);
+  const playRow = (h) => {
+    const work = document.getElementById("work");
+    if (work) work.scrollIntoView({ behavior: "smooth" });
+    window.dispatchEvent(new CustomEvent("ms-play", { detail: h.idx }));
+    close();
+  };
+  return (
+    <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
+      <aside role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
+        style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(480px, 92vw)", zIndex: 1201, background: "#0D0D0D", borderLeft: `1px solid ${C.border}`, boxShadow: "-24px 0 80px rgba(0,0,0,0.6)", overflowY: "auto", padding: 24, opacity: closing ? 0 : 1, transition: "opacity 0.25s" }}>
+        <div className="spec-grabber" aria-hidden="true" style={{ display: "none", width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.25)", margin: "0 auto 14px" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+          <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Specialty</span>
+          <button onClick={close} autoFocus aria-label="Close"
+            style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.06)", color: C.white, fontSize: 16, cursor: "pointer", lineHeight: 1 }}>×</button>
+        </div>
+        <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 8 }}>
+          <span style={{ width: 96, height: 96, borderRadius: 10, overflow: "hidden", flexShrink: 0, background: "#111" }}>
+            <img src={cap.img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: cap.imgPos, display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+          </span>
+          <div style={{ minWidth: 0 }}>
+            <h3 style={{ fontFamily: F, fontSize: "clamp(22px, 3vw, 30px)", fontWeight: 800, color: C.white, margin: 0, letterSpacing: -0.5, lineHeight: 1.15 }}>{cap.title}</h3>
+            {cap.meta && <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5, marginTop: 8 }}>{cap.meta}</span>}
+            <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{rows.length} proof reels · {fmtPlays(proofPlays)} plays</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", margin: "16px 0 20px" }}>
+          {rows.length > 0 && (
+            <button onClick={() => playRow(rows[0])} aria-label={cap.linkLabel}
+              style={{ width: 48, height: 48, borderRadius: "50%", border: "none", background: C.mint, color: C.bg, display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: `0 6px 24px ${C.mint}35`, flexShrink: 0 }}>
+              <IcPlay s={17} />
+            </button>
+          )}
+          <a href={cap.linkUrl} target="_blank" rel="noreferrer"
+            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 600, color: C.white, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 16px", textDecoration: "none", background: "rgba(255,255,255,0.04)" }}>
+            Open on Instagram ↗</a>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "0 8px 8px", borderBottom: `1px solid ${C.border}` }}>
+          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, textAlign: "center" }}>#</span>
+          <span />
+          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1 }}>HIGHLIGHTS</span>
+          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray }}>PLAYS</span>
+        </div>
+        {rows.map((h, i) => (
+          <div key={h.reel.title + i} role="button" tabIndex={0}
+            onClick={() => playRow(h)}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playRow(h); } }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.05)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s" }}>
+            <span style={{ fontFamily: F, fontSize: 13, color: C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center" }}>{i + 1}</span>
+            <span style={{ width: 44, height: 44, borderRadius: 6, overflow: "hidden", background: "#111" }}>
+              <img src={thumbOf(h.reel)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+            </span>
+            <span style={{ minWidth: 0 }}>
+              <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.reel.title}</span>
+              <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{h.handle}{h.when ? ` · ${h.when}` : ""}</span>
+            </span>
+            <span style={{ fontFamily: F, fontSize: 13, color: C.mint, fontVariantNumeric: "tabular-nums" }}>{h.reel.plays}</span>
+          </div>
+        ))}
+        <p style={{ fontFamily: F, fontSize: 14, color: "rgba(255,255,255,0.82)", lineHeight: 1.65, margin: "20px 0 0", borderLeft: `3px solid ${C.mint}`, paddingLeft: 16 }}>{cap.body}</p>
+      </aside>
+    </div>
+  );
+}
+
 function WhatIDoCards() {
   const gridRef = useRef(null);
+  const [drawerCap, setDrawerCap] = useState(null);
   usePlayWhenVisible(gridRef); // reels only play while the section is on screen
   return (
+    <>
     <div ref={gridRef} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
       {setList.map((c, i) => (
         <FadeIn key={i} delay={i * 0.1}>
-          <a href="#work"
-            onClick={() => { if (c.reelIdx) window.dispatchEvent(new CustomEvent("ms-play", { detail: c.reelIdx })); }}
-            style={{ textDecoration: "none", display: "block", height: "100%" }}>
-            <div style={{
+          <div role="button" tabIndex={0}
+            onClick={() => setDrawerCap(c)}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDrawerCap(c); } }}
+            style={{
               background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               border: `1px solid ${C.border}`, borderRadius: 16, padding: 28,
               transition: "all 0.3s", display: "flex", flexDirection: "column", gap: 12,
               height: "100%", cursor: "pointer",
             }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(30,215,96,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(30,215,96,0.06)`; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
-            >
-              <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
-                {c.mp4
-                  ? <video src={srcOf(c)} poster={c.img} muted loop playsInline preload="metadata"
-                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }}
-                      onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
-                  : <img src={c.img} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />}
-              </div>
-              {c.meta && <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5 }}>{c.meta}</span>}
-              <h4 style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, margin: 0 }}>{c.title}</h4>
-              <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.6, margin: 0, flex: 1 }}>{c.body}</p>
-              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, marginTop: 8 }}>{c.linkLabel}</span>
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(30,215,96,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(30,215,96,0.06)`; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
+          >
+            <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
+              {c.mp4
+                ? <video src={srcOf(c)} poster={c.img} muted loop playsInline preload="metadata"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }}
+                    onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
+                : <img src={c.img} alt={c.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />}
             </div>
-          </a>
+            {c.meta && <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5 }}>{c.meta}</span>}
+            <h4 style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, margin: 0, flex: 1 }}>{c.title}</h4>
+            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, marginTop: 8 }}>Highlights →</span>
+          </div>
         </FadeIn>
       ))}
     </div>
+    {drawerCap && <SpecialtyDrawer cap={drawerCap} onClose={() => setDrawerCap(null)} />}
+    </>
   );
 }
 
@@ -1109,6 +1147,14 @@ export default function Portfolio() {
         @keyframes cuebounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         @keyframes swipeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-110%); opacity: 0; } }
         @keyframes swipeIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes drawerFade { from { opacity: 0; } }
+        @keyframes drawerIn { from { transform: translateX(100%); } }
+        @keyframes sheetIn { from { transform: translateY(100%); } }
+        .spec-drawer { animation: drawerIn 0.35s cubic-bezier(0.22,1,0.36,1); }
+        @media (max-width: 900px) {
+          .spec-drawer { top: auto !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; max-height: 86svh; border-radius: 16px 16px 0 0; border-left: none !important; animation: sheetIn 0.35s cubic-bezier(0.22,1,0.36,1); }
+          .spec-drawer .spec-grabber, .spec-grabber { display: block !important; }
+        }
         @media (max-width: 900px) { .wall-card:nth-child(n+9) { display: none; } }
         .sp-shell { scroll-margin-top: 84px; }
         .shelf-row { scrollbar-width: none; }
