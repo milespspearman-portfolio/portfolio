@@ -989,9 +989,14 @@ function PlaylistShelf() {
 // with numbered Highlights. Rows expand and play IN the drawer (Miles's call,
 // supersedes the zero-video drawer rule); one expanded row = one mounted video.
 // Card bodies moved verbatim INTO the drawer (no message repetition). =====
-function SpecialtyDrawer({ cap, onClose }) {
+function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   const [closing, setClosing] = useState(false);
+  const asideRef = useRef(null);
   const close = () => { setClosing(true); setTimeout(onClose, 250); };
+  // Prev/next specialty (wrap-around) — the drawer never dead-ends.
+  const capIdx = setList.findIndex(c => c.title === cap.title);
+  const prevCap = setList[(capIdx - 1 + setList.length) % setList.length];
+  const nextCap = setList[(capIdx + 1) % setList.length];
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") close(); };
     window.addEventListener("keydown", onKey);
@@ -1015,7 +1020,7 @@ function SpecialtyDrawer({ cap, onClose }) {
   });
   return (
     <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
-      <aside role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
+      <aside ref={asideRef} role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
         style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(480px, 92vw)", zIndex: 1201, background: "#0D0D0D", borderLeft: `1px solid ${C.border}`, boxShadow: "-24px 0 80px rgba(0,0,0,0.6)", overflowY: "auto", padding: 24, opacity: closing ? 0 : 1, transition: "opacity 0.25s" }}>
         <div className="spec-grabber" aria-hidden="true" style={{ display: "none", width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.25)", margin: "0 auto 14px" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
@@ -1042,6 +1047,19 @@ function SpecialtyDrawer({ cap, onClose }) {
           )}
           <p style={{ fontFamily: F, fontSize: 13.5, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: 0, borderLeft: `3px solid ${C.mint}`, paddingLeft: 14 }}>{cap.body}</p>
         </div>
+        {/* Organization at a glance: album chips, tap to jump to that section */}
+        {groups.length > 1 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "0 0 16px" }}>
+            {groups.map(g => (
+              <button key={g.album}
+                onClick={() => asideRef.current?.querySelector(`[data-album="${g.album}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 100, padding: "5px 12px", cursor: "pointer" }}
+                onMouseEnter={e => { e.currentTarget.style.color = C.mint; e.currentTarget.style.borderColor = "rgba(30,215,96,0.35)"; }}
+                onMouseLeave={e => { e.currentTarget.style.color = C.gray; e.currentTarget.style.borderColor = C.border; }}>
+                {g.album} · {g.rows.length}</button>
+            ))}
+          </div>
+        )}
         <div style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "0 8px 8px", borderBottom: `1px solid ${C.border}` }}>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, textAlign: "center" }}>#</span>
           <span />
@@ -1051,7 +1069,7 @@ function SpecialtyDrawer({ cap, onClose }) {
         {groups.map((g) => (
         <div key={g.album}>
         {g.album && (
-          <div style={{ fontFamily: F, fontSize: 11, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5, padding: "16px 8px 6px" }}>{g.album}</div>
+          <div data-album={g.album} style={{ fontFamily: F, fontSize: 11, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5, padding: "16px 8px 6px", scrollMarginTop: 12 }}>{g.album}</div>
         )}
         {g.rows.map((h, i) => {
           const open = openRow === h.reel.title;
@@ -1097,6 +1115,23 @@ function SpecialtyDrawer({ cap, onClose }) {
         })}
         </div>
         ))}
+        {/* Never a dead end: previous / up-next specialty previews */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 24, paddingTop: 18, borderTop: `1px solid ${C.border}` }}>
+          {[{ label: "← Previous", c: prevCap, align: "left" }, { label: "Up next →", c: nextCap, align: "right" }].map(({ label, c, align }) => (
+            <button key={label} onClick={() => onSwitch(c)}
+              style={{ display: "flex", flexDirection: align === "right" ? "row-reverse" : "row", alignItems: "center", gap: 10, textAlign: align, background: "rgba(255,255,255,0.03)", border: `1px solid ${C.border}`, borderRadius: 12, padding: 10, cursor: "pointer", transition: "border-color 0.2s, background 0.2s", minWidth: 0 }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(30,215,96,0.35)"; e.currentTarget.style.background = "rgba(30,215,96,0.05)"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.background = "rgba(255,255,255,0.03)"; }}>
+              <span style={{ width: 40, height: 40, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "#111" }}>
+                <img src={c.img} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+              </span>
+              <span style={{ minWidth: 0 }}>
+                <span style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 600, color: C.gray, textTransform: "uppercase", letterSpacing: 1 }}>{label}</span>
+                <span style={{ display: "block", fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.white, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.title}</span>
+              </span>
+            </button>
+          ))}
+        </div>
       </aside>
     </div>
   );
@@ -1137,7 +1172,7 @@ function WhatIDoCards() {
         </FadeIn>
       ))}
     </div>
-    {drawerCap && <SpecialtyDrawer cap={drawerCap} onClose={() => setDrawerCap(null)} />}
+    {drawerCap && <SpecialtyDrawer key={drawerCap.title} cap={drawerCap} onClose={() => setDrawerCap(null)} onSwitch={setDrawerCap} />}
     </>
   );
 }
