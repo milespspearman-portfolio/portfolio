@@ -1374,7 +1374,7 @@ function Nav() {
     }}>
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {[["Work", "#work"], ["What I Do", "#what-i-do"], ["About", "#about"]].map(([label, href]) => (
+        {[["About", "#about"], ["What I Do", "#what-i-do"], ["Work", "#work"]].map(([label, href]) => (
           <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
             onMouseEnter={e => e.target.style.color = C.white}
             onMouseLeave={e => e.target.style.color = C.gray}
@@ -1454,49 +1454,6 @@ export default function Portfolio() {
         {/* ===== OPENING WALL ===== */}
         <OpeningWall />
 
-        {/* ===== WHAT I'M WORKING ON NOW ===== */}
-        <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
-          <FadeIn>
-            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
-              <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
-              <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
-                At Adobe, I lead creator and community social for the Brand team. Right now that means running the influencer-hosted sizzle format I built for Adobe MAX and Summit, and owning Creator Camp end to end, giving product marketing a direct window into how real pros use Adobe's tools.
-              </p>
-              <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
-            </div>
-          </FadeIn>
-          <FadeIn delay={0.15}>
-            <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", marginTop: 24, transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
-            >View My LinkedIn →</a>
-          </FadeIn>
-        </section>
-
-        {/* ===== PLAYLIST SHELF ===== */}
-        <PlaylistShelf />
-
-        {/* ===== HERO ROW — the playing cards, bridging the shelves into Work ===== */}
-        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
-          <FadeIn>
-            <HeroRow />
-          </FadeIn>
-        </section>
-
-        {/* ===== WORK — 3 visual grid buckets ===== */}
-        <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
-          <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
-            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
-          </FadeIn>
-
-          <WorkPlayer />
-
-          <div style={{ marginTop: 64 }}><Marquee /></div>
-        </section>
-
         {/* ===== ABOUT ===== */}
         <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
           <FadeIn>
@@ -1534,12 +1491,55 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
+        {/* ===== WHAT I'M WORKING ON NOW ===== */}
+        <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
+          <FadeIn>
+            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
+              <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
+              <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
+                At Adobe, I lead creator and community social for the Brand team. Right now that means running the influencer-hosted sizzle format I built for Adobe MAX and Summit, and owning Creator Camp end to end, giving product marketing a direct window into how real pros use Adobe's tools.
+              </p>
+              <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.15}>
+            <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", marginTop: 24, transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
+            >View My LinkedIn →</a>
+          </FadeIn>
+        </section>
+
         {/* ===== WHAT I DO — clickable cards ===== */}
         <section id="what-i-do" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
           <FadeIn>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
           <WhatIDoCards />
+        </section>
+
+        {/* ===== PLAYLIST SHELF ===== */}
+        <PlaylistShelf />
+
+        {/* ===== HERO ROW — the playing cards, bridging the shelves into Work ===== */}
+        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
+          <FadeIn>
+            <HeroRow />
+          </FadeIn>
+        </section>
+
+        {/* ===== WORK — 3 visual grid buckets ===== */}
+        <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
+          <FadeIn>
+            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
+            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
+          </FadeIn>
+
+          <WorkPlayer />
+
+          <div style={{ marginTop: 64 }}><Marquee /></div>
         </section>
 
         {/* ===== CTA ===== */}
