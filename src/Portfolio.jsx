@@ -1366,7 +1366,7 @@ function WhatIDoCards() {
             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.borderColor = "rgba(30,215,96,0.2)"; e.currentTarget.style.boxShadow = `0 12px 40px rgba(30,215,96,0.06)`; }}
             onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
           >
-            <div style={{ height: 150, borderRadius: 12, overflow: "hidden", background: "#111" }}>
+            <div style={{ aspectRatio: "1 / 1", borderRadius: 12, overflow: "hidden", background: "#111" }}>
               {c.mp4
                 ? <video src={srcOf(c)} poster={c.img} muted loop playsInline preload="metadata"
                     style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }}
