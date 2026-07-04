@@ -76,7 +76,7 @@ const EVENT_ROLES = {
 const EVENT_PARTNERS = {
   "’24 MAX Miami": "T13",
   "’25 Summit Vegas": "T13",
-  "’25 MAX London": "Addison Interactive",
+  "’25 MAX London": "Workhouse",
   "’25 MAX LA": "Addison Interactive",
 };
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
@@ -162,7 +162,7 @@ const portfolio = [
       { title: "Acrobat", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
       { title: "James Gunn", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
       { title: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", sub: "@adobelife · 30.5K likes · Nov 14, 2025", plays: "747.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Coolest-Job_11.14.25.mp4", postUrl: "https://www.instagram.com/p/DRC8V6JAkO1/" },
-      { title: "Kelley O'Hara", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
+      { title: "Kelley O'Hara x NWSL x Adobe", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
       { title: "Mark Rober", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
       { title: "Jessica Williams", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
       { title: "Navin’s Coolest Job", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
@@ -354,7 +354,7 @@ const reelIndexByTitle = (title) => {
 const CAPABILITY_REEL_TITLE = {
   "On-Camera Hosting & Producing": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
   "Content Strategy, Concept to Published": "Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
-  "Directing & On-Camera Coaching": "Kelley O'Hara",                               // MAX 2025 LA
+  "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
 };
 const setList = capabilities.map(c => {
@@ -431,16 +431,16 @@ const SPECIALTY_REELS = {
   "Directing & On-Camera Coaching": [
     { t: "Mark Rober", album: "’25 MAX LA" },
     { t: "James Gunn", album: "’25 MAX LA" },
-    { t: "Kelley O'Hara", album: "’25 MAX LA" },
+    { t: "Kelley O'Hara x NWSL x Adobe", album: "’25 MAX LA" },
     { t: "Jessica Williams", album: "’25 MAX LA" },
     { t: "Summit ’25: Ken Jeong Interview", album: "’25 Summit Vegas" },
-    { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
-    { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
-    { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
-    { t: "Gizem Dal Employee Spotlight", album: "Be You · Season 2" },
-    { t: "Amanda Valenzuela Employee Spotlight", album: "Be You · Season 2" },
-    { t: "Em Siegel Employee Spotlight", album: "Be You · Season 3" },
-    { t: "Imran Idzqandar Employee Spotlight", album: "Be You · Season 3" },
+    { t: "Dave Werner Employee Spotlight", album: "Employee Spotlights · Season 1" },
+    { t: "Manasa Hari Employee Spotlight", album: "Employee Spotlights · Season 1" },
+    { t: "Bowen Wang Employee Spotlight", album: "Employee Spotlights · Season 1" },
+    { t: "Gizem Dal Employee Spotlight", album: "Employee Spotlights · Season 2" },
+    { t: "Amanda Valenzuela Employee Spotlight", album: "Employee Spotlights · Season 2" },
+    { t: "Em Siegel Employee Spotlight", album: "Employee Spotlights · Season 3" },
+    { t: "Imran Idzqandar Employee Spotlight", album: "Employee Spotlights · Season 3" },
     { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "Coolest Job" },
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
     { t: "Coolest Job: Eric", album: "Coolest Job" },
@@ -450,13 +450,13 @@ const SPECIALTY_REELS = {
     { t: "San Jose Semaphore", album: "In-House" },
   ],
   "Producing: Talent Marketing & Employee Comms": [
-    { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
-    { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
-    { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
-    { t: "Gizem Dal Employee Spotlight", album: "Be You · Season 2" },
-    { t: "Amanda Valenzuela Employee Spotlight", album: "Be You · Season 2" },
-    { t: "Em Siegel Employee Spotlight", album: "Be You · Season 3" },
-    { t: "Imran Idzqandar Employee Spotlight", album: "Be You · Season 3" },
+    { t: "Dave Werner Employee Spotlight", album: "Employee Spotlights · Season 1" },
+    { t: "Manasa Hari Employee Spotlight", album: "Employee Spotlights · Season 1" },
+    { t: "Bowen Wang Employee Spotlight", album: "Employee Spotlights · Season 1" },
+    { t: "Gizem Dal Employee Spotlight", album: "Employee Spotlights · Season 2" },
+    { t: "Amanda Valenzuela Employee Spotlight", album: "Employee Spotlights · Season 2" },
+    { t: "Em Siegel Employee Spotlight", album: "Employee Spotlights · Season 3" },
+    { t: "Imran Idzqandar Employee Spotlight", album: "Employee Spotlights · Season 3" },
     { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "’25 MAX LA" },
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "’25 Summit Vegas" },
     { t: "Coolest Job: Eric", album: "Coolest Job · Summit ’26" },
@@ -493,8 +493,8 @@ const REEL_DESCS = {
 // gate-passed lines drafted from Workfront briefs. Renders under the album
 // sub-header when present. S2 blurb activates when Season 2 reels are added.
 const ALBUM_BLURBS = {
-  "Be You · Season 2": "The punishment for good work is more work.",
-  "Be You · Season 3": "Our approach to employee highlights has succeeded three times.",
+  "Employee Spotlights · Season 2": "The punishment for good work is more work.",
+  "Employee Spotlights · Season 3": "Our approach to employee highlights has succeeded three times.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
@@ -658,8 +658,12 @@ const funReels = (() => {
 function HeroMarqueeRow({ reels, duration, offset }) {
   return (
     <div style={{ overflow: "hidden", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
-      <div className="hero-marquee" style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "10px 0", animationDuration: `${duration}s` }}>
-        {[0, 1].map(copy => reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} />))}
+      <div className="hero-marquee" style={{ display: "flex", alignItems: "center", width: "max-content", padding: "10px 0", animationDuration: `${duration}s` }}>
+        {[0, 1].map(copy => (
+          <div key={copy} style={{ display: "flex", alignItems: "center", gap: 18, paddingRight: 18 }}>
+            {reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} />)}
+          </div>
+        ))}
       </div>
     </div>
   );
