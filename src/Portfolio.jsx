@@ -318,7 +318,7 @@ const capabilities = [
   },
   {
     img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy, Concept to Published",
-    meta: "IBC · NAB · Summit · 2024–2025",
+    meta: "IBC · MAX · Summit · 2024–2026",
     body: "“Make the Firefly Video product release fun” was my brief. So as a creative producer on this piece, I built content strategy with PMMs, PR, and editorial, then wrote the scripts myself. The proof is a format: emoji reactions, 1.5M at IBC 2024, repeated at NAB and Summit.",
     linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Play: IBC 2024 →",
   },
@@ -396,12 +396,26 @@ const SPECIALTY_REELS = {
     { t: "’25 MAX London Arches of Inspiration", album: "MAX London ’25" },
     { t: "Summit 2026 Recap", album: "Summit ’26" },
   ],
+  // Strategy albums = FORMATS, not events (Miles + recruiter consolidation,
+  // Jul 4): repeatability across shows IS the concept-to-published story.
+  // Reels cross-list from Hosting freely; his on-record claim covers it
+  // ("I pitch the concepts and write the scripts for every video I host").
+  // HELD: both NAB '24 emoji reels until Miles resolves the H2 date wrinkle.
   "Content Strategy, Concept to Published": [
-    { t: "Premiere Pro AI: Emoji Reactions", album: "IBC 2024" },
-    { t: "Summit ’25: Acrobat Escape Room", album: "Adobe Summit 2025" },
-    { t: "Over & Under AI Enterprise Activity", album: "Adobe Summit 2025" },
-    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Adobe Summit 2025" },
-    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX 2025 LA" },
+    { t: "Premiere Pro AI: Emoji Reactions", album: "Emoji Reactions" },
+    { t: "Event Recap Reactions: Sneaks in One Emoji", album: "Emoji Reactions" },
+    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Emoji Reactions" },
+    { t: "Summit ’25: Acrobat Escape Room", album: "Games & Activations" },
+    { t: "Over & Under AI Enterprise Activity", album: "Games & Activations" },
+    { t: "Fonts Creator Game", album: "Games & Activations" },
+    { t: "Adobe MAX 2024: In-Office MAX Trivia", album: "Games & Activations" },
+    { t: "“Describe Your Job” Interviews", album: "Games & Activations" },
+    { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "Games & Activations" },
+    { t: "’25 MAX London Arches of Inspiration", album: "Games & Activations" },
+    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "Coolest Job" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
+    { t: "Coolest Job: Eric", album: "Coolest Job" },
+    { t: "Coolest Job: Tongyu", album: "Coolest Job" },
   ],
   "Directing & On-Camera Coaching": [
     { t: "Mark Rober", album: "MAX 2025 LA" },
