@@ -305,7 +305,7 @@ const capabilities = [
   },
   {
     img: "/cards/video-production.jpg", imgPos: "50% 28%", title: "Video Production",
-    body: "Shoot, edit, and publish — mobile and DSLR, same-day turnaround, from product demos to executive interviews.",
+    body: "Shoot, edit, and publish on mobile and DSLR. Same-day for event coverage, full prep for executive shoots.",
     linkUrl: "https://www.instagram.com/reel/DCUlhpMAWvB/", linkLabel: "Watch: Premiere Pro Demo →",
   },
   {
@@ -561,7 +561,7 @@ function OpeningWall() {
       <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.30) 0%, rgba(10,10,10,0.55) 100%)", pointerEvents: "none" }} />
       {/* the words */}
       <div style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none" }}>
-        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 4, display: "block", marginBottom: 18 }}>Miles Spearman — San Francisco</span>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 4, display: "block", marginBottom: 18 }}>Social Creative Producer @Adobe | San Francisco</span>
         <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
           Creative<span style={{ color: C.mint }}>.</span><br />
           Producer<span style={{ color: C.mint }}>.</span><br />
@@ -1243,7 +1243,7 @@ export default function Portfolio() {
                 style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => e.target.style.color = C.mint}
                 onMouseLeave={e => e.target.style.color = C.gray}
-              >Off the clock: 🎷 @milesmusicmedia — my jazz content, 10K+ views per reel ↗</a>
+              >Off the clock: 🎷 @milesmusicmedia — my jazz content ↗</a>
             </p>
           </FadeIn>
         </section>
