@@ -269,6 +269,15 @@ portfolio.sort((a, b) => {
 });
 
 // Derived stats (computed from the data above, never hand-typed)
+const fmtWindow = (ev) => {
+  const ds = ev.reels.map(reelDate).filter(Boolean);
+  if (!ds.length) return "";
+  const a = new Date(Math.min(...ds)), b = new Date(Math.max(...ds));
+  const md = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  if (a.getTime() === b.getTime()) return `${md(a)}, ${a.getFullYear()}`;
+  if (a.getFullYear() === b.getFullYear()) return `${md(a)} – ${md(b)}, ${a.getFullYear()}`;
+  return `${md(a)}, ${a.getFullYear()} – ${md(b)}, ${b.getFullYear()}`;
+};
 const eventStats = portfolio.map((ev, i) => {
   const top = [...ev.reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
   return {
@@ -276,6 +285,7 @@ const eventStats = portfolio.map((ev, i) => {
     cover: thumbOf(top), // playlist art = frame from its top-played reel
     role: EVENT_ROLES[ev.event] || "",
     totalPlays: ev.reels.reduce((s, r) => s + playsNum(r.plays), 0),
+    window: fmtWindow(ev), // posting window, derived from reel dates only
   };
 });
 const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
@@ -782,7 +792,7 @@ function WorkPlayer() {
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{handlesOf(viewing)} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays</p>
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{handlesOf(viewing)} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays{viewing.window ? ` · ${viewing.window}` : ""}</p>
                 </div>
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
