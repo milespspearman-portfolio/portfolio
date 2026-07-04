@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 const C = {
-  bg: "#0A0A0A", mint: "#5DE8C5", pink: "#FF6B9D",
+  bg: "#0A0A0A", mint: "#14E39A", pink: "#FF6B9D",
   white: "#FFFFFF", gray: "#888888", darkGray: "#1A1A1A",
   glass: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.08)",
 };
@@ -39,9 +39,27 @@ const EVENT_ICONS = {
   "MAX London 2025": "🎡", "NAB 2025": "🎥", "Cannes": "🎞", "Evergreen Producing": "🌲",
 };
 const GRADS = [
-  ["#123D33", "#5DE8C5"], ["#3D1226", "#FF6B9D"], ["#0F2E3D", "#4FB8D9"], ["#2A123D", "#A45CE8"],
+  ["#0C4A33", "#14E39A"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
 ];
 const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, ${GRADS[i % GRADS.length][1]})`;
+
+// What Miles did on each playlist's videos — his words, retag per playlist as needed
+const EVENT_ROLES = {
+  "UC": "Created, produced & hosted",
+  "Employee & Always On": "Concepted, scripted, hosted & creatively directed",
+  "IBC 2024": "Concepted, scripted, hosted & creatively directed",
+  "MAX Miami 2024": "Concepted, scripted, hosted & creatively directed",
+  "NAB 2024": "Concepted, scripted, hosted & creatively directed",
+  "Upworthy": "Created, produced & hosted",
+  "Adobe Summit 2025": "Concepted, scripted, hosted & creatively directed",
+  "MAX 2025 LA": "Created, produced & hosted",
+  "MAX London 2025": "Concepted, scripted, hosted & creatively directed",
+  "NAB 2025": "Concepted, scripted, hosted & creatively directed",
+  "Cannes": "Produced",
+  "Evergreen Producing": "Produced",
+};
+// The "artist" on a playlist = the brands it published to, derived from each reel's handle
+const handlesOf = (ev) => [...new Set(ev.reels.map(r => r.sub.split(" · ")[0]))].join(", ");
 
 // Transport icons
 const IcPlay = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M4 1.5l10.5 6.5L4 14.5z" /></svg>;
@@ -186,6 +204,7 @@ const portfolio = [
 const eventStats = portfolio.map((ev, i) => ({
   ...ev, idx: i,
   icon: EVENT_ICONS[ev.event] || "🎬",
+  role: EVENT_ROLES[ev.event] || "",
   totalPlays: ev.reels.reduce((s, r) => s + playsNum(r.plays), 0),
 }));
 const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
@@ -448,12 +467,13 @@ function WorkPlayer() {
 
             {/* Detail panel — album view */}
             <main className="sp-main">
-              <div style={{ padding: "28px 24px 20px", display: "flex", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, rgba(93,232,197,0.07), transparent)` }}>
+              <div style={{ padding: "28px 24px 20px", display: "flex", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, ${GRADS[viewing.idx % GRADS.length][0]}, rgba(13,13,13,0) 96%)` }}>
                 <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 52, boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>{viewing.icon}</span>
                 <div style={{ minWidth: 0 }}>
-                  <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Event</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Miles Spearman · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays</p>
+                  {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{handlesOf(viewing)} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays</p>
                 </div>
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
@@ -518,7 +538,7 @@ function WorkPlayer() {
 
           <PlayerBar
             cur={cur}
-            eventName={track ? portfolio[track.e].event : ""}
+            eventName={cur ? `${cur.sub.split(" · ")[0]} · ${portfolio[track.e].event}` : ""}
             playing={playing} prog={prog} dur={dur} muted={muted}
             onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
           />
