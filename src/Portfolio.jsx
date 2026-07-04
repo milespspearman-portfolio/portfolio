@@ -284,6 +284,28 @@ const capabilities = [
   },
 ];
 
+// "The Set List" — each capability (copy verbatim above) is paired to a reel in
+// the portfolio. Indices {e,r} are DERIVED by title lookup (never hardcoded) so
+// clicking a capability deep-links into the Work player via the ms-play event.
+const reelIndexByTitle = (title) => {
+  for (let e = 0; e < portfolio.length; e++) {
+    const r = portfolio[e].reels.findIndex(x => x.title === title);
+    if (r !== -1) return { e, r };
+  }
+  return null;
+};
+// Which portfolio reel backs each capability card, by that reel's exact title.
+const CAPABILITY_REEL_TITLE = {
+  "On-Camera Hosting & Presenting": "Adobe Acrobat Escape Room Activity", // Adobe Summit 2025 — 2.6M, the one most people know him by
+  "Video Production": "MAX London Event Recap",                            // MAX London 2025
+  "Content Strategy": "Mansa",                                             // MAX 2025 LA
+  "Directing & On-Camera Coaching": "Kelley O'hara",                       // MAX 2025 LA
+};
+const setList = capabilities.map(c => {
+  const idx = reelIndexByTitle(CAPABILITY_REEL_TITLE[c.title]);
+  return { ...c, reelIdx: idx, mp4: idx ? portfolio[idx.e].reels[idx.r].mp4 : null };
+});
+
 const skills = ["Video Production", "On-Camera Hosting", "Executive Interviews", "Event Coverage", "Short-Form Content", "TikTok Strategy", "Instagram Reels", "YouTube Shorts", "Premiere Pro", "After Effects", "Brandwatch", "Sprinklr", "Creative Briefs", "Influencer Management", "DSLR + Mobile"];
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
 const statBadges = [
@@ -770,6 +792,95 @@ function WorkPlayer() {
         </div>
       </FadeIn>
     </>
+  );
+}
+
+// ===== WHAT I DO — "The Set List" (concept C) =====
+// A Spotify-style numbered track list that rhymes with the Work player below.
+// Accordion: one row open at a time (first open by default). Only the OPEN row
+// mounts a <video> (one playing video in the section, max) — collapsed rows show
+// their /cards/*.jpg still. Clicking the link label deep-links into the Work
+// player via ms-play. All capability copy is verbatim.
+const num2 = (n) => String(n + 1).padStart(2, "0");
+
+function SetListRow({ cap, i, open, onToggle }) {
+  const [h, setH] = useState(false);
+  const playInWork = (e) => {
+    e.stopPropagation();
+    if (!cap.reelIdx) return; // no mapped reel: fall through to the IG link
+    e.preventDefault();
+    const work = document.getElementById("work");
+    if (work) work.scrollIntoView({ behavior: "smooth" });
+    window.dispatchEvent(new CustomEvent("ms-play", { detail: cap.reelIdx }));
+  };
+  return (
+    <div style={{ borderBottom: `1px solid ${C.border}` }}>
+      {/* Collapsed row: number · thumb · title · action */}
+      <div role="button" tabIndex={0} aria-expanded={open}
+        onClick={onToggle}
+        onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); } }}
+        onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+        style={{
+          display: "grid", gridTemplateColumns: "34px 48px minmax(0,1fr) auto", gap: 14, alignItems: "center",
+          padding: "14px 16px", cursor: "pointer",
+          background: open ? "rgba(15,224,124,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
+          transition: "background 0.2s",
+        }}>
+        <span style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+          {open ? <EqBars /> : num2(i)}
+        </span>
+        <span style={{ width: 48, height: 48, borderRadius: 8, overflow: "hidden", flexShrink: 0, background: "#111" }}>
+          <img src={cap.img} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: cap.imgPos, display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+        </span>
+        <span style={{ minWidth: 0 }}>
+          <span style={{ display: "block", fontFamily: F, fontSize: 15.5, fontWeight: 700, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{cap.title}</span>
+        </span>
+        {/* Right action: link label (wide) collapses to a play/expand glyph on narrow via CSS */}
+        <span className="setlist-action" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span className="setlist-linklabel" onClick={playInWork} role="link" tabIndex={0}
+            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); playInWork(e); } }}
+            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 600, color: h || open ? C.mint : C.gray, whiteSpace: "nowrap", transition: "color 0.2s" }}>{cap.linkLabel}</span>
+          <span aria-hidden="true" style={{ display: "inline-flex", transform: open ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 0.3s", color: open ? C.mint : C.gray }}>
+            <IcPlay s={11} c={open ? C.mint : C.gray} />
+          </span>
+        </span>
+      </div>
+      {/* Expanded panel: grid-rows 0fr->1fr (CSS-only height animation, no JS measure) */}
+      <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
+        <div style={{ overflow: "hidden" }}>
+          <div className="setlist-panel" style={{ display: "flex", gap: 20, padding: open ? "6px 16px 22px 84px" : "0 16px 0 84px", alignItems: "flex-start", transition: "padding 0.35s ease" }}>
+            {/* Only the OPEN row mounts the video element (one playing video max) */}
+            {open && cap.mp4 && (
+              <video src={srcOf(cap)} poster={thumbOf(cap)} muted loop playsInline autoPlay preload="metadata"
+                className="setlist-video"
+                style={{ width: 150, aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", flexShrink: 0, boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }} />
+            )}
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{ fontFamily: F, fontSize: 14, color: "rgba(255,255,255,0.82)", lineHeight: 1.65, margin: "0 0 16px" }}>{cap.body}</p>
+              <button onClick={playInWork}
+                style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: C.bg, background: C.mint, border: "none", padding: "10px 22px", borderRadius: 100, cursor: "pointer", boxShadow: `0 6px 24px ${C.mint}35`, transition: "transform 0.15s" }}
+                onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
+                onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}>{cap.linkLabel}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SetList() {
+  const [openIdx, setOpenIdx] = useState(0); // first row open by default
+  const wrapRef = useRef(null);
+  // Pause the one open-row video when the section scrolls off-screen.
+  usePlayWhenVisible(wrapRef);
+  return (
+    <div ref={wrapRef} style={{ border: `1px solid ${C.border}`, borderRadius: 16, overflow: "hidden", background: "#0D0D0D" }}>
+      {setList.map((cap, i) => (
+        <SetListRow key={cap.title} cap={cap} i={i} open={openIdx === i}
+          onToggle={() => setOpenIdx(cur => cur === i ? -1 : i)} />
+      ))}
+    </div>
   );
 }
 
