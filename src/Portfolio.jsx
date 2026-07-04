@@ -52,8 +52,8 @@ const EVENT_ROLES = {
   "NAB 2025": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
   "Evergreen Producing": "Produced",
-  "Behind the Vision": "Created, produced & hosted",
-  "Miles Music Media": "Created, performed & produced",
+  "Behind the Vision": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
+  "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted — 1-Person Production",
 };
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
 const handlesOf = (ev) => [...new Set(ev.reels.map(r => r.sub.split(" · ")[0]))].join(", ");
@@ -243,22 +243,22 @@ const heroReels = (() => {
 
 const capabilities = [
   {
-    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 25%", title: "On-Camera Hosting & Presenting",
+    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Presenting",
     body: "Event activations, brand segments, interviews, and live hosting — comfortable on camera and on a stage.",
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Watch: Summit Hot Takes →",
   },
   {
-    img: "/cards/video-production.jpg", imgPos: "50% 25%", title: "Video Production",
+    img: "/cards/video-production.jpg", imgPos: "50% 29%", title: "Video Production",
     body: "Shoot, edit, and publish — mobile and DSLR, same-day turnaround, from product demos to executive interviews.",
     linkUrl: "https://www.instagram.com/reel/DCUlhpMAWvB/", linkLabel: "Watch: Premiere Pro Demo →",
   },
   {
-    img: "/cards/content-strategy.jpg", imgPos: "50% 25%", title: "Content Strategy",
+    img: "/cards/content-strategy.jpg", imgPos: "50% 28%", title: "Content Strategy",
     body: "Data-driven concepts backed by social listening and platform analytics — every video starts with a reason to exist.",
     linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Watch: Firefly Informational →",
   },
   {
-    img: "/cards/directing-coaching.jpg", imgPos: "50% 25%", title: "Directing & On-Camera Coaching",
+    img: "/cards/directing-coaching.jpg", imgPos: "50% 35%", title: "Directing & On-Camera Coaching",
     body: "I make people who aren't natural on camera look great — writing talking tracks, asking questions multiple ways, pulling the right sound bites whether it's an exec or a professional athlete.",
     linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Watch: Sneaks Interview →",
   },
