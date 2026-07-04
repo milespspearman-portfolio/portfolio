@@ -16,6 +16,10 @@ Living doc. Chrome/Google research appends finds here; reels graduate into the `
 
 Nomenclature rule (Miles, Jul 4): employee-comms interview reels are titled "{Full Name} Employee Spotlight". Full names come from the published captions ("Meet {Name}, {role} at Adobe"), never guessed.
 
+## Completeness checksum (Miles, Jul 4)
+
+Site currently derives 23.6M plays · 171.1K likes · 82 videos. Miles's expectation once ALL his videos are in: **at least ~32.3M plays and 100+ videos** ("it is well over 100 videos"). These are NOT numbers to type anywhere — stats stay derived. They are the finish-line test: if the derived totals sit well under this after the Workfront ingest + reel hunt, reels are still missing. Gap to close: ~8.7M plays, ~20+ videos.
+
 ## Found — awaiting Miles's go to add
 
 *(Chrome finder appends here: title guess · handle · post URL · date · plays/likes if visible · caption first line)*
