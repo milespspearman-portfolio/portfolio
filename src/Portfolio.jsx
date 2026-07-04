@@ -169,8 +169,8 @@ const portfolio = [
       { title: "Kelley O'Hara", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production — produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
       { title: "Mark Rober", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
       { title: "Jessica Williams", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
-      { title: "Navin", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
-      { title: "Firefly Coolest Job: Sarah", sub: "@adobe · 198 likes · Feb 20, 2026", plays: "35.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Firefly-Coolest-Job-Deep-Dives-Sarah_2.20.26.mp4", postUrl: "https://www.instagram.com/p/DU9ZnA-D_Xu/" },
+      { title: "Navin’s Coolest Job", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
+      { title: "Sarah Shen’s Coolest Job", sub: "@adobe · 198 likes · Feb 20, 2026", plays: "35.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Firefly-Coolest-Job-Deep-Dives-Sarah_2.20.26.mp4", postUrl: "https://www.instagram.com/p/DU9ZnA-D_Xu/" },
     ],
   },
   {
@@ -419,6 +419,8 @@ const SPECIALTY_REELS = {
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
     { t: "Coolest Job: Eric", album: "Coolest Job" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job" },
+    { t: "Navin’s Coolest Job", album: "Coolest Job" },
+    { t: "Sarah Shen’s Coolest Job", album: "Coolest Job" },
   ],
   // Directing expanded per Miles Jul 4: "i did on camera coaching with ken jeong,
   // and all the be you content as well too, along with the coolest job."
@@ -440,6 +442,8 @@ const SPECIALTY_REELS = {
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
     { t: "Coolest Job: Eric", album: "Coolest Job" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job" },
+    { t: "Navin’s Coolest Job", album: "Coolest Job" },
+    { t: "Sarah Shen’s Coolest Job", album: "Coolest Job" },
     { t: "San Jose Semaphore", album: "Evergreen" },
   ],
   "Producing: Talent Marketing & Employee Comms": [
@@ -454,6 +458,8 @@ const SPECIALTY_REELS = {
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "Adobe Summit 2025" },
     { t: "Coolest Job: Eric", album: "Coolest Job · Summit ’26" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job · Summit ’26" },
+    { t: "Navin’s Coolest Job", album: "Coolest Job · MAX ’25" },
+    { t: "Sarah Shen’s Coolest Job", album: "Coolest Job · MAX ’25" },
     { t: "San Jose Semaphore", album: "Evergreen Producing" },
     { t: "Intern Day Creative Cloud", album: "Intern Day ’25" },
   ],
@@ -545,7 +551,9 @@ function PlaysCounter() {
   const rows = [
     [fmtPlays(Math.round(TOTAL_PLAYS * p)), "plays"],
     [fmtPlays(Math.round(TOTAL_LIKES * p)), "likes"],
-    [String(Math.round(TOTAL_REELS * p)), "videos"],
+    // MILES-CLAIM Jul 4: "100+ ... it's a cumulative on all of my creative
+    // output" — career total, his number. Site-playable count stays TOTAL_REELS.
+    [String(Math.round(100 * p)) + (p >= 1 ? "+" : ""), "videos created"],
   ];
   return (
     <div ref={ref} style={{ margin: "0 0 32px" }}>
@@ -1482,7 +1490,10 @@ export default function Portfolio() {
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55`, cursor: "pointer" }}
                   onMouseEnter={ev => ev.target.style.borderBottomColor = C.mint}
                   onMouseLeave={ev => ev.target.style.borderBottomColor = `${C.mint}55`}
-                >professional trumpet player</a> in San Francisco.
+                >professional trumpet player</a> in San Francisco. Reach me anytime at{" "}
+                <a href="mailto:milespspearman@gmail.com"
+                  style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55` }}
+                >milespspearman@gmail.com</a>.
               </p>
               <a href="/Miles-Spearman-Resume.pdf" target="_blank" rel="noopener noreferrer"
                 style={{
@@ -1501,7 +1512,6 @@ export default function Portfolio() {
         {/* ===== WHAT I DO — clickable cards ===== */}
         <section id="what-i-do" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
           <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Services</span>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
           <WhatIDoCards />
@@ -1519,11 +1529,18 @@ export default function Portfolio() {
             </p>
           </FadeIn>
           <FadeIn delay={0.2}>
-            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+            <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+            <a href="mailto:milespspearman@gmail.com"
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
+            >Email Me →</a>
+            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, background: "transparent", border: `1px solid ${C.border}`, padding: "15px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s" }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
             >Connect on LinkedIn →</a>
+            </div>
           </FadeIn>
           <FadeIn delay={0.3}>
             <p style={{ fontFamily: F, fontSize: 13, margin: "28px 0 0" }}>
