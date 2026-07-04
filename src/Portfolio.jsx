@@ -453,6 +453,7 @@ const SPECIALTY_REELS = {
     { t: "Summit ’25: Coolest Job @Adobe S1", album: "’25 Summit Vegas" },
     { t: "Coolest Job: Eric", album: "Coolest Job · Summit ’26" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job · Summit ’26" },
+    { t: "Russell Preston Brown Employee Spotlight", album: "In-House Production" },
     { t: "Navin’s Coolest Job", album: "Coolest Job · MAX ’25" },
     { t: "Sarah Shen’s Coolest Job", album: "Coolest Job · MAX ’25" },
     { t: "San Jose Semaphore", album: "In-House Production" },
