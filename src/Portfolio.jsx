@@ -208,7 +208,7 @@ const portfolio = [
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Brand Intelligence B2B Interview", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
-      { title: "Imran Idzqandar Employee Spotlight", sub: "@adobe · 449 likes · May 27, 2026", plays: "28.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Imran_5.27.26.mp4", postUrl: "https://www.instagram.com/p/DY2y6jbCesw/" },
+      { title: "Imran Idzqandar Employee Spotlight", sub: "@adobe · 449 likes · May 27, 2026", plays: "281K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Imran_5.27.26.mp4", postUrl: "https://www.instagram.com/p/DY2y6jbCesw/" },
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
       { title: "Summit 2026 Recap", sub: "@adobe · 202 likes · Apr 30, 2026", plays: "22.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/SUMMIT-2026_4.30.26.mp4", postUrl: "https://www.instagram.com/p/DXw69j_E2U3/" },
     ],
@@ -1049,6 +1049,71 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
     if (g && g.album === h.album) g.rows.push(h);
     else groups.push({ album: h.album, rows: [h] });
   });
+  // Popular tier (recruiter-lens verdict): plays-sorted top 6, fully derived.
+  // Only when the list is long enough that chronology buries the receipts.
+  const popular = rows.length > 8 ? [...rows].sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays)).slice(0, 6) : null;
+  const yearSpan = (() => {
+    const ys = rows.map(h => { const t = reelDate(h.reel); return t ? new Date(t).getFullYear() : 0; }).filter(Boolean);
+    if (!ys.length) return "";
+    const a = Math.min(...ys), b = Math.max(...ys);
+    return a === b ? String(a) : `${a}–${b}`;
+  })();
+  const chipsEl = groups.length > 1 ? (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "12px 0 8px" }}>
+      {groups.map(g => (
+        <button key={g.album}
+          onClick={() => asideRef.current?.querySelector(`[data-album="${g.album}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 100, padding: "5px 12px", cursor: "pointer" }}
+          onMouseEnter={e => { e.currentTarget.style.color = C.mint; e.currentTarget.style.borderColor = "rgba(30,215,96,0.35)"; }}
+          onMouseLeave={e => { e.currentTarget.style.color = C.gray; e.currentTarget.style.borderColor = C.border; }}>
+          {g.album} · {g.rows.length}</button>
+      ))}
+    </div>
+  ) : null;
+  // One row renderer, two tiers; tier prefix keeps open-state keys distinct so
+  // the same reel never mounts two videos at once.
+  const renderRow = (h, i, tier) => {
+    const key = tier + h.reel.title;
+    const open = openRow === key;
+    const desc = REEL_DESCS[h.reel.title] || h.reel.role || "";
+    return (
+    <div key={key}>
+    <div role="button" tabIndex={0} aria-expanded={open}
+      onClick={() => toggleRow(key)}
+      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRow(key); } }}
+      onMouseEnter={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "rgba(255,255,255,0.05)"}
+      onMouseLeave={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "transparent"}
+      style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s", background: open ? "rgba(30,215,96,0.06)" : "transparent" }}>
+      <span style={{ fontFamily: F, fontSize: 13, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+        {open ? <EqBars /> : i + 1}
+      </span>
+      <span style={{ width: 44, height: 44, borderRadius: 6, overflow: "hidden", background: "#111" }}>
+        <img src={thumbOf(h.reel)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+      </span>
+      <span style={{ minWidth: 0 }}>
+        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.reel.title}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{h.handle}{h.when ? ` · ${h.when}` : ""}</span>
+      </span>
+      <span style={{ fontFamily: F, fontSize: 13, color: C.mint, fontVariantNumeric: "tabular-nums" }}>{h.reel.plays}</span>
+    </div>
+    <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
+      <div style={{ overflow: "hidden" }}>
+        {open && (
+          <div style={{ padding: "10px 8px 18px 82px" }}>
+            <video src={srcOf(h.reel)} poster={thumbOf(h.reel)} controls autoPlay playsInline preload="metadata"
+              style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
+              onError={e => { e.currentTarget.style.display = "none"; }} />
+            {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
+            <a href={h.reel.postUrl} target="_blank" rel="noreferrer"
+              style={{ display: "inline-block", fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
+              Open on Instagram ↗</a>
+          </div>
+        )}
+      </div>
+    </div>
+    </div>
+    );
+  };
   return (
     <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
       <aside ref={asideRef} role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
@@ -1071,32 +1136,30 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
         </div>
         <div style={{ display: "flex", gap: 16, alignItems: "flex-start", margin: "16px 0 20px" }}>
           {rows.length > 0 && (
-            <button onClick={() => toggleRow(openRow === null ? rows[0].reel.title : openRow)} aria-label={cap.linkLabel}
+            <button onClick={() => toggleRow(openRow === null ? (popular ? "pop:" + popular[0].reel.title : "alb:" + rows[0].reel.title) : openRow)} aria-label={cap.linkLabel}
               style={{ width: 48, height: 48, borderRadius: "50%", border: "none", background: C.mint, color: C.bg, display: "inline-flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: `0 6px 24px ${C.mint}35`, flexShrink: 0 }}>
               <IcPlay s={17} />
             </button>
           )}
           <p style={{ fontFamily: F, fontSize: 13.5, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: 0, borderLeft: `3px solid ${C.mint}`, paddingLeft: 14 }}>{cap.body}</p>
         </div>
-        {/* Organization at a glance: album chips, tap to jump to that section */}
-        {groups.length > 1 && (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "0 0 16px" }}>
-            {groups.map(g => (
-              <button key={g.album}
-                onClick={() => asideRef.current?.querySelector(`[data-album="${g.album}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 100, padding: "5px 12px", cursor: "pointer" }}
-                onMouseEnter={e => { e.currentTarget.style.color = C.mint; e.currentTarget.style.borderColor = "rgba(30,215,96,0.35)"; }}
-                onMouseLeave={e => { e.currentTarget.style.color = C.gray; e.currentTarget.style.borderColor = C.border; }}>
-                {g.album} · {g.rows.length}</button>
-            ))}
-          </div>
-        )}
+        {/* Organization at a glance (no Popular tier): chips above the list */}
+        {!popular && chipsEl}
         <div style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "0 8px 8px", borderBottom: `1px solid ${C.border}` }}>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, textAlign: "center" }}>#</span>
           <span />
-          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1 }}>HIGHLIGHTS</span>
+          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1 }}>{popular ? "POPULAR" : "HIGHLIGHTS"}</span>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray }}>PLAYS</span>
         </div>
+        {popular && popular.map((h, i) => renderRow(h, i, "pop:"))}
+        {popular && (
+          <>
+            <div style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1, padding: "22px 8px 8px", borderBottom: `1px solid ${C.border}` }}>
+              ALL EVENTS · {rows.length} REELS{yearSpan ? ` · ${yearSpan}` : ""}
+            </div>
+            {chipsEl}
+          </>
+        )}
         {groups.map((g) => (
         <div key={g.album}>
         {g.album && (
@@ -1105,48 +1168,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
             {ALBUM_BLURBS[g.album] && <div style={{ fontFamily: F, fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4, lineHeight: 1.5 }}>{ALBUM_BLURBS[g.album]}</div>}
           </div>
         )}
-        {g.rows.map((h, i) => {
-          const open = openRow === h.reel.title;
-          const desc = REEL_DESCS[h.reel.title] || h.reel.role || "";
-          return (
-          <div key={h.reel.title + i}>
-          <div role="button" tabIndex={0} aria-expanded={open}
-            onClick={() => toggleRow(h.reel.title)}
-            onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRow(h.reel.title); } }}
-            onMouseEnter={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "rgba(255,255,255,0.05)"}
-            onMouseLeave={e => e.currentTarget.style.background = open ? "rgba(30,215,96,0.06)" : "transparent"}
-            style={{ display: "grid", gridTemplateColumns: "26px 44px 1fr auto", gap: 12, alignItems: "center", padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s", background: open ? "rgba(30,215,96,0.06)" : "transparent" }}>
-            <span style={{ fontFamily: F, fontSize: 13, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-              {open ? <EqBars /> : i + 1}
-            </span>
-            <span style={{ width: 44, height: 44, borderRadius: 6, overflow: "hidden", background: "#111" }}>
-              <img src={thumbOf(h.reel)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-            </span>
-            <span style={{ minWidth: 0 }}>
-              <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.reel.title}</span>
-              <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{h.handle}{h.when ? ` · ${h.when}` : ""}</span>
-            </span>
-            <span style={{ fontFamily: F, fontSize: 13, color: C.mint, fontVariantNumeric: "tabular-nums" }}>{h.reel.plays}</span>
-          </div>
-          {/* Expanded: the reel plays HERE, with its own description below */}
-          <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
-            <div style={{ overflow: "hidden" }}>
-              {open && (
-                <div style={{ padding: "10px 8px 18px 82px" }}>
-                  <video src={srcOf(h.reel)} poster={thumbOf(h.reel)} controls autoPlay playsInline preload="metadata"
-                    style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
-                    onError={e => { e.currentTarget.style.display = "none"; }} />
-                  {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
-                  <a href={h.reel.postUrl} target="_blank" rel="noreferrer"
-                    style={{ display: "inline-block", fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
-                    Open on Instagram ↗</a>
-                </div>
-              )}
-            </div>
-          </div>
-          </div>
-          );
-        })}
+        {g.rows.map((h, i) => renderRow(h, i, "alb:"))}
         </div>
         ))}
         {/* Never a dead end: previous / up-next specialty previews */}
