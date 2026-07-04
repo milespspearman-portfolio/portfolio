@@ -1144,6 +1144,13 @@ export default function Portfolio() {
               <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: July 2026</span>
             </div>
           </FadeIn>
+          <FadeIn delay={0.15}>
+            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", marginTop: 24, transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
+            >View My LinkedIn →</a>
+          </FadeIn>
         </section>
 
         {/* ===== PLAYLIST SHELF ===== */}
