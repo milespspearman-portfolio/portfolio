@@ -324,7 +324,7 @@ const capabilities = [
   },
   {
     img: "/cards/directing-coaching.jpg", imgPos: "50% 32%", title: "Directing & On-Camera Coaching",
-    meta: "Adobe MAX · Summit · 2025–2026",
+    meta: "Adobe MAX · Summit · @adobelife · 2025–2026",
     body: "At MAX 2025 in LA I coached James Gunn, Mark Rober, and Kelley O'Hara on camera. That meant coordinating with strategy and our Adobe Brand studio team to craft talking tracks: I wrote the words, got them approved, then made sure we delivered them in our 10 minute time slot. The Rober reel sits at 2.2M plays.",
     linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Play: MAX 2025 LA →",
   },
@@ -417,11 +417,24 @@ const SPECIALTY_REELS = {
     { t: "Coolest Job: Eric", album: "Coolest Job" },
     { t: "Coolest Job: Tongyu", album: "Coolest Job" },
   ],
+  // Directing expanded per Miles Jul 4: "i did on camera coaching with ken jeong,
+  // and all the be you content as well too, along with the coolest job."
+  // Em Siegel held until her real play count lands (0-plays never enters a proof list).
   "Directing & On-Camera Coaching": [
-    { t: "Mark Rober", album: "MAX 2025 LA" },
-    { t: "James Gunn", album: "MAX 2025 LA" },
-    { t: "Kelley O'Hara", album: "MAX 2025 LA" },
-    { t: "Jessica Williams", album: "MAX 2025 LA" }, // Miles confirmed in chat Jul 4 (was held row H4)
+    { t: "Mark Rober", album: "MAX ’25" },
+    { t: "James Gunn", album: "MAX ’25" },
+    { t: "Kelley O'Hara", album: "MAX ’25" },
+    { t: "Jessica Williams", album: "MAX ’25" },
+    { t: "Summit ’25: Ken Jeong Interview", album: "Summit ’25" },
+    { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Manasa Hari Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Bowen Wang Employee Spotlight", album: "Be You · Season 1" },
+    { t: "Imran Idzqandar Employee Spotlight", album: "Be You · Season 3" },
+    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "Coolest Job" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Coolest Job" },
+    { t: "Coolest Job: Eric", album: "Coolest Job" },
+    { t: "Coolest Job: Tongyu", album: "Coolest Job" },
+    { t: "San Jose Semaphore", album: "Evergreen" },
   ],
   "Producing: Talent Marketing & Employee Comms": [
     { t: "Dave Werner Employee Spotlight", album: "Be You · Season 1" },
@@ -434,6 +447,16 @@ const SPECIALTY_REELS = {
     { t: "Coolest Job: Tongyu", album: "Coolest Job · Summit ’26" },
     { t: "San Jose Semaphore", album: "Evergreen Producing" },
   ],
+};
+// Lens-specific row descriptions — the same reel carries a DIFFERENT line per
+// specialty (hosted it / concepted it / coached the talent / produced it).
+// Keyed [specialty title][reel title]; falls back to REEL_DESCS, then `role`.
+// Miles's words or Workfront-brief lines only. NEVER invent entries.
+const SPECIALTY_ROW_DESCS = {
+  "On-Camera Hosting & Producing": {},
+  "Content Strategy, Concept to Published": {},
+  "Directing & On-Camera Coaching": {},
+  "Producing: Talent Marketing & Employee Comms": {},
 };
 // Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
 // trimmed) or Miles's own words; more land with the Workfront ingest. Rows with
@@ -1093,7 +1116,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   const renderRow = (h, i, tier) => {
     const key = tier + h.reel.title;
     const open = openRow === key;
-    const desc = REEL_DESCS[h.reel.title] || h.reel.role || "";
+    const desc = (SPECIALTY_ROW_DESCS[cap.title] || {})[h.reel.title] || REEL_DESCS[h.reel.title] || h.reel.role || "";
     return (
     <div key={key}>
     <div role="button" tabIndex={0} aria-expanded={open}
