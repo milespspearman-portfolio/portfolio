@@ -25,171 +25,172 @@ function FadeIn({ children, delay = 0, style = {} }) {
   return <div ref={ref} style={{ opacity: v ? 1 : 0, transform: v ? "translateY(0)" : "translateY(24px)", transition: `opacity 0.6s ease ${delay}s, transform 0.6s ease ${delay}s`, ...style }}>{children}</div>;
 }
 
-// IG embed component
-function IGEmbed({ shortcode, title, size = "normal" }) {
-  const h = size === "large" ? 520 : 420;
-  const w = size === "large" ? "100%" : "100%";
-  return (
-    <iframe
-      src={`https://www.instagram.com/reel/${shortcode}/embed/captioned/`}
-      style={{ width: w, height: h, border: "none", background: "#111", borderRadius: 12 }}
-      loading="lazy"
-      allowTransparency="true"
-      title={title}
-    />
-  );
-}
+// ===== PLAYER HELPERS =====
+// Local library paths in the data map 1:1 onto files served from /public
+const srcOf = (r) => r.mp4.replace("~/Downloads/Claude/miles-portfolio-reels", "/reels");
+const thumbOf = (r) => srcOf(r).replace("/reels/", "/thumbs/").replace(/\.mp4$/, ".jpg");
+const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; return /m/i.test(p) ? n * 1e6 : /k/i.test(p) ? n * 1e3 : n; };
+const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
+const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
-// TikTok embed
-function TTEmbed({ videoId, title }) {
-  return (
-    <iframe
-      src={`https://www.tiktok.com/embed/v2/${videoId}`}
-      style={{ width: "100%", height: 420, border: "none", background: "#111", borderRadius: 12 }}
-      loading="lazy"
-      title={title}
-      sandbox="allow-scripts allow-same-origin allow-popups"
-    />
-  );
-}
+const EVENT_ICONS = {
+  "UC": "🎓", "Employee & Always On": "📱", "IBC 2024": "📡", "MAX Miami 2024": "🌴",
+  "NAB 2024": "🎲", "Upworthy": "💛", "Adobe Summit 2025": "📊", "MAX 2025 LA": "🎬",
+  "MAX London 2025": "🎡", "NAB 2025": "🎥", "Cannes": "🎞", "Evergreen Producing": "🌲",
+};
+const GRADS = [
+  ["#123D33", "#5DE8C5"], ["#3D1226", "#FF6B9D"], ["#0F2E3D", "#4FB8D9"], ["#2A123D", "#A45CE8"],
+];
+const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, ${GRADS[i % GRADS.length][1]})`;
 
-// Smart embed - auto picks platform
-function Embed({ url, title, size }) {
-  if (url.includes("tiktok")) {
-    const m = url.match(/video\/(\d+)/);
-    if (m) return <TTEmbed videoId={m[1]} title={title} />;
-  }
-  const m = url.match(/(?:reel|p|tv)\/([A-Za-z0-9_-]+)/);
-  if (m) return <IGEmbed shortcode={m[1]} title={title} size={size} />;
-  return null;
-}
-
-// Video grid item
-function GridItem({ video, delay = 0 }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <FadeIn delay={delay} style={{ height: "100%" }}>
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          borderRadius: 14, overflow: "hidden",
-          border: `1px solid ${hovered ? "rgba(93,232,197,0.2)" : C.border}`,
-          transition: "border-color 0.3s, transform 0.3s",
-          transform: hovered ? "translateY(-4px)" : "translateY(0)",
-          background: "#111",
-          display: "flex", flexDirection: "column",
-        }}
-      >
-        <Embed url={video.url} title={video.title} />
-        <div style={{ padding: "12px 14px" }}>
-          <p style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.white, margin: 0, lineHeight: 1.3 }}>{video.title}</p>
-          {video.sub && <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "4px 0 0", lineHeight: 1.3 }}>{video.sub}</p>}
-        </div>
-      </div>
-    </FadeIn>
-  );
-}
+// Transport icons
+const IcPlay = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M4 1.5l10.5 6.5L4 14.5z" /></svg>;
+const IcPause = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M3.5 2h3.2v12H3.5zM9.3 2h3.2v12H9.3z" /></svg>;
+const IcPrev = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M13 2.5v11L5.5 8zM3 2.5h2v11H3z" /></svg>;
+const IcNext = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M3 2.5v11L10.5 8zM11 2.5h2v11h-2z" /></svg>;
+const IcVol = ({ s = 16, c = C.gray, muted = false }) => (
+  <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true">
+    <path d="M2 6h2.5L8 3v10L4.5 10H2z" />
+    {muted
+      ? <path d="M10.2 5.8l4 4M14.2 5.8l-4 4" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round" />
+      : <path d="M10.5 5.5a3.5 3.5 0 010 5M12 3.5a6 6 0 010 9" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round" />}
+  </svg>
+);
 
 // ===== DATA =====
 
-const portfolioBuckets = [
+const portfolio = [
   {
-    id: "hosting",
-    title: "Hosting & Engagements",
-    subtitle: "On the ground at global events — directing, hosting, and delivering same-day content.",
-    tag: "Events",
-    preview: [
-      { title: "Firefly Informational", sub: "MAX London", url: "https://www.instagram.com/reel/DJC2KUPPwh3/" },
-      { title: "Grabbing the Vibe — MAX Day 1", sub: "MAX Miami", url: "https://www.instagram.com/reel/DBKMzc2v1M5/" },
-      { title: "Fonts Creator Game", sub: "MAX London", url: "https://www.instagram.com/reel/DJAQxdstxfx/" },
-      { title: "SNEAKS Emoji Reactions", sub: "MAX Miami", url: "https://www.instagram.com/reel/DBPd7jKvT9p/" },
-      { title: "IBC Emoji Reactions", sub: "IBC Amsterdam", url: "https://www.instagram.com/reel/DAB_Fb0BUWZ/" },
-      { title: "NAB Emoji Reactions", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/C51y-zEKwAr/" },
-    ],
-    all: [
-      { title: "Firefly Informational", sub: "MAX London", url: "https://www.instagram.com/reel/DJC2KUPPwh3/" },
-      { title: "Grabbing the Vibe — MAX Day 1", sub: "MAX Miami", url: "https://www.instagram.com/reel/DBKMzc2v1M5/" },
-      { title: "Fonts Creator Game", sub: "MAX London", url: "https://www.instagram.com/reel/DJAQxdstxfx/" },
-      { title: "SNEAKS Emoji Reactions", sub: "MAX Miami", url: "https://www.instagram.com/reel/DBPd7jKvT9p/" },
-      { title: "IBC Emoji Reactions", sub: "IBC Amsterdam", url: "https://www.instagram.com/reel/DAB_Fb0BUWZ/" },
-      { title: "NAB Emoji Reactions", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/C51y-zEKwAr/" },
-      { title: "Castle Illustrator Game", sub: "MAX London", url: "https://www.instagram.com/reel/DJAQvZFp_Tl/" },
-      { title: "MAX London Event Recap", sub: "MAX London", url: "https://www.instagram.com/reel/DI7IQhWM2L3/" },
-      { title: "Interactive Event Activation", sub: "MAX Miami", url: "https://www.instagram.com/reel/DBOzrP1IsyY/" },
-      { title: "Defining a Creative — Collage", sub: "MAX Miami", url: "https://www.instagram.com/reel/DBSAnTctwG3/" },
-      { title: "Gatorade Activation & Partnership", sub: "MAX Miami", url: "https://www.instagram.com/reel/DElERFPtRwq/" },
-      { title: "In Office Event Trivia", sub: "MAX Miami", url: "https://www.instagram.com/reel/DA_xlkkJYTb/" },
-      { title: "IBC Event Recap", sub: "IBC Amsterdam", url: "https://www.instagram.com/reel/DAEf4XeN5HT/" },
-      { title: "Premiere Pro AI Features", sub: "IBC Amsterdam", url: "https://www.instagram.com/reel/DACI4I7O8GK/" },
-      { title: "NAB AI Feature Interviews", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/C56vDmUBrJI/" },
-      { title: "NAB Audio Real-Time Testing", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/C6E43DDsUfP/" },
-      { title: "NAB Day in the Life Recap", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/C6HqT-KLF9R/" },
-      { title: "NAB General Coverage", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/DIkB_V8STy1/" },
-      { title: "Premiere Pro 2025 Interviews", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/DIhgGMSs2jJ/" },
-      { title: "Generative Extend Activity", sub: "NAB Las Vegas", url: "https://www.instagram.com/reel/DIjjpFOMwm2/" },
+    event: "UC",
+    reels: [
+      { title: "UC", sub: "@uofcincy · 621 likes · Jul 7, 2022", plays: "5.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2022/UC/UC_7.7.22.mp4", postUrl: "https://www.instagram.com/p/CfuYwU7J0Zv/" },
     ],
   },
   {
-    id: "b2b",
-    title: "B2B Conferences",
-    subtitle: "Capturing the energy of Adobe's enterprise flagship — hot takes, activations, and executive content.",
-    tag: "Adobe Summit",
-    preview: [
-      { title: "Summit Hot Takes", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DH9hfTmBvr-/" },
-      { title: "Celebrity Interview Game", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DH4N4rztmXU/" },
-      { title: "Coca Cola Activation", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHZsBK7qAht/" },
-      { title: "Summit Reactions Recap", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHq_NIfo-wC/" },
-      { title: "Watercolor Master Sneaks", sub: "Pre-Event Interview", url: "https://www.instagram.com/reel/DA6zD2MA7Jh/" },
-      { title: "Photoshop Interview Demo", sub: "Product Launch", url: "https://www.instagram.com/reel/DB9foJNJh8L/" },
-    ],
-    all: [
-      { title: "Summit Hot Takes", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DH9hfTmBvr-/" },
-      { title: "Celebrity Interview Game", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DH4N4rztmXU/" },
-      { title: "Coca Cola Activation", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHZsBK7qAht/" },
-      { title: "Summit Reactions Recap", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHq_NIfo-wC/" },
-      { title: "Watercolor Master Sneaks", sub: "Pre-Event Interview", url: "https://www.instagram.com/reel/DA6zD2MA7Jh/" },
-      { title: "Photoshop Interview Demo", sub: "Product Launch", url: "https://www.instagram.com/reel/DB9foJNJh8L/" },
-      { title: "Adobe Summit Event Recap", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHwsrpri58C/" },
-      { title: "Best Job — Talent Marketing", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHor6j0vyYS/" },
-      { title: "Describe Your Job Interview", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHef1x_M1uJ/" },
-      { title: "Acrobat Escape Room", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHb0O45vPtj/" },
-      { title: "Over & Under AI Activity", sub: "Adobe Summit", url: "https://www.instagram.com/reel/DHbh4advyRR/" },
-      { title: "Premiere Pro Interview Demo", sub: "Product Launch", url: "https://www.instagram.com/reel/DCUlhpMAWvB/" },
-      { title: "Firefly Interview Demo", sub: "Product Launch", url: "https://www.instagram.com/reel/C_0rxmZPxif/" },
-      { title: "Animations & Presets Sneaks", sub: "Pre-Event Interview", url: "https://www.instagram.com/reel/DA_f8ShPIDZ/" },
-      { title: "Project Type Lab Sneaks", sub: "Pre-Event Interview", url: "https://www.instagram.com/reel/DA9EA1Mh0uv/" },
-      { title: "Students Black Friday", sub: "Always On", url: "https://www.instagram.com/reel/DDAM0ZNCvo2/" },
+    event: "Employee & Always On",
+    reels: [
+      { title: "Firefly Interview Demo", sub: "@adobevideo · 979 likes · Sep 12, 2024", plays: "728.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Firefly-Interview-Demo_9.12.24.mp4", postUrl: "https://www.instagram.com/p/C_0rxmZPxif/" },
+      { title: "Students Black Friday Discount", sub: "@adobe · 439 likes · Nov 30, 2024", plays: "831.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Students-Black-Friday-Discount_11.30.24.mp4", postUrl: "https://www.instagram.com/p/DDAM0ZNCvo2/" },
     ],
   },
   {
-    id: "collabs",
-    title: "Collaborations",
-    subtitle: "Brand partnerships, creator content, agency work, and university production.",
-    tag: "Partnerships & Agency",
-    preview: [
-      { title: "NFL Kickoff", sub: "NFL", url: "https://www.instagram.com/p/DOPM4FmkpE_/" },
-      { title: "NWSL", sub: "NWSL", url: "https://www.instagram.com/reel/DRLSGTLgiZS/" },
-      { title: "Taco Bell", sub: "Brand Partnership", url: "https://www.instagram.com/reel/CYkEVhTIoSU/" },
-      { title: "Upworthy", sub: "Creator Collab", url: "https://www.instagram.com/reel/DDKtoQgSz8q/" },
-      { title: "Beyond the Classroom", sub: "University of Cincinnati", url: "https://www.instagram.com/tv/CfuYwU7J0Zv/" },
-      { title: "OTOTO Design", sub: "Branded Agency — TikTok", url: "https://www.tiktok.com/@ototo_design/video/7199760275300486443" },
+    event: "IBC 2024",
+    reels: [
+      { title: "Emoji Reactions to Premiere Pro AI Features", sub: "@adobevideo · 2K likes · Sep 17, 2024", plays: "1.5M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/IBC-2024/Emoji-Reactions-to-Premiere-Pro-AI-Features_9.17.24.mp4", postUrl: "https://www.instagram.com/p/DAB_Fb0BUWZ/" },
+      { title: "Premiere Pro Real Life Features", sub: "@adobevideo · 724 likes · Sep 17, 2024", plays: "570.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/IBC-2024/Premiere-Pro-Real-Life-Features_9.17.24.mp4", postUrl: "https://www.instagram.com/p/DACI4I7O8GK/" },
+      { title: "IBC Event Coverage Recap", sub: "@adobevideo · 843 likes · Sep 18, 2024", plays: "684.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/IBC-2024/IBC-Event-Coverage-Recap_9.18.24.mp4", postUrl: "https://www.instagram.com/p/DAEf4XeN5HT/" },
     ],
-    all: [
-      { title: "NFL Kickoff", sub: "NFL", url: "https://www.instagram.com/p/DOPM4FmkpE_/" },
-      { title: "NWSL", sub: "NWSL", url: "https://www.instagram.com/reel/DRLSGTLgiZS/" },
-      { title: "Taco Bell", sub: "Brand Partnership", url: "https://www.instagram.com/reel/CYkEVhTIoSU/" },
-      { title: "Upworthy", sub: "Creator Collab", url: "https://www.instagram.com/reel/DDKtoQgSz8q/" },
-      { title: "Beyond the Classroom", sub: "University of Cincinnati", url: "https://www.instagram.com/tv/CfuYwU7J0Zv/" },
-      { title: "OTOTO Design", sub: "Branded Agency — TikTok", url: "https://www.tiktok.com/@ototo_design/video/7199760275300486443" },
-      { title: "Level Up Ep. 1", sub: "University of Cincinnati", url: "https://www.instagram.com/reel/ClOeARAJa3z/" },
-      { title: "Level Up Ep. 2", sub: "University of Cincinnati", url: "https://www.instagram.com/reel/ClRTLhOL3vu/" },
-      { title: "Classroom Highlights", sub: "University of Cincinnati", url: "https://www.instagram.com/reel/ClTyzSxPtJH/" },
-      { title: "KeyNutrients", sub: "Branded Agency — TikTok", url: "https://www.tiktok.com/@key_nutrients/video/7163713049256414506" },
-      { title: "Aquafit", sub: "Branded Agency — TikTok", url: "https://www.tiktok.com/@aquafit_official/video/7293681500464090375" },
+  },
+  {
+    event: "MAX Miami 2024",
+    reels: [
+      { title: "Watercolor Master Sneaks Interview", sub: "@adobe · 1.8K likes · Oct 9, 2024", plays: "1M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Watercolor-Master-Sneaks-Interview_10.9.24.mp4", postUrl: "https://www.instagram.com/p/DA6zD2MA7Jh/" },
+      { title: "Project Type Lab Sneaks Interview", sub: "@adobe · 415 likes · Oct 10, 2024", plays: "111.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Project-Type-Lab-Sneaks-Interview_10.10.24.mp4", postUrl: "https://www.instagram.com/p/DA9EA1Mh0uv/" },
+      { title: "Animations & Presets Sneaks Interview", sub: "@adobe · 381 likes · Oct 11, 2024", plays: "51.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Animations-Presets-Sneaks-Interview_10.11.24.mp4", postUrl: "https://www.instagram.com/p/DA_f8ShPIDZ/" },
+      { title: "In Office Event Trivia", sub: "@adobe · 917 likes · Oct 11, 2024", plays: "143K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/In-Office-Event-Trivia_10.11.24.mp4", postUrl: "https://www.instagram.com/p/DA_xlkkJYTb/" },
+      { title: "Grabbing the Vibe of Adobe MAX Day 1", sub: "@adobe · 897 likes · Oct 15, 2024", plays: "183.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Grabbing-the-Vibe-of-Adobe-MAX-Day-1_10.15.24.mp4", postUrl: "https://www.instagram.com/p/DBKMzc2v1M5/" },
+      { title: "Interactive Event Activation Coverage", sub: "@adobecreativecloud · 586 likes · Oct 17, 2024", plays: "57.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Interactive-Event-Activation-Coverage_10.17.24.mp4", postUrl: "https://www.instagram.com/p/DBOzrP1IsyY/" },
+      { title: "Reaction to SNEAKS in One Emoji", sub: "@adobe · 683 likes · Oct 17, 2024", plays: "47.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Reaction-to-SNEAKS-in-One-Emoji_10.17.24.mp4", postUrl: "https://www.instagram.com/p/DBPd7jKvT9p/" },
+      { title: "Defining a Creative Video Interview Collage", sub: "@adobecreativecloud · 446 likes · Oct 18, 2024", plays: "0", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Defining-a-Creative-Video-Interview-Collage_10.18.24.mp4", postUrl: "https://www.instagram.com/p/DBSAnTctwG3/" },
+      { title: "Photoshop Interview Demo", sub: "@photoshop · 1.1K likes · Nov 4, 2024", plays: "82.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Photoshop-Interview-Demo_11.4.24.mp4", postUrl: "https://www.instagram.com/p/DB9foJNJh8L/" },
+      { title: "Premiere Pro Interview Demo", sub: "@adobevideo · 335 likes · Nov 13, 2024", plays: "233.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/MAX-Miami-2024/Premiere-Pro-Interview-Demo_11.13.24.mp4", postUrl: "https://www.instagram.com/p/DCUlhpMAWvB/" },
+      { title: "Gatorade Activation & Partnership Video", sub: "@adobe · 544 likes · Jan 8, 2025", plays: "52.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-Miami-2024/Gatorade-Activation-Partnership-Video_1.8.25.mp4", postUrl: "https://www.instagram.com/p/DElERFPtRwq/" },
+    ],
+  },
+  {
+    event: "NAB 2024",
+    reels: [
+      { title: "NAB Emoji Reaction Interviews", sub: "@adobevideo · 1.9K likes · Apr 16, 2024", plays: "350.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Emoji-Reaction-Interviews_4.16.24.mp4", postUrl: "https://www.instagram.com/p/C51y-zEKwAr/" },
+      { title: "NAB Premiere Pro AI Feature Interviews", sub: "@adobevideo · 4.7K likes · Apr 18, 2024", plays: "1.4M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Premiere-Pro-AI-Feature-Interviews_4.18.24.mp4", postUrl: "https://www.instagram.com/p/C56vDmUBrJI/" },
+      { title: "NAB Audio Enhancements Real-Time Testing", sub: "@adobevideo · 163 likes · Apr 22, 2024", plays: "12.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Audio-Enhancements-Real-Time-Testing_4.22.24.mp4", postUrl: "https://www.instagram.com/p/C6E43DDsUfP/" },
+      { title: "NAB Day in the Life Event Recap", sub: "@adobevideo · 160 likes · Apr 23, 2024", plays: "11.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/NAB-2024/NAB-Day-in-the-Life-Event-Recap_4.23.24.mp4", postUrl: "https://www.instagram.com/p/C6HqT-KLF9R/" },
+    ],
+  },
+  {
+    event: "Upworthy",
+    reels: [
+      { title: "Upworthy", sub: "@upworthy · 6.6K likes · Dec 4, 2024", plays: "425.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Upworthy/Upworthy_12.4.24.mp4", postUrl: "https://www.instagram.com/p/DDKtoQgSz8q/" },
+    ],
+  },
+  {
+    event: "Adobe Summit 2025",
+    reels: [
+      { title: "Coca Cola Activation Interview", sub: "@adobe · 1.5K likes · Mar 20, 2025", plays: "350.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Coca-Cola-Activation-Interview_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHZsBK7qAht/" },
+      { title: "Over & Under AI Enterprise Activity", sub: "@adobe · 1.4K likes · Mar 20, 2025", plays: "711.8K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Over-Under-AI-Enterprise-Activity_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHbh4advyRR/" },
+      { title: "Adobe Acrobat Escape Room Activity", sub: "@adobeacrobat · 7K likes · Mar 20, 2025", plays: "2.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Adobe-Acrobat-Escape-Room-Activity_3.20.25.mp4", postUrl: "https://www.instagram.com/p/DHb0O45vPtj/" },
+      { title: "Describe Your Job Interview", sub: "@adobe · 318 likes · Mar 21, 2025", plays: "72.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Describe-Your-Job-Interview_3.21.25.mp4", postUrl: "https://www.instagram.com/p/DHef1x_M1uJ/" },
+      { title: "Talent Marketing Best Job", sub: "@adobelife · 684 likes · Mar 25, 2025", plays: "28.8K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Talent-Marketing-Best-Job_3.25.25.mp4", postUrl: "https://www.instagram.com/p/DHor6j0vyYS/" },
+      { title: "Adobe Summit Reactions Recap", sub: "@adobe · 291 likes · Mar 26, 2025", plays: "23.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Adobe-Summit-Reactions-Recap_3.26.25.mp4", postUrl: "https://www.instagram.com/p/DHq_NIfo-wC/" },
+      { title: "Adobe Summit Event Recap", sub: "@adobe · 417 likes · Mar 28, 2025", plays: "72K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Adobe-Summit-Event-Recap_3.28.25.mp4", postUrl: "https://www.instagram.com/p/DHwsrpri58C/" },
+      { title: "Celebrity Interview Game", sub: "@adobe · 249 likes · Mar 31, 2025", plays: "66K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Celebrity-Interview-Game_3.31.25.mp4", postUrl: "https://www.instagram.com/p/DH4N4rztmXU/" },
+      { title: "Summit Hot Takes", sub: "@adobe · 245 likes · Apr 2, 2025", plays: "51K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/Adobe-Summit-2025/Summit-Hot-Takes_4.2.25.mp4", postUrl: "https://www.instagram.com/p/DH9hfTmBvr-/" },
+    ],
+  },
+  {
+    event: "MAX 2025 LA",
+    reels: [
+      { title: "Dave Werner", sub: "@adobelife · 26K likes · Aug 18, 2025", plays: "1.9M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Dave-Werner_8.18.25.mp4", postUrl: "https://www.instagram.com/p/DNgTb3hthgJ/" },
+      { title: "Produced and Storyboarded Bowen", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
+      { title: "Mansa", sub: "@adobelife · 6.5K likes · Aug 20, 2025", plays: "809.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mansa_8.20.25.mp4", postUrl: "https://www.instagram.com/p/DNlh970un2W/" },
+      { title: "Acrobat Booth", sub: "@adobeacrobat · 1.3K likes · Oct 31, 2025", plays: "1.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat-Booth_10.31.25.mp4", postUrl: "https://www.instagram.com/p/DQe3K4Zjpv9/" },
+      { title: "Acrobat", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
+      { title: "James Gunn", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
+      { title: "Coolest Job", sub: "@adobelife · 30.5K likes · Nov 14, 2025", plays: "747.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Coolest-Job_11.14.25.mp4", postUrl: "https://www.instagram.com/p/DRC8V6JAkO1/" },
+      { title: "Kelley O'hara", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
+      { title: "Mark Rober", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
+      { title: "Jessica Williams", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
+      { title: "Navin", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
+      { title: "Firefly Coolest Job Deep Dives Sarah", sub: "@adobe · 198 likes · Feb 20, 2026", plays: "35.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Firefly-Coolest-Job-Deep-Dives-Sarah_2.20.26.mp4", postUrl: "https://www.instagram.com/p/DU9ZnA-D_Xu/" },
+    ],
+  },
+  {
+    event: "MAX London 2025",
+    reels: [
+      { title: "MAX London Event Recap", sub: "@adobe · 690 likes · Apr 26, 2025", plays: "58.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/MAX-London-Event-Recap_4.26.25.mp4", postUrl: "https://www.instagram.com/p/DI7IQhWM2L3/" },
+      { title: "Castle Illustrator Game", sub: "@adobe · 188 likes · Apr 28, 2025", plays: "18.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Castle-Illustrator-Game_4.28.25.mp4", postUrl: "https://www.instagram.com/p/DJAQvZFp_Tl/" },
+      { title: "Fonts Creator Game", sub: "@adobe · 1.4K likes · Apr 28, 2025", plays: "425K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Fonts-Creator-Game_4.28.25.mp4", postUrl: "https://www.instagram.com/p/DJAQxdstxfx/" },
+      { title: "Firefly Informational", sub: "@adobefirefly · 278 likes · Apr 29, 2025", plays: "24K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-London-2025/Firefly-Informational_4.29.25.mp4", postUrl: "https://www.instagram.com/p/DJC2KUPPwh3/" },
+    ],
+  },
+  {
+    event: "NAB 2025",
+    reels: [
+      { title: "Premiere Pro Releases 2025 Interviews", sub: "@adobevideo · 951 likes · Apr 16, 2025", plays: "839.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/Premiere-Pro-Releases-2025-Interviews_4.16.25.mp4", postUrl: "https://www.instagram.com/p/DIhgGMSs2jJ/" },
+      { title: "Generative Extend Activity", sub: "@adobevideo · 289 likes · Apr 17, 2025", plays: "84.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/Generative-Extend-Activity_4.17.25.mp4", postUrl: "https://www.instagram.com/p/DIjjpFOMwm2/" },
+      { title: "NAB General Event Coverage & Interviews", sub: "@adobevideo · 155 likes · Apr 17, 2025", plays: "39.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/NAB-General-Event-Coverage-Interviews_4.17.25.mp4", postUrl: "https://www.instagram.com/p/DIkB_V8STy1/" },
+    ],
+  },
+  {
+    event: "Cannes",
+    reels: [
+      { title: "Cannes Produced but not Hosted", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
+    ],
+  },
+  {
+    event: "Evergreen Producing",
+    reels: [
+      { title: "SUMMIT 2026", sub: "@adobe · 202 likes · Apr 30, 2026", plays: "22.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/SUMMIT-2026_4.30.26.mp4", postUrl: "https://www.instagram.com/p/DXw69j_E2U3/" },
+      { title: "Russell", sub: "@adobe · 2.8K likes · May 4, 2026", plays: "143.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Russell_5.4.26.mp4", postUrl: "https://www.instagram.com/p/DX7hTuSErBK/" },
+      { title: "Artist Spotlight Aaron Gonzalez", sub: "@adobe · 268 likes · May 5, 2026", plays: "16.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Artist-Spotlight-Aaron-Gonzalez_5.5.26.mp4", postUrl: "https://www.instagram.com/p/DX9u5N4gPbd/" },
+      { title: "Be You Em Siegel", sub: "@adobe · 337 likes · May 11, 2026", plays: "0", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Em-Siegel_5.11.26.mp4", postUrl: "https://www.instagram.com/p/DYNfjdwkYSU/" },
+      { title: "Eric Coolest Job", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
+      { title: "Tongyu Coolest Job", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
+      { title: "B2B Interview Brand Intelligence", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
+      { title: "Be You Imran", sub: "@adobe · 449 likes · May 27, 2026", plays: "28.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Imran_5.27.26.mp4", postUrl: "https://www.instagram.com/p/DY2y6jbCesw/" },
+      { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
     ],
   },
 ];
+
+// Derived stats (computed from the data above, never hand-typed)
+const eventStats = portfolio.map((ev, i) => ({
+  ...ev, idx: i,
+  icon: EVENT_ICONS[ev.event] || "🎬",
+  totalPlays: ev.reels.reduce((s, r) => s + playsNum(r.plays), 0),
+}));
+const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
+const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
+const highlights = [...eventStats].sort((a, b) => b.totalPlays - a.totalPlays).slice(0, 4);
 
 const capabilities = [
   {
@@ -238,48 +239,292 @@ function Marquee() {
   );
 }
 
-// ===== PORTFOLIO BUCKET =====
-function PortfolioBucket({ bucket }) {
-  const [expanded, setExpanded] = useState(false);
-  const videos = expanded ? bucket.all : bucket.preview;
-  const extraCount = bucket.all.length - bucket.preview.length;
+// ===== WORK — Spotify-pattern library player =====
 
+function Thumb({ reel, size = 44, radius = 6 }) {
+  const [failed, setFailed] = useState(false);
   return (
-    <FadeIn>
-      <div style={{ marginBottom: 80 }}>
-        <div style={{ marginBottom: 28 }}>
-          <span style={{ fontFamily: F, fontSize: 10, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2, display: "block", marginBottom: 8 }}>{bucket.tag}</span>
-          <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3vw, 36px)", fontWeight: 800, color: C.white, margin: 0, letterSpacing: -0.5 }}>{bucket.title}</h3>
-          <p style={{ fontFamily: F, fontSize: 14, color: C.gray, lineHeight: 1.6, margin: "8px 0 0", maxWidth: 550 }}>{bucket.subtitle}</p>
-        </div>
+    <div style={{ width: size, height: size, borderRadius: radius, overflow: "hidden", flexShrink: 0, background: "linear-gradient(135deg, #16302A, #0D1F2E)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {failed
+        ? <IcPlay s={Math.round(size * 0.3)} c="rgba(255,255,255,0.35)" />
+        : <img src={thumbOf(reel)} alt="" loading="lazy" onError={() => setFailed(true)} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
+    </div>
+  );
+}
 
-        {/* Video grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: 16,
-        }}>
-          {videos.map((v, i) => (
-            <GridItem key={`${bucket.id}-${i}`} video={v} delay={Math.min(i * 0.05, 0.3)} />
-          ))}
-        </div>
+function EqBars() {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "flex-end", gap: 2, height: 14 }} aria-label="Playing">
+      {[0, 1, 2].map(i => (
+        <span key={i} style={{ width: 3, background: C.mint, borderRadius: 1, animation: `eqbar 0.9s ease-in-out ${i * 0.18}s infinite` }} />
+      ))}
+    </span>
+  );
+}
 
-        {extraCount > 0 && (
-          <div style={{ marginTop: 24, textAlign: "center" }}>
-            <button onClick={() => setExpanded(!expanded)} style={{
-              fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint,
-              background: "rgba(93,232,197,0.06)", border: `1px solid rgba(93,232,197,0.15)`,
-              padding: "10px 28px", borderRadius: 100, cursor: "pointer", transition: "background 0.2s",
-            }}
-              onMouseEnter={e => e.target.style.background = "rgba(93,232,197,0.12)"}
-              onMouseLeave={e => e.target.style.background = "rgba(93,232,197,0.06)"}
-            >
-              {expanded ? "Show fewer ↑" : `Show all ${bucket.all.length} pieces ↓`}
-            </button>
-          </div>
+function SideRow({ ev, active, isSourceOfAudio, onClick }) {
+  const [h, setH] = useState(false);
+  return (
+    <button className="sp-side-row" onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left",
+        padding: 8, borderRadius: 10, border: "none", cursor: "pointer", fontFamily: F,
+        background: active ? "rgba(255,255,255,0.08)" : h ? "rgba(255,255,255,0.04)" : "transparent",
+        transition: "background 0.15s",
+      }}>
+      <span style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: gradFor(ev.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>{ev.icon}</span>
+      <span style={{ minWidth: 0, flex: 1 }}>
+        <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
+        <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
+      </span>
+      {isSourceOfAudio && <EqBars />}
+    </button>
+  );
+}
+
+function TrackRow({ reel, i, active, playing, onPlay }) {
+  const [h, setH] = useState(false);
+  return (
+    <div role="button" tabIndex={0} onClick={onPlay} onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPlay(); } }}
+      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
+        padding: "8px 12px", borderRadius: 8, cursor: "pointer",
+        background: h ? "rgba(255,255,255,0.07)" : active ? "rgba(93,232,197,0.06)" : "transparent",
+        transition: "background 0.15s",
+      }}>
+      <span style={{ fontFamily: F, fontSize: 13, color: C.gray, textAlign: "center" }}>
+        {active && playing ? <EqBars /> : h ? <IcPlay s={11} c={C.white} /> : i + 1}
+      </span>
+      <Thumb reel={reel} />
+      <span style={{ minWidth: 0 }}>
+        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.sub}</span>
+      </span>
+      <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title="Open on Instagram"
+          style={{ fontFamily: F, fontSize: 12, color: C.gray, textDecoration: "none", opacity: h ? 1 : 0, transition: "opacity 0.15s" }}
+          onMouseEnter={e => e.target.style.color = C.mint} onMouseLeave={e => e.target.style.color = C.gray}
+        >↗</a>
+        <span style={{ fontFamily: F, fontSize: 13, color: active ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", minWidth: 52, textAlign: "right" }}>{reel.plays}</span>
+      </span>
+    </div>
+  );
+}
+
+function HighlightCard({ ev, onOpen }) {
+  const [h, setH] = useState(false);
+  return (
+    <button onClick={onOpen} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
+      style={{
+        border: `1px solid ${h ? "rgba(93,232,197,0.25)" : C.border}`, borderRadius: 14, padding: 16, cursor: "pointer",
+        background: "rgba(255,255,255,0.03)", display: "flex", alignItems: "center", gap: 14, textAlign: "left",
+        transform: h ? "translateY(-4px)" : "none", transition: "all 0.25s", fontFamily: F, width: "100%",
+      }}>
+      <span style={{ width: 56, height: 56, borderRadius: 10, flexShrink: 0, background: gradFor(ev.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26 }}>{ev.icon}</span>
+      <span style={{ minWidth: 0, flex: 1 }}>
+        <span style={{ display: "block", fontSize: 15, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
+        <span style={{ display: "block", fontSize: 12, color: C.gray, marginTop: 3 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
+      </span>
+      <span style={{
+        width: 40, height: 40, borderRadius: "50%", background: C.mint, flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        opacity: h ? 1 : 0, transform: h ? "scale(1)" : "scale(0.8)", transition: "all 0.2s",
+        boxShadow: `0 4px 20px ${C.mint}40`,
+      }}><IcPlay s={15} /></span>
+    </button>
+  );
+}
+
+function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute }) {
+  const pct = dur ? (prog / dur) * 100 : 0;
+  return (
+    <div className="sp-bar" style={{ borderTop: `1px solid ${C.border}`, background: "rgba(10,10,10,0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", padding: "10px 16px", display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", alignItems: "center", gap: 12 }}>
+      {/* Left: track + "artist" */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
+        {cur ? (
+          <>
+            <Thumb reel={cur} size={48} radius={8} />
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontFamily: F, fontSize: 13.5, fontWeight: 600, color: C.white, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{cur.title}</p>
+              <p style={{ fontFamily: F, fontSize: 11.5, color: C.gray, margin: "2px 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{eventName}</p>
+            </div>
+          </>
+        ) : (
+          <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Pick a reel — {TOTAL_REELS} in the library</p>
         )}
       </div>
-    </FadeIn>
+      {/* Center: transport + progress */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+          <button onClick={() => onStep(-1)} disabled={!cur} aria-label="Previous reel" style={{ background: "none", border: "none", cursor: cur ? "pointer" : "default", opacity: cur ? 0.85 : 0.3, padding: 4 }}><IcPrev /></button>
+          <button onClick={onToggle} disabled={!cur} aria-label={playing ? "Pause" : "Play"}
+            style={{ width: 36, height: 36, borderRadius: "50%", background: cur ? C.mint : "rgba(255,255,255,0.15)", border: "none", cursor: cur ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s" }}
+            onMouseEnter={e => { if (cur) e.currentTarget.style.transform = "scale(1.08)"; }}
+            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
+            {playing ? <IcPause s={13} /> : <IcPlay s={13} />}
+          </button>
+          <button onClick={() => onStep(1)} disabled={!cur} aria-label="Next reel" style={{ background: "none", border: "none", cursor: cur ? "pointer" : "default", opacity: cur ? 0.85 : 0.3, padding: 4 }}><IcNext /></button>
+        </div>
+        <div className="sp-progress" style={{ display: "flex", alignItems: "center", gap: 8, width: "min(38vw, 420px)" }}>
+          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums", width: 30, textAlign: "right" }}>{fmtTime(prog)}</span>
+          <div onClick={cur ? onSeek : undefined} role="slider" aria-label="Seek" aria-valuemin={0} aria-valuemax={Math.round(dur || 0)} aria-valuenow={Math.round(prog || 0)}
+            style={{ flex: 1, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)", cursor: cur ? "pointer" : "default", position: "relative" }}>
+            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${pct}%`, borderRadius: 2, background: C.mint }} />
+          </div>
+          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums", width: 30 }}>{fmtTime(dur)}</span>
+        </div>
+      </div>
+      {/* Right: volume + IG */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 14 }}>
+        <button onClick={onMute} aria-label={muted ? "Unmute" : "Mute"} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex" }}><IcVol muted={muted} /></button>
+        {cur && (
+          <a className="sp-ig-link" href={cur.postUrl} target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
+            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(93,232,197,0.3)"; }}
+            onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
+          >Open on Instagram ↗</a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function WorkPlayer() {
+  const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.event === "MAX 2025 LA")));
+  const [track, setTrack] = useState(null); // { e, r } indices into portfolio
+  const [playing, setPlaying] = useState(false);
+  const [prog, setProg] = useState(0);
+  const [dur, setDur] = useState(0);
+  const [muted, setMuted] = useState(false);
+  const [vidErr, setVidErr] = useState(false);
+  const vidRef = useRef(null);
+  const shellRef = useRef(null);
+
+  const cur = track ? portfolio[track.e].reels[track.r] : null;
+  const viewing = eventStats[libIdx];
+
+  const playTrack = (e, r) => { setVidErr(false); setProg(0); setDur(0); setTrack({ e, r }); };
+
+  // Single <video> is the source of truth; on track change, load + play.
+  useEffect(() => {
+    const v = vidRef.current;
+    if (!v || !cur) return;
+    v.load();
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  }, [track]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggle = () => { const v = vidRef.current; if (!v || !cur) return; if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); };
+  const step = (d) => { if (!track) return; const list = portfolio[track.e].reels; const n = track.r + d; if (n >= 0 && n < list.length) playTrack(track.e, n); };
+  const seek = (ev) => { const v = vidRef.current; if (!v || !dur) return; const rect = ev.currentTarget.getBoundingClientRect(); v.currentTime = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width)) * dur; };
+  const openEvent = (i) => { setLibIdx(i); if (shellRef.current) shellRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); };
+
+  return (
+    <>
+      {/* Highlights — entry point into the library */}
+      <FadeIn>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 250px), 1fr))", gap: 14, marginBottom: 28 }}>
+          {highlights.map(ev => <HighlightCard key={ev.event} ev={ev} onOpen={() => openEvent(ev.idx)} />)}
+        </div>
+      </FadeIn>
+
+      {/* Player shell */}
+      <FadeIn>
+        <div ref={shellRef} className="sp-shell" style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden", background: "#0D0D0D", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
+          <div className="sp-body">
+            {/* Sidebar — Your Library */}
+            <aside className="sp-side">
+              <div style={{ padding: "16px 16px 10px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
+                <span style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white }}>Your Library</span>
+                <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays</span>
+              </div>
+              <div className="sp-side-list">
+                {eventStats.map(ev => (
+                  <SideRow key={ev.event} ev={ev} active={ev.idx === libIdx} isSourceOfAudio={!!track && track.e === ev.idx && playing} onClick={() => setLibIdx(ev.idx)} />
+                ))}
+              </div>
+            </aside>
+
+            {/* Detail panel — album view */}
+            <main className="sp-main">
+              <div style={{ padding: "28px 24px 20px", display: "flex", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, rgba(93,232,197,0.07), transparent)` }}>
+                <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), display: "flex", alignItems: "center", justifyContent: "center", fontSize: 52, boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>{viewing.icon}</span>
+                <div style={{ minWidth: 0 }}>
+                  <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Event</span>
+                  <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Miles Spearman · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays</p>
+                </div>
+              </div>
+              <div style={{ padding: "12px 24px 8px" }}>
+                <button onClick={() => playTrack(viewing.idx, 0)} aria-label={`Play ${viewing.event}`}
+                  style={{ width: 48, height: 48, borderRadius: "50%", background: C.mint, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 24px ${C.mint}35`, transition: "transform 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.transform = "scale(1.06)"}
+                  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
+                  <IcPlay s={17} />
+                </button>
+              </div>
+              {/* Track list */}
+              <div style={{ padding: "4px 12px 20px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, padding: "4px 12px 8px", borderBottom: `1px solid ${C.border}`, marginBottom: 6 }}>
+                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, textAlign: "center" }}>#</span>
+                  <span />
+                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase" }}>Title</span>
+                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase" }}>Plays</span>
+                </div>
+                {viewing.reels.map((r, i) => (
+                  <TrackRow key={r.postUrl} reel={r} i={i}
+                    active={!!track && track.e === viewing.idx && track.r === i}
+                    playing={playing}
+                    onPlay={() => playTrack(viewing.idx, i)} />
+                ))}
+              </div>
+            </main>
+
+            {/* Now Playing — the one real <video> */}
+            {cur && (
+              <div className="sp-now">
+                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase", margin: "0 0 10px" }}>Now Playing</p>
+                <div style={{ position: "relative" }}>
+                  <video
+                    ref={vidRef}
+                    src={srcOf(cur)}
+                    poster={thumbOf(cur)}
+                    playsInline
+                    muted={muted}
+                    preload="metadata"
+                    onClick={toggle}
+                    onPlay={() => setPlaying(true)}
+                    onPause={() => setPlaying(false)}
+                    onTimeUpdate={e => setProg(e.target.currentTime)}
+                    onLoadedMetadata={e => setDur(e.target.duration)}
+                    onEnded={() => step(1)}
+                    onError={() => { setVidErr(true); setPlaying(false); }}
+                    style={{ width: "100%", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", cursor: "pointer", display: "block" }}
+                  />
+                  {vidErr && (
+                    <div style={{ position: "absolute", inset: 0, borderRadius: 12, background: "rgba(10,10,10,0.88)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 20, textAlign: "center" }}>
+                      <span style={{ fontSize: 26 }}>🎬</span>
+                      <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: 0, lineHeight: 1.5 }}>This file hasn't landed on the server yet.</p>
+                      <a href={cur.postUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 18px", borderRadius: 100, textDecoration: "none" }}>Watch on Instagram ↗</a>
+                    </div>
+                  )}
+                </div>
+                <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white, margin: "12px 0 2px" }}>{cur.title}</p>
+                <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: 0 }}>{cur.sub}</p>
+              </div>
+            )}
+          </div>
+
+          <PlayerBar
+            cur={cur}
+            eventName={track ? portfolio[track.e].event : ""}
+            playing={playing} prog={prog} dur={dur} muted={muted}
+            onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
+          />
+        </div>
+      </FadeIn>
+    </>
   );
 }
 
@@ -331,6 +576,28 @@ export default function Portfolio() {
         body { background: ${C.bg}; overflow-x: hidden; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
+        .sp-shell { scroll-margin-top: 84px; }
+        .sp-body { display: flex; align-items: stretch; height: 640px; }
+        .sp-side { width: 280px; min-width: 280px; border-right: 1px solid ${C.border}; display: flex; flex-direction: column; }
+        .sp-side-list { flex: 1; overflow-y: auto; padding: 4px 8px 12px; display: flex; flex-direction: column; gap: 2px; }
+        .sp-main { flex: 1; min-width: 0; overflow-y: auto; }
+        .sp-now { width: 300px; min-width: 300px; border-left: 1px solid ${C.border}; padding: 16px; overflow-y: auto; }
+        @media (max-width: 1080px) { .sp-now { width: 250px; min-width: 250px; } }
+        @media (max-width: 900px) {
+          .sp-body { flex-direction: column; height: auto; }
+          .sp-side { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid ${C.border}; }
+          .sp-side-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 6px; padding: 4px 12px 12px; }
+          .sp-side-row { min-width: 210px; }
+          .sp-main { max-height: 460px; }
+          .sp-now { width: 100%; min-width: 0; border-left: none; border-bottom: 1px solid ${C.border}; order: -1; display: flex; flex-direction: column; align-items: center; }
+          .sp-now > div { width: min(62vw, 300px); }
+          .sp-now p { align-self: center; text-align: center; }
+          .sp-cover { width: 84px !important; height: 84px !important; font-size: 36px !important; }
+          .sp-bar { grid-template-columns: minmax(0,1fr) auto !important; }
+          .sp-progress { width: 100% !important; }
+          .sp-ig-link { display: none; }
+        }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
         ::-webkit-scrollbar-thumb { background: ${C.darkGray}; border-radius: 3px; }
@@ -443,6 +710,16 @@ export default function Portfolio() {
                   }}>{s}</span>
                 ))}
               </div>
+              <a href="/Miles-Spearman-Resume.pdf" download="Miles-Spearman-Resume.pdf"
+                style={{
+                  fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none",
+                  display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
+                  border: "1px solid rgba(93,232,197,0.3)", padding: "10px 24px", borderRadius: 100,
+                  transition: "background 0.2s",
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(93,232,197,0.1)"}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+              >Download Resume ↓</a>
             </div>
           </FadeIn>
         </section>
@@ -452,12 +729,12 @@ export default function Portfolio() {
           <FadeIn>
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
-            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 48px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me.</p>
+            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns — shot, edited, and published by me. {TOTAL_REELS} reels · {fmtPlays(TOTAL_PLAYS)} plays. Pick an event, press play.</p>
           </FadeIn>
 
-          {portfolioBuckets.map(b => <PortfolioBucket key={b.id} bucket={b} />)}
+          <WorkPlayer />
 
-          <Marquee />
+          <div style={{ marginTop: 64 }}><Marquee /></div>
         </section>
 
         {/* ===== CTA ===== */}
@@ -477,6 +754,15 @@ export default function Portfolio() {
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = `0 0 70px ${C.pink}35`; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.boxShadow = `0 0 50px ${C.pink}25`; }}
             >Connect on LinkedIn →</a>
+          </FadeIn>
+          <FadeIn delay={0.3}>
+            <p style={{ fontFamily: F, fontSize: 13, margin: "28px 0 0" }}>
+              <a href="https://www.instagram.com/milesmusicmedia" target="_blank" rel="noopener noreferrer"
+                style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.target.style.color = C.mint}
+                onMouseLeave={e => e.target.style.color = C.gray}
+              >Off the clock: 🎷 @milesmusicmedia — my jazz content, 10K+ views per reel ↗</a>
+            </p>
           </FadeIn>
         </section>
 
