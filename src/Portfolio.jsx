@@ -592,9 +592,17 @@ const TILTS = [-3, 2, -1.5, 2.5, -2, 1.5];
 function HeroCard({ reel, i }) {
   const [h, setH] = useState(false);
   const open = () => {
-    const work = document.getElementById("work");
-    if (work) work.scrollIntoView({ behavior: "smooth" });
-    window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: reel.e, r: reel.r } }));
+    // Recruiters care about the skill a reel proves (Miles Jul 4): land on the
+    // specialty drawer holding this reel; player only for reels in no drawer.
+    const spec = Object.entries(SPECIALTY_REELS).find(([, rows]) => rows.some(x => x.t === reel.title));
+    if (spec) {
+      document.getElementById("what-i-do")?.scrollIntoView({ behavior: "smooth" });
+      window.dispatchEvent(new CustomEvent("ms-open-specialty", { detail: { title: spec[0], reel: reel.title } }));
+    } else {
+      const work = document.getElementById("work");
+      if (work) work.scrollIntoView({ behavior: "smooth" });
+      window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: reel.e, r: reel.r } }));
+    }
   };
   const vh = [26, 21, 30, 23][i % 4];
   return (
@@ -1168,12 +1176,22 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   // Rows play INSIDE the drawer (Miles: "it should just play inside of the
   // specialty tab when i push play, just expands" — no jump to Selected Work).
   // One expanded row at a time = the only <video> mounted in the drawer.
-  const [openRow, setOpenRow] = useState(null); // keyed by tier-prefixed reel title
+  const initial = cap.initialReel ? (specialtyHighlights[cap.title] || []).find(h => h.reel.title === cap.initialReel) : null;
+  // Recruiter-lens flip fix: if the arriving reel is in the Popular top-6, open
+  // it THERE (first screen); otherwise open its album row and scroll to it.
+  const popular = rows.length > 8 ? [...rows].sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays)).slice(0, 6) : null;
+  const initialInPop = !!(initial && popular && popular.some(h => h.reel.title === cap.initialReel));
+  const [openRow, setOpenRow] = useState(initial ? (initialInPop ? "pop:" : "alb:") + cap.initialReel : null); // keyed by tier-prefixed reel title
   const toggleRow = (t) => setOpenRow(cur => (cur === t ? null : t));
+  useEffect(() => {
+    if (initial && !initialInPop) {
+      requestAnimationFrame(() => asideRef.current?.querySelector('[data-open-row]')?.scrollIntoView({ block: "center" }));
+    }
+  }, []);
   // Navin structure (Miles's call): in big drawers, events are the rows —
   // one row per body of work, tap to unfold its brief + reels. Space for
   // per-event descriptions (Workfront briefs) lives in ALBUM_BLURBS.
-  const [openAlbum, setOpenAlbum] = useState(null);
+  const [openAlbum, setOpenAlbum] = useState(initial && !initialInPop ? initial.album : null);
   // Album groups (order of first appearance) — Spotify artist-page style.
   const groups = [];
   rows.forEach(h => {
@@ -1181,9 +1199,6 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
     if (g && g.album === h.album) g.rows.push(h);
     else groups.push({ album: h.album, rows: [h] });
   });
-  // Popular tier (recruiter-lens verdict): plays-sorted top 6, fully derived.
-  // Only when the list is long enough that chronology buries the receipts.
-  const popular = rows.length > 8 ? [...rows].sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays)).slice(0, 6) : null;
   const yearSpan = (() => {
     const ys = rows.map(h => { const t = reelDate(h.reel); return t ? new Date(t).getFullYear() : 0; }).filter(Boolean);
     if (!ys.length) return "";
@@ -1209,7 +1224,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
     const open = openRow === key;
     const desc = (SPECIALTY_ROW_DESCS[cap.title] || {})[h.reel.title] || REEL_DESCS[h.reel.title] || h.reel.role || "";
     return (
-    <div key={key}>
+    <div key={key} {...(open ? { "data-open-row": "" } : {})}>
     <div role="button" tabIndex={0} aria-expanded={open}
       onClick={() => toggleRow(key)}
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleRow(key); } }}
@@ -1362,6 +1377,14 @@ function WhatIDoCards() {
   const gridRef = useRef(null);
   const [drawerCap, setDrawerCap] = useState(null);
   usePlayWhenVisible(gridRef); // reels only play while the section is on screen
+  useEffect(() => {
+    const h = (e) => {
+      const cap = setList.find(c => c.title === e.detail.title);
+      if (cap) setDrawerCap({ ...cap, initialReel: e.detail.reel });
+    };
+    window.addEventListener("ms-open-specialty", h);
+    return () => window.removeEventListener("ms-open-specialty", h);
+  }, []);
   return (
     <>
     <div ref={gridRef} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
@@ -1401,6 +1424,13 @@ function WhatIDoCards() {
 // ===== NAV =====
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [connectOpen, setConnectOpen] = useState(false);
+  useEffect(() => {
+    if (!connectOpen) return;
+    const close = () => setConnectOpen(false);
+    const t = setTimeout(() => window.addEventListener("click", close), 0);
+    return () => { clearTimeout(t); window.removeEventListener("click", close); };
+  }, [connectOpen]);
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", h);
@@ -1425,11 +1455,28 @@ function Nav() {
             onMouseLeave={e => e.target.style.color = C.gray}
           >{label}</a>
         ))}
-        <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
-          style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 20px", borderRadius: 100, textDecoration: "none", transition: "opacity 0.2s" }}
-          onMouseEnter={e => e.target.style.opacity = "0.85"}
-          onMouseLeave={e => e.target.style.opacity = "1"}
-        >Connect</a>
+        <div style={{ position: "relative" }}>
+          <button onClick={() => setConnectOpen(o => !o)} aria-expanded={connectOpen} aria-haspopup="true"
+            style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 20px", borderRadius: 100, border: "none", cursor: "pointer", transition: "opacity 0.2s" }}
+            onMouseEnter={e => e.target.style.opacity = "0.85"}
+            onMouseLeave={e => e.target.style.opacity = "1"}
+          >Connect {connectOpen ? "▴" : "▾"}</button>
+          {connectOpen && (
+            <div style={{ position: "absolute", right: 0, top: "calc(100% + 10px)", background: "#141414", border: `1px solid ${C.border}`, borderRadius: 12, padding: 6, minWidth: 220, boxShadow: "0 18px 50px rgba(0,0,0,0.6)", zIndex: 1100 }}>
+              {[["Email me", "mailto:milespspearman@gmail.com", "stays right here", false],
+                ["Connect on LinkedIn ↗", "https://www.linkedin.com/in/milesspearman/", "opens LinkedIn in a new tab", true]].map(([label, href, sub, ext]) => (
+                <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  onClick={() => setConnectOpen(false)}
+                  style={{ display: "block", padding: "10px 14px", borderRadius: 8, textDecoration: "none", transition: "background 0.15s" }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(30,215,96,0.08)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                  <span style={{ display: "block", fontFamily: F, fontSize: 13.5, fontWeight: 600, color: C.white }}>{label}</span>
+                  <span style={{ display: "block", fontFamily: F, fontSize: 11, color: C.gray, marginTop: 2 }}>{sub}</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
@@ -1619,8 +1666,8 @@ export default function Portfolio() {
             <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, background: "transparent", border: `1px solid ${C.border}`, padding: "15px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s" }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
-            >Connect on LinkedIn →</a>
+              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = "transparent"; e.target.style.color = C.white; e.target.style.boxShadow = "none"; }}
+            >Connect on LinkedIn ↗</a>
             </div>
           </FadeIn>
           <FadeIn delay={0.3}>
