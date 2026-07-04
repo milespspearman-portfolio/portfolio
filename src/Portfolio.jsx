@@ -355,6 +355,8 @@ function HeroCard({ reel, i }) {
       }}>
       <video src={srcOf(reel)} poster={thumbOf(reel)} muted loop playsInline autoPlay preload="metadata"
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      {/* per-card veil — lifts on hover so the card spotlights out of the dim */}
+      <span style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.55)", opacity: h ? 0 : 1, transition: "opacity 0.3s ease", pointerEvents: "none" }} />
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9))" }} />
       <span style={{ position: "absolute", left: 10, right: 10, bottom: 9, textAlign: "left" }}>
         <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
@@ -465,7 +467,7 @@ function OpeningWall() {
         ))}
       </div>
       {/* dim so type owns the frame */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.52) 0%, rgba(10,10,10,0.86) 100%)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.30) 0%, rgba(10,10,10,0.55) 100%)", pointerEvents: "none" }} />
       {/* the words */}
       <div style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none" }}>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 4, display: "block", marginBottom: 18 }}>Miles Spearman — San Francisco</span>
