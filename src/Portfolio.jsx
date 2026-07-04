@@ -1068,7 +1068,7 @@ function Nav() {
     }}>
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {[["Work", "#work"], ["Career Specialties", "#services"], ["About", "#about"]].map(([label, href]) => (
+        {[["Work", "#work"], ["What I Do", "#what-i-do"], ["About", "#about"]].map(([label, href]) => (
           <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
             onMouseEnter={e => e.target.style.color = C.white}
             onMouseLeave={e => e.target.style.color = C.gray}
@@ -1218,10 +1218,10 @@ export default function Portfolio() {
         </section>
 
         {/* ===== WHAT I DO — clickable cards ===== */}
-        <section id="services" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
+        <section id="what-i-do" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
           <FadeIn>
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Services</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>Career Specialties</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
           <WhatIDoCards />
         </section>
