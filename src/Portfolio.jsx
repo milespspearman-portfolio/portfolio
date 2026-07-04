@@ -356,10 +356,10 @@ function OpeningWall() {
         <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
           Creative<span style={{ color: C.mint }}>.</span><br />
           Producer<span style={{ color: C.mint }}>.</span><br />
-          <span style={{ color: C.pink }}>Musician.</span>
+          <span style={{ color: "#FFD447" }}>Musician.</span>
         </h1>
         <p style={{ fontFamily: F, fontSize: "clamp(15px, 1.8vw, 19px)", color: "rgba(255,255,255,0.82)", margin: "22px 0 0", fontWeight: 500 }}>
-          Inside and outside of work — every card behind this text is playing.
+          {TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} cumulative plays · inside and outside of work
         </p>
         <span style={{ display: "inline-flex", marginTop: 34, animation: "cuebounce 1.8s ease-in-out infinite", fontFamily: F, fontSize: 13, fontWeight: 600, color: C.gray, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 18px", background: "rgba(10,10,10,0.6)" }}>↓ scroll</span>
       </div>
@@ -812,6 +812,13 @@ export default function Portfolio() {
                   <span style={{ fontFamily: F, fontSize: 11, color: C.gray, lineHeight: 1.3 }}>{b.detail}</span>
                 </div>
               ))}
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.55} style={{ marginTop: 52 }}>
+            <div style={{ overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "16px clamp(24px, 5vw, 80px)" }}>
+                {heroReels.map((reel, i) => <HeroCard key={`row-${reel.postUrl}`} reel={reel} i={i} />)}
+              </div>
             </div>
           </FadeIn>
         </section>
