@@ -18,7 +18,8 @@ Other targets (Miles, Jul 4):
 
 | Target | Destination | In data? |
 |---|---|---|
-| Intern Day Creative Cloud | Producing: Talent Marketing drawer (+ its home playlist TBD) | ❌ FIND (likely @adobecreativecloud or @adobelife) |
+| Intern Day Creative Cloud | Producing: Talent Marketing drawer (+ its home playlist TBD) | ✅ FOUND (reel DMyLF09uG1i, @adobecreativecloud, Jul 31 2025) — awaiting Miles go to add |
+| NAB ’26 hosting reels | On-Camera Hosting & Producing drawer, album NAB ’26 (Miles's layout has the album, zero reels in data) | ❌ FIND — candidate: his YouTube 199K outlier "what's going on with @AdobeVideo at #NAB2026?" (YyvrjaG2kBw, Apr 19 2026; YouTube not IG, Miles decides) |
 
 Nomenclature rule (Miles, Jul 4): employee-comms interview reels are titled "{Full Name} Employee Spotlight". Full names come from the published captions ("Meet {Name}, {role} at Adobe"), never guessed.
 

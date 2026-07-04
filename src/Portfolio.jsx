@@ -311,8 +311,8 @@ const heroReels = (() => {
 // portfolio array; meta lines are Navin-style (events · years), facts only.
 const capabilities = [
   {
-    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting",
-    meta: "Adobe Summit · MAX · NAB · IBC · 2024–Present",
+    img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Producing",
+    meta: "Adobe MAX · Summit · NAB · 2024–Present",
     body: "One-off influencer posts don't scale, so I concepted a repeatable hosted sizzle format for Adobe's flagship events. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera. Created 9 posts over a 3 day event, published between March 20 and April 2, including a Ken Jeong interview and the Acrobat Escape Room at 2.6M plays.",
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: Adobe Summit 2025 →",
   },
@@ -348,7 +348,7 @@ const reelIndexByTitle = (title) => {
 };
 // Which portfolio reel backs each capability card, by that reel's exact title.
 const CAPABILITY_REEL_TITLE = {
-  "On-Camera Hosting": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
+  "On-Camera Hosting & Producing": "Summit ’25: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
   "Content Strategy, Concept to Published": "Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
   "Directing & On-Camera Coaching": "Kelley O'Hara",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
@@ -369,18 +369,32 @@ const setList = capabilities.map(c => {
 // season map where one exists, the event playlist otherwise). Rows group under
 // album sub-headers in the drawer, Spotify artist-page style.
 const SPECIALTY_REELS = {
-  "On-Camera Hosting": [
-    // ALL 9 Summit 2025 reels — Miles's ruling Jul 4 ("ALL Adobe Summit 2025 should be part of the Hosting one")
-    { t: "Summit ’25: Acrobat Escape Room", album: "Adobe Summit 2025" },
-    { t: "Over & Under AI Enterprise Activity", album: "Adobe Summit 2025" },
-    { t: "Adobe Summit ’25: Coca-Cola Activation", album: "Adobe Summit 2025" },
-    { t: "Summit ’25: Hosted Event Recap", album: "Adobe Summit 2025" },
-    { t: "“Describe Your Job” Interviews", album: "Adobe Summit 2025" },
-    { t: "Summit ’25: Ken Jeong Interview", album: "Adobe Summit 2025" },
-    { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "Adobe Summit 2025" },
-    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Adobe Summit 2025" },
-    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Adobe Summit 2025" },
-    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX 2025 LA" }, // Miles: into Hosting; he said album "MAX Miami" — data says Nov 2025 = MAX LA, flagged in chat
+  // Miles's layout Jul 4: chronological event albums, his labels. Reel picks per
+  // album are on-camera-evident selections, listed in chat for his pruning.
+  // NAB '26 album pending: no reels in data yet (see REELS-TO-ADD).
+  "On-Camera Hosting & Producing": [
+    { t: "Project Watercolor Master: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
+    { t: "Adobe MAX Day 1 Vibe", album: "MAX ’24" },
+    { t: "Adobe MAX 2025: In-Office MAX Trivia", album: "MAX ’24" },
+    { t: "Project Type Lab: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
+    { t: "Animations & Presets: Adobe Researcher Sneaks Interview", album: "MAX ’24" },
+    { t: "Summit ’25: Acrobat Escape Room", album: "Summit ’25" },
+    { t: "Over & Under AI Enterprise Activity", album: "Summit ’25" },
+    { t: "Adobe Summit ’25: Coca-Cola Activation", album: "Summit ’25" },
+    { t: "Summit ’25: Hosted Event Recap", album: "Summit ’25" },
+    { t: "“Describe Your Job” Interviews", album: "Summit ’25" },
+    { t: "Summit ’25: Ken Jeong Interview", album: "Summit ’25" },
+    { t: "Summit ’25: Escalator ‘Hot’ Takes", album: "Summit ’25" },
+    { t: "Summit ’25: Coolest Job @Adobe S1", album: "Summit ’25" },
+    { t: "Summit ’25: Sneaks Emoji Reactions", album: "Summit ’25" },
+    { t: "Premiere Pro 2025 Releases", album: "NAB ’25" },
+    { t: "Generative Extend Demo", album: "NAB ’25" },
+    { t: "NAB 2025 Event Coverage", album: "NAB ’25" },
+    { t: "MAX ’25 “Coolest Job” @Adobe | Firefly Feature", album: "MAX ’25" },
+    { t: "MAX London Recap", album: "MAX London ’25" },
+    { t: "Fonts Creator Game", album: "MAX London ’25" },
+    { t: "Illustrator Castle Game", album: "MAX London ’25" },
+    { t: "Summit 2026 Recap", album: "Summit ’26" },
   ],
   "Content Strategy, Concept to Published": [
     { t: "Premiere Pro AI: Emoji Reactions", album: "IBC 2024" },
