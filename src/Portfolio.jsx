@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 
 const C = {
-  bg: "#0A0A0A", mint: "#14E39A", pink: "#FF6B9D",
+  bg: "#0A0A0A", mint: "#0FE07C", pink: "#FF6B9D",
   white: "#FFFFFF", gray: "#888888", darkGray: "#1A1A1A",
   glass: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.08)",
 };
@@ -34,7 +34,7 @@ const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+
 const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
 const GRADS = [
-  ["#0C4A33", "#14E39A"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
+  ["#0C4A2E", "#0FE07C"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
 ];
 const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, ${GRADS[i % GRADS.length][1]})`;
 
@@ -288,26 +288,31 @@ function Marquee() {
   );
 }
 
-// ===== HERO REEL CAROUSEL =====
-function HeroCard({ reel }) {
+// ===== HERO REEL WALL — live muted videos =====
+const TILTS = [-3, 2, -1.5, 2.5, -2, 1.5];
+function HeroCard({ reel, i }) {
   const [h, setH] = useState(false);
   const open = () => {
     const work = document.getElementById("work");
     if (work) work.scrollIntoView({ behavior: "smooth" });
     window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: reel.e, r: reel.r } }));
   };
+  const tall = [236, 208, 250, 218][i % 4];
   return (
     <button onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       aria-label={`Play ${reel.title}`}
       style={{
-        position: "relative", width: 138, height: 232, borderRadius: 14, overflow: "hidden", flexShrink: 0,
-        border: `1px solid ${h ? "rgba(20,227,154,0.45)" : C.border}`, padding: 0, cursor: "pointer",
-        background: "#111", transform: h ? "translateY(-6px) scale(1.02)" : "none", transition: "all 0.25s",
+        position: "relative", width: Math.round(tall * 0.5625), height: tall, borderRadius: 14, overflow: "hidden", flexShrink: 0,
+        border: `1px solid ${h ? `${C.mint}73` : C.border}`, padding: 0, cursor: "pointer",
+        background: "#111", boxShadow: "0 16px 48px rgba(0,0,0,0.45)",
+        transform: h ? "translateY(-8px) scale(1.04) rotate(0deg)" : `rotate(${TILTS[i % TILTS.length]}deg)`,
+        transition: "all 0.3s", zIndex: h ? 3 : 1,
       }}>
-      <img src={thumbOf(reel)} alt="" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} onError={e => { e.target.style.display = "none"; }} />
-      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 45%, rgba(10,10,10,0.92))" }} />
+      <video src={srcOf(reel)} poster={thumbOf(reel)} muted loop playsInline autoPlay preload="metadata"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9))" }} />
       <span style={{ position: "absolute", left: 10, right: 10, bottom: 9, textAlign: "left" }}>
-        <span style={{ display: "block", fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
+        <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
         <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, marginTop: 3 }}>▶ {reel.plays} plays</span>
       </span>
       <span style={{
@@ -320,11 +325,24 @@ function HeroCard({ reel }) {
 }
 
 function HeroReelStrip() {
-  const doubled = [...heroReels, ...heroReels];
+  const wrapRef = useRef(null);
+  // Play the wall only while the hero is on screen — 11 muted videos otherwise burn CPU.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => {
+      el.querySelectorAll("video").forEach(v => {
+        if (entry.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); }
+        else v.pause();
+      });
+    }, { threshold: 0.05 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <div style={{ overflow: "hidden", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 6%, black 94%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 6%, black 94%, transparent)" }}>
-      <div className="hero-strip" style={{ display: "flex", gap: 14, width: "max-content", padding: "8px clamp(24px, 5vw, 80px)", animation: "heroloop 55s linear infinite" }}>
-        {doubled.map((reel, i) => <HeroCard key={`${reel.postUrl}-${i}`} reel={reel} />)}
+    <div ref={wrapRef} style={{ overflowX: "auto", overflowY: "hidden", scrollbarWidth: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
+      <div className="hero-strip" style={{ display: "flex", alignItems: "center", gap: 18, width: "max-content", padding: "16px clamp(24px, 5vw, 80px)", animation: "herodrift 60s ease-in-out infinite alternate" }}>
+        {heroReels.map((reel, i) => <HeroCard key={reel.postUrl} reel={reel} i={i} />)}
       </div>
     </div>
   );
@@ -691,7 +709,7 @@ export default function Portfolio() {
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
-        @keyframes heroloop { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes herodrift { 0% { transform: translateX(0); } 100% { transform: translateX(min(0px, calc(100vw - 100% - 2 * clamp(24px, 5vw, 80px)))); } }
         .hero-strip:hover { animation-play-state: paused; }
         .sp-shell { scroll-margin-top: 84px; }
         .sp-body { display: flex; align-items: stretch; height: 640px; }
