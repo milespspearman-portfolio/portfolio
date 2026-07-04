@@ -1,26 +1,24 @@
 # Portfolio Site — Progress Log
 
-## 🔄 HANDOFF POINT (Jul 4 ~03:30, updated ~04:00) — fresh session starts HERE
+## 🔄 HANDOFF POINT (Jul 4 ~mid-day session) — fresh session starts HERE
 
-**FIRST READS, in order: CLAUDE.md → this block → AGENT-PLAN.md → COPY-PRINCIPLES.md** (the 7-check copy gate; ALL copy work runs through it).
+**FIRST READS, in order: CLAUDE.md → this block → AGENT-PLAN.md → COPY-PRINCIPLES.md** (7 checks + the new "Resume & LinkedIn alignment" rules; ALL copy work runs through both).
 
-**Copy-inputs job (Miles-ordered, before writing/applying ANY case-study lines):**
-1. Pull the most relevant claude.ai chats: LinkedIn strategy (spearmmp acct, `linkedin-strategy-chatsweep/` + its Project) and resume-work chats — use the deep-chat-archive skill/API recipe (org f63a9189, conversations API, NOT DOM). Fold LinkedIn findings into COPY-PRINCIPLES.md.
-2. Check Miles's downloaded resumes: `~/Downloads/*.pdf` resume versions (e.g. Miles_Spearman_Resume_Microsoft*.pdf) + resume-tailoring skill outputs — extract how his real resume phrases roles/metrics; site role lines + case-study lines must agree with resume claims (one voice everywhere).
-3. THEN apply approved case-study lines (research/COPY-PATTERNS-CASE-STUDY.md) through the 7 checks.
+**Pushed live through `96f6864`.** gh push works from Claude's shell. Vercel auto-deploys main (~60s).
 
-**PUSH NOW WORKS from Claude's shell** (gh auth done Jul 4). Remote = live through `2edde26`. Push after every landed agent commit.
-Read CLAUDE.md + AGENT-PLAN.md too. State: opening wall (parallax + hover-spotlight `bd9678a`), gold #F5C518, page order triad→About→Adobe-intro→Work→WhatIDo, Off the Clock live. ~18 commits UNPUSHED (Miles pushes; no git creds in Claude shell).
+**DONE this session (don't redo):**
+- **Miles's title markup APPLIED** (`3865924`): ~40 retitles from his hand-edited TITLE-PROPOSALS.md; Kelley O'Hara fix; TBD rows skipped; untouched LOW rows keep current title. Per his "NOT MAX" notes, **Dave Werner / Bowen / Mansa reels MOVED from MAX 2025 LA → Evergreen Producing** (now 9 + 12 reels, stats re-derive, verified in browser: playback from new slot works, 0 console errors). "SUMMIT 2026" → "Summit 2026 Recap", parked LAST in Evergreen pending his "where are these?" answer (data has only that one Summit-2026 reel; say the word and it becomes its own playlist). CAPABILITY_REEL_TITLE synced.
+- **Copy-inputs job DONE** (`29e1749`): resume + LinkedIn sweeps read from disk (no API pull needed), verbatim extracts → `research/COPY-INPUTS-RESUME-LINKEDIN.md`; COPY-PRINCIPLES.md gained 8 alignment rules (exact Adobe title string, 225k context rule, PDF-cleared numbers list, no em dashes, NDA line, voice rules, jazz-one-line + Off-the-Clock exception).
+- **Freelancer scan DONE** (`96f6864`): `research/FREELANCER-LIST-PORTFOLIO-SCAN.md` — 100-person sheet, 50 portfolios read. Headlines: 1/50 shows any metric; ~30/46 lead with a work grid; 0/46 put About before Work; ~35/47 carry client names/logos.
+- **Owed challenge pass DELIVERED** (`96f6864`): `research/CHALLENGE-PASS-LAYOUT.md` — 6 attacks with verdicts + ranked cheap-fix list.
+- Dev-server note: `.claude/launch.json` now has `autoPort: true` + vite reads `PORT` env, so a second session can run its own preview alongside another.
 
-**In flight when this session ended (check their disk output/commits):**
-- Title-apply agent: applying Miles's hand-edited TITLE-PROPOSALS.md Proposed column to `portfolio` titles (skip TBD rows, sync CAPABILITY_REEL_TITLE + heroReels lookups). Should self-commit. If no commit exists, re-run per this spec.
-- Freelancer-scan agent: reading ~/Downloads/Freelancer_List.xlsx, finding each producer/CD portfolio → research/FREELANCER-LIST-PORTFOLIO-SCAN.md. If doc absent, re-run.
-
-**Miles's open decisions (do NOT build until he says):**
-1. What I Do concept: HE hasn't picked. Latest rec (mine): B "Editorial Split" with A's hover-video panels (recruiters skim, don't click); C "Set List" plumbing already committed (inert) if he prefers it. research/WHAT-I-DO-CONCEPTS.md has all three.
-2. OWED: adversarial "challenge pass" on current page order/design vs the freelancer-scan findings — Miles explicitly wants the current layout ARGUED AGAINST using real peer-portfolio data once the scan doc exists.
-3. Case-study lines (research/COPY-PATTERNS-CASE-STUDY.md) — his markup pending.
-4. Role lines verification, Be You seasons, YouTube 199K placement, logo strip (AGENT-PLAN §7b).
+**Miles's decision queue (nothing below gets built until he says):**
+1. **Challenge-pass calls** (research/CHALLENGE-PASS-LAYOUT.md): nav reorder to Work-first (rec: yes), page-order swap Work-above-About (his `6c60184` order vs 46-site data), logo strip greenlight (§7b), video cap on mid viewports. Metric inversion + Spotify pattern + Off the Clock = argued and KEPT.
+2. **Title leftovers** (TITLE-PROPOSALS.md): TBD rows (MAX Miami 6 + 8, Summit Over/Under — his cell has two candidate titles), LOW rows he left (Acrobat, Navin, Russell), his open Qs. Also flag: his "Adobe MAX 2025: In-Office MAX Trivia" title sits on an Oct 2024 MAX-Miami reel (year looks off — one-tap revert if unintended); "TacoBell" vs marquee's "Taco Bell" spelling.
+3. **Case-study lines** (research/COPY-PATTERNS-CASE-STUDY.md) — his markup still pending; when it lands, apply through the 7 checks + the new alignment rules (esp. exact-numbers + em-dash + NDA rules).
+4. **New collision from the fold:** resume chats killed stat-badge grids ("hate this entire thing") + "50+/250+" are variant-only numbers — but the live site has the 3-badge stat grid he approved in-build. His call: keep site badges or align to resume rules.
+5. Standing: What I Do concept pick (research/WHAT-I-DO-CONCEPTS.md), role-line verification per playlist (now with COPY-INPUTS flags: Cannes mentions, "hosted" strings), Be You seasons, YouTube 199K placement.
 
 ## ✅ ROUND 9 — SHIPPED (commits `6fc19e0`→`0cb6f69`): opening wall (16 live muted videos under "Creative. Producer. Musician." — his triad, my layout), mint→#0FE07C, card frames finalized (park mid-sip / Kelley / Mansa red — spit-take literally doesn't exist in sampled frames of all 4 London reels). Figma connected+verified (view seat), token harvest deferred to design pass. 11 commits UNPUSHED.
 
