@@ -1355,7 +1355,7 @@ function Nav() {
             onMouseLeave={e => e.target.style.color = C.gray}
           >{label}</a>
         ))}
-        <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+        <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
           style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 20px", borderRadius: 100, textDecoration: "none", transition: "opacity 0.2s" }}
           onMouseEnter={e => e.target.style.opacity = "0.85"}
           onMouseLeave={e => e.target.style.opacity = "1"}
@@ -1441,7 +1441,7 @@ export default function Portfolio() {
             </div>
           </FadeIn>
           <FadeIn delay={0.15}>
-            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+            <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", marginTop: 24, transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
@@ -1535,7 +1535,7 @@ export default function Portfolio() {
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
             >Email Me →</a>
-            <a href="https://www.linkedin.com/in/miles-spearman/" target="_blank" rel="noopener noreferrer"
+            <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, background: "transparent", border: `1px solid ${C.border}`, padding: "15px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s" }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 50px ${C.mint}30`; }}
@@ -1549,6 +1549,15 @@ export default function Portfolio() {
                 onMouseEnter={e => e.target.style.color = C.mint}
                 onMouseLeave={e => e.target.style.color = C.gray}
               >Off the clock: 🎷 @milesmusicmedia — my jazz content ↗</a>
+            </p>
+            <p style={{ fontFamily: F, fontSize: 12.5, margin: "10px 0 0", display: "flex", gap: 18, justifyContent: "center", flexWrap: "wrap" }}>
+              {[["Instagram · @miles.spearman", "https://www.instagram.com/miles.spearman/"], ["YouTube · @MilesSpearman", "https://www.youtube.com/@MilesSpearman"]].map(([label, href]) => (
+                <a key={href} href={href} target="_blank" rel="noopener noreferrer"
+                  style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseEnter={e => e.target.style.color = C.mint}
+                  onMouseLeave={e => e.target.style.color = C.gray}
+                >{label} ↗</a>
+              ))}
             </p>
           </FadeIn>
         </section>
