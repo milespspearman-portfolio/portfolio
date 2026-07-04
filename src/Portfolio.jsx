@@ -798,9 +798,9 @@ export default function Portfolio() {
             </span>
           </FadeIn>
           <FadeIn delay={0.1}>
-            <h1 style={{ fontFamily: F, fontSize: "clamp(36px, 5.5vw, 72px)", fontWeight: 800, color: C.white, lineHeight: 1.05, margin: "0 0 24px 0", maxWidth: 820, letterSpacing: -1.5 }}>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(36px, 5.5vw, 72px)", fontWeight: 800, color: C.white, lineHeight: 1.05, margin: "0 0 24px 0", maxWidth: 820, letterSpacing: -1.5 }}>
               The creative behind Adobe's social — from strategy to feed.
-            </h1>
+            </h2>
           </FadeIn>
           <FadeIn delay={0.2}>
             <p style={{ fontFamily: F, fontSize: "clamp(16px, 1.8vw, 20px)", color: C.gray, lineHeight: 1.6, margin: "0 0 40px 0", maxWidth: 600 }}>
