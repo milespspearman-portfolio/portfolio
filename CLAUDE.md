@@ -30,8 +30,24 @@ Spotify Web Player skeuomorph: "Your Library" sidebar = 12 playlists (events/cam
 ## 4. Open — Miles decides (do NOT invent)
 
 1. **Campaign playlists** (e.g. "Be You Season 1/2/3"): data has only 2 "Be You" reels (Em Siegel, Imran, both in Evergreen Producing). Restructuring into seasons needs Miles's reel→season mapping; the `portfolio` array shape already supports any grouping.
+1b. **Personal section SHIPPED (Jul 4):** sidebar "Off the Clock" divider + 2 playlists. "Behind the Vision" (@miles.spearman, 1 reel, 287 plays·21 likes·Jul 3 2026 — stats pulled live from IG; mp4 transcoded from the 1.6GB ProRes master `~/Downloads/Miles Behind The Vision Project/Miles Behind the Vision Shortest_2.mov` → 80MB H.264). "Miles Music Media" (7 jazz winners, 13.1K–40K plays, stats from `reels_work/manifest.json`, mp4s copied from `reels_work/videos/`). Personal mp4 fields use absolute `/reels/...` paths (srcOf passes those through). Still open: remaining jazz winners if Miles wants more (see `PERSONAL-CONTENT-SCOUT.md`), titles for jazz reels are tune names (Miles may retitle). YouTube: personal channel has ONE 199K outlier ("what's going on with @AdobeVideo at #NAB2026?", Apr 19 2026, ID YyvrjaG2kBw) — not yet on the site, Miles decides if/where.
 2. **Role retags:** `EVENT_ROLES` defaults were best-guess (MAX LA + UC + Upworthy = "Created, produced & hosted"; Cannes + Evergreen = "Produced"; rest = "Concepted, scripted, hosted & creatively directed"). Miles verifies per playlist — résumé-grade claims, one string each.
 3. **Push** (see Status). After push, spot-check live: video plays on Vercel (496MB static assets — expected fine, unverified in prod).
+
+## 4b. Delegation map — how to finish this with subagents (context insurance)
+
+Every task below is self-contained if the agent reads THIS file + the named input first. Main thread should only dispatch + verify.
+
+| Task | Agent / model | Input | Output |
+|---|---|---|---|
+| Apply title cleanups Miles approved | `cavecrew-builder` (or general-purpose, **sonnet**) | `TITLE-PROPOSALS.md` rows Miles marked ✓ | Edit `title:` strings in `portfolio` array only; never touch mp4 paths/subs/plays |
+| Role retags Miles supplies | `cavecrew-builder` | His per-playlist/per-reel list | `EVENT_ROLES` map + per-reel `role` fields |
+| Build "Personal" playlist(s) | general-purpose, **opus** | `PERSONAL-CONTENT-SCOUT.md` + Miles's picks + mp4s he downloads | New event object(s) in `portfolio`; sidebar may gain an "Off the Clock" group divider |
+| Campaign regroup (Be You seasons etc.) | general-purpose, **sonnet** | Miles's reel→playlist mapping | Reorder/regroup `portfolio` array, zero data invention |
+| Post-push prod check | `claude` agent w/ Chrome tools | live URL | Click 3 reels, confirm playback + no 404s |
+| Diff review before any push | `cavecrew-reviewer` | `git diff HEAD~1` | One-line findings |
+
+Rules for ALL agents: read CLAUDE.md first; locked copy stays verbatim; data facts (plays/likes/dates/handles) never invented; commit per task with clear message; do NOT push (Miles pushes).
 
 ## 5. Decision log (don't undo)
 

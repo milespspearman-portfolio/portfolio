@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 
 const C = {
   bg: "#0A0A0A", mint: "#14E39A", pink: "#FF6B9D",
@@ -27,7 +27,7 @@ function FadeIn({ children, delay = 0, style = {} }) {
 
 // ===== PLAYER HELPERS =====
 // Local library paths in the data map 1:1 onto files served from /public
-const srcOf = (r) => r.mp4.replace("~/Downloads/Claude/miles-portfolio-reels", "/reels");
+const srcOf = (r) => r.mp4.startsWith("/reels/") ? r.mp4 : r.mp4.replace("~/Downloads/Claude/miles-portfolio-reels", "/reels");
 const thumbOf = (r) => srcOf(r).replace("/reels/", "/thumbs/").replace(/\.mp4$/, ".jpg");
 const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; return /m/i.test(p) ? n * 1e6 : /k/i.test(p) ? n * 1e3 : n; };
 const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
@@ -52,6 +52,8 @@ const EVENT_ROLES = {
   "NAB 2025": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
   "Evergreen Producing": "Produced",
+  "Behind the Vision": "Created, produced & hosted",
+  "Miles Music Media": "Created, performed & produced",
 };
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
 const handlesOf = (ev) => [...new Set(ev.reels.map(r => r.sub.split(" · ")[0]))].join(", ");
@@ -191,6 +193,25 @@ const portfolio = [
       { title: "B2B Interview Brand Intelligence", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
       { title: "Be You Imran", sub: "@adobe · 449 likes · May 27, 2026", plays: "28.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Imran_5.27.26.mp4", postUrl: "https://www.instagram.com/p/DY2y6jbCesw/" },
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
+    ],
+  },
+  // ——— Personal / Off the Clock ———
+  {
+    event: "Behind the Vision",
+    reels: [
+      { title: "Behind the Vision", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
+    ],
+  },
+  {
+    event: "Miles Music Media",
+    reels: [
+      { title: "Happy 100th Birthday Miles Davis", sub: "@milesmusicmedia · 3.7K likes · May 25, 2026", plays: "40K", mp4: "/reels/2026/Miles-Music-Media/Happy-100th-Birthday-Miles-Davis_5.25.26.mp4", postUrl: "https://www.instagram.com/p/DYwEdpmIGwt/" },
+      { title: "In Walked Bud", sub: "@milesmusicmedia · 1.6K likes · Apr 6, 2026", plays: "25.8K", mp4: "/reels/2026/Miles-Music-Media/In-Walked-Bud_4.6.26.mp4", postUrl: "https://www.instagram.com/p/DWxVESoDCR5/" },
+      { title: "Ornithology", sub: "@milesmusicmedia · 1.2K likes · Apr 21, 2026", plays: "20.6K", mp4: "/reels/2026/Miles-Music-Media/Ornithology_4.21.26.mp4", postUrl: "https://www.instagram.com/p/DXaB8HAkn42/" },
+      { title: "Donna Lee", sub: "@milesmusicmedia · 1.3K likes · Feb 22, 2026", plays: "20K", mp4: "/reels/2026/Miles-Music-Media/Donna-Lee_2.22.26.mp4", postUrl: "https://www.instagram.com/p/DVDOzkiCOJ7/" },
+      { title: "Confirmation", sub: "@milesmusicmedia · 1.1K likes · Mar 12, 2026", plays: "18.9K", mp4: "/reels/2026/Miles-Music-Media/Confirmation_3.12.26.mp4", postUrl: "https://www.instagram.com/p/DVxcAn_jWt3/" },
+      { title: "Contrafacts", sub: "@milesmusicmedia · 824 likes · Apr 4, 2026", plays: "15.4K", mp4: "/reels/2026/Miles-Music-Media/Contrafacts_4.4.26.mp4", postUrl: "https://www.instagram.com/p/DWsh2AHCF1z/" },
+      { title: "Miles Davis Might Be a Thief (Four)", sub: "@milesmusicmedia · 823 likes · Mar 5, 2026", plays: "13.1K", mp4: "/reels/2026/Miles-Music-Media/Miles-Davis-Might-Be-a-Thief_3.5.26.mp4", postUrl: "https://www.instagram.com/p/DVfdB5aDRDA/" },
     ],
   },
 ];
@@ -462,7 +483,15 @@ function WorkPlayer() {
               </div>
               <div className="sp-side-list">
                 {eventStats.map(ev => (
-                  <SideRow key={ev.event} ev={ev} active={ev.idx === libIdx} isSourceOfAudio={!!track && track.e === ev.idx && playing} onClick={() => setLibIdx(ev.idx)} />
+                  <Fragment key={ev.event}>
+                    {ev.event === "Behind the Vision" && (
+                      <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
+                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>Off the Clock</span>
+                        <span style={{ flex: 1, height: 1, background: C.border }} />
+                      </div>
+                    )}
+                    <SideRow ev={ev} active={ev.idx === libIdx} isSourceOfAudio={!!track && track.e === ev.idx && playing} onClick={() => setLibIdx(ev.idx)} />
+                  </Fragment>
                 ))}
               </div>
             </aside>
