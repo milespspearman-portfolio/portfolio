@@ -313,11 +313,15 @@ const heroReels = (() => {
   });
   return top;
 })();
-// The full wall = every reel, biggest plays first (Miles: "fill this front part
-// with all the reels, show volume"). Only the first LIVE_WALL play video; the
-// rest are poster stills (mobile research: never run 80+ videos on a phone).
-const wallReels = _allFlat;
-const LIVE_WALL = 14;
+// The wall (Miles: "show volume") — biggest plays first. R2 design: at 84 the
+// collage is 2x viewport, center-clipped, hiding the best cards off-top; cap to
+// what fills one screen densely (the literal "84 reels · 24.1M" volume claim
+// lives in Selected Work). R3 mobile: never 80+ videos on a phone; cap live +
+// card count by device, read once at module load.
+const _isPhone = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
+const _finePointer = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+const wallReels = _allFlat.slice(0, _isPhone ? 12 : 32);
+const LIVE_WALL = _isPhone ? 3 : 14;
 
 // Card copy = Miles's own words (Jul 4 picks), fact-checked against the
 // portfolio array; meta lines are Navin-style (events · years), facts only.
@@ -614,7 +618,7 @@ function AboutClip() {
   const reel = swipeReelBy(word);
   return (
     <span ref={wrapRef} aria-hidden="true" className="about-clip"
-      style={{ position: "absolute", top: 28, right: 28, width: "clamp(96px, 12vw, 132px)", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#111", border: `1px solid ${C.border}`, boxShadow: "0 16px 44px rgba(0,0,0,0.5)" }}>
+      style={{ position: "absolute", top: 24, right: 24, width: "clamp(84px, 9vw, 112px)", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#111", border: `1px solid ${C.border}`, boxShadow: "0 16px 44px rgba(0,0,0,0.5)" }}>
       <img src="/headshot.jpg" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 25%" }} />
       {reel && (
         <video key={reel.postUrl} src={srcOf(reel)} poster="/headshot.jpg" muted loop playsInline autoPlay preload="none"
@@ -788,21 +792,23 @@ function HeroMarqueeRow({ reels, duration, offset }) {
     el.addEventListener("mouseenter", pause);
     el.addEventListener("mouseleave", resume);
     el.addEventListener("pointerdown", pause);
+    el.addEventListener("pointerup", pauseIdle);       // R3 B3: browsers firing pointer but not touch don't pause forever
+    el.addEventListener("pointercancel", pauseIdle);
     el.addEventListener("touchstart", pause, { passive: true });
     el.addEventListener("touchend", pauseIdle, { passive: true });
     el.addEventListener("wheel", pauseIdle, { passive: true });
     return () => { cancelAnimationFrame(raf); clearTimeout(idle);
       el.removeEventListener("mouseenter", pause); el.removeEventListener("mouseleave", resume);
-      el.removeEventListener("pointerdown", pause); el.removeEventListener("touchstart", pause);
-      el.removeEventListener("touchend", pauseIdle); el.removeEventListener("wheel", pauseIdle);
+      el.removeEventListener("pointerdown", pause); el.removeEventListener("pointerup", pauseIdle); el.removeEventListener("pointercancel", pauseIdle);
+      el.removeEventListener("touchstart", pause); el.removeEventListener("touchend", pauseIdle); el.removeEventListener("wheel", pauseIdle);
     };
   }, [duration]);
   return (
-    <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
+    <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
       <div style={{ display: "flex", alignItems: "center", width: "max-content", padding: "10px clamp(24px, 5vw, 80px)" }}>
         {[0, 1].map(copy => (
           <div key={copy} style={{ display: "flex", alignItems: "center", gap: 18, paddingRight: 18 }}>
-            {reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} />)}
+            {reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} live={_finePointer} />)}
           </div>
         ))}
       </div>
@@ -847,8 +853,8 @@ function OpeningWall() {
       raf = 0;
       const h = window.innerHeight || 1;
       const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.85))); // 0..1 over ~first screen
-      if (wordsRef.current) { wordsRef.current.style.opacity = String(1 - p); wordsRef.current.style.transform = `translateY(${(-p * 26).toFixed(1)}px)`; }
-      if (veilRef.current) veilRef.current.style.opacity = String(1 - p * 0.8); // veil lifts -> reels brighten
+      if (wordsRef.current) { wordsRef.current.style.opacity = String(1 - Math.min(1, p * 1.25)); wordsRef.current.style.transform = `translateY(${(-p * 26).toFixed(1)}px)`; }
+      if (veilRef.current) veilRef.current.style.opacity = String(1 - p); // veil lifts fully -> reels reach true brightness
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -1062,7 +1068,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
             style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
             onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(30,215,96,0.3)"; }}
             onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
-          >Open on Instagram ↗</a>
+          ><span className="sp-ig-label">Open on Instagram </span>↗</a>
         )}
       </div>
     </div>
@@ -1281,7 +1287,7 @@ function ShelfRow({ title, items }) {
           <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3 }}>{title}</span>
           <div style={{ display: "flex", gap: 8 }}>
             {[["‹", -1], ["›", 1]].map(([glyph, d]) => (
-              <button key={glyph} onClick={() => scroll(d)} aria-label={`Scroll ${title} ${d < 0 ? "left" : "right"}`}
+              <button key={glyph} className="shelf-arrow" onClick={() => scroll(d)} aria-label={`Scroll ${title} ${d < 0 ? "left" : "right"}`}
                 style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.04)", color: C.white, fontFamily: F, fontSize: 18, cursor: "pointer", lineHeight: 1, transition: "background 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
                 onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
@@ -1691,9 +1697,17 @@ export default function Portfolio() {
           .sp-now > div { width: min(62vw, 300px); }
           .sp-now p { align-self: center; text-align: center; }
           .sp-cover { width: 84px !important; height: 84px !important; font-size: 36px !important; }
-          .sp-bar { grid-template-columns: minmax(0,1fr) auto !important; }
+          /* R3 B4: transport bar sticky so play/seek stay under the thumb; keep IG CTA (glyph only) */
+          .sp-bar { grid-template-columns: minmax(0,1fr) auto !important; position: sticky; bottom: 0; z-index: 5; background: ${C.bg}; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
           .sp-progress { width: 100% !important; }
-          .sp-ig-link { display: none; }
+          .sp-ig-link { padding: 11px !important; }
+          .sp-ig-link .sp-ig-label { display: none; }
+        }
+        /* R3 B5: 44px tap targets on touch devices */
+        @media (hover: none) {
+          .spec-drawer [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
+          .sp-bar button { min-width: 44px; min-height: 44px; }
+          .tracklist-ig { opacity: 1 !important; }
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
@@ -1720,7 +1734,7 @@ export default function Portfolio() {
               border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
             }}>
               <AboutClip />
-              <h2 className="about-heading" style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px", paddingRight: 150 }}>
+              <h2 className="about-heading" style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px", paddingRight: 128 }}>
                 About the <SwipeWord /><span style={{ color: C.mint }}>.</span>
               </h2>
               <PlaysCounter />
