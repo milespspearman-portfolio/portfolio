@@ -1,6 +1,43 @@
 # Portfolio Site — Progress Log
 
-## 🔄 HANDOFF POINT — fresh session starts HERE (session 3, Jul 4 late)
+## 🔄 HANDOFF POINT — fresh session starts HERE (session 4, Jul 4 night)
+**FIRST READS: CLAUDE.md → this block → COPY-PRINCIPLES.md → research/PORTFOLIO-PATTERN-SPEC.md.** Everything below (session 3 and earlier) is HISTORY; this block wins. **All work through commit `79c469f` is PUSHED and live.**
+
+### Hard lesson this session (don't repeat)
+**Background agents die silently.** An Opus description-writer hung 55 min with zero output, blocking the build; two earlier workflows died the same way. RULE: do all FILE-EDIT work INLINE on the main loop. Use agents only for READ-ONLY review/research, and actively check their output-file mtime/size if they go quiet (a stall monitor script lives at scratchpad/agentmon.sh). Miles: "i do not need silent fails today."
+
+### Shipped session 4 (all inline, pushed, verified)
+- **Descriptions filled** (the layer Miles noticed missing): 17 `ALBUM_BLURBS` (Audrey squares per drawer album) + ~48 `REEL_DESCS` (caption-sourced, complete-sentences-only, event names kept, R1-cleaned, 0 em dashes). 6 hand-written spotlight lines preserved.
+- **Full wall** (OpeningWall): all reels biggest-first, device-sliced (32 desktop / 12 mobile) after R2 found 84 clips the best cards off-top; top 14 (desktop) / 3 (mobile) live video, rest lazy posters. "84 reels · 24.1M" volume claim lives in Selected Work text.
+- **Scroll-dissolve**: triad evaporates (eased 1.25x) + veil lifts fully to 0 → reels brighten to tappable. Ref-based, no re-render, reduced-motion safe.
+- **About swipe-clip tile**: top-right in the grey card, 9:16 (clamp 84-112px), synced to the swipe word via shared `useSwipeTick`; headshot (`public/headshot.jpg`, 129KB) = resting frame; word→reel map in `SWIPE_REEL_TITLES` (Creative=MAX London Recap/spit take, Producer=Semaphore, Host=3 Things/T-Pain, Director=Kelley, Teammate=Gatorade).
+- **Marquees**: JS scroll-advance = auto-drift AND finger-swipeable; poster-on-touch (`_finePointer`), pointerup/cancel resume, overscroll-contain.
+- **Mobile fixes (R3)**: player bar sticky + safe-area, Open-on-Instagram un-hidden (glyph) on mobile, 44px tap targets (drawer close/shelf arrows/player buttons via `@media (hover:none)`).
+- **Nav Connect = dropdown** (Email stays here / LinkedIn opens new tab); hero cards open the specialty drawer (Popular-tier seed + scroll-to-row), not the player.
+- **8 missing videos FOUND** (hunt succeeded) — see below.
+
+### THE 84→100+ ENGINE (Miles's "huge unlock" — the hunt is DONE, awaiting his calls)
+`research/MISSING-VIDEOS.md` (in-repo, leak-scanned clean — Miles ruled the featured people public) has 8 verified public URLs, NO downloads yet (his rule):
+- **NFL "Made to Create" LCC — YouTube `emLfQR3DPME`, 484K views** (biggest single number he has; + LinkedIn mirror)
+- Photoshop Archives (Russell + Matthew Richmond) YouTube `UQUBT0kw3WA` 145K · Iliza backstage `Yppr9COGl0o` · Marvel Eyes of Wakanda `rcKUba3Q93M` · GSW Creative Threads `epGnepZdfbk` · NWSL Kelley `T9Y612yikpU`+IG `DNRX89SpIkC` · Eric Matisoff BTS `q7yZmnS8Tfg`
+- **NOT pinned:** NFL Kickoff carousel (deep in @adobe grid — needs Miles's shortcode). Skip: Parsons, Adobe Voices Exec (not posted).
+- **DECISION NEEDED:** most are YouTube LONGFORM but the site is IG-reels. Add a "Longform/YouTube" library row? Fold in as YouTube-type rows? The NFL 484K deserves prominent placement. Then Miles green-lights Apify → download+folder+Notion per [[apify-reel-download-rule]].
+
+### Miles's open calls (nudge, don't invent)
+1. YouTube-longform format (above) + NFL Kickoff shortcode + Apify green-light on the 8.
+2. R1 copy flags: WIWON says "Social Creative Studio", About bio says "Adobe Brand" (recruiter-read tension, his pick); Cannes reintroduced in WIWON while the Cannes playlist stays pulled (his call — he added the line deliberately); S2/S3 album blurbs are dry inside-jokes (his words, kept).
+3. Double-colon titles (Watercolor/Type Lab Sneaks), bare ":Recap" pair, TacoBell vs Taco Bell — cosmetic.
+
+### Deferred mobile polish (R3 P-items, not blocking)
+Bottom-sheet swipe-down-to-dismiss (tap-dismiss already works 3 ways); nav `env(safe-area-inset-top)` + `100svh` on app wrapper; `prefers-reduced-motion` on the CSS animations (cuebounce/eqbar/swipe/float/count-up); full tap-target sweep (seek-bar hitbox, TrackRow ↗). Also: **855MB of raw MP4s is a mobile-data bomb** — compression/HLS is a real separate project. Full detail: `research/MOBILE-BEST-PRACTICES.md` + `research/QA-PROD-MOBILE-PERF.md` (never delivered — re-run).
+
+### Gotcha: device detection is module-load
+`_isPhone`/`_finePointer` (Portfolio.jsx ~line 320) read matchMedia ONCE at JS load, so they don't react to resize (a desktop→narrow resize won't re-slice the wall). Correct on a fresh device load; if you need live-reactive, lift to a component with a resize listener.
+
+### Standing agent crew (all Miles-requested, in .claude/agents/)
+design-judge (desktop/composition) · mobile-design (≤900px/touch, NEW this session) · recruiter-lens (hiring read) · copy-editor (the gate) · org-scribe (keeps PORTFOLIO-PATTERN-SPEC.md true). Run the relevant ones after any change; they're read-only and cheap.
+
+## (session 3) 🔄 HANDOFF POINT — fresh session starts HERE (session 3, Jul 4 late)
 **FIRST READS: CLAUDE.md → this block → COPY-PRINCIPLES.md.** The session-2 block below is HISTORY — this block supersedes it.
 
 ### Shipped session 3 (commits `88d57a9`→`c13db92`, verify pushed: `git status -sb`)
