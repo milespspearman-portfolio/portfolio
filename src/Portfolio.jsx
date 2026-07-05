@@ -74,6 +74,10 @@ const EVENT_ROLES = {
 };
 // External production partners per playlist — Miles's locked map (Jul 4),
 // Audrey pattern: share the agency. Only Miles-confirmed credits appear.
+// Brand roster surfaced on the timeline node (recruiter-legible names, one quiet line — not a badge grid).
+const EVENT_BRANDS = {
+  "Brand Partnerships": "Adobe × NWSL · Marvel · Golden State Warriors · Photoshop",
+};
 const EVENT_PARTNERS = {
   "’24 MAX Miami": "T13",
   "’25 Summit Vegas": "T13",
@@ -630,11 +634,11 @@ function SwipeWord() {
   return (
     <span style={{ position: "relative", display: "inline-block", overflow: "hidden", verticalAlign: "bottom" }}>
       {tick > 0 && (
-        <span key={`out${tick}`} style={{ position: "absolute", left: 0, top: 0, whiteSpace: "nowrap", animation: "swipeOut 0.5s cubic-bezier(0.55,0,0.45,1) both" }}>
+        <span key={`out${tick}`} style={{ position: "absolute", left: 0, top: 0, color: C.mint, whiteSpace: "nowrap", animation: "swipeOut 0.5s cubic-bezier(0.55,0,0.45,1) both" }}>
           {SWIPE_WORDS[prev]}
         </span>
       )}
-      <span key={`in${tick}`} style={{ display: "inline-block", whiteSpace: "nowrap", animation: tick > 0 ? "swipeIn 0.5s cubic-bezier(0.55,0,0.45,1) both" : "none" }}>
+      <span key={`in${tick}`} style={{ display: "inline-block", color: C.mint, whiteSpace: "nowrap", animation: tick > 0 ? "swipeIn 0.5s cubic-bezier(0.55,0,0.45,1) both" : "none" }}>
         {SWIPE_WORDS[idx]}
       </span>
     </span>
@@ -1302,7 +1306,7 @@ function ShelfCard({ ev }) {
       }}>
       <span style={{ display: "block", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", background: gradFor(ev.idx), position: "relative" }}>
         <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-        <span style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
+        <span className="shelf-card-play" style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
       </span>
       <span style={{ display: "block", marginTop: 12, fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
       <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
@@ -1394,9 +1398,9 @@ function CareerTimeline() {
           return (
             <Fragment key={ev.event}>
               {showYear && (
-                <div className="tl-year" style={{ position: "sticky", top: 72, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 85%, transparent)` }}>
+                <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 60%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)} plays</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)}</span>
                 </div>
               )}
               <div style={{ position: "relative", marginBottom: 14 }}>
@@ -1415,6 +1419,7 @@ function CareerTimeline() {
                     <span style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: cat.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
                     <span style={{ display: "block", fontFamily: F, fontSize: "clamp(18px, 2.4vw, 26px)", fontWeight: 800, color: C.white, letterSpacing: -0.4, lineHeight: 1.12 }}>{ev.event}</span>
                     {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
+                    {EVENT_BRANDS[ev.event] && <span style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
                     <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{ev.window} · {reels.length} {reels.length === 1 ? "reel" : "reels"}</span>
                     <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>▶ {fmtPlays(ev.totalPlays)} plays</span>
                   </span>
@@ -1442,7 +1447,7 @@ function CareerTimeline() {
                             ))}
                           </div>
                         )}
-                        <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
+                        <div style={{ display: "flex", gap: "4px 12px", alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
                           <a href={active.postUrl} target="_blank" rel="noreferrer" style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open on Instagram ↗</a>
                           <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: Math.min(reelIdx, reels.length - 1) } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
                         </div>
@@ -1865,10 +1870,11 @@ export default function Portfolio() {
           .spec-drawer [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; }
+          .shelf-card-play { opacity: 1 !important; transform: translateY(0) !important; }
           .tl-card { position: relative; }
           .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
           .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #1ED760; }
-          .tl-chips { -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+          .tl-chips { -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent); mask-image: linear-gradient(90deg, #000 92%, transparent); scroll-padding-right: 16px; }
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
