@@ -1666,10 +1666,7 @@ export default function Portfolio() {
         @keyframes drawerFade { from { opacity: 0; } }
         @keyframes clipFade { from { opacity: 0; } to { opacity: 1; } }
         .marquee-scroll::-webkit-scrollbar { display: none; }
-        @media (max-width: 700px) {
-          .about-clip { position: static !important; display: block; float: right; width: 104px !important; margin: 0 0 10px 14px; top: auto !important; right: auto !important; }
-          .about-heading { padding-right: 0 !important; }
-        }
+        /* R4 mobile fix: About renders as normal block flow; static headshot at card bottom, no floating swipe clip. */
         @keyframes drawerIn { from { transform: translateX(100%); } }
         @keyframes sheetIn { from { transform: translateY(100%); } }
         .spec-drawer { animation: drawerIn 0.35s cubic-bezier(0.22,1,0.36,1); }
@@ -1733,8 +1730,7 @@ export default function Portfolio() {
               position: "relative", maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
             }}>
-              <AboutClip />
-              <h2 className="about-heading" style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px", paddingRight: 128 }}>
+              <h2 className="about-heading" style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
                 About the <SwipeWord /><span style={{ color: C.mint }}>.</span>
               </h2>
               <PlaysCounter />
@@ -1760,6 +1756,11 @@ export default function Portfolio() {
                 onMouseEnter={e => e.currentTarget.style.background = "rgba(30,215,96,0.1)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >View Resume →</a>
+              {/* Static headshot at the bottom of the About card (R4: no longer part of the swipe clip) */}
+              <div style={{ marginTop: 40, display: "flex", justifyContent: "flex-start" }}>
+                <img src="/headshot.jpg" alt="Miles Spearman"
+                  style={{ width: "clamp(120px, 30vw, 168px)", aspectRatio: "1 / 1", objectFit: "cover", objectPosition: "50% 20%", borderRadius: 18, border: `1px solid ${C.border}`, boxShadow: "0 16px 44px rgba(0,0,0,0.4)" }} />
+              </div>
             </div>
           </FadeIn>
         </section>
