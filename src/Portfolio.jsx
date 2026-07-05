@@ -78,6 +78,28 @@ const EVENT_ROLES = {
 const EVENT_BRANDS = {
   "Brand Partnerships": "Adobe × NWSL · Marvel · Golden State Warriors · Photoshop",
 };
+// Per-album Workfront-brief lines shown when an album group unfolds in a drawer.
+// Restored Jul 5 — was accidentally dropped in commit 7175fb7, causing a runtime
+// crash (ReferenceError) when any album group expanded. Miles's lines verbatim.
+const ALBUM_BLURBS = {
+  "Emoji Reactions": "One format, three shows. Real creators react to a new AI feature in a single emoji. It pulled 1.5M at IBC 2024, then traveled to NAB and Summit.",
+  "Games & Activations": "Booth games and floor activations turned into social. The Acrobat Escape Room alone reached 2.6M plays.",
+  "Coolest Job": "A recurring series putting Adobe's most interesting roles on camera, from employees to Sneaks presenters, across Summit and MAX.",
+  "Coolest Job · MAX ’25": "The MAX 2025 deep dives: longer, narrative cuts of the Coolest Job format.",
+  "Coolest Job · Summit ’26": "The Summit 2026 class of Coolest Job, built to grow the series.",
+  "Employee Spotlights · Season 1": "Where the series started. Three employees, three creative lives outside work. Dave Werner's reached 1.9M plays.",
+  "Employee Spotlights · Season 2": "The punishment for good work is more work.",
+  "Employee Spotlights · Season 3": "Our approach to employee highlights has succeeded three times.",
+  "Always On": "Evergreen demand content: product demos and seasonal moments that run year round.",
+  "In-House Production": "Employee stories, activations, and talent pieces produced end to end, in house.",
+  "Intern Day ’25": "A look inside Adobe's internship, made to recruit the next class of creatives.",
+  "’24 MAX Miami": "Adobe MAX 2024, Miami. Sneaks interviews, floor activations, and the show's trivia format.",
+  "’25 Summit Vegas": "Adobe Summit 2025, Las Vegas. The flagship hosting run: escape rooms, celebrity interviews, and hosted recaps.",
+  "’25 MAX LA": "Adobe MAX 2025, Los Angeles. Celebrity and talent on camera: James Gunn, Mark Rober, Kelley O'Hara, Jessica Williams.",
+  "’25 MAX London": "Adobe MAX London 2025. Interactive booth games and event recaps, including the 425K Fonts Creator game.",
+  "’25 NAB Vegas": "NAB 2025, Las Vegas. Premiere Pro release coverage and live feature demos for the video community.",
+  "’26 Summit Vegas": "Adobe Summit 2026, Las Vegas. The latest event recap work.",
+};
 const EVENT_PARTNERS = {
   "’24 MAX Miami": "T13",
   "’25 Summit Vegas": "T13",
