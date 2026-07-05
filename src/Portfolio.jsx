@@ -1048,8 +1048,8 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
         <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.sub}</span>
       </span>
       <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title="Open on Instagram"
-          style={{ fontFamily: F, fontSize: 12, color: C.gray, textDecoration: "none", opacity: h ? 1 : 0, transition: "opacity 0.15s" }}
+        <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title="Open on Instagram" className="tracklist-ig"
+          style={{ fontFamily: F, fontSize: 12, color: C.gray, textDecoration: "none", padding: "6px", minWidth: 24, textAlign: "center", opacity: h ? 1 : 0, transition: "opacity 0.15s" }}
           onMouseEnter={e => e.target.style.color = C.mint} onMouseLeave={e => e.target.style.color = C.gray}
         >↗</a>
         <span style={{ fontFamily: F, fontSize: 13, color: active ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", minWidth: 52, textAlign: "right" }}>{reel.plays}</span>
@@ -1398,7 +1398,7 @@ function CareerTimeline() {
           return (
             <Fragment key={ev.event}>
               {showYear && (
-                <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 60%, transparent)` }}>
+                <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 82%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
                   <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)}</span>
                 </div>
@@ -1419,9 +1419,9 @@ function CareerTimeline() {
                     <span style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: cat.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
                     <span style={{ display: "block", fontFamily: F, fontSize: "clamp(18px, 2.4vw, 26px)", fontWeight: 800, color: C.white, letterSpacing: -0.4, lineHeight: 1.12 }}>{ev.event}</span>
                     {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
-                    {EVENT_BRANDS[ev.event] && <span style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
+                    {EVENT_BRANDS[ev.event] && <span className="tl-brands" style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
                     <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{ev.window} · {reels.length} {reels.length === 1 ? "reel" : "reels"}</span>
-                    <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>▶ {fmtPlays(ev.totalPlays)} plays</span>
+                    <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{fmtPlays(ev.totalPlays)} plays</span>
                   </span>
                 </div>
                 <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", gridTemplateColumns: "minmax(0, 1fr)", transition: "grid-template-rows 0.4s ease" }}>
@@ -1760,8 +1760,8 @@ function Nav() {
   }, []);
   return (
     <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
-      padding: "0 clamp(24px, 5vw, 80px)", height: 64,
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000, boxSizing: "border-box",
+      padding: "env(safe-area-inset-top) clamp(24px, 5vw, 80px) 0", height: "calc(64px + env(safe-area-inset-top))",
       display: "flex", alignItems: "center", justifyContent: "space-between",
       background: scrolled ? "rgba(10,10,10,0.92)" : "transparent",
       backdropFilter: scrolled ? "blur(20px)" : "none",
@@ -1771,14 +1771,16 @@ function Nav() {
     }}>
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {[["About", "#about"], ["What I Do", "#what-i-do"], ["Work", "#work"]].map(([label, href]) => (
-          <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
-            onMouseEnter={e => e.target.style.color = C.white}
-            onMouseLeave={e => e.target.style.color = C.gray}
-          >{label}</a>
-        ))}
+        <span className="nav-links" style={{ display: "flex", gap: 28, alignItems: "center" }}>
+          {[["About", "#about"], ["What I Do", "#what-i-do"], ["Work", "#work"]].map(([label, href]) => (
+            <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+              onMouseEnter={e => e.target.style.color = C.white}
+              onMouseLeave={e => e.target.style.color = C.gray}
+            >{label}</a>
+          ))}
+        </span>
         <div style={{ position: "relative" }}>
-          <button onClick={() => setConnectOpen(o => !o)} aria-expanded={connectOpen} aria-haspopup="true"
+          <button onClick={() => setConnectOpen(o => !o)} aria-expanded={connectOpen} aria-haspopup="true" className="nav-connect"
             style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 20px", borderRadius: 100, border: "none", cursor: "pointer", transition: "opacity 0.2s" }}
             onMouseEnter={e => e.target.style.opacity = "0.85"}
             onMouseLeave={e => e.target.style.opacity = "1"}
@@ -1833,7 +1835,8 @@ export default function Portfolio() {
           .spec-drawer { top: auto !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; max-height: 86svh; border-radius: 16px 16px 0 0; border-left: none !important; animation: sheetIn 0.35s cubic-bezier(0.22,1,0.36,1); }
           .spec-drawer .spec-grabber, .spec-grabber { display: block !important; }
         }
-        @media (max-width: 900px) { .wall-card:nth-child(n+9) { display: none; } }
+        @media (max-width: 900px) { .tl-brands { white-space: normal !important; overflow: visible !important; } }
+        @media (max-width: 640px) { .nav-links { display: none !important; } }
         .sp-shell { scroll-margin-top: 84px; }
         .shelf-row { scrollbar-width: none; }
         .shelf-row::-webkit-scrollbar { display: none; }
@@ -1871,6 +1874,7 @@ export default function Portfolio() {
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; }
           .shelf-card-play { opacity: 1 !important; transform: translateY(0) !important; }
+          .nav-connect { min-height: 44px !important; }
           .tl-card { position: relative; }
           .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
           .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #1ED760; }
