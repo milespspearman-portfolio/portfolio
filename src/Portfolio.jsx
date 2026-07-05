@@ -1332,11 +1332,18 @@ function ShelfRow({ title, items }) {
 // ── Timeline expand: three interaction prototypes behind a preview switcher.
 // Miles is A/B-ing how a project opens — poster carousel (tap-to-play), video-
 // first + swipe, or a vertical list. One wins; the other two get removed.
-function TLLinks({ ev, r, ri }) {
+function TLMiniBtn({ onMinimize }) {
+  return (
+    <button onClick={e => { e.stopPropagation(); onMinimize(); }} aria-label="Minimize this reel"
+      style={{ fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, background: "transparent", border: `1px solid ${C.border}`, borderRadius: 100, padding: "7px 14px", minHeight: 40, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
+      ▲ Minimize</button>
+  );
+}
+function TLLinks({ ev, r, ri, onMinimize }) {
   return (
     <div style={{ display: "flex", gap: "4px 12px", alignItems: "center", justifyContent: "center", marginTop: 10, flexWrap: "wrap" }}>
-      <a href={r.postUrl} target="_blank" rel="noreferrer" style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", padding: "8px 4px", minHeight: 40, display: "inline-flex", alignItems: "center" }}>Open on Instagram ↗</a>
       <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: ri } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "8px 4px", minHeight: 40, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
+      {onMinimize && <TLMiniBtn onMinimize={onMinimize} />}
     </div>
   );
 }
@@ -1415,6 +1422,9 @@ function TLExpand({ ev, reels, cat, mode, onMinimize }) {
             );
           })}
         </div>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 14 }}>
+          <TLMiniBtn onMinimize={onMinimize} />
+        </div>
       </div>
     );
   }
@@ -1456,7 +1466,7 @@ function TLExpand({ ev, reels, cat, mode, onMinimize }) {
       <div style={{ textAlign: "center", marginTop: 10, padding: "0 16px" }}>
         <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: C.white }}>{active.title}</span>
         <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{active.plays} plays · {idx + 1} / {reels.length}{isSwipe ? " · swipe" : " · tap to play"}</span>
-        <TLLinks ev={ev} r={active} ri={idx} />
+        <TLLinks ev={ev} r={active} ri={idx} onMinimize={onMinimize} />
       </div>
     </div>
   );
