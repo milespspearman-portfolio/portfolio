@@ -1404,14 +1404,21 @@ function TLDetail({ ev, reel, cat, onClose }) {
   );
 }
 
-function TLExpand({ ev, reels, cat, mode, onMinimize }) {
-  const [idx, setIdx] = useState(0);            // active carousel page
-  const [playing, setPlaying] = useState(null); // which poster is playing (null = all posters)
-  const [detail, setDetail] = useState(null);   // reel whose Expand sheet is open
-  const scRef = useRef(null);
+function TLExpand({ ev, reels, cat, onMinimize }) {
+  const [idx, setIdx] = useState(0);              // active reel (carousel + swipe share it)
+  const [playing, setPlaying] = useState(null);   // carousel: which poster is playing
+  const [view, setView] = useState("carousel");   // "carousel" | "swipe"
+  const scRef = useRef(null);                      // carousel pager
+  const swRef = useRef(null);                      // swipe pager
   const rafRef = useRef(0);
   useEffect(() => () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }, []);
-  const onScroll = () => {
+  // Entering swipe view, jump the pager to the reel you were on in the carousel.
+  useEffect(() => { if (view === "swipe" && swRef.current) { const el = swRef.current; el.scrollLeft = idx * el.clientWidth; } }, [view]);
+  const track = (ref) => {
+    const el = ref.current; if (!el || rafRef.current) return;
+    rafRef.current = requestAnimationFrame(() => { rafRef.current = 0; setIdx(nearestChildIdx(el)); });
+  };
+  const onCarouselScroll = () => {
     const el = scRef.current; if (!el || rafRef.current) return;
     rafRef.current = requestAnimationFrame(() => {
       rafRef.current = 0;
@@ -1422,44 +1429,59 @@ function TLExpand({ ev, reels, cat, mode, onMinimize }) {
   const active = reels[Math.min(idx, reels.length - 1)] || reels[0];
   const desc = active ? (REEL_DESCS[active.title] || "") : "";
 
-  // ORIGINAL "full view" — one big video + full description + chip strip, all
-  // visible at once (the version Miles wants to compare against).
-  if (mode === "classic") {
+  // EXPANDED SWIPE VIEW — full videos, swipe left/right through the project's
+  // reels, caption under each. "Minimize" / ✕ returns to the carousel.
+  if (view === "swipe") {
     return (
-      <div data-tl-open="" style={{ position: "relative", padding: "16px 4px 8px", minWidth: 0 }}>
-        <TLMinimizeX onMinimize={onMinimize} />
-        <video key={active.postUrl} src={srcOf(active)} poster={thumbOf(active)} controls autoPlay muted playsInline preload="metadata"
-          style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
-          onError={e => { e.currentTarget.style.display = "none"; }} />
-        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: C.white, marginTop: 12 }}>{active.title}</span>
-        {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "8px 0 0", maxWidth: 360 }}>{desc}</p>}
-        {reels.length > 1 && (
-          <div className="tl-chips" style={{ display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollSnapType: "x proximity", padding: "12px 16px 4px 0", marginTop: 8, maxWidth: "100%" }}>
-            {reels.map((r, ri) => (
-              <button key={r.postUrl} onClick={() => setIdx(ri)}
-                style={{ flex: "0 0 auto", scrollSnapAlign: "start", display: "flex", alignItems: "center", gap: 8, minHeight: 44, padding: "6px 10px 6px 6px", borderRadius: 8, cursor: "pointer", background: ri === idx ? "rgba(30,215,96,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${ri === idx ? cat.accent + "66" : C.border}` }}>
-                <img src={thumbOf(r)} alt="" loading="lazy" style={{ width: 30, height: 40, borderRadius: 4, objectFit: "cover", display: "block", flex: "0 0 auto" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-                <span style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-                  <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: ri === idx ? C.mint : C.white, maxWidth: 132, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.title}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums" }}>{r.plays} plays</span>
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-        <div style={{ display: "flex", gap: "4px 12px", alignItems: "center", marginTop: 10, flexWrap: "wrap" }}>
-          <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: idx } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "8px 4px", minHeight: 40, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
-          <TLMiniBtn onMinimize={onMinimize} />
+      <div data-tl-open="" style={{ position: "relative", padding: "12px 0 8px" }}>
+        <button onClick={e => { e.stopPropagation(); setView("carousel"); }} aria-label="Back to carousel"
+          style={{ position: "absolute", top: 8, right: 2, width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", color: C.white, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, lineHeight: 1, zIndex: 5 }}>✕</button>
+        <div ref={swRef} onScroll={() => track(swRef)} className="tl-pager"
+          style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
+          {reels.map((r, i) => {
+            const near = Math.abs(i - idx) <= 1;
+            return (
+              <div key={r.postUrl} style={{ flex: "0 0 100%", scrollSnapAlign: "center", display: "flex", justifyContent: "center", padding: "0 8px" }}>
+                <div style={{ position: "relative", width: "min(80%, 260px)", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000", boxShadow: i === idx ? "0 12px 40px rgba(0,0,0,0.5)" : "none", opacity: i === idx ? 1 : 0.45, transition: "opacity 0.25s" }}>
+                  {near ? (
+                    <video key={r.postUrl} src={srcOf(r)} poster={thumbOf(r)} controls muted playsInline autoPlay={i === idx}
+                      ref={el => { if (el) { i === idx ? el.play().catch(() => {}) : el.pause(); } }}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+                  ) : (
+                    <img src={thumbOf(r)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: 12 }}>
+          {reels.map((r, i) => (
+            <span key={r.postUrl} aria-hidden="true" style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 3, background: i === idx ? cat.accent : "rgba(255,255,255,0.25)", transition: "width 0.2s, background 0.2s" }} />
+          ))}
+        </div>
+        <div style={{ maxWidth: 420, margin: "12px auto 0", padding: "0 18px" }}>
+          <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25, textAlign: "center" }}>{active.title}</span>
+          <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4, textAlign: "center" }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · {idx + 1} / {reels.length} · swipe</span>
+          {desc ? (
+            <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", whiteSpace: "pre-line" }}>{desc}</p>
+          ) : (
+            <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, fontStyle: "italic", margin: "12px 0 0", textAlign: "center" }}>No caption saved for this reel yet.</p>
+          )}
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
+          <button onClick={e => { e.stopPropagation(); setView("carousel"); }} aria-label="Minimize to carousel"
+            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
+            ▲ Minimize</button>
         </div>
       </div>
     );
   }
 
-  const withDetail = mode === "carouselPlus";
   return (
     <div data-tl-open="" style={{ position: "relative", padding: "16px 0 8px" }}>
       <TLMinimizeX onMinimize={onMinimize} />
-      <div ref={scRef} onScroll={onScroll} className="tl-pager"
+      <div ref={scRef} onScroll={onCarouselScroll} className="tl-pager"
         style={{ display: "flex", gap: 12, overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", padding: "0 18%", scrollbarWidth: "none" }}>
         {reels.map((r, i) => (
           <div key={r.postUrl} style={{ flex: "0 0 70%", maxWidth: 250, scrollSnapAlign: "center", display: "flex", justifyContent: "center" }}>
@@ -1485,26 +1507,20 @@ function TLExpand({ ev, reels, cat, mode, onMinimize }) {
       </div>
       <div style={{ textAlign: "center", marginTop: 12, padding: "0 16px" }}>
         <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25 }}>{active.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{active.plays} plays{withDetail && reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · {playing === idx ? "playing" : "tap to play"}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · {playing === idx ? "playing" : "tap to play"}</span>
         <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center", marginTop: 12, flexWrap: "wrap" }}>
-          {withDetail ? (
-            <button onClick={e => { e.stopPropagation(); setDetail(active); }}
-              style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
-              Expand</button>
-          ) : (
-            <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: idx } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "9px 4px", minHeight: 40, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
-          )}
+          <button onClick={e => { e.stopPropagation(); setView("swipe"); }}
+            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
+            Expand</button>
           <TLMiniBtn onMinimize={onMinimize} />
         </div>
       </div>
-      {withDetail && detail && <TLDetail ev={ev} reel={detail} cat={cat} onClose={() => setDetail(null)} />}
     </div>
   );
 }
 
 function CareerTimeline() {
   const [openIdx, setOpenIdx] = useState(null); // eventStats idx of the open node
-  const [tlMode, setTlMode] = useState("carouselPlus"); // TEMP compare switcher: classic | carousel | carouselPlus
   const [reelIdx, setReelIdx] = useState(0);    // active reel within the open node
   const railRef = useRef(null);
   const fillRef = useRef(null);
@@ -1556,15 +1572,6 @@ function CareerTimeline() {
         <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>The Work, In Order</h2>
         <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 20px 0", maxWidth: 520 }}>Every event and evergreen project on one scroll. Tap a milestone to play it. Newest first.</p>
       </FadeIn>
-      {/* TEMP compare switcher — Original (full view) vs Carousel vs Carousel + captions. Remove once Miles picks. */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", margin: "0 0 32px" }}>
-        <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: 1.5 }}>Compare:</span>
-        {[["classic", "Original"], ["carousel", "Carousel"], ["carouselPlus", "Carousel + captions"]].map(([m, label]) => (
-          <button key={m} onClick={() => { setTlMode(m); setOpenIdx(null); }}
-            style={{ fontFamily: F, fontSize: 12, fontWeight: 700, cursor: "pointer", padding: "8px 15px", minHeight: 40, borderRadius: 100, border: `1px solid ${tlMode === m ? C.mint : C.border}`, background: tlMode === m ? C.mint : "transparent", color: tlMode === m ? C.bg : C.gray, transition: "all 0.15s" }}>
-            {label}</button>
-        ))}
-      </div>
 
       <div className="tl-wrap" style={{ position: "relative", paddingLeft: "var(--gap)" }}>
         <div ref={railRef} aria-hidden="true" style={{ position: "absolute", top: 0, bottom: 0, left: "var(--rail)", width: 2, background: C.border }}>
@@ -1613,14 +1620,14 @@ function CareerTimeline() {
                     <span style={{ display: "block", fontFamily: F, fontSize: "clamp(18px, 2.4vw, 26px)", fontWeight: 800, color: C.white, letterSpacing: -0.4, lineHeight: 1.12 }}>{ev.event}</span>
                     {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
                     {EVENT_BRANDS[ev.event] && <span className="tl-brands" style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
-                    <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{ev.window} · {reels.length} {reels.length === 1 ? "reel" : "reels"}</span>
+                    <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{reels.length} {reels.length === 1 ? "reel" : "reels"}</span>
                     <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{fmtPlays(ev.totalPlays)} plays</span>
                   </span>
                 </div>
                 <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", gridTemplateColumns: "minmax(0, 1fr)", transition: "grid-template-rows 0.4s ease" }}>
                   <div style={{ overflow: "hidden", minWidth: 0 }}>
                     {open && active && (
-                      <TLExpand ev={ev} reels={reels} cat={cat} mode={tlMode} onMinimize={() => toggle(ev.idx)} />
+                      <TLExpand ev={ev} reels={reels} cat={cat} onMinimize={() => toggle(ev.idx)} />
                     )}
                   </div>
                 </div>
