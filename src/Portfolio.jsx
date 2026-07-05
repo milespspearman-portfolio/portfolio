@@ -579,12 +579,35 @@ const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
 
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
 
-// "About the Artist" swipe stack — one word at a time, always swiping the same
-// direction: the labels come and go, the person stays.
+// "About the Artist" swipe stack — one word at a time; the labels come and go,
+// the person stays. A shared module ticker keeps the word and its proof clip
+// (AboutClip) in lockstep so they advance together.
 const SWIPE_WORDS = ["Creative", "Producer", "Host", "Director", "Teammate"];
+// Each swipe word → the reel that proves it (Miles's map). Resolved to reel objs.
+const SWIPE_REEL_TITLES = {
+  Creative: "’25 MAX London: Recap",              // the spit take lives here
+  Producer: "San Jose Semaphore",
+  Host: "’24 MAX: 3 Things We Didn’t Expect",      // the T-Pain jump
+  Director: "’25 MAX: Kelley O'Hara x NWSL x Adobe",
+  Teammate: "’24 MAX: Adobe x Gatorade Activation",
+};
+const swipeReelBy = (word) => {
+  const t = SWIPE_REEL_TITLES[word];
+  for (const ev of portfolio) { const r = ev.reels.find(x => x.title === t); if (r) return r; }
+  return null;
+};
+let _swipeTick = 0; const _swipeSubs = new Set(); let _swipeTimer = null;
+function useSwipeTick() {
+  const [, force] = useState(0);
+  useEffect(() => {
+    _swipeSubs.add(force);
+    if (!_swipeTimer) _swipeTimer = setInterval(() => { _swipeTick++; _swipeSubs.forEach(f => f(v => v + 1)); }, 2600);
+    return () => { _swipeSubs.delete(force); if (!_swipeSubs.size && _swipeTimer) { clearInterval(_swipeTimer); _swipeTimer = null; } };
+  }, []);
+  return _swipeTick;
+}
 function SwipeWord() {
-  const [tick, setTick] = useState(0);
-  useEffect(() => { const t = setInterval(() => setTick(v => v + 1), 2200); return () => clearInterval(t); }, []);
+  const tick = useSwipeTick();
   const idx = tick % SWIPE_WORDS.length;
   const prev = (idx + SWIPE_WORDS.length - 1) % SWIPE_WORDS.length;
   return (
@@ -597,6 +620,28 @@ function SwipeWord() {
       <span key={`in${tick}`} style={{ display: "inline-block", whiteSpace: "nowrap", animation: tick > 0 ? "swipeIn 0.5s cubic-bezier(0.55,0,0.45,1) both" : "none" }}>
         {SWIPE_WORDS[idx]}
       </span>
+    </span>
+  );
+}
+// The 9:16 proof clip in the About card, top-right. Headshot is the resting
+// frame + poster; the clip for the current swipe word crossfades in and plays
+// muted. Synced to SwipeWord via the shared ticker. Viewport-paused.
+function AboutClip() {
+  const tick = useSwipeTick();
+  const wrapRef = useRef(null);
+  usePlayWhenVisible(wrapRef);
+  const word = SWIPE_WORDS[tick % SWIPE_WORDS.length];
+  const reel = swipeReelBy(word);
+  return (
+    <span ref={wrapRef} aria-hidden="true" className="about-clip"
+      style={{ position: "absolute", top: 28, right: 28, width: "clamp(96px, 12vw, 132px)", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#111", border: `1px solid ${C.border}`, boxShadow: "0 16px 44px rgba(0,0,0,0.5)" }}>
+      <img src="/headshot.jpg" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 25%" }} />
+      {reel && (
+        <video key={reel.postUrl} src={srcOf(reel)} poster="/headshot.jpg" muted loop playsInline autoPlay preload="none"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", animation: "clipFade 0.6s ease both" }}
+          onError={e => { e.currentTarget.style.display = "none"; }} />
+      )}
+      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.55))" }} />
     </span>
   );
 }
@@ -1572,6 +1617,11 @@ export default function Portfolio() {
         .hero-marquee { animation-name: heroloop; animation-timing-function: linear; animation-iteration-count: infinite; }
         .hero-marquee:hover { animation-play-state: paused; }
         @keyframes drawerFade { from { opacity: 0; } }
+        @keyframes clipFade { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 700px) {
+          .about-clip { position: static !important; display: block; float: right; width: 104px !important; margin: 0 0 10px 14px; top: auto !important; right: auto !important; }
+          .about-heading { padding-right: 0 !important; }
+        }
         @keyframes drawerIn { from { transform: translateX(100%); } }
         @keyframes sheetIn { from { transform: translateY(100%); } }
         .spec-drawer { animation: drawerIn 0.35s cubic-bezier(0.22,1,0.36,1); }
@@ -1624,10 +1674,11 @@ export default function Portfolio() {
         <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
           <FadeIn>
             <div style={{
-              maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+              position: "relative", maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
             }}>
-              <h2 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px" }}>
+              <AboutClip />
+              <h2 className="about-heading" style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(30px, 4vw, 54px)", lineHeight: 1.05, letterSpacing: -1, color: C.white, margin: "0 0 20px", paddingRight: 150 }}>
                 About the <SwipeWord /><span style={{ color: C.mint }}>.</span>
               </h2>
               <PlaysCounter />
