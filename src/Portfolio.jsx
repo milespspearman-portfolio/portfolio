@@ -67,7 +67,12 @@ const EVENT_ROLES = {
   "’25 MAX London": "Concepted, scripted, hosted & creatively directed",
   "’25 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
-  "In-House Production": "Produced",
+  "Employee Spotlights: Season 1": "Produced & creatively directed",
+  "Employee Spotlights: Season 2": "Produced & creatively directed",
+  "Employee Spotlights: Season 3": "Produced & creatively directed",
+  "’26 Summit": "Produced",
+  "Artist Spotlights": "Produced & creatively directed",
+  "Always-On": "Produced",
   "Brand Partnerships": "Produced with the Social Creative Studio team",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
@@ -223,25 +228,50 @@ const portfolio = [
   //   ],
   // },
   {
-    event: "In-House Production", groupBy: "year-channel",
+    event: "Employee Spotlights: Season 1",
     reels: [
-      { title: "Firefly Interview Demo", sub: "@adobevideo · 979 likes · Sep 12, 2024", plays: "728.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Firefly-Interview-Demo_9.12.24.mp4", postUrl: "https://www.instagram.com/p/C_0rxmZPxif/" },
-      { title: "Creative Cloud for Students Black Friday Discount", sub: "@adobe · 439 likes · Nov 30, 2024", plays: "831.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Students-Black-Friday-Discount_11.30.24.mp4", postUrl: "https://www.instagram.com/p/DDAM0ZNCvo2/" },
-      { title: "Intern Day Creative Cloud", sub: "@adobecreativecloud · 201 likes · Jul 31, 2025", plays: "28.1K", mp4: "/reels/2025/Evergreen-Producing/Intern-Day-Creative-Cloud_7.31.25.mp4", postUrl: "https://www.instagram.com/reel/DMyLF09uG1i/" },
       { title: "Dave Werner Employee Spotlight", sub: "@adobelife · 26K likes · Aug 18, 2025", plays: "1.9M", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Dave-Werner_8.18.25.mp4", postUrl: "https://www.instagram.com/p/DNgTb3hthgJ/" },
-      { title: "Bowen Wang Employee Spotlight", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
       { title: "Manasa Hari Employee Spotlight", sub: "@adobelife · 6.5K likes · Aug 20, 2025", plays: "809.5K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mansa_8.20.25.mp4", postUrl: "https://www.instagram.com/p/DNlh970un2W/" },
+      { title: "Bowen Wang Employee Spotlight", sub: "@adobelife · 2.5K likes · Aug 19, 2025", plays: "233.9K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Produced-and-Storyboarded-Bowen_8.19.25.mp4", postUrl: "https://www.instagram.com/p/DNixXhgNCbp/" },
+    ],
+  },
+  {
+    event: "Employee Spotlights: Season 2",
+    reels: [
       { title: "Amanda Valenzuela Employee Spotlight", sub: "@adobe · 753 likes · Feb 9, 2026", plays: "171.4K", mp4: "/reels/2026/Evergreen-Producing/Amanda-Valenzuela-Employee-Spotlight_2.9.26.mp4", postUrl: "https://www.instagram.com/reel/DUjGBECDvM9/" },
       { title: "Gizem Dal Employee Spotlight", sub: "@adobelife · 115 likes · Mar 4, 2026", plays: "5.2K", mp4: "/reels/2026/Evergreen-Producing/Gizem-Dal-Employee-Spotlight_3.4.26.mp4", postUrl: "https://www.instagram.com/reel/DVe1rvOE2ME/" },
-      { title: "Russell Preston Brown Employee Spotlight", sub: "@adobe · 2.8K likes · May 4, 2026", plays: "143.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Russell_5.4.26.mp4", postUrl: "https://www.instagram.com/p/DX7hTuSErBK/" },
-      { title: "Artist Spotlight: Aaron Gonzalez", sub: "@adobe · 268 likes · May 5, 2026", plays: "16.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Artist-Spotlight-Aaron-Gonzalez_5.5.26.mp4", postUrl: "https://www.instagram.com/p/DX9u5N4gPbd/" },
-      { title: "Em Siegel Employee Spotlight", sub: "@adobe · 337 likes · May 11, 2026", plays: "50.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Em-Siegel_5.11.26.mp4", postUrl: "https://www.instagram.com/p/DYNfjdwkYSU/" },
-      { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
-      { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
-      { title: "Brand Intelligence B2B Interview", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
+    ],
+  },
+  {
+    event: "Employee Spotlights: Season 3",
+    reels: [
       { title: "Imran Idzqandar Employee Spotlight", sub: "@adobe · 449 likes · May 27, 2026", plays: "281K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Imran_5.27.26.mp4", postUrl: "https://www.instagram.com/p/DY2y6jbCesw/" },
-      { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
+      { title: "Russell Preston Brown Employee Spotlight", sub: "@adobe · 2.8K likes · May 4, 2026", plays: "143.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Russell_5.4.26.mp4", postUrl: "https://www.instagram.com/p/DX7hTuSErBK/" },
+      { title: "Em Siegel Employee Spotlight", sub: "@adobe · 337 likes · May 11, 2026", plays: "50.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Be-You-Em-Siegel_5.11.26.mp4", postUrl: "https://www.instagram.com/p/DYNfjdwkYSU/" },
+    ],
+  },
+  {
+    event: "’26 Summit",
+    reels: [
       { title: "’26 Summit: Recap", sub: "@adobe · 202 likes · Apr 30, 2026", plays: "22.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/SUMMIT-2026_4.30.26.mp4", postUrl: "https://www.instagram.com/p/DXw69j_E2U3/" },
+      { title: "Brand Intelligence B2B Interview", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
+      { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
+      { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
+    ],
+  },
+  {
+    event: "Artist Spotlights",
+    reels: [
+      { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
+      { title: "Artist Spotlight: Aaron Gonzalez", sub: "@adobe · 268 likes · May 5, 2026", plays: "16.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Artist-Spotlight-Aaron-Gonzalez_5.5.26.mp4", postUrl: "https://www.instagram.com/p/DX9u5N4gPbd/" },
+    ],
+  },
+  {
+    event: "Always-On",
+    reels: [
+      { title: "Creative Cloud for Students Black Friday Discount", sub: "@adobe · 439 likes · Nov 30, 2024", plays: "831.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Students-Black-Friday-Discount_11.30.24.mp4", postUrl: "https://www.instagram.com/p/DDAM0ZNCvo2/" },
+      { title: "Firefly Interview Demo", sub: "@adobevideo · 979 likes · Sep 12, 2024", plays: "728.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Employee-and-Always-On/Firefly-Interview-Demo_9.12.24.mp4", postUrl: "https://www.instagram.com/p/C_0rxmZPxif/" },
+      { title: "Intern Day Creative Cloud", sub: "@adobecreativecloud · 201 likes · Jul 31, 2025", plays: "28.1K", mp4: "/reels/2025/Evergreen-Producing/Intern-Day-Creative-Cloud_7.31.25.mp4", postUrl: "https://www.instagram.com/reel/DMyLF09uG1i/" },
     ],
   },
   {
@@ -294,7 +324,9 @@ const LIBRARY_OF = {
   "’24 MAX Miami": "Events", "’25 MAX LA": "Events", "’25 MAX London": "Events",
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
-  "In-House Production": "Evergreen", "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
+  "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
+  "’26 Summit": "Evergreen", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen",
+  "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
 const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
