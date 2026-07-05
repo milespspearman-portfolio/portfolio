@@ -1432,8 +1432,7 @@ function TLExpand({ ev, reels, cat, mode, onMinimize }) {
           style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
           onError={e => { e.currentTarget.style.display = "none"; }} />
         <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: C.white, marginTop: 12 }}>{active.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 3 }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""}</span>
-        {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "10px 0 0", maxWidth: 360 }}>{desc}</p>}
+        {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "8px 0 0", maxWidth: 360 }}>{desc}</p>}
         {reels.length > 1 && (
           <div className="tl-chips" style={{ display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollSnapType: "x proximity", padding: "12px 16px 4px 0", marginTop: 8, maxWidth: "100%" }}>
             {reels.map((r, ri) => (
