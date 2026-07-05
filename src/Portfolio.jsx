@@ -253,7 +253,7 @@ const portfolio = [
   {
     event: "’26 Summit",
     reels: [
-      { title: "’26 Summit: Recap", sub: "@adobe · 202 likes · Apr 30, 2026", plays: "22.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/SUMMIT-2026_4.30.26.mp4", postUrl: "https://www.instagram.com/p/DXw69j_E2U3/" },
+      { title: "’26 Summit: Sneaks Celebrity Host Interview", sub: "@adobe · 202 likes · Apr 30, 2026", plays: "22.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/SUMMIT-2026_4.30.26.mp4", postUrl: "https://www.instagram.com/p/DXw69j_E2U3/" },
       { title: "Brand Intelligence B2B Interview", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
@@ -496,7 +496,7 @@ const SPECIALTY_REELS = {
     { t: "’25 MAX London: Recap", album: "’25 MAX London" },
     { t: "’25 MAX London: Fonts Creator Game", album: "’25 MAX London" },
     { t: "’25 MAX London: Arches of Inspiration", album: "’25 MAX London" },
-    { t: "’26 Summit: Recap", album: "’26 Summit Vegas" },
+    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit Vegas" },
   ],
   // Strategy albums = FORMATS, not events (Miles + recruiter consolidation,
   // Jul 4): repeatability across shows IS the concept-to-published story.
@@ -640,7 +640,7 @@ const REEL_DESCS = {
   "Brand Intelligence B2B Interview": "At Adobe Summit, we introduced Adobe Brand Intelligence. It took a diverse team of individuals from all over the globe at different stages of their careers to work together and launch something this big into th",
   "Imran Idzqandar Employee Spotlight": "Meet Imran Idzqandar, Enterprise Architect at Adobe. Outside of work, Imran is a pilot and part of the Adobe Aviators community.",
   "San Jose Semaphore": "The San Jose Semaphore has been solved! The puzzle, created by Ben Rubin, featured rotating discs at the top of Adobe's Almaden Tower that hid a message through data points of bytes and numbered colors.",
-  "’26 Summit: Recap": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
+  "’26 Summit: Sneaks Celebrity Host Interview": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
@@ -1518,16 +1518,11 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
         {reels.map((r, i) => (
           <div key={r.postUrl} style={{ flex: "0 0 70%", maxWidth: 250, scrollSnapAlign: "center", display: "flex", justifyContent: "center" }}>
             <div style={{ position: "relative", width: "100%", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000", boxShadow: i === idx ? "0 12px 40px rgba(0,0,0,0.5)" : "none", opacity: i === idx ? 1 : 0.5, transition: "opacity 0.25s" }}>
-              {playing === i ? (
-                <video key={r.postUrl} src={srcOf(r)} poster={thumbOf(r)} controls autoPlay muted playsInline
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-              ) : (
-                <button onClick={() => setPlaying(i)} aria-label={`Play ${r.title}`}
-                  style={{ position: "absolute", inset: 0, border: "none", padding: 0, background: "transparent", cursor: "pointer" }}>
-                  <img src={thumbOf(r)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-                  <span aria-hidden="true" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 52, height: 52, borderRadius: "50%", background: "rgba(0,0,0,0.55)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>▶</span>
-                </button>
-              )}
+              <button onClick={() => { setIdx(i); setView("swipe"); }} aria-label={`Open ${r.title}`}
+                style={{ position: "absolute", inset: 0, border: "none", padding: 0, background: "transparent", cursor: "pointer" }}>
+                <img src={thumbOf(r)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+                <span aria-hidden="true" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 52, height: 52, borderRadius: "50%", background: "rgba(0,0,0,0.55)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>▶</span>
+              </button>
             </div>
           </div>
         ))}
@@ -1539,7 +1534,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
       </div>
       <div style={{ textAlign: "center", marginTop: 12, padding: "0 16px" }}>
         <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25 }}>{active.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · {playing === idx ? "playing" : "tap to play"}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · tap to open</span>
         <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center", marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={e => { e.stopPropagation(); setView("swipe"); }}
             style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
