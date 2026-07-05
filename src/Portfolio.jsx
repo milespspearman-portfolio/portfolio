@@ -790,10 +790,44 @@ const funReels = (() => {
 // infinite loop. Hover pauses the row so the magnet/click still work. Sets are
 // duplicated for a seamless -50% loop. Two placements: top row (biggest plays,
 // About -> WIWON) and fun row (emotion picks, What I Do -> Selected Work).
+// JS scroll-advance marquee (Miles Jul 4 + mobile research): auto-drifts AND is
+// finger-swipeable. rAF nudges scrollLeft; hover, pointer-down, or any manual
+// scroll pauses it, then it resumes after a short idle. Native momentum + a
+// hidden scrollbar give touch users a real swipe. reduced-motion: no drift.
 function HeroMarqueeRow({ reels, duration, offset }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0, idle = 0, paused = false;
+    const speed = () => Math.max(0.3, (el.scrollWidth / 2) / (duration * 60)); // px/frame ~ old loop feel
+    const step = () => {
+      if (!paused && el.scrollWidth > el.clientWidth) {
+        el.scrollLeft += speed();
+        const half = el.scrollWidth / 2;
+        if (el.scrollLeft >= half) el.scrollLeft -= half; // seamless wrap
+      }
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    const pause = () => { paused = true; };
+    const resume = () => { paused = false; };
+    const pauseIdle = () => { paused = true; clearTimeout(idle); idle = setTimeout(() => { paused = false; }, 1800); };
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("mouseleave", resume);
+    el.addEventListener("pointerdown", pause);
+    el.addEventListener("touchstart", pause, { passive: true });
+    el.addEventListener("touchend", pauseIdle, { passive: true });
+    el.addEventListener("wheel", pauseIdle, { passive: true });
+    return () => { cancelAnimationFrame(raf); clearTimeout(idle);
+      el.removeEventListener("mouseenter", pause); el.removeEventListener("mouseleave", resume);
+      el.removeEventListener("pointerdown", pause); el.removeEventListener("touchstart", pause);
+      el.removeEventListener("touchend", pauseIdle); el.removeEventListener("wheel", pauseIdle);
+    };
+  }, [duration]);
   return (
-    <div style={{ overflow: "hidden", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
-      <div className="hero-marquee" style={{ display: "flex", alignItems: "center", width: "max-content", padding: "10px 0", animationDuration: `${duration}s` }}>
+    <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
+      <div style={{ display: "flex", alignItems: "center", width: "max-content", padding: "10px clamp(24px, 5vw, 80px)" }}>
         {[0, 1].map(copy => (
           <div key={copy} style={{ display: "flex", alignItems: "center", gap: 18, paddingRight: 18 }}>
             {reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} />)}
@@ -1653,6 +1687,7 @@ export default function Portfolio() {
         .hero-marquee:hover { animation-play-state: paused; }
         @keyframes drawerFade { from { opacity: 0; } }
         @keyframes clipFade { from { opacity: 0; } to { opacity: 1; } }
+        .marquee-scroll::-webkit-scrollbar { display: none; }
         @media (max-width: 700px) {
           .about-clip { position: static !important; display: block; float: right; width: 104px !important; margin: 0 0 10px 14px; top: auto !important; right: auto !important; }
           .about-heading { padding-right: 0 !important; }
