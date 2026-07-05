@@ -264,6 +264,7 @@ const portfolio = [
     reels: [
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
       { title: "Artist Spotlight: Aaron Gonzalez", sub: "@adobe · 268 likes · May 5, 2026", plays: "16.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Artist-Spotlight-Aaron-Gonzalez_5.5.26.mp4", postUrl: "https://www.instagram.com/p/DX9u5N4gPbd/" },
+      { title: "Building Murals: Laura Garcia", sub: "@adobe · 546 likes · Nov 20, 2025", plays: "243.3K", role: "Produced", mp4: "/reels/2025/Brand-Partnerships/Building-Murals-Laura-Garcia_11.20.25.mp4", postUrl: "https://www.instagram.com/reel/DRQpeMIjeCw/" },
     ],
   },
   {
@@ -278,7 +279,6 @@ const portfolio = [
     event: "Brand Partnerships",
     reels: [
       { title: "Photoshop Archives: Russell Brown & Matthew Richmond", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", role: "Produced", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
-      { title: "Building Murals: Laura Garcia", sub: "@adobe · 546 likes · Nov 20, 2025", plays: "243.3K", role: "Produced", mp4: "/reels/2025/Brand-Partnerships/Building-Murals-Laura-Garcia_11.20.25.mp4", postUrl: "https://www.instagram.com/reel/DRQpeMIjeCw/" },
       { title: "Photoshop x Marvel: Eyes of Wakanda", sub: "@photoshop · 2.7K likes · Sep 8, 2025", plays: "299K", mp4: "/reels/2025/Brand-Partnerships/Marvel-Eyes-of-Wakanda-Photoshop_9.8.25.mp4", postUrl: "https://www.instagram.com/reel/DOWitx1Afr1/" },
       { title: "Adobe x NWSL: 2025 Creator Club", sub: "@adobe · 896 likes · Aug 12, 2025", plays: "2.7M", mp4: "/reels/2025/Brand-Partnerships/NWSL-Creator-Club_8.12.25.mp4", postUrl: "https://www.instagram.com/reel/DNRX89SpIkC/" },
       { title: "Adobe x Golden State Warriors: Creative Threads", sub: "@adobe · 1.5K likes · May 23, 2025", plays: "225.2K", mp4: "/reels/2025/Brand-Partnerships/GSW-Creative-Threads_5.23.25.mp4", postUrl: "https://www.instagram.com/reel/DKAz21sPv0q/" },
@@ -376,8 +376,26 @@ const yearOf = (ev) => {
   const h = {}; ev.reels.forEach(r => { const t = reelDate(r); if (!t) return; const y = new Date(t).getFullYear(); h[y] = (h[y] || 0) + 1; });
   let best = 0, bc = -1; for (const y in h) { if (h[y] > bc || (h[y] === bc && +y > best)) { bc = h[y]; best = +y; } } return best;
 };
-// Spine order: modal-year desc, then most-recently-active within the year — so buckets and order agree.
-const timelineNodes = [...proEvents].sort((a, b) => (yearOf(b) - yearOf(a)) || (Math.max(...b.reels.map(reelDate)) - Math.max(...a.reels.map(reelDate))));
+// Spine nodes: Events-library events stay whole (one on-location trip); Evergreen
+// projects split into one node PER year, each carrying that year's reels, so an
+// ongoing series lands each reel where it actually happened. Library playlists
+// stay whole — only the chronological spine splits.
+const _spineNode = (ev, reels, uid) => {
+  const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
+  return { ...ev, idx: uid, reels, cover: thumbOf(top), totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0), window: fmtWindow({ reels }) };
+};
+const timelineNodes = [];
+proEvents.forEach(ev => {
+  if (LIBRARY_OF[ev.event] === "Evergreen") {
+    const byYear = {};
+    ev.reels.forEach(r => { const y = new Date(reelDate(r)).getFullYear() || 0; (byYear[y] = byYear[y] || []).push(r); });
+    Object.keys(byYear).forEach(y => timelineNodes.push(_spineNode(ev, byYear[y], `${ev.idx}:${y}`)));
+  } else {
+    timelineNodes.push(_spineNode(ev, ev.reels, `e${ev.idx}`));
+  }
+});
+// Modal-year desc, then most-recently-active within the year — buckets and order agree.
+timelineNodes.sort((a, b) => (yearOf(b) - yearOf(a)) || (Math.max(...b.reels.map(reelDate)) - Math.max(...a.reels.map(reelDate))));
 const TL_YEARS = [...new Set(timelineNodes.map(yearOf))].sort((a, b) => b - a);
 const yearMeta = Object.fromEntries(TL_YEARS.map(y => {
   const evs = timelineNodes.filter(ev => yearOf(ev) === y);
@@ -1205,7 +1223,7 @@ function WorkPlayer() {
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{handlesOf(viewing)} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
                 </div>
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
@@ -1616,7 +1634,7 @@ function CareerTimeline() {
           const active = reels[Math.min(reelIdx, reels.length - 1)] || reels[0];
           const desc = active ? (REEL_DESCS[active.title] || "") : "";
           return (
-            <Fragment key={ev.event}>
+            <Fragment key={ev.idx}>
               {showYear && (
                 <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 82%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
