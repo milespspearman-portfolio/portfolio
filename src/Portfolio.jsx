@@ -299,17 +299,25 @@ const likesNum = (sub) => { const m = sub.match(/([\d.]+K|[\d.]+M|\d+) likes/i);
 const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a + likesNum(r.sub), 0), 0);
 
 // Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
-const heroReels = (() => {
+const _allFlat = (() => {
   const flat = [];
   portfolio.forEach((ev, e) => ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })));
   flat.sort((a, b) => playsNum(b.plays) - playsNum(a.plays));
-  const top = flat.slice(0, 12);
+  return flat;
+})();
+const heroReels = (() => {
+  const top = _allFlat.slice(0, 12);
   ["’25 MAX London: Fonts Creator Game", "Behind the Product", "Happy 100th Birthday Miles Davis", "Donna Lee"].forEach(t => {
-    const x = flat.find(f => f.title === t);
+    const x = _allFlat.find(f => f.title === t);
     if (x && !top.includes(x)) top.push(x);
   });
   return top;
 })();
+// The full wall = every reel, biggest plays first (Miles: "fill this front part
+// with all the reels, show volume"). Only the first LIVE_WALL play video; the
+// rest are poster stills (mobile research: never run 80+ videos on a phone).
+const wallReels = _allFlat;
+const LIVE_WALL = 14;
 
 // Card copy = Miles's own words (Jul 4 picks), fact-checked against the
 // portfolio array; meta lines are Navin-style (events · years), facts only.
@@ -705,7 +713,7 @@ function Marquee() {
 
 // ===== HERO REEL WALL — live muted videos =====
 const TILTS = [-3, 2, -1.5, 2.5, -2, 1.5];
-function HeroCard({ reel, i }) {
+function HeroCard({ reel, i, live = true }) {
   const [h, setH] = useState(false);
   const open = () => {
     // Recruiters care about the skill a reel proves (Miles Jul 4): land on the
@@ -734,8 +742,11 @@ function HeroCard({ reel, i }) {
         transition: "transform 0.32s cubic-bezier(0.22,1,0.36,1), box-shadow 0.32s ease, border-color 0.32s ease",
         zIndex: h ? 5 : 1,
       }}>
-      <video src={srcOf(reel)} poster={thumbOf(reel)} muted loop playsInline autoPlay preload="metadata"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      {live
+        ? <video src={srcOf(reel)} poster={thumbOf(reel)} muted loop playsInline autoPlay preload="metadata"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        : <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} onError={e => { e.currentTarget.style.display = "none"; }} />}
       {/* per-card veil — lifts on hover so the card spotlights out of the dim */}
       <span style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.55)", opacity: h ? 0 : 1, transition: "opacity 0.3s ease", pointerEvents: "none" }} />
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9))" }} />
@@ -814,8 +825,30 @@ function OpeningWall() {
   const wrapRef = useRef(null);
   const collageRef = useRef(null);
   const cardRefs = useRef([]);
-  // Play the wall only while it's on screen — 16 muted videos otherwise burn CPU.
+  const wordsRef = useRef(null);
+  const veilRef = useRef(null);
+  // Play the wall only while it's on screen — muted videos otherwise burn CPU.
   usePlayWhenVisible(wrapRef);
+
+  // Scroll-dissolve (Miles Jul 4): as you scroll the opening, the triad
+  // EVAPORATES and the dim veil LIFTS so the reels brighten into tappability.
+  // Applied imperatively via refs (no setState) so the 84-card wall never
+  // re-renders on scroll. reduced-motion: leave everything at rest.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const apply = () => {
+      raf = 0;
+      const h = window.innerHeight || 1;
+      const p = Math.min(1, Math.max(0, window.scrollY / (h * 0.85))); // 0..1 over ~first screen
+      if (wordsRef.current) { wordsRef.current.style.opacity = String(1 - p); wordsRef.current.style.transform = `translateY(${(-p * 26).toFixed(1)}px)`; }
+      if (veilRef.current) veilRef.current.style.opacity = String(1 - p * 0.8); // veil lifts -> reels brighten
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    apply();
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(raf); };
+  }, []);
 
   // Cursor parallax: pointer position drives a per-card translate, applied
   // imperatively to each wrapper's style (never React state) so 60fps pointer
@@ -875,18 +908,20 @@ function OpeningWall() {
     <section ref={wrapRef} style={{ position: "relative", minHeight: "100svh", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {/* video collage backdrop */}
       <div ref={collageRef} style={{ position: "absolute", inset: "-6% -5%", display: "flex", flexWrap: "wrap", gap: 18, alignItems: "center", justifyContent: "center", alignContent: "center", transform: "rotate(-3deg)" }}>
-        {heroReels.map((reel, i) => (
-          // Parallax layer: rAF writes translate3d here; HeroCard owns hover/tilt
-          // on its own element, so the two transforms never fight.
-          <div key={reel.postUrl} ref={n => { cardRefs.current[i] = n; }} style={{ flexShrink: 0, willChange: "transform" }}>
-            <HeroCard reel={reel} i={i} />
-          </div>
-        ))}
+        {wallReels.map((reel, i) => {
+          const live = i < LIVE_WALL;
+          // Parallax refs only on live cards (cheap set); poster cards stay static.
+          return (
+            <div key={reel.postUrl} ref={live ? (n => { cardRefs.current[i] = n; }) : undefined} style={{ flexShrink: 0, willChange: live ? "transform" : "auto" }}>
+              <HeroCard reel={reel} i={i} live={live} />
+            </div>
+          );
+        })}
       </div>
-      {/* dim so type owns the frame */}
-      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.30) 0%, rgba(10,10,10,0.55) 100%)", pointerEvents: "none" }} />
-      {/* the words */}
-      <div style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none" }}>
+      {/* dim so type owns the frame — lifts on scroll (opacity via ref, no re-render) */}
+      <div ref={veilRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.34) 0%, rgba(10,10,10,0.62) 100%)", pointerEvents: "none", willChange: "opacity" }} />
+      {/* the words — evaporate on scroll */}
+      <div ref={wordsRef} style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none", willChange: "opacity, transform" }}>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 4, display: "block", marginBottom: 18 }}>Social Creative Producer @Adobe | San Francisco</span>
         <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
           Creative<span style={{ color: C.mint }}>.</span><br />
