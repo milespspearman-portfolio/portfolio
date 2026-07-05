@@ -1,5 +1,29 @@
 # Portfolio Site — Progress Log
 
+## 🔄 HANDOFF POINT — fresh session starts HERE (session 5, Jul 4–5 overnight)
+**Everything through commit `f54390d` is PUSHED and live.** Reads: CLAUDE.md → this block → COPY-PRINCIPLES.md → research/PORTFOLIO-PATTERN-SPEC.md (rule 15 = the timeline lens).
+
+### Shipped session 5 (all inline, pushed, verified)
+- **Mobile About fix** (`807de91`): killed the swipe-synced flipping video tile that dominated ≤700px and buried the text; kept the swipe-WORD text animation; **static headshot now at the bottom** of the About card. DOM-verified: text renders, no console errors.
+- **CareerTimeline — vertical-spine timeline** (`414f27f`, review fixes in `f54390d`): NEW `<section id="timeline">` directly under Selected Work (#work), **ADDITIVE** (libraries kept, per Miles "not sure I want to replace yet"). 9 pro work-units newest-first, sticky red year markers (2026/2025/2024) with a derived "{projects} · {reels} · {plays}" density line, category-colored nodes (mint=Events, gold=Evergreen), **tap-to-expand-and-play-in-place** (one `<video>` ever), other-reels chip strip, "Open in full player" ms-play handoff. Jazz fenced out at the data layer. Spec: research/TIMELINE-DESIGN-DECISION.md (decided by an opus+sonnet design workflow).
+- **Reviews applied**: recruiter-lens (bucket by MODAL year so '25 events sit under 2025 not 2026; poster == played reel; reel count in density line) + mobile-design (sticky year below nav + safe-area; touch tap-to-play hint; chip momentum/edge-fade; 44px footer links; reduced-motion rail quiet; 240px video).
+
+### The 84→100 video engine — state
+- **CONFIRMED IG** (research/IG-LINKS-CONFIRMED.md, Apify-ready): Building Murals `DRQpeMIjeCw` (545K), NWSL Creator Club `DNRX89SpIkC`, Marvel Wakanda `DOWitx1Afr1` (@photoshop), NFL Kickoff carousel `DOPM4FmkpE_` (@adobe, Sep 5 2025).
+- **Already IN the data** (Miles was right): Iliza = "'26 Summit: Recap"; Eric = "Coolest Job: Eric".
+- **Still needed** (Miles drop / deep-scroll): GSW Creative Threads (@adobe), Photoshop Archives w/ Russell (@photoshop — Miles finding), NFL "Made to Create" 484K YouTube (Longform). Google surfaces only mirrors, not the @adobe/@photoshop-owned reels.
+- **Apify gate**: greenlit to run Apify → download + folder + Notion **once the IG set is complete**. Not complete (GSW / Photoshop-Russell outstanding), so NOT run.
+
+### Blocked / needs Miles
+1. **Drop the last IG shortcodes** (GSW, Photoshop-Russell) + the NFL Made-to-Create longform URL → I Apify the full set, download mp4s + thumbs + Notion rows, add to the `portfolio` array (the timeline auto-picks them up).
+2. **YouTube under the Miles Music library** (his ask): correct channel = "Miles Music & Media" (@milesspearman, 1.86K subs, `UCIcilFbIwXOdH1bYFoF632Q`). BLOCKED: **vidiq is out of credits** + YouTube SPA isn't WebFetch-able → needs a credit top-up OR a Chrome pass for the >2K list. Plus a design call: how to surface YouTube in a library that plays local mp4s (link-out rows? — IG iframes were killed as fragile).
+3. Session-4 copy calls still open: WIWON "Social Creative Studio" vs bio "Adobe Brand"; Cannes-in-WIWON.
+
+### Tool notes (session 5)
+- **vidiq = OUT OF CREDITS** — blocks channel/video stats; this hung a background YouTube agent ~29 min (silent fail). Do external-data work inline or expect hangs.
+- Preview screenshots render BLACK whenever a `<video>` is on screen (compositing) — verify via preview_eval / preview_inspect (DOM = authoritative). Reconfirmed.
+- @milesspearman YouTube resolves to the JAZZ channel (1.86K subs), NOT the 102-sub "Miles Spearman" channel (lone NAB 199K).
+
 ## 🔄 HANDOFF POINT — fresh session starts HERE (session 4, Jul 4 night)
 **FIRST READS: CLAUDE.md → this block → COPY-PRINCIPLES.md → research/PORTFOLIO-PATTERN-SPEC.md.** Everything below (session 3 and earlier) is HISTORY; this block wins. **All work through commit `79c469f` is PUSHED and live.**
 

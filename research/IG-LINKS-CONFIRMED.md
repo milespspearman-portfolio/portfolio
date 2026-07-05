@@ -20,7 +20,7 @@ Confirmed in Chrome (Browser 3, logged in). Ready for the Apify download batch *
 - **GSW Creative Threads** — @adobe, ~FY25 Q2 (Mar–May 2025). Google → @warriors Fan Night reel `DICEKs3yGC_`, Adobe FB video, YT Short `epGnepZdfbk`, Adobe blog Homegrown Series. The @adobe-owned reel not pinned. → Miles drop or deep-scroll @adobe.
 - **Eric Matisoff AFB Sneaks BTS** — @adobe/AFB, Summit 2026 (~Apr 2026). YT `q7yZmnS8Tfg` exists; Eric + Iliza co-hosted Sneaks. @adobe reel not pinned. → Miles drop or deep-scroll.
 - **Photoshop Archives (Russell / Matthew Richmond)** — @photoshop. Miles: "there are clean IG promos from Russell's video, I'll find them." Awaiting his drop.
-- **Iliza backstage** — Miles: "you have this already, it's inside and labeled." → verify against current `portfolio` data before re-adding.
+- ~~**Iliza backstage**~~ **RESOLVED — already in the data** as "'26 Summit: Recap" (desc: "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks"). Miles was right: it's inside and labeled. Also **Eric Matisoff already present** as "Coolest Job: Eric" ("@ericmatisoff... host of Adobe Summit's Sneaks for the last four years"). The MISSING-VIDEOS "AFB Sneaks BTS" may be a distinct reel, but Eric already has a node.
 
 ## Miles jazz YouTube — @milesspearman resolves to **"Miles Music & Media"** (1,870 subs ≈ 1.86K, jazz/trumpet). Harvest agent running; every video >2K views lands under the Off The Clock **Miles Music Media** library so recruiters see the YouTube presence.
 _(The 102-sub "Miles Spearman" channel — lone NAB 199K outlier — is the decoy; not the target.)_
