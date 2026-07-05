@@ -1,7 +1,10 @@
 # Portfolio Site — Progress Log
 
 ## 🔄 HANDOFF POINT — fresh session starts HERE (session 5, Jul 4–5 overnight)
-**Everything through commit `f54390d` is PUSHED and live.** Reads: CLAUDE.md → this block → COPY-PRINCIPLES.md → research/PORTFOLIO-PATTERN-SPEC.md (rule 15 = the timeline lens).
+**Everything through commit `e3ff732` is PUSHED and live.** Reads: CLAUDE.md → this block → COPY-PRINCIPLES.md → research/PORTFOLIO-PATTERN-SPEC.md (rule 15 = the timeline lens).
+
+### UPDATE (later Jul 5) — Brand Partnerships playlist SHIPPED
+Found the last 2 shortcodes via Chrome/Google (GSW `DKAz21sPv0q` @adobe, Photoshop Archives `DVgpCMOkduU` @photoshop — Russell + Matthew Richmond). Ran Apify (`apify/instagram-scraper`) → downloaded 5 mp4s + ffmpeg thumbs + audio-checked (all have audio) → added a new **"Brand Partnerships"** Evergreen playlist (NWSL Creator Club **2.7M**, Marvel Eyes of Wakanda 299K, GSW Creative Threads 225K, Building Murals 243K, Photoshop Archives 85K) with real Apify play counts + per-reel roles ("Produced" only on the 2 Miles produced) → 5 Notion rows in 🎬 Miles Portfolio Links. Site now **89 reels / 27.6M plays**; timeline auto-picked it up (node under 2025). **NFL Kickoff `DOPM4FmkpE_` skipped** — it's a graphics carousel (Sidecar, no single playable video); revisit if Miles wants it as a poster+link entry. Copy: bio + MAX card now say "Social Creative Studio" (his pick). STILL BLOCKED: YouTube-under-Miles-Music (vidiq out of credits).
 
 ### Shipped session 5 (all inline, pushed, verified)
 - **Mobile About fix** (`807de91`): killed the swipe-synced flipping video tile that dominated ≤700px and buried the text; kept the swipe-WORD text animation; **static headshot now at the bottom** of the About card. DOM-verified: text renders, no console errors.
