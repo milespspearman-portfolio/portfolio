@@ -1414,9 +1414,16 @@ function CareerTimeline() {
                   onMouseEnter={e => { if (!open) e.currentTarget.style.transform = "translateY(-2px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
                   style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(30,215,96,0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
-                  <span style={{ position: "relative", width: "100%", aspectRatio: "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
-                    <img src={ev.cover} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-                    <span aria-hidden="true" style={{ position: "absolute", right: 6, bottom: 6, width: 22, height: 22, borderRadius: "50%", background: "rgba(0,0,0,0.62)", color: cat.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>▶</span>
+                  <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0, alignSelf: open ? "start" : "center" }}>
+                    <span style={{ position: "relative", width: "100%", aspectRatio: "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
+                      <img src={ev.cover} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+                      <span aria-hidden="true" style={{ position: "absolute", right: 6, bottom: 6, width: 22, height: 22, borderRadius: "50%", background: "rgba(0,0,0,0.62)", color: cat.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>▶</span>
+                    </span>
+                    {open && (
+                      <button onClick={e => { e.stopPropagation(); toggle(ev.idx); }} aria-label="Minimize this reel"
+                        style={{ width: "100%", fontFamily: F, fontSize: 10, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 8, padding: "8px 2px", cursor: "pointer", letterSpacing: 0.2, whiteSpace: "nowrap" }}>
+                        ▲ Minimize</button>
+                    )}
                   </span>
                   <span style={{ minWidth: 0 }}>
                     <span style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: cat.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
@@ -1452,10 +1459,7 @@ function CareerTimeline() {
                             ))}
                           </div>
                         )}
-                        <div style={{ display: "flex", gap: "4px 14px", alignItems: "center", marginTop: 10, flexWrap: "wrap" }}>
-                          <button onClick={e => { e.stopPropagation(); toggle(ev.idx); }} aria-label="Minimize this reel"
-                            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "0 18px", minHeight: 44, display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer" }}>
-                            <span aria-hidden="true" style={{ fontSize: 11, marginTop: -1 }}>▲</span> Minimize</button>
+                        <div style={{ display: "flex", gap: "4px 12px", alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
                           <a href={active.postUrl} target="_blank" rel="noreferrer" style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open on Instagram ↗</a>
                           <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: Math.min(reelIdx, reels.length - 1) } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
                         </div>
