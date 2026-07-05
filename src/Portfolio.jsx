@@ -68,6 +68,7 @@ const EVENT_ROLES = {
   "’25 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
   "Cannes": "Produced",
   "In-House Production": "Produced",
+  "Brand Partnerships": "Produced with the Social Creative Studio team",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
 };
@@ -217,6 +218,16 @@ const portfolio = [
       { title: "’26 Summit: Recap", sub: "@adobe · 202 likes · Apr 30, 2026", plays: "22.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/SUMMIT-2026_4.30.26.mp4", postUrl: "https://www.instagram.com/p/DXw69j_E2U3/" },
     ],
   },
+  {
+    event: "Brand Partnerships",
+    reels: [
+      { title: "Photoshop Archives: Russell Brown & Matthew Richmond", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", role: "Produced", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
+      { title: "Building Murals: Laura Garcia", sub: "@adobe · 546 likes · Nov 20, 2025", plays: "243.3K", role: "Produced", mp4: "/reels/2025/Brand-Partnerships/Building-Murals-Laura-Garcia_11.20.25.mp4", postUrl: "https://www.instagram.com/reel/DRQpeMIjeCw/" },
+      { title: "Photoshop x Marvel: Eyes of Wakanda", sub: "@photoshop · 2.7K likes · Sep 8, 2025", plays: "299K", mp4: "/reels/2025/Brand-Partnerships/Marvel-Eyes-of-Wakanda-Photoshop_9.8.25.mp4", postUrl: "https://www.instagram.com/reel/DOWitx1Afr1/" },
+      { title: "Adobe x NWSL: 2025 Creator Club", sub: "@adobe · 896 likes · Aug 12, 2025", plays: "2.7M", mp4: "/reels/2025/Brand-Partnerships/NWSL-Creator-Club_8.12.25.mp4", postUrl: "https://www.instagram.com/reel/DNRX89SpIkC/" },
+      { title: "Adobe x Golden State Warriors: Creative Threads", sub: "@adobe · 1.5K likes · May 23, 2025", plays: "225.2K", mp4: "/reels/2025/Brand-Partnerships/GSW-Creative-Threads_5.23.25.mp4", postUrl: "https://www.instagram.com/reel/DKAz21sPv0q/" },
+    ],
+  },
   // ——— Personal / Off the Clock ———
   {
     event: "Miles Music Media",
@@ -257,7 +268,7 @@ const LIBRARY_OF = {
   "’24 MAX Miami": "Events", "’25 MAX LA": "Events", "’25 MAX London": "Events",
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
-  "In-House Production": "Evergreen", "Side Projects": "Evergreen",
+  "In-House Production": "Evergreen", "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
 const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
@@ -511,6 +522,11 @@ const SPECIALTY_ROW_DESCS = {
 // trimmed) or Miles's own words; more land with the Workfront ingest. Rows with
 // no entry fall back to the reel's on-record `role` field. NEVER invent entries.
 const REEL_DESCS = {
+  "Adobe x NWSL: 2025 Creator Club": "Say hello to the 2025 Creator Club, brought to you by Adobe and the NWSL. A love letter to the fans who bring the game to life, with Adobe Express templates to rep your team your way.",
+  "Adobe x Golden State Warriors: Creative Threads": "At the Adobe x Warriors Creative Threads workshops, emerging Bay Area artists design sneakers that speak louder than words, facilitated by The Campus Worldwide.",
+  "Photoshop x Marvel: Eyes of Wakanda": "How the team behind Marvel Animation's Eyes of Wakanda illustrated the series, and how custom brushes in Photoshop helped bring it to life.",
+  "Building Murals: Laura Garcia": "Illustrator Laura Garcia brings her Nicaraguan roots to life at Adobe's San Francisco office, transforming a window into a vibrant mural that celebrates creativity, culture, and community.",
+  "Photoshop Archives: Russell Brown & Matthew Richmond": "Tools don't make things, people do. Matthew Richmond, Adobe VP of Design, joins Russell Preston Brown on Photoshop Archives to discuss the early days of Photoshop and the future of Adobe's professional tools.",
   // Hand-written spotlight lines (verbatim):
   "Dave Werner Employee Spotlight": "Meet Dave Werner, Senior Staff Designer in our Video and Animation team. From designs that help bring animated characters to life to performing in local theatre productions, Dave's creativity thrives both inside and outside of work.",
   "Gizem Dal Employee Spotlight": "Meet Gizem Dal, Graphic Software Engineer at Adobe and drummer.",
