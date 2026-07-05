@@ -622,23 +622,9 @@ const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
 
 const marqueeItems = ["Adobe MAX", "Adobe MAX London", "Adobe Summit", "NAB Show Las Vegas", "IBC Amsterdam", "NFL", "NWSL", "Taco Bell"];
 
-// "About the Artist" swipe stack — one word at a time; the labels come and go,
-// the person stays. A shared module ticker keeps the word and its proof clip
-// (AboutClip) in lockstep so they advance together.
+// "About the Artist" swipe stack — one word at a time; the labels come and
+// go, the person stays. A shared module ticker (useSwipeTick) advances them.
 const SWIPE_WORDS = ["Creative", "Producer", "Host", "Director", "Teammate"];
-// Each swipe word → the reel that proves it (Miles's map). Resolved to reel objs.
-const SWIPE_REEL_TITLES = {
-  Creative: "’25 MAX London: Recap",              // the spit take lives here
-  Producer: "San Jose Semaphore",
-  Host: "’24 MAX: 3 Things We Didn’t Expect",      // the T-Pain jump
-  Director: "’25 MAX: Kelley O'Hara x NWSL x Adobe",
-  Teammate: "’24 MAX: Adobe x Gatorade Activation",
-};
-const swipeReelBy = (word) => {
-  const t = SWIPE_REEL_TITLES[word];
-  for (const ev of portfolio) { const r = ev.reels.find(x => x.title === t); if (r) return r; }
-  return null;
-};
 let _swipeTick = 0; const _swipeSubs = new Set(); let _swipeTimer = null;
 function useSwipeTick() {
   const [, force] = useState(0);
@@ -666,29 +652,6 @@ function SwipeWord() {
     </span>
   );
 }
-// The 9:16 proof clip in the About card, top-right. Headshot is the resting
-// frame + poster; the clip for the current swipe word crossfades in and plays
-// muted. Synced to SwipeWord via the shared ticker. Viewport-paused.
-function AboutClip() {
-  const tick = useSwipeTick();
-  const wrapRef = useRef(null);
-  usePlayWhenVisible(wrapRef);
-  const word = SWIPE_WORDS[tick % SWIPE_WORDS.length];
-  const reel = swipeReelBy(word);
-  return (
-    <span ref={wrapRef} aria-hidden="true" className="about-clip"
-      style={{ position: "absolute", top: 24, right: 24, width: "clamp(84px, 9vw, 112px)", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#111", border: `1px solid ${C.border}`, boxShadow: "0 16px 44px rgba(0,0,0,0.5)" }}>
-      <img src="/headshot.jpg" alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 25%" }} />
-      {reel && (
-        <video key={reel.postUrl} src={srcOf(reel)} poster="/headshot.jpg" muted loop playsInline autoPlay preload="none"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", animation: "clipFade 0.6s ease both" }}
-          onError={e => { e.currentTarget.style.display = "none"; }} />
-      )}
-      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 60%, rgba(10,10,10,0.55))" }} />
-    </span>
-  );
-}
-
 // Scroll-triggered count-up stack, styled after Miles's EOY deck: number in
 // red, descriptor beside it. Every number is DERIVED from the data, never typed.
 function PlaysCounter() {
@@ -696,6 +659,7 @@ function PlaysCounter() {
   const [p, setP] = useState(0); // eased 0..1 progress shared by all rows
   useEffect(() => {
     const el = ref.current; if (!el) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setP(1); return; }
     let started = false;
     const io = new IntersectionObserver(([e]) => {
       if (!e.isIntersecting || started) return;
@@ -1515,6 +1479,45 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
     document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
   }, []);
+  // Mobile bottom-sheet: drag the sheet down to dismiss. Only hijacks the touch
+  // when content is scrolled to the top and the finger pulls DOWN, so inner
+  // scrolling is untouched. Native non-passive listener so preventDefault works
+  // (React binds touchmove passive). Gated to the ≤900px sheet layout.
+  const [dragY, setDragY] = useState(0);
+  const dragYRef = useRef(0);
+  const drag = useRef({ startY: 0, active: false });
+  const setDrag = (v) => { dragYRef.current = v; setDragY(v); };
+  useEffect(() => {
+    const el = asideRef.current;
+    if (!el) return;
+    const isSheet = () => window.matchMedia("(max-width: 900px)").matches;
+    const onStart = (e) => {
+      if (!isSheet()) return;
+      drag.current = { startY: e.touches[0].clientY, active: true };
+    };
+    const onMove = (e) => {
+      if (!drag.current.active) return;
+      const dy = e.touches[0].clientY - drag.current.startY;
+      if (el.scrollTop <= 0 && dy > 0) { e.preventDefault(); setDrag(dy); }
+      else if (dragYRef.current) setDrag(0);
+    };
+    const onEnd = () => {
+      if (!drag.current.active) return;
+      drag.current.active = false;
+      if (dragYRef.current > 90) close();
+      else setDrag(0);
+    };
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, []);
   const rows = specialtyHighlights[cap.title] || [];
   const proofPlays = rows.reduce((s, h) => s + playsNum(h.reel.plays), 0);
   // Rows play INSIDE the drawer (Miles: "it should just play inside of the
@@ -1608,7 +1611,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   return (
     <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
       <aside ref={asideRef} role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
-        style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(480px, 92vw)", zIndex: 1201, background: "#0D0D0D", borderLeft: `1px solid ${C.border}`, boxShadow: "-24px 0 80px rgba(0,0,0,0.6)", overflowY: "auto", padding: 24, opacity: closing ? 0 : 1, transition: "opacity 0.25s" }}>
+        style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(480px, 92vw)", zIndex: 1201, background: "#0D0D0D", borderLeft: `1px solid ${C.border}`, boxShadow: "-24px 0 80px rgba(0,0,0,0.6)", overflowY: "auto", padding: 24, opacity: closing ? 0 : 1, transform: `translateY(${dragY}px)`, transition: drag.current.active ? "none" : "opacity 0.25s, transform 0.3s cubic-bezier(0.22,1,0.36,1)" }}>
         <div className="spec-grabber" aria-hidden="true" style={{ display: "none", width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.25)", margin: "0 auto 14px" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
           <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Specialty</span>
@@ -1837,6 +1840,14 @@ export default function Portfolio() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: ${C.bg}; overflow-x: hidden; }
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
@@ -1847,7 +1858,6 @@ export default function Portfolio() {
         .hero-marquee { animation-name: heroloop; animation-timing-function: linear; animation-iteration-count: infinite; }
         .hero-marquee:hover { animation-play-state: paused; }
         @keyframes drawerFade { from { opacity: 0; } }
-        @keyframes clipFade { from { opacity: 0; } to { opacity: 1; } }
         .marquee-scroll::-webkit-scrollbar { display: none; }
         /* R4 mobile fix: About renders as normal block flow; static headshot at card bottom, no floating swipe clip. */
         @keyframes drawerIn { from { transform: translateX(100%); } }
