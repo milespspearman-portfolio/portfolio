@@ -1397,7 +1397,7 @@ function CareerTimeline() {
                   onMouseEnter={e => { if (!open) e.currentTarget.style.transform = "translateY(-2px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
                   style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(30,215,96,0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
-                  <span style={{ position: "relative", width: 84, aspectRatio: "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
+                  <span style={{ position: "relative", width: "100%", aspectRatio: "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
                     <img src={ev.cover} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
                     <span aria-hidden="true" style={{ position: "absolute", right: 6, bottom: 6, width: 22, height: 22, borderRadius: "50%", background: "rgba(0,0,0,0.62)", color: cat.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>▶</span>
                   </span>
@@ -1433,7 +1433,10 @@ function CareerTimeline() {
                             ))}
                           </div>
                         )}
-                        <div style={{ display: "flex", gap: "4px 12px", alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
+                        <div style={{ display: "flex", gap: "4px 14px", alignItems: "center", marginTop: 10, flexWrap: "wrap" }}>
+                          <button onClick={e => { e.stopPropagation(); toggle(ev.idx); }} aria-label="Minimize this reel"
+                            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "0 18px", minHeight: 44, display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer" }}>
+                            <span aria-hidden="true" style={{ fontSize: 11, marginTop: -1 }}>▲</span> Minimize</button>
                           <a href={active.postUrl} target="_blank" rel="noreferrer" style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open on Instagram ↗</a>
                           <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: Math.min(reelIdx, reels.length - 1) } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
                         </div>
@@ -1898,7 +1901,7 @@ export default function Portfolio() {
         @media (max-width: 900px) {
           .tl-wrap { --rail: 18px; --gap: 46px; }
           .tl-year { top: calc(64px + env(safe-area-inset-top)) !important; }
-          .tl-card { grid-template-columns: 72px 1fr !important; gap: 12px !important; }
+          .tl-card { grid-template-columns: 68px 1fr !important; gap: 16px !important; padding: 16px !important; }
         }
         /* R3 B5: 44px tap targets on touch devices */
         @media (hover: none) {
