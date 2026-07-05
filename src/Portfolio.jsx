@@ -358,7 +358,7 @@ const capabilities = [
   {
     img: "/cards/directing-coaching.jpg", imgPos: "50% 32%", title: "Directing & On-Camera Coaching",
     meta: "Adobe MAX · Summit · @adobelife · 2025–2026",
-    body: "At MAX 2025 in LA I coached James Gunn, Mark Rober, and Kelley O'Hara on camera. That meant coordinating with strategy and our Adobe Brand studio team to craft talking tracks: I wrote the words, got them approved, then made sure we delivered them in our 10 minute time slot. The Rober reel sits at 2.2M plays.",
+    body: "At MAX 2025 in LA I coached James Gunn, Mark Rober, and Kelley O'Hara on camera. That meant coordinating with strategy and our Social Creative Studio team to craft talking tracks: I wrote the words, got them approved, then made sure we delivered them in our 10 minute time slot. The Rober reel sits at 2.2M plays.",
     linkUrl: "https://www.instagram.com/reel/DA6zD2MA7Jh/", linkLabel: "Play: ’25 MAX LA →",
   },
   {
@@ -1883,7 +1883,7 @@ export default function Portfolio() {
               </h2>
               <PlaysCounter />
               <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
-                I'm a social producer and content creator at Adobe Brand in San Francisco. I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC. The music background shows up in how I think about rhythm, pacing, and storytelling. And yeah, I'm also a{" "}
+                I'm a social producer and content creator on Adobe's Social Creative Studio team in San Francisco. I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC. The music background shows up in how I think about rhythm, pacing, and storytelling. And yeah, I'm also a{" "}
                 <a href="#work"
                   onClick={() => { const e = portfolio.findIndex(ev => ev.event === "Miles Music Media"); if (e !== -1) window.dispatchEvent(new CustomEvent("ms-play", { detail: { e, r: 0 } })); }}
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55`, cursor: "pointer" }}

@@ -17,9 +17,9 @@ Confirmed in Chrome (Browser 3, logged in). Ready for the Apify download batch *
 | (Photoshop Archives, GSW, Marvel BTS, Eric BTS YT mirrors from research/MISSING-VIDEOS.md if wanted) | — | — |
 
 ## PENDING — need Miles's shortcode or a deep-scroll (Google surfaces only mirrors, not the @adobe/@photoshop-owned reel)
-- **GSW Creative Threads** — @adobe, ~FY25 Q2 (Mar–May 2025). Google → @warriors Fan Night reel `DICEKs3yGC_`, Adobe FB video, YT Short `epGnepZdfbk`, Adobe blog Homegrown Series. The @adobe-owned reel not pinned. → Miles drop or deep-scroll @adobe.
+- ~~GSW Creative Threads~~ **FOUND `DKAz21sPv0q`** — @adobe, "From the court to the canvas, at the Adobe x @warriors Creative Threads workshops... @thecampusworldwide" (~1yr ago, 0:47). Ready for Apify.
 - **Eric Matisoff AFB Sneaks BTS** — @adobe/AFB, Summit 2026 (~Apr 2026). YT `q7yZmnS8Tfg` exists; Eric + Iliza co-hosted Sneaks. @adobe reel not pinned. → Miles drop or deep-scroll.
-- **Photoshop Archives (Russell / Matthew Richmond)** — @photoshop. Miles: "there are clean IG promos from Russell's video, I'll find them." Awaiting his drop.
+- ~~Photoshop Archives (Russell / Matthew Richmond)~~ **FOUND `DVgpCMOkduU`** — @photoshop, "Tools don't make things. People do." @mrichmondphoto (Adobe VP Design) joins @dr_brown on Photoshop Archives (4mo ago, 0:29). Ready for Apify.
 - ~~**Iliza backstage**~~ **RESOLVED — already in the data** as "'26 Summit: Recap" (desc: "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks"). Miles was right: it's inside and labeled. Also **Eric Matisoff already present** as "Coolest Job: Eric" ("@ericmatisoff... host of Adobe Summit's Sneaks for the last four years"). The MISSING-VIDEOS "AFB Sneaks BTS" may be a distinct reel, but Eric already has a node.
 
 ## Miles jazz YouTube — @milesspearman resolves to **"Miles Music & Media"** (1,870 subs ≈ 1.86K, jazz/trumpet). Harvest agent running; every video >2K views lands under the Off The Clock **Miles Music Media** library so recruiters see the YouTube presence.
