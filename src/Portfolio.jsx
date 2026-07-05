@@ -301,12 +301,18 @@ const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a 
 // ===== CAREER TIMELINE data (professional work only; jazz/Off The Clock fenced out) =====
 const TL_CAT = { Events: { accent: C.mint, chip: "ON LOCATION" }, Evergreen: { accent: C.gold, chip: "IN-HOUSE" } };
 const proEvents = eventStats.filter(ev => LIBRARY_OF[ev.event] !== "Off The Clock");
-const yearOf = (ev) => { const ds = ev.reels.map(reelDate).filter(Boolean); return ds.length ? new Date(Math.max(...ds)).getFullYear() : 0; };
-const timelineNodes = [...proEvents].sort((a, b) => Math.max(...b.reels.map(reelDate)) - Math.max(...a.reels.map(reelDate)));
+// Year bucket = the event's MODAL year (the year most of its reels landed in), tie-break to the
+// later year. Keeps "'25 MAX LA" under 2025 even though a couple of reels slipped into 2026.
+const yearOf = (ev) => {
+  const h = {}; ev.reels.forEach(r => { const t = reelDate(r); if (!t) return; const y = new Date(t).getFullYear(); h[y] = (h[y] || 0) + 1; });
+  let best = 0, bc = -1; for (const y in h) { if (h[y] > bc || (h[y] === bc && +y > best)) { bc = h[y]; best = +y; } } return best;
+};
+// Spine order: modal-year desc, then most-recently-active within the year — so buckets and order agree.
+const timelineNodes = [...proEvents].sort((a, b) => (yearOf(b) - yearOf(a)) || (Math.max(...b.reels.map(reelDate)) - Math.max(...a.reels.map(reelDate))));
 const TL_YEARS = [...new Set(timelineNodes.map(yearOf))].sort((a, b) => b - a);
 const yearMeta = Object.fromEntries(TL_YEARS.map(y => {
   const evs = timelineNodes.filter(ev => yearOf(ev) === y);
-  return [y, { count: evs.length, plays: evs.reduce((s, e) => s + e.totalPlays, 0) }];
+  return [y, { count: evs.length, reels: evs.reduce((s, e) => s + e.reels.length, 0), plays: evs.reduce((s, e) => s + e.totalPlays, 0) }];
 }));
 
 // Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
@@ -1327,7 +1333,7 @@ function CareerTimeline() {
   useEffect(() => {
     const rail = railRef.current, fill = fillRef.current;
     if (!rail || !fill) return;
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { fill.style.height = "100%"; return; }
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { fill.style.height = "0%"; return; }
     let raf = 0;
     const onScroll = () => {
       if (raf) return;
@@ -1365,19 +1371,20 @@ function CareerTimeline() {
           const open = openIdx === ev.idx;
           const showYear = yr !== lastYear; lastYear = yr;
           const meta = yearMeta[yr] || { count: 0, plays: 0 };
-          const reels = ev.reels;
+          // Top-played first, so reels[0] matches ev.cover (poster = the reel that plays on tap).
+          const reels = [...ev.reels].sort((x, y) => playsNum(y.plays) - playsNum(x.plays));
           const active = reels[Math.min(reelIdx, reels.length - 1)] || reels[0];
           const desc = active ? (REEL_DESCS[active.title] || "") : "";
           return (
             <Fragment key={ev.event}>
               {showYear && (
-                <div className="tl-year" style={{ position: "sticky", top: 72, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 60%, transparent)` }}>
+                <div className="tl-year" style={{ position: "sticky", top: 72, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 85%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {fmtPlays(meta.plays)} plays</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)} plays</span>
                 </div>
               )}
               <div style={{ position: "relative", marginBottom: 14 }}>
-                <span aria-hidden="true" style={{ position: "absolute", left: "calc(var(--rail) - var(--gap) - 7px)", top: 18, width: open ? 18 : 14, height: open ? 18 : 14, borderRadius: "50%", background: cat.accent, boxShadow: `0 0 0 6px ${cat.accent}1F`, transition: "all 0.2s" }} />
+                <span aria-hidden="true" style={{ position: "absolute", left: "calc(var(--rail) - var(--gap) - 7px)", top: 22, width: open ? 18 : 14, height: open ? 18 : 14, borderRadius: "50%", background: cat.accent, boxShadow: `0 0 0 6px ${cat.accent}1F`, transition: "all 0.2s" }} />
                 <div role="button" tabIndex={0} aria-expanded={open} className="tl-card"
                   onClick={() => toggle(ev.idx)}
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(ev.idx); } }}
@@ -1401,15 +1408,15 @@ function CareerTimeline() {
                     {open && active && (
                       <div style={{ padding: "16px 4px 8px", minWidth: 0 }}>
                         <video key={active.postUrl} src={srcOf(active)} poster={thumbOf(active)} controls autoPlay muted playsInline preload="metadata"
-                          style={{ width: "min(100%, 260px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
+                          style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
                           onError={e => { e.currentTarget.style.display = "none"; }} />
                         <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: C.white, marginTop: 12 }}>{active.title}</span>
                         {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "8px 0 0", maxWidth: 360 }}>{desc}</p>}
                         {reels.length > 1 && (
-                          <div className="tl-chips" style={{ display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain", padding: "12px 0 4px", marginTop: 4, maxWidth: "100%" }}>
+                          <div className="tl-chips" style={{ display: "flex", gap: 8, overflowX: "auto", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollSnapType: "x proximity", padding: "12px 16px 4px 0", marginTop: 4, maxWidth: "100%" }}>
                             {reels.map((r, ri) => (
                               <button key={r.postUrl} onClick={() => setReelIdx(ri)}
-                                style={{ flex: "0 0 auto", display: "flex", alignItems: "center", gap: 8, minHeight: 44, padding: "6px 10px 6px 6px", borderRadius: 8, cursor: "pointer", background: ri === reelIdx ? "rgba(30,215,96,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${ri === reelIdx ? cat.accent + "66" : C.border}` }}>
+                                style={{ flex: "0 0 auto", scrollSnapAlign: "start", display: "flex", alignItems: "center", gap: 8, minHeight: 44, padding: "6px 10px 6px 6px", borderRadius: 8, cursor: "pointer", background: ri === reelIdx ? "rgba(30,215,96,0.12)" : "rgba(255,255,255,0.04)", border: `1px solid ${ri === reelIdx ? cat.accent + "66" : C.border}` }}>
                                 <img src={thumbOf(r)} alt="" loading="lazy" style={{ width: 30, height: 40, borderRadius: 4, objectFit: "cover", display: "block", flex: "0 0 auto" }} onError={e => { e.currentTarget.style.display = "none"; }} />
                                 <span style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
                                   <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: ri === reelIdx ? C.mint : C.white, maxWidth: 132, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.title}</span>
@@ -1419,9 +1426,9 @@ function CareerTimeline() {
                             ))}
                           </div>
                         )}
-                        <div style={{ display: "flex", gap: 16, alignItems: "center", marginTop: 12, flexWrap: "wrap" }}>
-                          <a href={active.postUrl} target="_blank" rel="noreferrer" style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none" }}>Open on Instagram ↗</a>
-                          <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: reelIdx } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none" }}>Open in full player →</a>
+                        <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 8, flexWrap: "wrap" }}>
+                          <a href={active.postUrl} target="_blank" rel="noreferrer" style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open on Instagram ↗</a>
+                          <a href="#work" onClick={() => window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: Math.min(reelIdx, reels.length - 1) } }))} style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.gray, textDecoration: "none", padding: "10px 4px", minHeight: 44, display: "inline-flex", alignItems: "center" }}>Open in full player →</a>
                         </div>
                       </div>
                     )}
@@ -1834,7 +1841,7 @@ export default function Portfolio() {
         .tl-wrap { --rail: clamp(20px, 6vw, 60px); --gap: clamp(52px, 12vw, 108px); }
         @media (max-width: 900px) {
           .tl-wrap { --rail: 18px; --gap: 46px; }
-          .tl-year { top: 60px !important; }
+          .tl-year { top: calc(64px + env(safe-area-inset-top)) !important; }
           .tl-card { grid-template-columns: 72px 1fr !important; gap: 12px !important; }
         }
         /* R3 B5: 44px tap targets on touch devices */
@@ -1842,6 +1849,10 @@ export default function Portfolio() {
           .spec-drawer [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; }
+          .tl-card { position: relative; }
+          .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
+          .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #1ED760; }
+          .tl-chips { -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
