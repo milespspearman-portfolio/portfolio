@@ -1357,6 +1357,23 @@ function CareerTimeline() {
 
   const toggle = (idx) => { setOpenIdx(o => (o === idx ? null : idx)); setReelIdx(0); };
 
+  // Auto-collapse the open node once it has scrolled fully out of view — "moved
+  // on = closed" (also unmounts its <video>). Guarded so it only fires AFTER the
+  // card has been seen once, so tapping a card low on the screen (its expanded
+  // body rendering below the fold) doesn't snap shut immediately.
+  useEffect(() => {
+    if (openIdx === null) return;
+    const el = document.querySelector("[data-tl-open]");
+    if (!el) return;
+    let seen = false;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) seen = true;
+      else if (seen) setOpenIdx(null);
+    }, { threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [openIdx]);
+
   let lastYear = null;
   return (
     <section id="timeline" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
@@ -1413,7 +1430,9 @@ function CareerTimeline() {
                 <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", gridTemplateColumns: "minmax(0, 1fr)", transition: "grid-template-rows 0.4s ease" }}>
                   <div style={{ overflow: "hidden", minWidth: 0 }}>
                     {open && active && (
-                      <div style={{ padding: "16px 4px 8px", minWidth: 0 }}>
+                      <div data-tl-open="" style={{ position: "relative", padding: "16px 4px 8px", minWidth: 0 }}>
+                        <button onClick={e => { e.stopPropagation(); toggle(ev.idx); }} aria-label="Minimize this reel"
+                          style={{ position: "absolute", top: 8, right: 2, width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", color: C.white, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, lineHeight: 1, zIndex: 3 }}>✕</button>
                         <video key={active.postUrl} src={srcOf(active)} poster={thumbOf(active)} controls autoPlay muted playsInline preload="metadata"
                           style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
                           onError={e => { e.currentTarget.style.display = "none"; }} />
