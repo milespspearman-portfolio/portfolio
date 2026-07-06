@@ -71,6 +71,7 @@ const EVENT_ROLES = {
   "Employee Spotlights: Season 2": "Produced & creatively directed",
   "Employee Spotlights: Season 3": "Produced & creatively directed",
   "’26 Summit": "Produced",
+  "’26 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
   "Artist Spotlights": "Produced & creatively directed",
   "Always-On": "Produced",
   "Made to Create": "Produced",
@@ -261,6 +262,13 @@ const portfolio = [
     ],
   },
   {
+    event: "’26 NAB Vegas",
+    reels: [
+      { title: "’26 NAB: Object Matte (OTG)", sub: "@adobevideo · 9.7K likes · Apr 23, 2026", plays: "1.1M", mp4: "/reels/2026/NAB-2026/Object-Matte-OTG_4.23.26.mp4", postUrl: "https://www.instagram.com/reel/DXfDr0Kj6Ug/" },
+      { title: "’26 NAB: Color Mode (OTG)", sub: "@adobevideo · 2K likes · Apr 22, 2026", plays: "452.6K", mp4: "/reels/2026/NAB-2026/ColorMode-OTG_4.22.26.mp4", postUrl: "https://www.instagram.com/reel/DXcYL0dFCYo/" },
+    ],
+  },
+  {
     event: "Artist Spotlights",
     reels: [
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
@@ -329,7 +337,7 @@ const portfolio = [
 // Miles's three libraries — every playlist belongs to exactly one.
 const LIBRARY_OF = {
   "’24 MAX Miami": "Events", "’25 MAX LA": "Events", "’25 MAX London": "Events",
-  "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
+  "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events", "’26 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
   "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen", "Made to Create": "Evergreen",
@@ -667,6 +675,8 @@ const REEL_DESCS = {
   "San Jose Semaphore": "The San Jose Semaphore has been solved! The puzzle, created by Ben Rubin, featured rotating discs at the top of Adobe's Almaden Tower that hid a message through data points of bytes and numbered colors.",
   "’26 Summit: Sneaks Celebrity Host Interview": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
   "Behind the Lens: NFL Live Content Correspondents": "When seconds count, creativity can't wait. Diego Galicia and Payton Gygax are NFL Live Content Correspondents, who capture, edit, and publish from the sidelines in real time. Every game, every play, every post has a deadline measured in seconds. From the field to fans, they're using Adobe tools to move at the speed of the game without sacrificing their creative vision.",
+  "’26 NAB: Object Matte (OTG)": "If we could be anywhere in the world right now, we'd be at #NABShow demoing our new Object Matte feature in After Effects. This just-announced tool overhauls rotoscoping, so you can now instantly isolate and track your subjects with just a click. Say goodbye to manual tasks and hello to intuitive masks. Try it today in After Effects!",
+  "’26 NAB: Color Mode (OTG)": "Live from #NABShow, it's Color Mode! We introduced attendees to our brand-new color grading experience in Premiere (beta), and we made sure to capture their hot takes on the technology. (Spoiler alert: they loved it). Try it for yourself by downloading the beta today.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
