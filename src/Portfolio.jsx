@@ -196,7 +196,6 @@ const portfolio = [
       { title: "’25 MAX: PDF Spaces is Everywhere", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
       { title: "’25 MAX: James Gunn’s Filmmaking Assignment", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
       { title: "’25 MAX: “Coolest Job” @Adobe | Firefly Feature", sub: "@adobelife · 30.5K likes · Nov 14, 2025", plays: "747.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Coolest-Job_11.14.25.mp4", postUrl: "https://www.instagram.com/p/DRC8V6JAkO1/" },
-      { title: "’25 MAX: Kelley O'Hara x NWSL x Adobe", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
       { title: "’25 MAX: Mark Rober’s Creator Assignment", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
       { title: "’25 MAX: Jessica Williams’ Creator Assignment", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
       { title: "’25 MAX: Navin’s Coolest Job", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
@@ -274,6 +273,7 @@ const portfolio = [
       { title: "’25 IBC: Recap", sub: "@adobevideo · 165 likes · Sep 23, 2025", plays: "23.2K", mp4: "/reels/2025/IBC-2025/IBC-Recap_9.23.25.mp4", postUrl: "https://www.instagram.com/reel/DO9bJcDCb1R/" },
       { title: "’25 IBC: Favorite Premiere Transitions", sub: "@adobevideo · 147 likes · Sep 19, 2025", plays: "44.8K", mp4: "/reels/2025/IBC-2025/Favorite-Transitions_9.19.25.mp4", postUrl: "https://www.instagram.com/reel/DOzGcIukzUD/" },
       { title: "’25 IBC: Premiere Pro Transitions Release", sub: "@adobevideo · 90 likes · Sep 19, 2025", plays: "30.5K", mp4: "/reels/2025/IBC-2025/Premiere-Transitions-Release_9.19.25.mp4", postUrl: "https://www.instagram.com/reel/DOy_iA-jPsD/" },
+      { title: "’25 IBC: Premiere on Mobile Release", sub: "@adobe · 190 likes · Sep 30, 2025", plays: "", role: "Concepted, scripted, coached & produced", landscape: true, mp4: "/reels/2025/IBC-2025/Premiere-on-Mobile_9.30.25.mp4", postUrl: "https://www.linkedin.com/posts/mikefolgner_check-out-premiere-on-mobile-today-activity-7378906399935987714-kaDd" },
     ],
   },
   {
@@ -295,6 +295,7 @@ const portfolio = [
   {
     event: "Brand Partnerships",
     reels: [
+      { title: "Kelley O'Hara x NWSL x Adobe", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
       { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
       { title: "Photoshop Archives: Russell Brown & Matthew Richmond", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", role: "Produced", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
       { title: "Photoshop x Marvel: Eyes of Wakanda", sub: "@photoshop · 2.7K likes · Sep 8, 2025", plays: "299K", mp4: "/reels/2025/Brand-Partnerships/Marvel-Eyes-of-Wakanda-Photoshop_9.8.25.mp4", postUrl: "https://www.instagram.com/reel/DOWitx1Afr1/" },
@@ -488,7 +489,7 @@ const reelIndexByTitle = (title) => {
 const CAPABILITY_REEL_TITLE = {
   "On-Camera Hosting & Producing": "’25 Summit: Acrobat Escape Room",                          // Adobe Summit 2025 — 2.6M, the one most people know him by
   "Content Strategy, Concept to Published": "’24 IBC: Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
-  "Directing & On-Camera Coaching": "’25 MAX: Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
+  "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
 };
 const setList = capabilities.map(c => {
@@ -565,7 +566,7 @@ const SPECIALTY_REELS = {
   "Directing & On-Camera Coaching": [
     { t: "’25 MAX: Mark Rober’s Creator Assignment", album: "’25 MAX LA" },
     { t: "’25 MAX: James Gunn’s Filmmaking Assignment", album: "’25 MAX LA" },
-    { t: "’25 MAX: Kelley O'Hara x NWSL x Adobe", album: "’25 MAX LA" },
+    { t: "Kelley O'Hara x NWSL x Adobe", album: "Brand Partnerships" },
     { t: "’25 MAX: Jessica Williams’ Creator Assignment", album: "’25 MAX LA" },
     { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit Vegas" },
     { t: "Dave Werner Employee Spotlight", album: "Employee Spotlights · Season 1" },
@@ -654,7 +655,7 @@ const REEL_DESCS = {
   "’25 Summit: Escalator ‘Hot’ Takes": "We asked the experts at Adobe Summit to serve up their best rapid-fire insights on agentic AI. The takeaway?",
   "’25 MAX: James Gunn’s Filmmaking Assignment": "That project sitting in your drafts? @jamesgunn has a message for you.",
   "’25 MAX: “Coolest Job” @Adobe | Firefly Feature": "We asked: who has the coolest job at Adobe? The @adobefirefly team had a few ideas.",
-  "’25 MAX: Kelley O'Hara x NWSL x Adobe": "From the pitch to producing, former @NWSL athlete @kelleyohara is redefining success. We are teaming up with Kelley, who is using our tools to empower her next chapter, growing the game, on and off the field.",
+  "Kelley O'Hara x NWSL x Adobe": "From the pitch to producing, former @NWSL athlete @kelleyohara is redefining success. We are teaming up with Kelley, who is using our tools to empower her next chapter, growing the game, on and off the field.",
   "’25 MAX: Mark Rober’s Creator Assignment": "\"Your most viral clips are the ones that create the biggest visceral response. \" Adobe MAX keynote speaker @markrober offers advice on how to level up your content.",
   "’25 MAX: Jessica Williams’ Creator Assignment": "\"Follow your instinct, not the trends. \" Adobe MAX Sneaks host @msjwilly reminds us that our instinct is the most powerful thing we can tap into as creators.",
   "’25 MAX: Navin’s Coolest Job": "What's it like to work on the Adobe Firefly team? Navin Watumull, Senior Product Marketing Manager, gives us a peek inside his role helping shape how creators experience our generative AI tools.",
@@ -683,6 +684,7 @@ const REEL_DESCS = {
   "’25 IBC: Recap": "\"You look happier.\" Thanks, we just updated our Premiere Pro to 25.5 and gained 90+ new effects, faster timelines, and more intuitive workflows.",
   "’25 IBC: Favorite Premiere Transitions": "Jump cut: the camera holds to reveal IBC 2025 attendees sharing their favorite editing transitions. Discover your fave with our 90+ new effects, transitions, and animations now live in the latest Premiere Pro.",
   "’25 IBC: Premiere Pro Transitions Release": "Three words. Five syllables. (Hint: It's \"Update Premiere Pro!\") Get the latest and greatest features, effects, and performance by upgrading to Premiere Pro 25.5 today.",
+  "’25 IBC: Premiere on Mobile Release": "Our team at Adobe is thrilled to bring Premiere to the iPhone. A favorite feature: the ability to use your voice to generate sound effects. If you create video, give it a try.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
@@ -1536,7 +1538,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
         </div>
         <div style={{ maxWidth: 420, margin: "12px auto 0", padding: "0 18px" }}>
           <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25, textAlign: "center" }}>{active.title}</span>
-          <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4, textAlign: "center" }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · {idx + 1} / {reels.length} · swipe</span>
+          <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4, textAlign: "center" }}>{[active.plays ? `${active.plays} plays` : null, reelDateStr(active) || null, `${idx + 1} / ${reels.length}`, "swipe"].filter(Boolean).join(" · ")}</span>
           {desc ? (
             <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", whiteSpace: "pre-line" }}>{desc}</p>
           ) : (
@@ -1576,7 +1578,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
       </div>
       <div style={{ textAlign: "center", marginTop: 12, padding: "0 16px" }}>
         <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25 }}>{active.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{active.plays} plays{reelDateStr(active) ? ` · ${reelDateStr(active)}` : ""} · tap to open</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{[active.plays ? `${active.plays} plays` : null, reelDateStr(active) || null, "tap to open"].filter(Boolean).join(" · ")}</span>
         <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center", marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={e => { e.stopPropagation(); setView("swipe"); }}
             style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
