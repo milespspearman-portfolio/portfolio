@@ -492,6 +492,12 @@ const LIVE_WALL = _isPhone ? 3 : 14;
 // portfolio array; meta lines are Navin-style (events · years), facts only.
 const capabilities = [
   {
+    img: "/thumbs/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.jpg", imgPos: "50% 22%", title: "Making B2B Social Friendly",
+    meta: "Exec Leadership, Customer Stories & Hot Takes",
+    body: "A one stop shop for my B2B work, organized the way recruiters look: hosting (Adobe Summit), customer stories (Intuit, Wyndham Hotels), exec thought leadership, and product releases. Pitched, produced, directed, and coached, concept to published. Making B2B social friendly.",
+    linkUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN", linkLabel: "Play: Customer Story →",
+  },
+  {
     img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Producing",
     meta: "Adobe MAX · Summit · NAB · 2024–Present",
     body: "One-off influencer posts don't scale, so I concepted a repeatable hosted sizzle format for Adobe's flagship events. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera. Created 9 posts over a 3 day event, published between March 20 and April 2, including a Ken Jeong interview and the Acrobat Escape Room at 2.6M plays.",
@@ -514,12 +520,6 @@ const capabilities = [
     meta: "@adobelife · 2025–2026",
     body: "Talent marketing at Adobe means making employees the story. I produced and creatively directed the Dave interview feature in-house, and it hit 1.9M plays on @adobelife. On the San Jose Semaphore piece I handled directing and on-camera coaching.",
     linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: In-House Production →",
-  },
-  {
-    img: "/thumbs/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.jpg", imgPos: "50% 22%", title: "B2B",
-    meta: "Making B2B social friendly · Adobe · 2024–2026",
-    body: "A one stop shop for my B2B work, organized the way recruiters look: hosting (Adobe Summit), customer stories (Intuit, Wyndham Hotels), exec thought leadership, and product releases. Pitched, produced, directed, and coached, concept to published. Making B2B social friendly.",
-    linkUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN", linkLabel: "Play: Customer Story →",
   },
   {
     img: "/thumbs/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.jpg", imgPos: "50% 25%", title: "Adobe Summit ’25 & ’26",
@@ -545,7 +545,7 @@ const CAPABILITY_REEL_TITLE = {
   "Content Strategy, Concept to Published": "’24 IBC: Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
   "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
-  "B2B": "’25 MAX Customer Story: Intuit",
+  "Making B2B Social Friendly": "’25 MAX Customer Story: Intuit",
   "Adobe Summit ’25 & ’26": "’26 Summit: Anil Chakravarthy Exec Interview",
 };
 const setList = capabilities.map(c => {
@@ -658,7 +658,10 @@ const SPECIALTY_REELS = {
     { t: "San Jose Semaphore", album: "In-House Production" },
     { t: "Intern Day Creative Cloud", album: "Intern Day ’25" },
   ],
-  "B2B": [
+  "Making B2B Social Friendly": [
+    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "Hosting" },
+    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "Hosting" },
+    { t: "’26 Summit: Words of Wisdom with Iliza Shlesinger", album: "Hosting" },
     { t: "’25 Summit: Ken Jeong Interview", album: "Hosting" },
     { t: "’25 Summit: Acrobat Escape Room", album: "Hosting" },
     { t: "’25 Summit: Hosted Event Recap", album: "Hosting" },
@@ -696,7 +699,7 @@ const SPECIALTY_ROW_DESCS = {
   "Content Strategy, Concept to Published": {},
   "Directing & On-Camera Coaching": {},
   "Producing: Talent Marketing & Employee Comms": {},
-  "B2B": {},
+  "Making B2B Social Friendly": {},
   "Adobe Summit ’25 & ’26": {},
 };
 // Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
