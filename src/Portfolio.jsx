@@ -313,6 +313,7 @@ const portfolio = [
       { title: "’26 PS Archives: The Power of Small Tools", sub: "@photoshop · 4.5K likes · Mar 30, 2026", plays: "829.9K", mp4: "/reels/2026/Photoshop-Archives/Power-of-Small-Tools_3.30.26.mp4", postUrl: "https://www.instagram.com/reel/DWhcBanEvld/" },
       { title: "’26 PS Archives: 1st Satisfying Project", sub: "@photoshop · 2.1K likes · Mar 9, 2026", plays: "734.8K", mp4: "/reels/2026/Photoshop-Archives/1st-Satisfying-Project_3.9.26.mp4", postUrl: "https://www.instagram.com/reel/DVrH3rxiUdw/" },
       { title: "’26 PS Archives: Tools Don’t Make Things", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
+      { title: "’26 PS Archives: Tools Don’t Know When Something is Good", sub: "@photoshop · 2.8K likes · Mar 16, 2026", plays: "713.7K", mp4: "/reels/2026/Photoshop-Archives/Tools-Dont-Know-Whats-Good_3.16.26.mp4", postUrl: "https://www.instagram.com/reel/DV9Idx2AInv/" },
     ],
   },
   // ——— Personal / Off the Clock ———
@@ -637,6 +638,7 @@ const REEL_DESCS = {
   "’26 PS Archives: The Power of Small Tools": "Not every feature is front and center, but for someone, it's the whole workflow.",
   "’26 PS Archives: 1st Satisfying Project": "What was your first satisfying Photoshop project? The Photoshop Archives crew shares theirs.",
   "’26 PS Archives: Tools Don’t Make Things": "Tools don't make things, people do. Matthew Richmond, Adobe VP of Design, joins Russell Preston Brown on Photoshop Archives to discuss the early days of Photoshop and the future of Adobe's professional tools.",
+  "’26 PS Archives: Tools Don’t Know When Something is Good": "Creative tools can generate possibilities, but knowing what's good is still a human skill.",
   "’26 Summit: Words of Wisdom with Iliza Shlesinger": "We went backstage at Adobe Summit to chat with Iliza Shlesinger, comedian and celebrity co-host of Adobe Sneaks, about how creativity shows up around her stand-up specials.",
   // Hand-written spotlight lines (verbatim):
   "Dave Werner Employee Spotlight": "Meet Dave Werner, Senior Staff Designer in our Video and Animation team. From designs that help bring animated characters to life to performing in local theatre productions, Dave's creativity thrives both inside and outside of work.",
