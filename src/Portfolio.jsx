@@ -74,7 +74,7 @@ const EVENT_ROLES = {
   "’26 NAB Vegas": "Produced",
   "Artist Spotlights": "Produced & creatively directed",
   "Always-On": "Produced",
-  "Made to Create": "Produced",
+  "’25 IBC Amsterdam": "Hosted & on-camera talent",
   "Brand Partnerships": "Produced with the Social Creative Studio team",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
@@ -269,6 +269,14 @@ const portfolio = [
     ],
   },
   {
+    event: "’25 IBC Amsterdam",
+    reels: [
+      { title: "’25 IBC: Recap", sub: "@adobevideo · 165 likes · Sep 23, 2025", plays: "23.2K", mp4: "/reels/2025/IBC-2025/IBC-Recap_9.23.25.mp4", postUrl: "https://www.instagram.com/reel/DO9bJcDCb1R/" },
+      { title: "’25 IBC: Favorite Premiere Transitions", sub: "@adobevideo · 147 likes · Sep 19, 2025", plays: "44.8K", mp4: "/reels/2025/IBC-2025/Favorite-Transitions_9.19.25.mp4", postUrl: "https://www.instagram.com/reel/DOzGcIukzUD/" },
+      { title: "’25 IBC: Premiere Pro Transitions Release", sub: "@adobevideo · 90 likes · Sep 19, 2025", plays: "30.5K", mp4: "/reels/2025/IBC-2025/Premiere-Transitions-Release_9.19.25.mp4", postUrl: "https://www.instagram.com/reel/DOy_iA-jPsD/" },
+    ],
+  },
+  {
     event: "Artist Spotlights",
     reels: [
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
@@ -285,14 +293,9 @@ const portfolio = [
     ],
   },
   {
-    event: "Made to Create",
-    reels: [
-      { title: "Behind the Lens: NFL Live Content Correspondents", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
-    ],
-  },
-  {
     event: "Brand Partnerships",
     reels: [
+      { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
       { title: "Photoshop Archives: Russell Brown & Matthew Richmond", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", role: "Produced", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
       { title: "Photoshop x Marvel: Eyes of Wakanda", sub: "@photoshop · 2.7K likes · Sep 8, 2025", plays: "299K", mp4: "/reels/2025/Brand-Partnerships/Marvel-Eyes-of-Wakanda-Photoshop_9.8.25.mp4", postUrl: "https://www.instagram.com/reel/DOWitx1Afr1/" },
       { title: "Adobe x NWSL: 2025 Creator Club", sub: "@adobe · 896 likes · Aug 12, 2025", plays: "2.7M", mp4: "/reels/2025/Brand-Partnerships/NWSL-Creator-Club_8.12.25.mp4", postUrl: "https://www.instagram.com/reel/DNRX89SpIkC/" },
@@ -338,9 +341,9 @@ const portfolio = [
 const LIBRARY_OF = {
   "’24 MAX Miami": "Events", "’25 MAX LA": "Events", "’25 MAX London": "Events",
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events", "’26 NAB Vegas": "Events",
-  "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
+  "’24 IBC Amsterdam": "Events", "’25 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
-  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen", "Made to Create": "Evergreen",
+  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen",
   "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
@@ -674,9 +677,12 @@ const REEL_DESCS = {
   "Imran Idzqandar Employee Spotlight": "Meet Imran Idzqandar, Enterprise Architect at Adobe. Outside of work, Imran is a pilot and part of the Adobe Aviators community.",
   "San Jose Semaphore": "The San Jose Semaphore has been solved! The puzzle, created by Ben Rubin, featured rotating discs at the top of Adobe's Almaden Tower that hid a message through data points of bytes and numbered colors.",
   "’26 Summit: Sneaks Celebrity Host Interview": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
-  "Behind the Lens: NFL Live Content Correspondents": "When seconds count, creativity can't wait. Diego Galicia and Payton Gygax are NFL Live Content Correspondents, who capture, edit, and publish from the sidelines in real time. Every game, every play, every post has a deadline measured in seconds. From the field to fans, they're using Adobe tools to move at the speed of the game without sacrificing their creative vision.",
+  "NFL x Adobe: Behind the Lens (LCC)": "When seconds count, creativity can't wait. Diego Galicia and Payton Gygax are NFL Live Content Correspondents, who capture, edit, and publish from the sidelines in real time. Every game, every play, every post has a deadline measured in seconds. From the field to fans, they're using Adobe tools to move at the speed of the game without sacrificing their creative vision.",
   "’26 NAB: Object Matte (OTG)": "If we could be anywhere in the world right now, we'd be at #NABShow demoing our new Object Matte feature in After Effects. This just-announced tool overhauls rotoscoping, so you can now instantly isolate and track your subjects with just a click. Say goodbye to manual tasks and hello to intuitive masks. Try it today in After Effects!",
   "’26 NAB: Color Mode (OTG)": "Live from #NABShow, it's Color Mode! We introduced attendees to our brand-new color grading experience in Premiere (beta), and we made sure to capture their hot takes on the technology. (Spoiler alert: they loved it). Try it for yourself by downloading the beta today.",
+  "’25 IBC: Recap": "\"You look happier.\" Thanks, we just updated our Premiere Pro to 25.5 and gained 90+ new effects, faster timelines, and more intuitive workflows.",
+  "’25 IBC: Favorite Premiere Transitions": "Jump cut: the camera holds to reveal IBC 2025 attendees sharing their favorite editing transitions. Discover your fave with our 90+ new effects, transitions, and animations now live in the latest Premiere Pro.",
+  "’25 IBC: Premiere Pro Transitions Release": "Three words. Five syllables. (Hint: It's \"Update Premiere Pro!\") Get the latest and greatest features, effects, and performance by upgrading to Premiere Pro 25.5 today.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
@@ -1647,8 +1653,9 @@ function CareerTimeline() {
           const open = openIdx === ev.idx;
           const showYear = yr !== lastYear; lastYear = yr;
           const meta = yearMeta[yr] || { count: 0, plays: 0 };
-          // Top-played first, so reels[0] matches ev.cover (poster = the reel that plays on tap).
-          const reels = [...ev.reels].sort((x, y) => playsNum(y.plays) - playsNum(x.plays));
+          // Chronological within a project — newest reel first — so the carousel
+          // reads in order (e.g. Brand Partnerships: Eyes of Wakanda → NWSL → GSW).
+          const reels = [...ev.reels].sort((x, y) => reelDate(y) - reelDate(x));
           const active = reels[Math.min(reelIdx, reels.length - 1)] || reels[0];
           const desc = active ? (REEL_DESCS[active.title] || "") : "";
           return (
