@@ -48,6 +48,10 @@ function FadeIn({ children, delay = 0, style = {} }) {
 const srcOf = (r) => r.mp4.startsWith("/reels/") ? r.mp4 : r.mp4.replace("~/Downloads/Claude/miles-portfolio-reels", "/reels");
 const thumbOf = (r) => srcOf(r).replace("/reels/", "/thumbs/").replace(/\.mp4$/, ".jpg");
 const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; return /m/i.test(p) ? n * 1e6 : /k/i.test(p) ? n * 1e3 : n; };
+// LinkedIn never exposes video view counts (verified: scrapers return
+// reactions/comments/shares only) — show "N/A" instead of a blank that reads
+// as zero. Display-only; the plays field stays "" so no derived total moves.
+const playsLabel = (r) => r.plays || (r.postUrl && r.postUrl.includes("linkedin.com") ? "N/A" : "");
 const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
 const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
@@ -322,17 +326,17 @@ const portfolio = [
   {
     event: "GenStudio for Performance Marketing",
     reels: [
-      { title: "GenStudio for Performance Marketing Demo", sub: "@adobe · Nov 13, 2024", plays: "", role: "Hosted; content strategy; concept to published", mp4: "/reels/2024/GenStudio/GenStudio-Performance-Marketing.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_adobe-genstudio-for-performance-marketing-activity-7262556392153055232-xLqm" },
-      { title: "Exec Thought Leadership: On TikTok Your Ad Has Just 10 Seconds to Live", sub: "@adobe · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/TikTok-10-Seconds.mp4", postUrl: "https://www.linkedin.com/posts/tap-into-tiktoks-18b-monthly-users-with-ugcPost-7389722765508935681-Mov9" },
-      { title: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", sub: "@adobe · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/Go-Global.mp4", postUrl: "https://www.linkedin.com/posts/go-global-with-confidence-genstudio-for-ugcPost-7389692893927698432-6aFM" },
-      { title: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", sub: "@adobe · Nov 13, 2025", plays: "", role: "Produced", mp4: "/reels/2025/GenStudio-TL/Goldfish-Attention.mp4", postUrl: "https://www.linkedin.com/posts/purnimarroy_attention-spans-are-shorter-than-ever-and-ugcPost-7394620260328488961-EbUw" },
+      { title: "GenStudio for Performance Marketing Demo", sub: "LinkedIn · 58 reactions · Nov 13, 2024", plays: "", role: "Hosted; content strategy; concept to published", mp4: "/reels/2024/GenStudio/GenStudio-Performance-Marketing.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_adobe-genstudio-for-performance-marketing-activity-7262556392153055232-xLqm" },
+      { title: "Exec Thought Leadership: On TikTok Your Ad Has Just 10 Seconds to Live", sub: "LinkedIn · 19 reactions · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/TikTok-10-Seconds.mp4", postUrl: "https://www.linkedin.com/posts/tap-into-tiktoks-18b-monthly-users-with-ugcPost-7389722765508935681-Mov9" },
+      { title: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", sub: "LinkedIn · 33 reactions · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/Go-Global.mp4", postUrl: "https://www.linkedin.com/posts/go-global-with-confidence-genstudio-for-ugcPost-7389692893927698432-6aFM" },
+      { title: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", sub: "LinkedIn · 23 reactions · Nov 13, 2025", plays: "", role: "Produced", mp4: "/reels/2025/GenStudio-TL/Goldfish-Attention.mp4", postUrl: "https://www.linkedin.com/posts/purnimarroy_attention-spans-are-shorter-than-ever-and-ugcPost-7394620260328488961-EbUw" },
     ],
   },
   {
     event: "’25 MAX Customer Stories",
     reels: [
-      { title: "’25 MAX Customer Story: Intuit", sub: "@adobe · Dec 8, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.mp4", postUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN" },
-      { title: "’25 MAX Customer Story: Wyndham Hotels", sub: "@adobe · Jan 21, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/GenStudio-Customer-Stories/Wyndham-Marissa-Yoss.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_everything-good-comes-from-real-human-insight-activity-7419788674906759168-W8Fk" },
+      { title: "’25 MAX Customer Story: Intuit", sub: "LinkedIn · 26 reactions · Dec 8, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.mp4", postUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN" },
+      { title: "’25 MAX Customer Story: Wyndham Hotels", sub: "LinkedIn · 148 reactions · Jan 21, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/GenStudio-Customer-Stories/Wyndham-Marissa-Yoss.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_everything-good-comes-from-real-human-insight-activity-7419788674906759168-W8Fk" },
     ],
   },
   {
@@ -1201,7 +1205,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
           style={{ fontFamily: F, fontSize: 12, color: C.gray, textDecoration: "none", padding: "6px", minWidth: 24, textAlign: "center", opacity: h ? 1 : 0, transition: "opacity 0.15s" }}
           onMouseEnter={e => e.target.style.color = C.mint} onMouseLeave={e => e.target.style.color = C.gray}
         >↗</a>
-        <span style={{ fontFamily: F, fontSize: 13, color: active ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", minWidth: 52, textAlign: "right" }}>{reel.plays}</span>
+        <span style={{ fontFamily: F, fontSize: 13, color: active ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", minWidth: 52, textAlign: "right" }}>{playsLabel(reel)}</span>
       </span>
     </div>
   );
@@ -1941,7 +1945,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
         <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{h.reel.title}</span>
         <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2 }}>{h.handle}{h.when ? ` · ${h.when}` : ""}</span>
       </span>
-      <span style={{ fontFamily: F, fontSize: 13, color: C.mint, fontVariantNumeric: "tabular-nums" }}>{h.reel.plays}</span>
+      <span style={{ fontFamily: F, fontSize: 13, color: C.mint, fontVariantNumeric: "tabular-nums" }}>{playsLabel(h.reel)}</span>
     </div>
     <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
       <div style={{ overflow: "hidden" }}>
@@ -2192,7 +2196,7 @@ function Nav() {
 function MobileTabBar() {
   const tabs = [
     ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2"],
-    ["Work", "#what-i-do", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
+    ["Work", "#work", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
     ["Timeline", "#timeline", "M12 3v18M6 7h10M6 12h8M6 17h6"],
     ["Library", "#library", "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"],
   ];
