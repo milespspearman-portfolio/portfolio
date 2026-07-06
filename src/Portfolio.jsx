@@ -54,6 +54,11 @@ const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; retur
 const playsLabel = (r) => r.plays || (r.postUrl && r.postUrl.includes("linkedin.com") ? "N/A" : "");
 // Platform name from a reel's post URL — link labels say the real source.
 const platformOf = (r) => r.postUrl?.includes("linkedin.com") ? "LinkedIn" : (r.postUrl?.includes("youtu") ? "YouTube" : "Instagram");
+// Miles Jul 6: bare "@adobe" is vague now that LinkedIn/YouTube reels carry
+// source tags — IG handles get an explicit " IG" suffix at display time.
+// Data subs stay verbatim; likes/date parsing is untouched.
+const handleTag = (r) => r.sub.split(" · ")[0] + (r.postUrl?.includes("instagram.com") ? " IG" : "");
+const subTag = (r) => { const p = r.sub.split(" · "); return [handleTag(r), ...p.slice(1)].join(" · "); };
 const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
 const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
@@ -127,7 +132,7 @@ const EVENT_PARTNERS = {
   "’25 MAX LA": "Addison Interactive",
 };
 // The "artist" on a playlist = the brands it published to, derived from each reel's handle
-const handlesOf = (ev) => [...new Set(ev.reels.map(r => r.sub.split(" · ")[0]))].join(", ");
+const handlesOf = (ev) => [...new Set(ev.reels.map(r => handleTag(r)))].join(", ");
 
 // Transport icons
 const IcPlay = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M4 1.5l10.5 6.5L4 14.5z" /></svg>;
@@ -786,7 +791,7 @@ const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
     const idx = reelIndexByTitle(t);
     if (!idx) return null;
     const reel = portfolio[idx.e].reels[idx.r];
-    return { idx, reel, album, event: portfolio[idx.e].event, handle: reel.sub.split(" · ")[0], when: monthYear(reel) };
+    return { idx, reel, album, event: portfolio[idx.e].event, handle: handleTag(reel), when: monthYear(reel) };
   }).filter(Boolean),
 ]));
 
@@ -1201,7 +1206,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
       <Thumb reel={reel} />
       <span style={{ minWidth: 0 }}>
         <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.sub}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{subTag(reel)}</span>
       </span>
       <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title={`Open on ${platformOf(reel)}`} className="tracklist-ig"
@@ -1369,7 +1374,7 @@ function WorkPlayer() {
                   const byYear = new Map();
                   viewing.reels.forEach((r, i) => {
                     const y = new Date(reelDate(r)).getFullYear() || 0;
-                    const h = r.sub.split(" · ")[0];
+                    const h = handleTag(r);
                     if (!byYear.has(y)) byYear.set(y, new Map());
                     const ch = byYear.get(y);
                     if (!ch.has(h)) ch.set(h, []);
@@ -1430,7 +1435,7 @@ function WorkPlayer() {
                   )}
                 </div>
                 <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white, margin: "12px 0 2px" }}>{cur.title}</p>
-                <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: 0 }}>{cur.sub}</p>
+                <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: 0 }}>{subTag(cur)}</p>
                 <p style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{cur.role || EVENT_ROLES[portfolio[track.e].event] || ""}</p>
               </div>
             )}
@@ -1438,7 +1443,7 @@ function WorkPlayer() {
 
           <PlayerBar
             cur={cur}
-            eventName={cur ? `${cur.sub.split(" · ")[0]} · ${portfolio[track.e].event}` : ""}
+            eventName={cur ? `${handleTag(cur)} · ${portfolio[track.e].event}` : ""}
             playing={playing} prog={prog} dur={dur} muted={muted}
             onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
           />
