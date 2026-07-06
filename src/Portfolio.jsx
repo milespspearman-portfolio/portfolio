@@ -93,6 +93,8 @@ const EVENT_ROLES = {
   "’25 MAX Customer Stories": "Produced, creatively directed & coached",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
+  "Miles on YouTube": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
+  "Making B2B Social Friendly": "Pitched, Produced and Directed",
 };
 // External production partners per playlist — Miles's locked map (Jul 4),
 // Audrey pattern: share the agency. Only Miles-confirmed credits appear.
@@ -389,6 +391,26 @@ const portfolio = [
       { title: "Behind the Product", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
     ],
   },
+  {
+    // "Miles Music & Media" YouTube channel (UCIcilFbIwXOdH1bYFoF632Q) — the
+    // 12 highest-viewed of the 41 videos clearing 2K views (harvested Jul 6
+    // via yt-dlp, exact public counts). Remaining 29 listed in the handoff.
+    event: "Miles on YouTube",
+    reels: [
+      { title: "Trying Out My First Marching Band Meme", sub: "YouTube · Feb 9, 2024", plays: "12.2K", mp4: "/reels/2024/Miles-on-YouTube/Marching-Band-Meme.mp4", postUrl: "https://www.youtube.com/watch?v=s2zRgn_c8nE" },
+      { title: "Play THIS if You Want to Sound Good in Jazz", sub: "YouTube · Jan 28, 2024", plays: "11.6K", mp4: "/reels/2024/Miles-on-YouTube/Play-This-Sound-Good-Jazz.mp4", postUrl: "https://www.youtube.com/watch?v=hAA_rZcaOYI" },
+      { title: "Play THIS Lick if You Want to Sound Good in Jazz", sub: "YouTube · Apr 11, 2024", plays: "11.5K", mp4: "/reels/2024/Miles-on-YouTube/Play-This-Lick-Sound-Good-Jazz.mp4", postUrl: "https://www.youtube.com/watch?v=bPA8Br0JBCM" },
+      { title: "POV: Your Trumpet Lips Are Feeling Good", sub: "YouTube · Mar 5, 2024", plays: "10.1K", mp4: "/reels/2024/Miles-on-YouTube/POV-Trumpet-Lips.mp4", postUrl: "https://www.youtube.com/watch?v=-uUmEoFVeFI" },
+      { title: "Day 12 of Testing My High Range on Trumpet", sub: "YouTube · Mar 22, 2024", plays: "8.6K", mp4: "/reels/2024/Miles-on-YouTube/Day-12-High-Range.mp4", postUrl: "https://www.youtube.com/watch?v=zwae6cauLlU" },
+      { title: "Play THIS if You Sound Good in Jazz Pt 3", sub: "YouTube · Mar 10, 2024", plays: "8.5K", mp4: "/reels/2024/Miles-on-YouTube/Play-This-Sound-Good-Jazz-Pt3.mp4", postUrl: "https://www.youtube.com/watch?v=v69bdadlUJY" },
+      { title: "How to SOLO Over Autumn Leaves | Full Jazz Improvisation Lesson", sub: "YouTube · Mar 11, 2024", plays: "7.5K", landscape: true, mp4: "/reels/2024/Miles-on-YouTube/Autumn-Leaves-Improv-Lesson.mp4", postUrl: "https://www.youtube.com/watch?v=Oq86rsWwyzU" },
+      { title: "Day 7 of Testing My High Range on Trumpet", sub: "YouTube · Mar 15, 2024", plays: "7.1K", mp4: "/reels/2024/Miles-on-YouTube/Day-7-High-Range.mp4", postUrl: "https://www.youtube.com/watch?v=YPkEz-51QzY" },
+      { title: "How to Solo Over “Take the A-Train” | Full Jazz Improvisation Lesson", sub: "YouTube · Feb 6, 2024", plays: "6.9K", landscape: true, mp4: "/reels/2024/Miles-on-YouTube/A-Train-Improv-Lesson.mp4", postUrl: "https://www.youtube.com/watch?v=NCzKGl8uunU" },
+      { title: "Funkytown / I Got You (Lucky Chops)", sub: "YouTube · Dec 1, 2018", plays: "6.6K", landscape: true, mp4: "/reels/2024/Miles-on-YouTube/Funkytown-Lucky-Chops.mp4", postUrl: "https://www.youtube.com/watch?v=gIKN0Ddz4F4" },
+      { title: "There Will Never Be Another You", sub: "YouTube · Feb 5, 2024", plays: "6.3K", mp4: "/reels/2024/Miles-on-YouTube/There-Will-Never-Be-Another-You.mp4", postUrl: "https://www.youtube.com/watch?v=G9UHGABsRhU" },
+      { title: "Play This Jazz Lick in Your Next Solo", sub: "YouTube · Feb 5, 2024", plays: "5.6K", mp4: "/reels/2024/Miles-on-YouTube/Play-This-Lick-Next-Solo.mp4", postUrl: "https://www.youtube.com/watch?v=501sl93NYy0" },
+    ],
+  },
 ];
 
 // Miles's three libraries — every playlist belongs to exactly one.
@@ -399,14 +421,51 @@ const LIBRARY_OF = {
   "Employee Spotlights: Season 1": "In-House Production", "Employee Spotlights: Season 2": "In-House Production", "Employee Spotlights: Season 3": "In-House Production",
   "’26 Summit": "Events", "Artist Spotlights": "In-House Production", "Always-On": "In-House Production", "Photoshop Archives": "In-House Production",
   "Side Projects": "In-House Production", "Brand Partnerships": "In-House Production", "Adobe × NFL": "In-House Production", "GenStudio for Performance Marketing": "In-House Production", "’25 MAX Customer Stories": "In-House Production",
-  "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
+  "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock", "Miles on YouTube": "Off The Clock",
+  "Making B2B Social Friendly": "Events", // pinned virtual playlist (top of sidebar)
 };
 const LIB_ORDER = ["Events", "In-House Production", "Off The Clock"];
 
 // Library order first, most recent projects first within each (Miles's call).
 // Off The Clock keeps his authored order: Miles Music Media, then Miles.Spearman.
 const reelDate = (r) => Date.parse(r.sub.split(" · ").pop()) || 0;
+// ===== B2B playlist (Miles Jul 6): the same reels as the "Making B2B Social
+// Friendly" square, surfaced as a playlist PINNED to the top of the sidebar.
+// One source of truth: this spec also feeds the square's drawer (see
+// SPECIALTY_REELS). The event is `pinned` — reels are REFERENCES to reels
+// that already live in other playlists, so every derived total (TOTAL_REELS,
+// TOTAL_PLAYS, likes), the timeline, and the opening wall skip it to avoid
+// double-counting.
+const B2B_PLAYLIST_SPEC = [
+  { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit" },
+  { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "’26 Summit" },
+  { t: "’26 Summit: Words of Wisdom with Iliza Shlesinger", album: "’26 Summit" },
+  { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit" },
+  { t: "’25 Summit: Acrobat Escape Room", album: "’25 Summit" },
+  { t: "’25 Summit: Hosted Event Recap", album: "’25 Summit" },
+  { t: "’25 Summit: “Describe Your Job” Interviews", album: "’25 Summit" },
+  { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "’25 Summit" },
+  { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit" },
+  { t: "’25 MAX Customer Story: Wyndham Hotels", album: "Customer Stories" },
+  { t: "’25 MAX Customer Story: Intuit", album: "Customer Stories" },
+  { t: "Exec Thought Leadership: TikTok Your Ad Has Just 10 Seconds to Live", album: "Exec Thought Leadership" },
+  { t: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", album: "Exec Thought Leadership" },
+  { t: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", album: "Exec Thought Leadership" },
+  { t: "GenStudio for Performance Marketing Demo", album: "Product Releases" },
+  { t: "Brand Intelligence B2B Interview", album: "Product Releases" },
+  { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
+  { t: "’25 IBC: Premiere on Mobile Release", album: "Product Releases" },
+];
+portfolio.unshift({
+  event: "Making B2B Social Friendly",
+  pinned: true,
+  reels: B2B_PLAYLIST_SPEC.map(({ t }) => {
+    for (const ev of portfolio) { const r = ev.reels.find(x => x.title === t); if (r) return r; }
+    return null;
+  }).filter(Boolean),
+});
 portfolio.sort((a, b) => {
+  if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1; // B2B stays on top
   const la = LIB_ORDER.indexOf(LIBRARY_OF[a.event]), lb = LIB_ORDER.indexOf(LIBRARY_OF[b.event]);
   if (la !== lb) return la - lb;
   if (LIBRARY_OF[a.event] === "Off The Clock") return 0; // authored order
@@ -433,15 +492,17 @@ const eventStats = portfolio.map((ev, i) => {
     window: fmtWindow(ev), // posting window, derived from reel dates only
   };
 });
-const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
-const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
+// Pinned virtual playlists hold REFERENCES to reels owned by other events —
+// every total skips them so nothing is counted twice.
+const TOTAL_REELS = portfolio.reduce((s, ev) => s + (ev.pinned ? 0 : ev.reels.length), 0);
+const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + (ev.pinned ? 0 : ev.totalPlays), 0);
 // Likes live inside each reel's sub string ("· 1.8K likes ·") — derived, never typed
 const likesNum = (sub) => { const m = sub.match(/([\d.]+K|[\d.]+M|\d+) likes/i); return m ? playsNum(m[1]) : 0; };
-const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a + likesNum(r.sub), 0), 0);
+const TOTAL_LIKES = portfolio.reduce((s, ev) => s + (ev.pinned ? 0 : ev.reels.reduce((a, r) => a + likesNum(r.sub), 0)), 0);
 
 // ===== CAREER TIMELINE data (professional work only; jazz/Off The Clock fenced out) =====
 const TL_CAT = { Events: { accent: C.mint, chip: "ON LOCATION" }, "In-House Production": { accent: C.gold, chip: "IN-HOUSE" } };
-const proEvents = eventStats.filter(ev => LIBRARY_OF[ev.event] !== "Off The Clock");
+const proEvents = eventStats.filter(ev => LIBRARY_OF[ev.event] !== "Off The Clock" && !ev.pinned);
 // Year bucket = the event's MODAL year (the year most of its reels landed in), tie-break to the
 // later year. Keeps "'25 MAX LA" under 2025 even though a couple of reels slipped into 2026.
 const yearOf = (ev) => {
@@ -477,7 +538,7 @@ const yearMeta = Object.fromEntries(TL_YEARS.map(y => {
 // Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
 const _allFlat = (() => {
   const flat = [];
-  portfolio.forEach((ev, e) => ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })));
+  portfolio.forEach((ev, e) => { if (ev.pinned) return; ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })); });
   flat.sort((a, b) => playsNum(b.plays) - playsNum(a.plays));
   return flat;
 })();
@@ -545,6 +606,7 @@ const capabilities = [
 // clicking a capability deep-links into the Work player via the ms-play event.
 const reelIndexByTitle = (title) => {
   for (let e = 0; e < portfolio.length; e++) {
+    if (portfolio[e].pinned) continue; // resolve to the reel's HOME playlist, not the pinned mirror
     const r = portfolio[e].reels.findIndex(x => x.title === title);
     if (r !== -1) return { e, r };
   }
@@ -671,27 +733,10 @@ const SPECIALTY_REELS = {
   // Miles's Jul 6 spec verbatim ("one stop shop", his album list): Summit
   // pieces grouped BY EVENT YEAR, not under a "Hosting" label — the 3 '26
   // pieces (Sneaks Celebrity Host, Anil, Iliza) were produced, NOT hosted
-  // by Miles, so a Hosting album misstates his role on them.
-  "Making B2B Social Friendly": [
-    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit" },
-    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "’26 Summit" },
-    { t: "’26 Summit: Words of Wisdom with Iliza Shlesinger", album: "’26 Summit" },
-    { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit" },
-    { t: "’25 Summit: Acrobat Escape Room", album: "’25 Summit" },
-    { t: "’25 Summit: Hosted Event Recap", album: "’25 Summit" },
-    { t: "’25 Summit: “Describe Your Job” Interviews", album: "’25 Summit" },
-    { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "’25 Summit" },
-    { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit" },
-    { t: "’25 MAX Customer Story: Wyndham Hotels", album: "Customer Stories" },
-    { t: "’25 MAX Customer Story: Intuit", album: "Customer Stories" },
-    { t: "Exec Thought Leadership: TikTok Your Ad Has Just 10 Seconds to Live", album: "Exec Thought Leadership" },
-    { t: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", album: "Exec Thought Leadership" },
-    { t: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", album: "Exec Thought Leadership" },
-    { t: "GenStudio for Performance Marketing Demo", album: "Product Releases" },
-    { t: "Brand Intelligence B2B Interview", album: "Product Releases" },
-    { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
-    { t: "’25 IBC: Premiere on Mobile Release", album: "Product Releases" },
-  ],
+  // by Miles, so a Hosting album misstates his role on them. The same spec
+  // (B2B_PLAYLIST_SPEC) also builds the pinned B2B sidebar playlist — one
+  // source of truth, drawer and playlist can't drift.
+  "Making B2B Social Friendly": B2B_PLAYLIST_SPEC,
   // Miles's Jul 6 spec: jazz square, 3 albums. Lesson-vs-performing split is
   // content-verified (agent viewed 3 frames per mp4), not guessed from titles.
   "My Music Hobbies": [
@@ -716,6 +761,18 @@ const SPECIALTY_REELS = {
     { t: "Have You Ever Just Binged Research", album: "Miles Jazz History Lessons" },
     { t: "Ear Training Is the Most Underrated", album: "Miles Jazz History Lessons" },
     { t: "Happy Jazz History Month More to", album: "Miles Jazz History Lessons" },
+    { t: "Trying Out My First Marching Band Meme", album: "Miles YouTube Videos" },
+    { t: "Play THIS if You Want to Sound Good in Jazz", album: "Miles YouTube Videos" },
+    { t: "Play THIS Lick if You Want to Sound Good in Jazz", album: "Miles YouTube Videos" },
+    { t: "POV: Your Trumpet Lips Are Feeling Good", album: "Miles YouTube Videos" },
+    { t: "Day 12 of Testing My High Range on Trumpet", album: "Miles YouTube Videos" },
+    { t: "Play THIS if You Sound Good in Jazz Pt 3", album: "Miles YouTube Videos" },
+    { t: "How to SOLO Over Autumn Leaves | Full Jazz Improvisation Lesson", album: "Miles YouTube Videos" },
+    { t: "Day 7 of Testing My High Range on Trumpet", album: "Miles YouTube Videos" },
+    { t: "How to Solo Over “Take the A-Train” | Full Jazz Improvisation Lesson", album: "Miles YouTube Videos" },
+    { t: "Funkytown / I Got You (Lucky Chops)", album: "Miles YouTube Videos" },
+    { t: "There Will Never Be Another You", album: "Miles YouTube Videos" },
+    { t: "Play This Jazz Lick in Your Next Solo", album: "Miles YouTube Videos" },
   ],
 };
 // Lens-specific row descriptions — the same reel carries a DIFFERENT line per
