@@ -521,12 +521,6 @@ const capabilities = [
     body: "Talent marketing at Adobe means making employees the story. I produced and creatively directed the Dave interview feature in-house, and it hit 1.9M plays on @adobelife. On the San Jose Semaphore piece I handled directing and on-camera coaching.",
     linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: In-House Production →",
   },
-  {
-    img: "/thumbs/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.jpg", imgPos: "50% 25%", title: "Adobe Summit ’25 & ’26",
-    meta: "Adobe Summit · Las Vegas · 2025–2026",
-    body: "Two years of Adobe Summit, Adobe's flagship B2B enterprise event. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera, including the Ken Jeong interview and the Acrobat Escape Room at 2.6M plays. In 2026 I produced the Sneaks celebrity host and the Anil Chakravarthy executive interview.",
-    linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: ’25 Summit Vegas →",
-  },
 ];
 
 // "The Set List" — each capability (copy verbatim above) is paired to a reel in
@@ -546,7 +540,6 @@ const CAPABILITY_REEL_TITLE = {
   "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
   "Making B2B Social Friendly": "’25 MAX Customer Story: Intuit",
-  "Adobe Summit ’25 & ’26": "’26 Summit: Anil Chakravarthy Exec Interview",
 };
 const setList = capabilities.map(c => {
   const idx = reelIndexByTitle(CAPABILITY_REEL_TITLE[c.title]);
@@ -677,18 +670,6 @@ const SPECIALTY_REELS = {
     { t: "Brand Intelligence B2B Interview", album: "Product Releases" },
     { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
   ],
-  "Adobe Summit ’25 & ’26": [
-    { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit Vegas" },
-    { t: "’25 Summit: Acrobat Escape Room", album: "’25 Summit Vegas" },
-    { t: "’25 Summit: Hosted Event Recap", album: "’25 Summit Vegas" },
-    { t: "’25 Summit: “Describe Your Job” Interviews", album: "’25 Summit Vegas" },
-    { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "’25 Summit Vegas" },
-    { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit Vegas" },
-    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "’26 Summit" },
-    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit" },
-    { t: "Brand Intelligence B2B Interview", album: "’26 Summit" },
-    { t: "’26 Summit: Behind the Scenes of Sneaks", album: "’26 Summit" },
-  ],
 };
 // Lens-specific row descriptions — the same reel carries a DIFFERENT line per
 // specialty (hosted it / concepted it / coached the talent / produced it).
@@ -700,7 +681,6 @@ const SPECIALTY_ROW_DESCS = {
   "Directing & On-Camera Coaching": {},
   "Producing: Talent Marketing & Employee Comms": {},
   "Making B2B Social Friendly": {},
-  "Adobe Summit ’25 & ’26": {},
 };
 // Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
 // trimmed) or Miles's own words; more land with the Workfront ingest. Rows with
@@ -1892,7 +1872,11 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   const initial = cap.initialReel ? (specialtyHighlights[cap.title] || []).find(h => h.reel.title === cap.initialReel) : null;
   // Recruiter-lens flip fix: if the arriving reel is in the Popular top-6, open
   // it THERE (first screen); otherwise open its album row and scroll to it.
-  const popular = rows.length > 8 ? [...rows].sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays)).slice(0, 6) : null;
+  // B2B square skips the plays-ranked POPULAR tier: 6 of its LinkedIn reels
+  // have no retrievable play count, and a plays ranking would sink them to the
+  // bottom as false flops. Album grouping only until real numbers land (§5.1).
+  const NO_POPULAR = cap.title === "Making B2B Social Friendly";
+  const popular = rows.length > 8 && !NO_POPULAR ? [...rows].sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays)).slice(0, 6) : null;
   const initialInPop = !!(initial && popular && popular.some(h => h.reel.title === cap.initialReel));
   const [openRow, setOpenRow] = useState(initial ? (initialInPop ? "pop:" : "alb:") + cap.initialReel : null); // keyed by tier-prefixed reel title
   const toggleRow = (t) => setOpenRow(cur => (cur === t ? null : t));
