@@ -48,10 +48,11 @@ function FadeIn({ children, delay = 0, style = {} }) {
 const srcOf = (r) => r.mp4.startsWith("/reels/") ? r.mp4 : r.mp4.replace("~/Downloads/Claude/miles-portfolio-reels", "/reels");
 const thumbOf = (r) => srcOf(r).replace("/reels/", "/thumbs/").replace(/\.mp4$/, ".jpg");
 const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; return /m/i.test(p) ? n * 1e6 : /k/i.test(p) ? n * 1e3 : n; };
-// LinkedIn never exposes video view counts (verified: scrapers return
-// reactions/comments/shares only) — show "N/A" instead of a blank that reads
-// as zero. Display-only; the plays field stays "" so no derived total moves.
-const playsLabel = (r) => r.plays || (r.postUrl && r.postUrl.includes("linkedin.com") ? "N/A" : "");
+// Some platforms never publish view counts (LinkedIn — verified: scrapers
+// return reactions/comments/shares only — and IG carousels). Blank plays
+// render "N/A" so absence can't be misread as zero or a data error.
+// Display-only; the plays field stays "" so no derived total moves.
+const playsLabel = (r) => r.plays || "N/A";
 // Platform name from a reel's post URL — link labels say the real source.
 const platformOf = (r) => r.postUrl?.includes("linkedin.com") ? "LinkedIn" : (r.postUrl?.includes("youtu") ? "YouTube" : "Instagram");
 // Miles Jul 6: bare "@adobe" is vague now that LinkedIn/YouTube reels carry
@@ -1364,7 +1365,9 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
 }
 
 function WorkPlayer() {
-  const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.event === "’25 MAX LA")));
+  // Open on the pinned B2B playlist (index 0 after the pinned-first sort) —
+  // the chip that reads first should also be the one that's selected.
+  const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.pinned)));
   const [track, setTrack] = useState(null); // { e, r } indices into portfolio
   const [playing, setPlaying] = useState(false);
   const [prog, setProg] = useState(0);
@@ -1439,6 +1442,9 @@ function WorkPlayer() {
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
                   <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
+                  {viewing.pinned && viewing.reels.some(r => !r.plays) && (
+                    <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn doesn't publish view counts — those reels show N/A.</p>
+                  )}
                 </div>
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
@@ -1499,7 +1505,7 @@ function WorkPlayer() {
             {cur && (
               <div className="sp-now">
                 <p style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase", margin: "0 0 10px" }}>Now Playing</p>
-                <div style={{ position: "relative" }}>
+                <div className={cur.landscape ? "sp-now-ls" : ""} style={{ position: "relative" }}>
                   <video
                     ref={vidRef}
                     src={srcOf(cur)}
@@ -1514,7 +1520,7 @@ function WorkPlayer() {
                     onLoadedMetadata={e => setDur(e.target.duration)}
                     onEnded={() => step(1)}
                     onError={() => { setVidErr(true); setPlaying(false); }}
-                    style={{ width: "100%", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", cursor: "pointer", display: "block" }}
+                    style={{ width: "100%", aspectRatio: cur && cur.landscape ? "16 / 9" : "9 / 16", objectFit: cur && cur.landscape ? "contain" : "cover", borderRadius: 12, background: "#000", cursor: "pointer", display: "block" }}
                   />
                   {vidErr && (
                     <div style={{ position: "absolute", inset: 0, borderRadius: 12, background: "rgba(10,10,10,0.88)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 20, textAlign: "center" }}>
@@ -2010,7 +2016,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   const chipsEl = groups.length > 1 ? (
     <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "12px 0 8px" }}>
       {groups.map(g => (
-        <button key={g.album}
+        <button key={g.album} className="album-chip"
           onClick={() => asideRef.current?.querySelector(`[data-album="${g.album}"]`)?.scrollIntoView({ behavior: "smooth", block: "start" })}
           style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 100, padding: "5px 12px", cursor: "pointer" }}
           onMouseEnter={e => { e.currentTarget.style.color = C.mint; e.currentTarget.style.borderColor = "rgba(30,215,96,0.35)"; }}
@@ -2048,9 +2054,9 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
     <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", transition: "grid-template-rows 0.35s ease" }}>
       <div style={{ overflow: "hidden" }}>
         {open && (
-          <div style={{ padding: "10px 8px 18px 82px" }}>
+          <div className="spec-row-expand" style={{ padding: "10px 8px 18px 82px" }}>
             <video src={srcOf(h.reel)} poster={thumbOf(h.reel)} controls autoPlay muted playsInline preload="metadata"
-              style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
+              style={{ width: h.reel.landscape ? "100%" : "min(100%, 240px)", aspectRatio: h.reel.landscape ? "16 / 9" : "9 / 16", objectFit: h.reel.landscape ? "contain" : "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
               onError={e => { e.currentTarget.style.display = "none"; }} />
             {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
             {!h.reel.plays && h.reel.postUrl?.includes("linkedin.com") && (
@@ -2298,9 +2304,9 @@ function Nav() {
 function MobileTabBar() {
   const tabs = [
     ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2"],
-    ["Work", "#work", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
+    ["What I Do", "#what-i-do", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
     ["Timeline", "#timeline", "M12 3v18M6 7h10M6 12h8M6 17h6"],
-    ["Library", "#library", "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"],
+    ["Playlist", "#work", "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"],
   ];
   return (
     <nav className="mobile-tabbar" aria-label="Sections">
@@ -2408,11 +2414,17 @@ export default function Portfolio() {
           .tl-year { top: calc(64px + env(safe-area-inset-top)) !important; }
           .tl-card { grid-template-columns: 68px 1fr !important; gap: 16px !important; padding: 16px !important; }
         }
+        /* Landscape reels in the mobile Now Playing pane need the wide escape */
+        @media (max-width: 900px) {
+          .sp-now > div.sp-now-ls { width: min(92vw, 400px); }
+          .spec-row-expand { padding: 10px 8px 18px 26px !important; }
+        }
         /* R3 B5: 44px tap targets on touch devices */
         @media (hover: none) {
           .spec-drawer [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
           .sp-bar button { min-width: 44px; min-height: 44px; }
-          .tracklist-ig { opacity: 1 !important; }
+          .tracklist-ig { opacity: 1 !important; padding: 12px 10px !important; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+          .album-chip { padding: 11px 16px !important; min-height: 44px; }
           .shelf-card-play { opacity: 1 !important; transform: translateY(0) !important; }
           .wall-card .wall-play { opacity: 1 !important; transform: translate(-50%,-50%) scale(0.85) !important; }
           .nav-connect { min-height: 44px !important; }
@@ -2538,7 +2550,7 @@ export default function Portfolio() {
         <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
           <FadeIn>
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Selected Work</h2>
+            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work Playlist</h2>
             <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns: Pitched, Produced and Directed by Me. {TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays. Pick a playlist, press play.</p>
           </FadeIn>
 
