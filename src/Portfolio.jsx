@@ -78,6 +78,8 @@ const EVENT_ROLES = {
   "’25 IBC Amsterdam": "Hosted & on-camera talent",
   "Brand Partnerships": "Produced with the Social Creative Studio team",
   "Adobe × NFL": "Produced in partnership with the NFL",
+  "GenStudio Exec Thought Leadership": "Produced, creatively directed & coached",
+  "GenStudio Customer Stories": "Produced, creatively directed & coached",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
 };
@@ -87,6 +89,8 @@ const EVENT_ROLES = {
 const EVENT_BRANDS = {
   "Brand Partnerships": "Adobe × NWSL · Marvel · Golden State Warriors · Photoshop",
   "Adobe × NFL": "Official Creativity Partner",
+  "GenStudio Exec Thought Leadership": "Adobe GenStudio for Performance Marketing",
+  "GenStudio Customer Stories": "Adobe × Intuit · Wyndham Hotels & Resorts",
 };
 // Per-album Workfront-brief lines shown when an album group unfolds in a drawer.
 // Restored Jul 5 — was accidentally dropped in commit 7175fb7, causing a runtime
@@ -263,6 +267,7 @@ const portfolio = [
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "@adobe · 94 likes · May 29, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_inside-adobe-summit-sneaks-2026-activity-7466192897889996800-UEnr" },
       { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "@adobe · Apr 30, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
+      { title: "’26 Summit: Anil Chakravarthy Exec Interview", sub: "@adobe · Apr 17, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.mp4", postUrl: "https://www.linkedin.com/posts/adobe_adobe-summit-anil-chakravarthy-ugcPost-7451028793734926336-5JmJ" },
     ],
   },
   {
@@ -312,6 +317,22 @@ const portfolio = [
     reels: [
       { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
       { title: "NFL x Adobe: Season Opener Kickoff", sub: "@adobe · 1.3K likes · Sep 5, 2025", plays: "", mp4: "/reels/2025/NFL-Kickoff/NFL-Season-Opener-Carousel.mp4", postUrl: "https://www.instagram.com/p/DOPM4FmkpE_/" },
+    ],
+  },
+  {
+    event: "GenStudio Exec Thought Leadership",
+    reels: [
+      { title: "GenStudio for Performance Marketing", sub: "@adobe · Nov 13, 2024", plays: "", role: "Hosted; content strategy; concept to published", mp4: "/reels/2024/GenStudio/GenStudio-Performance-Marketing.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_adobe-genstudio-for-performance-marketing-activity-7262556392153055232-xLqm" },
+      { title: "GenStudio: 10 Seconds on TikTok", sub: "@adobe · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/TikTok-10-Seconds.mp4", postUrl: "https://www.linkedin.com/posts/tap-into-tiktoks-18b-monthly-users-with-ugcPost-7389722765508935681-Mov9" },
+      { title: "GenStudio: Go Global", sub: "@adobe · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/Go-Global.mp4", postUrl: "https://www.linkedin.com/posts/go-global-with-confidence-genstudio-for-ugcPost-7389692893927698432-6aFM" },
+      { title: "Shorter Attention Span Than a Goldfish", sub: "@adobe · Nov 13, 2025", plays: "", role: "Produced", mp4: "/reels/2025/GenStudio-TL/Goldfish-Attention.mp4", postUrl: "https://www.linkedin.com/posts/purnimarroy_attention-spans-are-shorter-than-ever-and-ugcPost-7394620260328488961-EbUw" },
+    ],
+  },
+  {
+    event: "GenStudio Customer Stories",
+    reels: [
+      { title: "GenStudio Customer Story: Intuit", sub: "@adobe · Dec 8, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.mp4", postUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN" },
+      { title: "GenStudio Customer Story: Wyndham Hotels", sub: "@adobe · Jan 21, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/GenStudio-Customer-Stories/Wyndham-Marissa-Yoss.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_everything-good-comes-from-real-human-insight-activity-7419788674906759168-W8Fk" },
     ],
   },
   {
@@ -366,7 +387,7 @@ const LIBRARY_OF = {
   "’24 IBC Amsterdam": "Events", "’25 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
   "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen", "Photoshop Archives": "Evergreen",
-  "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen", "Adobe × NFL": "Evergreen",
+  "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen", "Adobe × NFL": "Evergreen", "GenStudio Exec Thought Leadership": "Evergreen", "GenStudio Customer Stories": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
 const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
@@ -494,6 +515,18 @@ const capabilities = [
     body: "Talent marketing at Adobe means making employees the story. I produced and creatively directed the Dave interview feature in-house, and it hit 1.9M plays on @adobelife. On the San Jose Semaphore piece I handled directing and on-camera coaching.",
     linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: In-House Production →",
   },
+  {
+    img: "/thumbs/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.jpg", imgPos: "50% 22%", title: "B2B: Customer Stories & Exec",
+    meta: "GenStudio · Customer Stories · Executive · 2024–2026",
+    body: "B2B storytelling end to end. I produce customer stories with real customers on camera (Intuit, Wyndham Hotels & Resorts), executive interviews (Adobe's Anil Chakravarthy), and the GenStudio for Performance Marketing thought-leadership series. Concept to published, coaching the talent through every take.",
+    linkUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN", linkLabel: "Play: GenStudio Customer Story →",
+  },
+  {
+    img: "/thumbs/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.jpg", imgPos: "50% 25%", title: "Adobe Summit ’25 & ’26",
+    meta: "Adobe Summit · Las Vegas · 2025–2026",
+    body: "Two years of Adobe Summit, Adobe's flagship B2B enterprise event. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera, including the Ken Jeong interview and the Acrobat Escape Room at 2.6M plays. In 2026 I produced the Sneaks celebrity host and the Anil Chakravarthy executive interview.",
+    linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: ’25 Summit Vegas →",
+  },
 ];
 
 // "The Set List" — each capability (copy verbatim above) is paired to a reel in
@@ -512,6 +545,8 @@ const CAPABILITY_REEL_TITLE = {
   "Content Strategy, Concept to Published": "’24 IBC: Premiere Pro AI: Emoji Reactions",    // IBC 2024 — 1.5M, the repeatable format
   "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
+  "B2B: Customer Stories & Exec": "GenStudio Customer Story: Intuit",
+  "Adobe Summit ’25 & ’26": "’26 Summit: Anil Chakravarthy Exec Interview",
 };
 const setList = capabilities.map(c => {
   const idx = reelIndexByTitle(CAPABILITY_REEL_TITLE[c.title]);
@@ -623,6 +658,28 @@ const SPECIALTY_REELS = {
     { t: "San Jose Semaphore", album: "In-House Production" },
     { t: "Intern Day Creative Cloud", album: "Intern Day ’25" },
   ],
+  "B2B: Customer Stories & Exec": [
+    { t: "GenStudio Customer Story: Intuit", album: "Customer Stories" },
+    { t: "GenStudio Customer Story: Wyndham Hotels", album: "Customer Stories" },
+    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "Executive Interviews" },
+    { t: "Brand Intelligence B2B Interview", album: "Executive Interviews" },
+    { t: "GenStudio for Performance Marketing", album: "GenStudio for Performance Marketing" },
+    { t: "GenStudio: 10 Seconds on TikTok", album: "GenStudio Exec Thought Leadership" },
+    { t: "GenStudio: Go Global", album: "GenStudio Exec Thought Leadership" },
+    { t: "Shorter Attention Span Than a Goldfish", album: "GenStudio Exec Thought Leadership" },
+  ],
+  "Adobe Summit ’25 & ’26": [
+    { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit Vegas" },
+    { t: "’25 Summit: Acrobat Escape Room", album: "’25 Summit Vegas" },
+    { t: "’25 Summit: Hosted Event Recap", album: "’25 Summit Vegas" },
+    { t: "’25 Summit: “Describe Your Job” Interviews", album: "’25 Summit Vegas" },
+    { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "’25 Summit Vegas" },
+    { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit Vegas" },
+    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "’26 Summit" },
+    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit" },
+    { t: "Brand Intelligence B2B Interview", album: "’26 Summit" },
+    { t: "’26 Summit: Behind the Scenes of Sneaks", album: "’26 Summit" },
+  ],
 };
 // Lens-specific row descriptions — the same reel carries a DIFFERENT line per
 // specialty (hosted it / concepted it / coached the talent / produced it).
@@ -633,6 +690,8 @@ const SPECIALTY_ROW_DESCS = {
   "Content Strategy, Concept to Published": {},
   "Directing & On-Camera Coaching": {},
   "Producing: Talent Marketing & Employee Comms": {},
+  "B2B: Customer Stories & Exec": {},
+  "Adobe Summit ’25 & ’26": {},
 };
 // Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
 // trimmed) or Miles's own words; more land with the Workfront ingest. Rows with
@@ -714,6 +773,13 @@ const REEL_DESCS = {
   "’25 IBC: Premiere on Mobile Release": "Our team at Adobe is thrilled to bring Premiere to the iPhone. A favorite feature: the ability to use your voice to generate sound effects. If you create video, give it a try.",
   "Cracking the Semaphore Code": "After three years, the San Jose Semaphore has been solved. The puzzle, created by Ben Rubin, uses rotating discs atop Adobe's Almaden Tower to hide a secret message in data. Here's the story of cracking the code.",
   "’26 Summit: Behind the Scenes of Sneaks": "Go behind the scenes of Adobe Summit Sneaks with host and Principal Evangelist Eric Matisoff and Research Scientist Yuzhe You. What it takes to bring the biggest innovations from the Adobe lab to the main stage.",
+  "GenStudio for Performance Marketing": "At Adobe MAX, we showcased the possibilities of Adobe GenStudio for Performance Marketing, including how work that could have taken weeks can now be done in minutes.",
+  "GenStudio: 10 Seconds on TikTok": "Tap into TikTok's 1.8 billion monthly users with content that performs. GenStudio for Performance Marketing powers fast, on-brand creation and optimization at scale.",
+  "GenStudio: Go Global": "Go global with confidence. GenStudio for Performance Marketing helps you localize personalized content at scale to reach every market, faster.",
+  "Shorter Attention Span Than a Goldfish": "Attention spans are shorter than ever, and that's exactly why video has become one of the most powerful ways to connect with audiences everywhere they are. I loved helping bring this piece to life to showcase the innovations Adobe is delivering around video.",
+  "GenStudio Customer Story: Intuit": "Intuit's Audrey Timpe shares how AI has become the team's ultimate brainstorming partner, helping them create faster, react quicker, and stay focused on bold, standout ideas with Adobe GenStudio for Performance Marketing.",
+  "GenStudio Customer Story: Wyndham Hotels": "Everything good comes from real human insight. Wyndham Hotels & Resorts' Marissa Yoss shares how AI is closing the gap between ideas and execution, turning data into personalized experiences, faster.",
+  "’26 Summit: Anil Chakravarthy Exec Interview": "We asked Adobe's President of Customer Experience Orchestration Business, Anil Chakravarthy, some burning questions about AI ahead of Adobe Summit. Here's the real talk on agentic AI.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
@@ -1832,10 +1898,10 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
   const [openAlbum, setOpenAlbum] = useState(initial && !initialInPop ? initial.album : null);
   // Album groups (order of first appearance) — Spotify artist-page style.
   const groups = [];
+  const _byAlbum = {};
   rows.forEach(h => {
-    const g = groups[groups.length - 1];
-    if (g && g.album === h.album) g.rows.push(h);
-    else groups.push({ album: h.album, rows: [h] });
+    if (_byAlbum[h.album]) _byAlbum[h.album].rows.push(h);
+    else { const g = { album: h.album, rows: [h] }; _byAlbum[h.album] = g; groups.push(g); }
   });
   const yearSpan = (() => {
     const ys = rows.map(h => { const t = reelDate(h.reel); return t ? new Date(t).getFullYear() : 0; }).filter(Boolean);
