@@ -126,7 +126,7 @@ const ALBUM_BLURBS = {
   "’25 MAX LA": "Adobe MAX 2025, Los Angeles. Celebrity and talent on camera: James Gunn, Mark Rober, Kelley O'Hara, Jessica Williams.",
   "’25 MAX London": "Adobe MAX London 2025. Interactive booth games and event recaps, including the 425K Fonts Creator game.",
   "’25 NAB Vegas": "NAB 2025, Las Vegas. Premiere Pro release coverage and live feature demos for the video community.",
-  "’26 Summit Vegas": "Adobe Summit 2026, Las Vegas. The latest event recap work.",
+  "’26 Summit": "Adobe Summit 2026, Las Vegas. The latest event recap work.",
 };
 const EVENT_PARTNERS = {
   "’24 MAX Miami": "T13",
@@ -945,8 +945,10 @@ function PlaysCounter() {
     [fmtPlays(Math.round(TOTAL_PLAYS * p)), "plays"],
     [fmtPlays(Math.round(TOTAL_LIKES * p)), "likes"],
     // MILES-CLAIM Jul 4: "100+ ... it's a cumulative on all of my creative
-    // output" — career total, his number. Site-playable count stays TOTAL_REELS.
-    [String(Math.round(100 * p)) + (p >= 1 ? "+" : ""), "videos created"],
+    // output" — career total. Floor is now DERIVED (library count rounded
+    // down to a ten, "+"), so the counter can never read smaller than the
+    // playable library beneath it (123 reels made "100+" an undersell).
+    [String(Math.round(Math.floor(TOTAL_REELS / 10) * 10 * p)) + (p >= 1 ? "+" : ""), "videos created"],
   ];
   return (
     <div ref={ref} style={{ margin: "0 0 32px" }}>
@@ -1075,6 +1077,15 @@ function HeroMarqueeRow({ reels, duration, offset }) {
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
+    // Wrap on the scroll event too — native touch momentum keeps scrolling
+    // while `paused`, and without this the "infinite" row dead-ends at both
+    // seams under a finger.
+    const onScroll = () => {
+      const half = el.scrollWidth / 2;
+      if (el.scrollLeft >= half) el.scrollLeft -= half;
+      else if (el.scrollLeft < 2 && half > el.clientWidth) el.scrollLeft += half;
+    };
+    el.addEventListener("scroll", onScroll, { passive: true });
     const pause = () => { paused = true; };
     const resume = () => { paused = false; };
     const pauseIdle = () => { paused = true; clearTimeout(idle); idle = setTimeout(() => { paused = false; }, 1800); };
@@ -1087,6 +1098,7 @@ function HeroMarqueeRow({ reels, duration, offset }) {
     el.addEventListener("touchend", pauseIdle, { passive: true });
     el.addEventListener("wheel", pauseIdle, { passive: true });
     return () => { cancelAnimationFrame(raf); clearTimeout(idle);
+      el.removeEventListener("scroll", onScroll);
       el.removeEventListener("mouseenter", pause); el.removeEventListener("mouseleave", resume);
       el.removeEventListener("pointerdown", pause); el.removeEventListener("pointerup", pauseIdle); el.removeEventListener("pointercancel", pauseIdle);
       el.removeEventListener("touchstart", pause); el.removeEventListener("touchend", pauseIdle); el.removeEventListener("wheel", pauseIdle);
@@ -1273,7 +1285,9 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-        <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
+        <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>
+          {ev.pinned && <span style={{ fontFamily: F, fontSize: 9, fontWeight: 800, color: C.bg, background: C.mint, borderRadius: 3, padding: "1px 4px", letterSpacing: 0.5, marginRight: 5, verticalAlign: "1px" }}>PINNED</span>}
+          {ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
       </span>
       {isSourceOfAudio && <EqBars />}
     </button>
@@ -1442,8 +1456,8 @@ function WorkPlayer() {
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
                   <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
-                  {viewing.pinned && viewing.reels.some(r => !r.plays) && (
-                    <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn doesn't publish view counts, so those reels show N/A.</p>
+                  {viewing.reels.some(r => !r.plays) && (
+                    <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
                   )}
                 </div>
               </div>
@@ -2074,9 +2088,9 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
     );
   };
   return (
-    <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1200, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
+    <div onClick={close} style={{ position: "fixed", inset: 0, zIndex: 1400, background: "rgba(10,10,10,0.6)", opacity: closing ? 0 : 1, transition: "opacity 0.25s", animation: "drawerFade 0.3s" }}>
       <aside ref={asideRef} role="dialog" aria-modal="true" aria-label={cap.title} onClick={e => e.stopPropagation()} className="spec-drawer"
-        style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(480px, 92vw)", zIndex: 1201, background: "#0D0D0D", borderLeft: `1px solid ${C.border}`, boxShadow: "-24px 0 80px rgba(0,0,0,0.6)", overflowY: "auto", padding: 24, opacity: closing ? 0 : 1, transform: `translateY(${dragY}px)`, transition: drag.current.active ? "none" : "opacity 0.25s, transform 0.3s cubic-bezier(0.22,1,0.36,1)" }}>
+        style={{ position: "fixed", top: 0, right: 0, bottom: 0, width: "min(480px, 92vw)", zIndex: 1401, background: "#0D0D0D", borderLeft: `1px solid ${C.border}`, boxShadow: "-24px 0 80px rgba(0,0,0,0.6)", overflowY: "auto", padding: 24, opacity: closing ? 0 : 1, transform: `translateY(${dragY}px)`, transition: drag.current.active ? "none" : "opacity 0.25s, transform 0.3s cubic-bezier(0.22,1,0.36,1)" }}>
         <div className="spec-grabber" aria-hidden="true" style={{ display: "none", width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.25)", margin: "0 auto 14px" }} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
           <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Specialty</span>
@@ -2215,7 +2229,7 @@ function WhatIDoCards() {
             onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = C.border; e.currentTarget.style.boxShadow = "none"; }}
           >
             <div style={{ aspectRatio: "1 / 1", borderRadius: 12, overflow: "hidden", background: "#111" }}>
-              {c.mp4
+              {c.mp4 && _finePointer
                 ? <video src={srcOf(c)} poster={c.img} muted loop playsInline preload="metadata"
                     style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: c.imgPos, display: "block" }}
                     onError={e => { e.currentTarget.parentElement.style.display = "none"; }} />
@@ -2354,7 +2368,7 @@ export default function Portfolio() {
         @keyframes sheetIn { from { transform: translateY(100%); } }
         .spec-drawer { animation: drawerIn 0.35s cubic-bezier(0.22,1,0.36,1); }
         @media (max-width: 900px) {
-          .spec-drawer { top: auto !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; max-height: 86svh; border-radius: 16px 16px 0 0; border-left: none !important; animation: sheetIn 0.35s cubic-bezier(0.22,1,0.36,1); }
+          .spec-drawer { top: auto !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; max-height: 86svh; border-radius: 16px 16px 0 0; border-left: none !important; animation: sheetIn 0.35s cubic-bezier(0.22,1,0.36,1); padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important; }
           .spec-drawer .spec-grabber, .spec-grabber { display: block !important; }
         }
         @media (max-width: 900px) { .tl-brands { white-space: normal !important; overflow: visible !important; } }
@@ -2416,12 +2430,14 @@ export default function Portfolio() {
         }
         /* Landscape reels in the mobile Now Playing pane need the wide escape */
         @media (max-width: 900px) {
-          .sp-now > div.sp-now-ls { width: min(92vw, 400px); }
+          .sp-now > div.sp-now-ls { width: 100%; max-width: 400px; }
+          .sp-side-divider { padding: 0 4px !important; align-items: center; }
+          .sp-side-divider > span:last-child { display: none; }
           .spec-row-expand { padding: 10px 8px 18px 26px !important; }
         }
         /* R3 B5: 44px tap targets on touch devices */
         @media (hover: none) {
-          .spec-drawer [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
+          [role="dialog"] [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; padding: 12px 10px !important; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
           .album-chip { padding: 11px 16px !important; min-height: 44px; }
