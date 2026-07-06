@@ -532,6 +532,12 @@ const capabilities = [
     body: "Talent marketing at Adobe means making employees the story. I produced and creatively directed the Dave interview feature in-house, and it hit 1.9M plays on @adobelife. On the San Jose Semaphore piece I handled directing and on-camera coaching.",
     linkUrl: "https://www.instagram.com/reel/DNgTb3hthgJ/", linkLabel: "Play: In-House Production →",
   },
+  {
+    img: "/thumbs/2026/Miles-Music-Media/Happy-100th-Birthday-Miles-Davis_5.25.26.jpg", imgPos: "50% 30%", title: "My Music Hobbies",
+    meta: "@MilesMusicMedia IG & MilesSpearman YT",
+    body: "Off the clock I'm a creator myself: jazz history lessons and trumpet performances on @milesmusicmedia, plus my own YouTube channel. Brainstormed, researched, shot, scripted, edited, and posted as a one-person production.",
+    linkUrl: "https://www.instagram.com/milesmusicmedia/", linkLabel: "Play: Miles Music Media →",
+  },
 ];
 
 // "The Set List" — each capability (copy verbatim above) is paired to a reel in
@@ -551,6 +557,7 @@ const CAPABILITY_REEL_TITLE = {
   "Directing & On-Camera Coaching": "Kelley O'Hara x NWSL x Adobe",                               // MAX 2025 LA
   "Producing: Talent Marketing & Employee Comms": "Dave Werner Employee Spotlight", // Evergreen Producing — 1.9M
   "Making B2B Social Friendly": "’25 MAX Customer Story: Intuit",
+  "My Music Hobbies": "Happy 100th Birthday Miles Davis",
 };
 const setList = capabilities.map(c => {
   const idx = reelIndexByTitle(CAPABILITY_REEL_TITLE[c.title]);
@@ -685,6 +692,31 @@ const SPECIALTY_REELS = {
     { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
     { t: "’25 IBC: Premiere on Mobile Release", album: "Product Releases" },
   ],
+  // Miles's Jul 6 spec: jazz square, 3 albums. Lesson-vs-performing split is
+  // content-verified (agent viewed 3 frames per mp4), not guessed from titles.
+  "My Music Hobbies": [
+    { t: "Happy 100th Birthday Miles Davis", album: "Miles Performing" },
+    { t: "Don't Forget to Follow @milesmusicmedia", album: "Miles Performing" },
+    { t: "What's the Difference Between the", album: "Miles Performing" },
+    { t: "Now Watch Again What Color Was", album: "Miles Performing" },
+    { t: "Guess Who I've Been Listening", album: "Miles Performing" },
+    { t: "You Either Love the Tune or", album: "Miles Performing" },
+    { t: "Sonny Rollins to Pay Tribute Rest", album: "Miles Performing" },
+    { t: "Bruh First Time Playing a Transcription", album: "Miles Performing" },
+    { t: "Back in New York I Had", album: "Miles Performing" },
+    { t: "Confirmation Is a Beast but Hopefully", album: "Miles Performing" },
+    { t: "In Walked Bud", album: "Miles Jazz History Lessons" },
+    { t: "Ornithology", album: "Miles Jazz History Lessons" },
+    { t: "Donna Lee", album: "Miles Jazz History Lessons" },
+    { t: "Confirmation", album: "Miles Jazz History Lessons" },
+    { t: "Contrafacts", album: "Miles Jazz History Lessons" },
+    { t: "Miles Davis Might Be a Thief (Four)", album: "Miles Jazz History Lessons" },
+    { t: "Ornithology Was Written by a Trumpet", album: "Miles Jazz History Lessons" },
+    { t: "Miles Davis Might Be a Thief", album: "Miles Jazz History Lessons" },
+    { t: "Have You Ever Just Binged Research", album: "Miles Jazz History Lessons" },
+    { t: "Ear Training Is the Most Underrated", album: "Miles Jazz History Lessons" },
+    { t: "Happy Jazz History Month More to", album: "Miles Jazz History Lessons" },
+  ],
 };
 // Lens-specific row descriptions — the same reel carries a DIFFERENT line per
 // specialty (hosted it / concepted it / coached the talent / produced it).
@@ -696,6 +728,7 @@ const SPECIALTY_ROW_DESCS = {
   "Directing & On-Camera Coaching": {},
   "Producing: Talent Marketing & Employee Comms": {},
   "Making B2B Social Friendly": {},
+  "My Music Hobbies": {},
 };
 // Per-reel drawer descriptions — published IG caption lines (verbatim, emoji/CTA
 // trimmed) or Miles's own words; more land with the Workfront ingest. Rows with
