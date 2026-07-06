@@ -311,6 +311,7 @@ const portfolio = [
     event: "Adobe × NFL",
     reels: [
       { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
+      { title: "NFL x Adobe: Season Opener Kickoff", sub: "@adobe · 1.3K likes · Sep 5, 2025", plays: "", mp4: "/reels/2025/NFL-Kickoff/NFL-Season-Opener-Carousel.mp4", postUrl: "https://www.instagram.com/p/DOPM4FmkpE_/" },
     ],
   },
   {
@@ -704,6 +705,7 @@ const REEL_DESCS = {
   "San Jose Semaphore": "The San Jose Semaphore has been solved! The puzzle, created by Ben Rubin, featured rotating discs at the top of Adobe's Almaden Tower that hid a message through data points of bytes and numbered colors.",
   "’26 Summit: Sneaks Celebrity Host Interview": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
   "NFL x Adobe: Behind the Lens (LCC)": "When seconds count, creativity can't wait. Diego Galicia and Payton Gygax are NFL Live Content Correspondents, who capture, edit, and publish from the sidelines in real time. Every game, every play, every post has a deadline measured in seconds. From the field to fans, they're using Adobe tools to move at the speed of the game without sacrificing their creative vision.",
+  "NFL x Adobe: Season Opener Kickoff": "It's time for a new season, and we're teaming up with the @NFL to make fandom more personal than ever. From AI-powered fan experiences to My Cause My Cleats designs and @AdobeExpress templates, fans can get closer to the game, the players, and the culture of football. Creativity is officially on the field 🏈",
   "’26 NAB: Object Matte (OTG)": "If we could be anywhere in the world right now, we'd be at #NABShow demoing our new Object Matte feature in After Effects. This just-announced tool overhauls rotoscoping, so you can now instantly isolate and track your subjects with just a click. Say goodbye to manual tasks and hello to intuitive masks. Try it today in After Effects!",
   "’26 NAB: Color Mode (OTG)": "Live from #NABShow, it's Color Mode! We introduced attendees to our brand-new color grading experience in Premiere (beta), and we made sure to capture their hot takes on the technology. (Spoiler alert: they loved it). Try it for yourself by downloading the beta today.",
   "’25 IBC: Recap": "\"You look happier.\" Thanks, we just updated our Premiere Pro to 25.5 and gained 90+ new effects, faster timelines, and more intuitive workflows.",
@@ -1720,7 +1722,7 @@ function CareerTimeline() {
                     {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
                     {EVENT_BRANDS[ev.event] && <span className="tl-brands" style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
                     <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{reels.length} {reels.length === 1 ? "reel" : "reels"}</span>
-                    <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{fmtPlays(ev.totalPlays)} plays</span>
+                    {ev.totalPlays > 0 && <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{fmtPlays(ev.totalPlays)} plays</span>}
                   </span>
                 </div>
                 <div style={{ display: "grid", gridTemplateRows: open ? "1fr" : "0fr", gridTemplateColumns: "minmax(0, 1fr)", transition: "grid-template-rows 0.4s ease" }}>
