@@ -73,6 +73,7 @@ const EVENT_ROLES = {
   "’26 Summit": "Produced",
   "Artist Spotlights": "Produced & creatively directed",
   "Always-On": "Produced",
+  "Made to Create": "Produced",
   "Brand Partnerships": "Produced with the Social Creative Studio team",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
@@ -276,6 +277,12 @@ const portfolio = [
     ],
   },
   {
+    event: "Made to Create",
+    reels: [
+      { title: "Behind the Lens: NFL Live Content Correspondents", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
+    ],
+  },
+  {
     event: "Brand Partnerships",
     reels: [
       { title: "Photoshop Archives: Russell Brown & Matthew Richmond", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", role: "Produced", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
@@ -325,7 +332,7 @@ const LIBRARY_OF = {
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
-  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen",
+  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen", "Made to Create": "Evergreen",
   "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
@@ -659,6 +666,7 @@ const REEL_DESCS = {
   "Imran Idzqandar Employee Spotlight": "Meet Imran Idzqandar, Enterprise Architect at Adobe. Outside of work, Imran is a pilot and part of the Adobe Aviators community.",
   "San Jose Semaphore": "The San Jose Semaphore has been solved! The puzzle, created by Ben Rubin, featured rotating discs at the top of Adobe's Almaden Tower that hid a message through data points of bytes and numbered colors.",
   "’26 Summit: Sneaks Celebrity Host Interview": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
+  "Behind the Lens: NFL Live Content Correspondents": "When seconds count, creativity can't wait. Diego Galicia and Payton Gygax are NFL Live Content Correspondents, who capture, edit, and publish from the sidelines in real time. Every game, every play, every post has a deadline measured in seconds. From the field to fans, they're using Adobe tools to move at the speed of the game without sacrificing their creative vision.",
 };
 const monthYear = (r) => { const t = reelDate(r); return t ? new Date(t).toLocaleDateString("en-US", { month: "short", year: "numeric" }) : ""; };
 const specialtyHighlights = Object.fromEntries(capabilities.map(c => [c.title,
