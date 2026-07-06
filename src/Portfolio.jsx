@@ -52,6 +52,8 @@ const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; retur
 // reactions/comments/shares only) — show "N/A" instead of a blank that reads
 // as zero. Display-only; the plays field stays "" so no derived total moves.
 const playsLabel = (r) => r.plays || (r.postUrl && r.postUrl.includes("linkedin.com") ? "N/A" : "");
+// Platform name from a reel's post URL — link labels say the real source.
+const platformOf = (r) => r.postUrl?.includes("linkedin.com") ? "LinkedIn" : (r.postUrl?.includes("youtu") ? "YouTube" : "Instagram");
 const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
 const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
@@ -327,7 +329,7 @@ const portfolio = [
     event: "GenStudio for Performance Marketing",
     reels: [
       { title: "GenStudio for Performance Marketing Demo", sub: "LinkedIn · 58 reactions · Nov 13, 2024", plays: "", role: "Hosted; content strategy; concept to published", mp4: "/reels/2024/GenStudio/GenStudio-Performance-Marketing.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_adobe-genstudio-for-performance-marketing-activity-7262556392153055232-xLqm" },
-      { title: "Exec Thought Leadership: On TikTok Your Ad Has Just 10 Seconds to Live", sub: "LinkedIn · 19 reactions · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/TikTok-10-Seconds.mp4", postUrl: "https://www.linkedin.com/posts/tap-into-tiktoks-18b-monthly-users-with-ugcPost-7389722765508935681-Mov9" },
+      { title: "Exec Thought Leadership: TikTok Your Ad Has Just 10 Seconds to Live", sub: "LinkedIn · 19 reactions · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/TikTok-10-Seconds.mp4", postUrl: "https://www.linkedin.com/posts/tap-into-tiktoks-18b-monthly-users-with-ugcPost-7389722765508935681-Mov9" },
       { title: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", sub: "LinkedIn · 33 reactions · Oct 30, 2025", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2025/GenStudio-TL/Go-Global.mp4", postUrl: "https://www.linkedin.com/posts/go-global-with-confidence-genstudio-for-ugcPost-7389692893927698432-6aFM" },
       { title: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", sub: "LinkedIn · 23 reactions · Nov 13, 2025", plays: "", role: "Produced", mp4: "/reels/2025/GenStudio-TL/Goldfish-Attention.mp4", postUrl: "https://www.linkedin.com/posts/purnimarroy_attention-spans-are-shorter-than-ever-and-ugcPost-7394620260328488961-EbUw" },
     ],
@@ -670,12 +672,13 @@ const SPECIALTY_REELS = {
     { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit" },
     { t: "’25 MAX Customer Story: Wyndham Hotels", album: "Customer Stories" },
     { t: "’25 MAX Customer Story: Intuit", album: "Customer Stories" },
-    { t: "Exec Thought Leadership: On TikTok Your Ad Has Just 10 Seconds to Live", album: "Exec Thought Leadership" },
+    { t: "Exec Thought Leadership: TikTok Your Ad Has Just 10 Seconds to Live", album: "Exec Thought Leadership" },
     { t: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", album: "Exec Thought Leadership" },
     { t: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", album: "Exec Thought Leadership" },
     { t: "GenStudio for Performance Marketing Demo", album: "Product Releases" },
     { t: "Brand Intelligence B2B Interview", album: "Product Releases" },
     { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
+    { t: "’25 IBC: Premiere on Mobile Release", album: "Product Releases" },
   ],
 };
 // Lens-specific row descriptions — the same reel carries a DIFFERENT line per
@@ -770,7 +773,7 @@ const REEL_DESCS = {
   "Cracking the Semaphore Code": "After three years, the San Jose Semaphore has been solved. The puzzle, created by Ben Rubin, uses rotating discs atop Adobe's Almaden Tower to hide a secret message in data. Here's the story of cracking the code.",
   "’26 Summit: Behind the Scenes of Sneaks": "Go behind the scenes of Adobe Summit Sneaks with host and Principal Evangelist Eric Matisoff and Research Scientist Yuzhe You. What it takes to bring the biggest innovations from the Adobe lab to the main stage.",
   "GenStudio for Performance Marketing Demo": "At Adobe MAX, we showcased the possibilities of Adobe GenStudio for Performance Marketing, including how work that could have taken weeks can now be done in minutes.",
-  "Exec Thought Leadership: On TikTok Your Ad Has Just 10 Seconds to Live": "Tap into TikTok's 1.8 billion monthly users with content that performs. GenStudio for Performance Marketing powers fast, on-brand creation and optimization at scale.",
+  "Exec Thought Leadership: TikTok Your Ad Has Just 10 Seconds to Live": "Tap into TikTok's 1.8 billion monthly users with content that performs. GenStudio for Performance Marketing powers fast, on-brand creation and optimization at scale.",
   "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language": "Go global with confidence. GenStudio for Performance Marketing helps you localize personalized content at scale to reach every market, faster.",
   "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish": "Attention spans are shorter than ever, and that's exactly why video has become one of the most powerful ways to connect with audiences everywhere they are. I loved helping bring this piece to life to showcase the innovations Adobe is delivering around video.",
   "’25 MAX Customer Story: Intuit": "Intuit's Audrey Timpe shares how AI has become the team's ultimate brainstorming partner, helping them create faster, react quicker, and stay focused on bold, standout ideas with Adobe GenStudio for Performance Marketing.",
@@ -1201,7 +1204,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
         <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.sub}</span>
       </span>
       <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title="Open on Instagram" className="tracklist-ig"
+        <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title={`Open on ${platformOf(reel)}`} className="tracklist-ig"
           style={{ fontFamily: F, fontSize: 12, color: C.gray, textDecoration: "none", padding: "6px", minWidth: 24, textAlign: "center", opacity: h ? 1 : 0, transition: "opacity 0.15s" }}
           onMouseEnter={e => e.target.style.color = C.mint} onMouseLeave={e => e.target.style.color = C.gray}
         >↗</a>
@@ -1258,7 +1261,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
             style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
             onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(30,215,96,0.3)"; }}
             onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
-          ><span className="sp-ig-label">Open on Instagram </span>↗</a>
+          ><span className="sp-ig-label">Open on {platformOf(cur)} </span>↗</a>
         )}
       </div>
     </div>
@@ -1955,9 +1958,13 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
               style={{ width: "min(100%, 240px)", aspectRatio: "9 / 16", objectFit: "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
               onError={e => { e.currentTarget.style.display = "none"; }} />
             {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
+            {!h.reel.plays && h.reel.postUrl?.includes("linkedin.com") && (
+              <p style={{ fontFamily: F, fontSize: 11.5, color: C.gray, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 340 }}>
+                Posted on LinkedIn, which doesn't publish view counts — plays show N/A.</p>
+            )}
             <a href={h.reel.postUrl} target="_blank" rel="noreferrer"
               style={{ display: "inline-block", fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
-              Open on Instagram ↗</a>
+              Open on {platformOf(h.reel)} ↗</a>
           </div>
         )}
       </div>
