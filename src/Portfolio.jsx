@@ -325,7 +325,7 @@ const LIBRARY_OF = {
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
-  "’26 Summit": "Evergreen", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen",
+  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen",
   "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
