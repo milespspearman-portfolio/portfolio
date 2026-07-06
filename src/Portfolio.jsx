@@ -104,7 +104,7 @@ const ALBUM_BLURBS = {
   "Employee Spotlights · Season 1": "Where the series started. Three employees, three creative lives outside work. Dave Werner's reached 1.9M plays.",
   "Employee Spotlights · Season 2": "The punishment for good work is more work.",
   "Employee Spotlights · Season 3": "Our approach to employee highlights has succeeded three times.",
-  "Always On": "Evergreen demand content: product demos and seasonal moments that run year round.",
+  "Always On": "Always-on demand content: product demos and seasonal moments that run year round.",
   "In-House Production": "Employee stories, activations, and talent pieces produced end to end, in house.",
   "Intern Day ’25": "A look inside Adobe's internship, made to recruit the next class of creatives.",
   "’24 MAX Miami": "Adobe MAX 2024, Miami. Sneaks interviews, floor activations, and the show's trivia format.",
@@ -266,8 +266,8 @@ const portfolio = [
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "@adobe · 94 likes · May 29, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_inside-adobe-summit-sneaks-2026-activity-7466192897889996800-UEnr" },
-      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "@adobe · Apr 30, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
-      { title: "’26 Summit: Anil Chakravarthy Exec Interview", sub: "@adobe · Apr 17, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.mp4", postUrl: "https://www.linkedin.com/posts/adobe_adobe-summit-anil-chakravarthy-ugcPost-7451028793734926336-5JmJ" },
+      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "YouTube · Apr 30, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
+      { title: "’26 Summit: Anil Chakravarthy Exec Interview", sub: "LinkedIn · Apr 17, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.mp4", postUrl: "https://www.linkedin.com/posts/adobe_adobe-summit-anil-chakravarthy-ugcPost-7451028793734926336-5JmJ" },
     ],
   },
   {
@@ -582,7 +582,6 @@ const SPECIALTY_REELS = {
     { t: "’25 MAX London: Recap", album: "’25 MAX London" },
     { t: "’25 MAX London: Fonts Creator Game", album: "’25 MAX London" },
     { t: "’25 MAX London: Arches of Inspiration", album: "’25 MAX London" },
-    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit Vegas" },
   ],
   // Strategy albums = FORMATS, not events (Miles + recruiter consolidation,
   // Jul 4): repeatability across shows IS the concept-to-published story.
@@ -651,16 +650,20 @@ const SPECIALTY_REELS = {
     { t: "San Jose Semaphore", album: "In-House Production" },
     { t: "Intern Day Creative Cloud", album: "Intern Day ’25" },
   ],
+  // Miles's Jul 6 spec verbatim ("one stop shop", his album list): Summit
+  // pieces grouped BY EVENT YEAR, not under a "Hosting" label — the 3 '26
+  // pieces (Sneaks Celebrity Host, Anil, Iliza) were produced, NOT hosted
+  // by Miles, so a Hosting album misstates his role on them.
   "Making B2B Social Friendly": [
-    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "Hosting" },
-    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "Hosting" },
-    { t: "’26 Summit: Words of Wisdom with Iliza Shlesinger", album: "Hosting" },
-    { t: "’25 Summit: Ken Jeong Interview", album: "Hosting" },
-    { t: "’25 Summit: Acrobat Escape Room", album: "Hosting" },
-    { t: "’25 Summit: Hosted Event Recap", album: "Hosting" },
-    { t: "’25 Summit: “Describe Your Job” Interviews", album: "Hosting" },
-    { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "Hosting" },
-    { t: "’25 Summit: Sneaks Emoji Reactions", album: "Hosting" },
+    { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit" },
+    { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "’26 Summit" },
+    { t: "’26 Summit: Words of Wisdom with Iliza Shlesinger", album: "’26 Summit" },
+    { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit" },
+    { t: "’25 Summit: Acrobat Escape Room", album: "’25 Summit" },
+    { t: "’25 Summit: Hosted Event Recap", album: "’25 Summit" },
+    { t: "’25 Summit: “Describe Your Job” Interviews", album: "’25 Summit" },
+    { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "’25 Summit" },
+    { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit" },
     { t: "’25 MAX Customer Story: Wyndham Hotels", album: "Customer Stories" },
     { t: "’25 MAX Customer Story: Intuit", album: "Customer Stories" },
     { t: "Exec Thought Leadership: On TikTok Your Ad Has Just 10 Seconds to Live", album: "Exec Thought Leadership" },
@@ -711,7 +714,7 @@ const REEL_DESCS = {
   "’24 MAX: Project Type Lab: Adobe Researcher Sneaks Interview": "Take your text effects to the next level with Project Type Lab! This cutting edge tech allows you to generate, edit and reposition text seamlessly within your design using generative AI.",
   "’24 MAX: Project Generative Physics": "Create life in your scenes with a single click with Project Generative Physics! In this Adobe Research Sneak, realistic physics are a snap with a simple text prompt.",
   "’24 MAX: In-Office Trivia": "How much do YOU know about Adobe MAX? In addition to having amazing Sneaks, it's the perfect place to brush up on your creative skills and learn some new ones.",
-  "’24 MAX: Attendee Scavenger Hunt": "They come from near and far, but our incredible community all agrees. the best thing about Adobe MAX is everything!",
+  "’24 MAX: Attendee Scavenger Hunt": "They come from near and far, but our incredible community all agrees: the best thing about Adobe MAX is everything!",
   "’24 MAX: 3 Things We Didn’t Expect": "From secret escape rooms to birthday ambushes, Adobe MAX was full of surprises! What captured your delight or broke your brain over the past few days?",
   "’24 MAX: Sneaks Reactions One Emoji": "Adobe MAX Sneaks = next-level creativity.",
   "’24 MAX: Premiere Pro Demo": "Still reeling from Adobe MAX! From dropping Generative Extend in (beta) to Firefly's Generate Video (beta), the future of video editing is looking bright.",
@@ -723,15 +726,15 @@ const REEL_DESCS = {
   "’25 Summit: Over & Under AI Enterprise Activity": "The sky is the limit for AI! Our recent study shows AI is streamlining the way we travel, shop, and more.",
   "’25 Summit: Acrobat Escape Room": "Cracking codes, unlocking clues and winning escape rooms at Adobe Summit thanks, AI Assistant!",
   "’25 Summit: “Describe Your Job” Interviews": "No titles, no problem. We put Adobe Summit attendees on the spot, and their answers were priceless!",
-  "’25 Summit: Coolest Job @Adobe S1": "\"Who do you think has the coolest job at Adobe? \" Easy question, right?",
+  "’25 Summit: Coolest Job @Adobe S1": "\"Who do you think has the coolest job at Adobe?\" Easy question, right?",
   "’25 Summit: Sneaks Emoji Reactions": "Big ideas, bold innovations! We unveiled potential new features at Adobe Summit Sneaks on the keynote stage, and our dedicated correspondent Miles was on the ground capturing attendee reactions.",
   "’25 Summit: Hosted Event Recap": "Have you heard that Adobe Summit's celebrity host @KenJeong can't stop talking about this new technology? Agentic AI blew us away this year and totally stole the spotlight.",
   "’25 Summit: Escalator ‘Hot’ Takes": "We asked the experts at Adobe Summit to serve up their best rapid-fire insights on agentic AI. The takeaway?",
   "’25 MAX: James Gunn’s Filmmaking Assignment": "That project sitting in your drafts? @jamesgunn has a message for you.",
   "’25 MAX: “Coolest Job” @Adobe | Firefly Feature": "We asked: who has the coolest job at Adobe? The @adobefirefly team had a few ideas.",
   "Kelley O'Hara x NWSL x Adobe": "From the pitch to producing, former @NWSL athlete @kelleyohara is redefining success. We are teaming up with Kelley, who is using our tools to empower her next chapter, growing the game, on and off the field.",
-  "’25 MAX: Mark Rober’s Creator Assignment": "\"Your most viral clips are the ones that create the biggest visceral response. \" Adobe MAX keynote speaker @markrober offers advice on how to level up your content.",
-  "’25 MAX: Jessica Williams’ Creator Assignment": "\"Follow your instinct, not the trends. \" Adobe MAX Sneaks host @msjwilly reminds us that our instinct is the most powerful thing we can tap into as creators.",
+  "’25 MAX: Mark Rober’s Creator Assignment": "\"Your most viral clips are the ones that create the biggest visceral response.\" Adobe MAX keynote speaker @markrober offers advice on how to level up your content.",
+  "’25 MAX: Jessica Williams’ Creator Assignment": "\"Follow your instinct, not the trends.\" Adobe MAX Sneaks host @msjwilly reminds us that our instinct is the most powerful thing we can tap into as creators.",
   "’25 MAX: Navin’s Coolest Job": "What's it like to work on the Adobe Firefly team? Navin Watumull, Senior Product Marketing Manager, gives us a peek inside his role helping shape how creators experience our generative AI tools.",
   "’25 MAX: Sarah Shen’s Coolest Job": "Designing generative AI tools for creators looks like this: Sarah Shen, Director of Design for @adobefirefly, shares how she connects cutting-edge technology with real creative needs.",
   "’25 MAX London: Recap": "No matter where you traveled from, we're so grateful you're part of our bold, brilliant creative community. Thanks for making Adobe MAX London unforgettable.",
@@ -742,10 +745,10 @@ const REEL_DESCS = {
   "’25 NAB: Event Coverage": "Out: Scouring your media library for a misplaced shot. In: Empowering your editing workflow with Media Intelligence. Using casual language, you can search for filmed subject matter, video specs, and more.",
   "Cannes Lions Firefly Feature": "Cannes we just take a moment? Take a look back at Firefly's Creator Beach at.",
   "Firefly Interview Demo": "Current office mood: excitedly experimenting with the new Firefly Video Model. Go behind the curtain as the team generates powerful outputs with Text-to-Video and Image-to-Video, coming soon to beta.",
-  "Creative Cloud for Students Black Friday Discount": "Deal Alert!, unlock 70% OFF @AdobeCreativeCloud with your student email.",
+  "Creative Cloud for Students Black Friday Discount": "Deal Alert! Unlock 70% OFF @AdobeCreativeCloud with your student email.",
   "Russell Preston Brown Employee Spotlight": "Meet Russell Preston Brown, Senior Principal Designer, who has worked at Adobe for 41 years! Outside the office, Russell is a costume maker, designer, and photographer.",
   "Artist Spotlight: Aaron Gonzalez": "We love seeing creativity come to life! Aaron Gonzalez of @flosseditions took a risk to start creating art.",
-  "Em Siegel Employee Spotlight": "Meet @ecs. ceramics, Staff Product Designer at Adobe.",
+  "Em Siegel Employee Spotlight": "Meet @ecs.ceramics, Staff Product Designer at Adobe.",
   "Coolest Job: Eric": "Cool job alert! @ericmatisoff is a Customer Experience Orchestration at Adobe, but he's also been the host of Adobe Summit's Sneaks for the last four years!",
   "Coolest Job: Tongyu": "Adobe Research Scientist Tongyu Zhou levels up her passion for gaming through the projects she leads every day at Adobe.",
   "Brand Intelligence B2B Interview": "At Adobe Summit, we introduced Adobe Brand Intelligence. It took a diverse team of individuals from all over the globe at different stages of their careers to work together and launch something this big.",
@@ -1167,7 +1170,7 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-        <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
+        <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
       </span>
       {isSourceOfAudio && <EqBars />}
     </button>
@@ -1333,7 +1336,7 @@ function WorkPlayer() {
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(viewing.totalPlays)} plays{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
                 </div>
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
@@ -1455,7 +1458,7 @@ function ShelfCard({ ev }) {
         <span className="shelf-card-play" style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
       </span>
       <span style={{ display: "block", marginTop: 12, fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-      <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"} · {fmtPlays(ev.totalPlays)} plays</span>
+      <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
     </a>
   );
 }
@@ -1553,7 +1556,7 @@ function TLDetail({ ev, reel, cat, onClose }) {
           </div>
         </div>
         <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "16px 0 0", letterSpacing: -0.3, lineHeight: 1.22 }}>{reel.title}</h3>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: C.gray, marginTop: 6 }}>{reel.plays} plays{date ? ` · ${date}` : ""}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: C.gray, marginTop: 6 }}>{[reel.plays ? `${reel.plays} plays` : null, date].filter(Boolean).join(" · ")}</span>
         {caption ? (
           <p style={{ fontFamily: F, fontSize: 13.5, color: "rgba(255,255,255,0.84)", lineHeight: 1.65, margin: "14px 0 4px", whiteSpace: "pre-line" }}>{caption}</p>
         ) : (
@@ -1725,7 +1728,7 @@ function CareerTimeline() {
       <FadeIn>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Timeline</span>
         <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>The Work, In Order</h2>
-        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 20px 0", maxWidth: 520 }}>Every event and evergreen project on one scroll. Tap a milestone to play it. Newest first.</p>
+        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 20px 0", maxWidth: 520 }}>Every event and in-house project on one scroll. Tap a milestone to play it. Newest first.</p>
       </FadeIn>
 
       <div className="tl-wrap" style={{ position: "relative", paddingLeft: "var(--gap)" }}>
