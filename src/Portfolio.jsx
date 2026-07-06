@@ -74,6 +74,7 @@ const EVENT_ROLES = {
   "’26 NAB Vegas": "Produced",
   "Artist Spotlights": "Produced & creatively directed",
   "Always-On": "Produced",
+  "Photoshop Archives": "Produced",
   "’25 IBC Amsterdam": "Hosted & on-camera talent",
   "Brand Partnerships": "Produced with the Social Creative Studio team",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
@@ -259,6 +260,7 @@ const portfolio = [
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "@adobe · 94 likes · Mar 20, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_inside-adobe-summit-sneaks-2026-activity-7466192897889996800-UEnr" },
+      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "@adobe · 3 likes · Apr 30, 2026", plays: "765", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
     ],
   },
   {
@@ -299,10 +301,18 @@ const portfolio = [
     reels: [
       { title: "Kelley O'Hara x NWSL x Adobe", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
       { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
-      { title: "Photoshop Archives: Russell Brown & Matthew Richmond", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", role: "Produced", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
       { title: "Photoshop x Marvel: Eyes of Wakanda", sub: "@photoshop · 2.7K likes · Sep 8, 2025", plays: "299K", mp4: "/reels/2025/Brand-Partnerships/Marvel-Eyes-of-Wakanda-Photoshop_9.8.25.mp4", postUrl: "https://www.instagram.com/reel/DOWitx1Afr1/" },
       { title: "Adobe x NWSL: 2025 Creator Club", sub: "@adobe · 896 likes · Aug 12, 2025", plays: "2.7M", mp4: "/reels/2025/Brand-Partnerships/NWSL-Creator-Club_8.12.25.mp4", postUrl: "https://www.instagram.com/reel/DNRX89SpIkC/" },
       { title: "Adobe x Golden State Warriors: Creative Threads", sub: "@adobe · 1.5K likes · May 23, 2025", plays: "225.2K", mp4: "/reels/2025/Brand-Partnerships/GSW-Creative-Threads_5.23.25.mp4", postUrl: "https://www.instagram.com/reel/DKAz21sPv0q/" },
+    ],
+  },
+  {
+    event: "Photoshop Archives",
+    reels: [
+      { title: "’26 PS Archives: Russell Brown x Matthew Richmond (Podcast)", sub: "@photoshop · 104 likes · Mar 3, 2026", plays: "145.5K", landscape: true, mp4: "/reels/2026/Photoshop-Archives/PS-Archives-Podcast.mp4", postUrl: "https://youtu.be/UQUBT0kw3WA" },
+      { title: "’26 PS Archives: The Power of Small Tools", sub: "@photoshop · 4.5K likes · Mar 30, 2026", plays: "829.9K", mp4: "/reels/2026/Photoshop-Archives/Power-of-Small-Tools_3.30.26.mp4", postUrl: "https://www.instagram.com/reel/DWhcBanEvld/" },
+      { title: "’26 PS Archives: 1st Satisfying Project", sub: "@photoshop · 2.1K likes · Mar 9, 2026", plays: "734.8K", mp4: "/reels/2026/Photoshop-Archives/1st-Satisfying-Project_3.9.26.mp4", postUrl: "https://www.instagram.com/reel/DVrH3rxiUdw/" },
+      { title: "’26 PS Archives: Tools Don’t Make Things", sub: "@photoshop · 361 likes · Mar 5, 2026", plays: "85.5K", mp4: "/reels/2026/Brand-Partnerships/Photoshop-Archives-Russell-Matthew_3.5.26.mp4", postUrl: "https://www.instagram.com/reel/DVgpCMOkduU/" },
     ],
   },
   // ——— Personal / Off the Clock ———
@@ -346,7 +356,7 @@ const LIBRARY_OF = {
   "’25 Summit Vegas": "Events", "’24 NAB Vegas": "Events", "’25 NAB Vegas": "Events", "’26 NAB Vegas": "Events",
   "’24 IBC Amsterdam": "Events", "’25 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
-  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen",
+  "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen", "Photoshop Archives": "Evergreen",
   "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
@@ -403,7 +413,7 @@ const yearOf = (ev) => {
 // stay whole — only the chronological spine splits.
 const _spineNode = (ev, reels, uid) => {
   const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
-  return { ...ev, idx: uid, reels, cover: thumbOf(top), totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0), window: fmtWindow({ reels }) };
+  return { ...ev, idx: uid, reels, cover: thumbOf(top), coverLandscape: !!top.landscape, totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0), window: fmtWindow({ reels }) };
 };
 const timelineNodes = [];
 proEvents.forEach(ev => {
@@ -623,7 +633,11 @@ const REEL_DESCS = {
   "Adobe x Golden State Warriors: Creative Threads": "At the Adobe x Warriors Creative Threads workshops, emerging Bay Area artists design sneakers that speak louder than words, facilitated by The Campus Worldwide.",
   "Photoshop x Marvel: Eyes of Wakanda": "How the team behind Marvel Animation's Eyes of Wakanda illustrated the series, and how custom brushes in Photoshop helped bring it to life.",
   "Building Murals: Laura Garcia": "Illustrator Laura Garcia brings her Nicaraguan roots to life at Adobe's San Francisco office, transforming a window into a vibrant mural that celebrates creativity, culture, and community.",
-  "Photoshop Archives: Russell Brown & Matthew Richmond": "Tools don't make things, people do. Matthew Richmond, Adobe VP of Design, joins Russell Preston Brown on Photoshop Archives to discuss the early days of Photoshop and the future of Adobe's professional tools.",
+  "’26 PS Archives: Russell Brown x Matthew Richmond (Podcast)": "Matthew Richmond, Adobe VP of Design for Pro Products, joins Russell Preston Brown to reflect on his early career, from having Adobe as a client to the early days of Photoshop, and where AI and creative control go next.",
+  "’26 PS Archives: The Power of Small Tools": "Not every feature is front and center, but for someone, it's the whole workflow.",
+  "’26 PS Archives: 1st Satisfying Project": "What was your first satisfying Photoshop project? The Photoshop Archives crew shares theirs.",
+  "’26 PS Archives: Tools Don’t Make Things": "Tools don't make things, people do. Matthew Richmond, Adobe VP of Design, joins Russell Preston Brown on Photoshop Archives to discuss the early days of Photoshop and the future of Adobe's professional tools.",
+  "’26 Summit: Words of Wisdom with Iliza Shlesinger": "We went backstage at Adobe Summit to chat with Iliza Shlesinger, comedian and celebrity co-host of Adobe Sneaks, about how creativity shows up around her stand-up specials.",
   // Hand-written spotlight lines (verbatim):
   "Dave Werner Employee Spotlight": "Meet Dave Werner, Senior Staff Designer in our Video and Animation team. From designs that help bring animated characters to life to performing in local theatre productions, Dave's creativity thrives both inside and outside of work.",
   "Gizem Dal Employee Spotlight": "Meet Gizem Dal, Graphic Software Engineer at Adobe and drummer.",
@@ -1661,7 +1675,7 @@ function CareerTimeline() {
           const meta = yearMeta[yr] || { count: 0, plays: 0 };
           // Chronological within a project — newest reel first — so the carousel
           // reads in order (e.g. Brand Partnerships: Eyes of Wakanda → NWSL → GSW).
-          const reels = [...ev.reels].sort((x, y) => reelDate(y) - reelDate(x));
+          const reels = [...ev.reels].sort((x, y) => (Number(!!y.landscape) - Number(!!x.landscape)) || (reelDate(y) - reelDate(x)));
           const active = reels[Math.min(reelIdx, reels.length - 1)] || reels[0];
           const desc = active ? (REEL_DESCS[active.title] || "") : "";
           return (
@@ -1681,7 +1695,7 @@ function CareerTimeline() {
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
                   style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(30,215,96,0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
                   <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0, alignSelf: open ? "start" : "center" }}>
-                    <span style={{ position: "relative", width: "100%", aspectRatio: "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
+                    <span style={{ position: "relative", width: "100%", aspectRatio: ev.coverLandscape ? "16 / 9" : "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
                       <img src={ev.cover} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
                       <span aria-hidden="true" style={{ position: "absolute", right: 6, bottom: 6, width: 22, height: 22, borderRadius: "50%", background: "rgba(0,0,0,0.62)", color: cat.accent, display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 10 }}>▶</span>
                     </span>
