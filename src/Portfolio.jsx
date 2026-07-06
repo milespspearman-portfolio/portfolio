@@ -71,7 +71,7 @@ const EVENT_ROLES = {
   "Employee Spotlights: Season 2": "Produced & creatively directed",
   "Employee Spotlights: Season 3": "Produced & creatively directed",
   "’26 Summit": "Produced",
-  "’26 NAB Vegas": "Concepted, scripted, hosted & creatively directed",
+  "’26 NAB Vegas": "Produced",
   "Artist Spotlights": "Produced & creatively directed",
   "Always-On": "Produced",
   "Made to Create": "Produced",
@@ -287,7 +287,7 @@ const portfolio = [
   {
     event: "Made to Create",
     reels: [
-      { title: "Behind the Lens: NFL Live Content Correspondents", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
+      { title: "Behind the Lens: NFL Live Content Correspondents", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
     ],
   },
   {
@@ -1509,8 +1509,8 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
           {reels.map((r, i) => {
             const near = Math.abs(i - idx) <= 1;
             return (
-              <div key={r.postUrl} style={{ flex: "0 0 100%", scrollSnapAlign: "center", display: "flex", justifyContent: "center", padding: "0 8px" }}>
-                <div style={{ position: "relative", width: "min(80%, 260px)", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000", boxShadow: i === idx ? "0 12px 40px rgba(0,0,0,0.5)" : "none", opacity: i === idx ? 1 : 0.45, transition: "opacity 0.25s" }}>
+              <div key={r.postUrl} style={{ flex: "0 0 100%", scrollSnapAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", padding: "0 8px" }}>
+                <div style={{ position: "relative", width: r.landscape ? "min(94%, 380px)" : "min(80%, 260px)", aspectRatio: r.landscape ? "16 / 9" : "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000", boxShadow: i === idx ? "0 12px 40px rgba(0,0,0,0.5)" : "none", opacity: i === idx ? 1 : 0.45, transition: "opacity 0.25s" }}>
                   {near ? (
                     <video key={r.postUrl} src={srcOf(r)} poster={thumbOf(r)} controls muted playsInline autoPlay={i === idx}
                       ref={el => { if (el) { i === idx ? el.play().catch(() => {}) : el.pause(); } }}
@@ -1552,8 +1552,8 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
       <div ref={scRef} onScroll={onCarouselScroll} className="tl-pager"
         style={{ display: "flex", gap: 12, overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", padding: "0 18%", scrollbarWidth: "none" }}>
         {reels.map((r, i) => (
-          <div key={r.postUrl} style={{ flex: "0 0 70%", maxWidth: 250, scrollSnapAlign: "center", display: "flex", justifyContent: "center" }}>
-            <div style={{ position: "relative", width: "100%", aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000", boxShadow: i === idx ? "0 12px 40px rgba(0,0,0,0.5)" : "none", opacity: i === idx ? 1 : 0.5, transition: "opacity 0.25s" }}>
+          <div key={r.postUrl} style={{ flex: r.landscape ? "0 0 88%" : "0 0 70%", maxWidth: r.landscape ? 340 : 250, scrollSnapAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div style={{ position: "relative", width: "100%", aspectRatio: r.landscape ? "16 / 9" : "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000", boxShadow: i === idx ? "0 12px 40px rgba(0,0,0,0.5)" : "none", opacity: i === idx ? 1 : 0.5, transition: "opacity 0.25s" }}>
               <button onClick={() => { setIdx(i); setView("swipe"); }} aria-label={`Open ${r.title}`}
                 style={{ position: "absolute", inset: 0, border: "none", padding: 0, background: "transparent", cursor: "pointer" }}>
                 <img src={thumbOf(r)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
