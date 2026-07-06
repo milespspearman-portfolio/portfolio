@@ -260,7 +260,7 @@ const portfolio = [
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "@adobe · 94 likes · May 29, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_inside-adobe-summit-sneaks-2026-activity-7466192897889996800-UEnr" },
-      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "@adobe · 3 likes · Apr 30, 2026", plays: "765", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
+      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "@adobe · Apr 30, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
     ],
   },
   {
@@ -649,21 +649,21 @@ const REEL_DESCS = {
   "Intern Day Creative Cloud": "Welcome to Adobe Intern Day! From real-world projects to exclusive perks, here's what building your future with us gets you.",
   // Caption-sourced (complete sentences only, event names kept, R1-clean):
   "TacoBell x Upworthy Feature": "Play it loud Miles! Miles is a @tacobell Foundation Live Más Scholarship recipient who's passionate about jazz and playing the trumpet.",
-  "’24 IBC: Premiere Pro AI: Emoji Reactions": "At, we asked our attendees to describe their excitement for the new Adobe Firefly Video Model. Watch as their imaginations run wild with the new updates.",
-  "’24 IBC: Event Recap": "We're all heading back into the office, but emotionally, we're still at! Check out some of our fave highlights, including the latest cinema camera releases from @CanonUSA and @Sony and, of course, our new updat",
+  "’24 IBC: Premiere Pro AI: Emoji Reactions": "At IBC, we asked our attendees to describe their excitement for the new Adobe Firefly Video Model. Watch as their imaginations run wild with the new updates.",
+  "’24 IBC: Event Recap": "We're all heading back into the office, but emotionally, we're still at IBC! Check out some of our fave highlights, including the latest cinema camera releases from @CanonUSA and @Sony and, of course, our new updates.",
   "’24 MAX: Project Watercolor Master: Adobe Researcher Sneaks Interview": "What if you could paint, blend, and flow like a watercolor master on a digital canvas? Introducing Web-Based Painting, an experimental technology developed by our team in Paris.",
   "’24 MAX: Project Type Lab: Adobe Researcher Sneaks Interview": "Take your text effects to the next level with Project Type Lab! This cutting edge tech allows you to generate, edit and reposition text seamlessly within your design using generative AI.",
-  "’24 MAX: Project Generative Physics": "Create life in your scenes with a single click with Project Generative Physics! In this Adobe Research Sneak, realistic physics are a snap with a simple text prompt that can generate subjects which interact wit",
+  "’24 MAX: Project Generative Physics": "Create life in your scenes with a single click with Project Generative Physics! In this Adobe Research Sneak, realistic physics are a snap with a simple text prompt.",
   "’24 MAX: In-Office Trivia": "How much do YOU know about Adobe MAX? In addition to having amazing Sneaks, it's the perfect place to brush up on your creative skills and learn some new ones.",
   "’24 MAX: Attendee Scavenger Hunt": "They come from near and far, but our incredible community all agrees. the best thing about Adobe MAX is everything!",
   "’24 MAX: 3 Things We Didn’t Expect": "From secret escape rooms to birthday ambushes, Adobe MAX was full of surprises! What captured your delight or broke your brain over the past few days?",
   "’24 MAX: Sneaks Reactions One Emoji": "Adobe MAX Sneaks = next-level creativity.",
   "’24 MAX: Premiere Pro Demo": "Still reeling from Adobe MAX! From dropping Generative Extend in (beta) to Firefly's Generate Video (beta), the future of video editing is looking bright.",
   "’24 MAX: Adobe x Gatorade Activation": "In case you missed this iconic partnership at Adobe MAX, @gatorade and Firefly have teamed up to take your hydration game to the next level.",
-  "’24 NAB: Emoji Reaction Interviews": "powered by Firefly is coming to! Drop an emoji that sums up your reaction.",
-  "’24 NAB: Premiere Pro AI Announcement Reactions": "Generative AI in is around the corner. Which feature do you think you'll use the most, Object Addition, Object Removal, or Generative Extend?",
+  "’24 NAB: Emoji Reaction Interviews": "Firefly is coming to NAB! Drop an emoji that sums up your reaction.",
+  "’24 NAB: Premiere Pro AI Announcement Reactions": "Generative AI in Premiere Pro is around the corner. Which feature do you think you'll use the most, Object Addition, Object Removal, or Generative Extend?",
   "’24 NAB: Premiere Enhanced Speech Live Test": "Last week at NAB we put Enhance Speech and all of the new audio features to the test: can they beat the noise of the crowd?",
-  "’25 Summit: Coca-Cola Activation": "\" \"Refreshing. \" \"Legendary.",
+  "’25 Summit: Coca-Cola Activation": "Refreshing. Legendary.",
   "’25 Summit: Over & Under AI Enterprise Activity": "The sky is the limit for AI! Our recent study shows AI is streamlining the way we travel, shop, and more.",
   "’25 Summit: Acrobat Escape Room": "Cracking codes, unlocking clues and winning escape rooms at Adobe Summit thanks, AI Assistant!",
   "’25 Summit: “Describe Your Job” Interviews": "No titles, no problem. We put Adobe Summit attendees on the spot, and their answers were priceless!",
@@ -677,22 +677,22 @@ const REEL_DESCS = {
   "’25 MAX: Mark Rober’s Creator Assignment": "\"Your most viral clips are the ones that create the biggest visceral response. \" Adobe MAX keynote speaker @markrober offers advice on how to level up your content.",
   "’25 MAX: Jessica Williams’ Creator Assignment": "\"Follow your instinct, not the trends. \" Adobe MAX Sneaks host @msjwilly reminds us that our instinct is the most powerful thing we can tap into as creators.",
   "’25 MAX: Navin’s Coolest Job": "What's it like to work on the Adobe Firefly team? Navin Watumull, Senior Product Marketing Manager, gives us a peek inside his role helping shape how creators experience our generative AI tools.",
-  "’25 MAX: Sarah Shen’s Coolest Job": "Designing generative AI tools for creators looks like this Sarah Shen, Director of Design for @adobefirefly, shares how she connects cutting-edge technology with real creative needs. From exploring generative A",
+  "’25 MAX: Sarah Shen’s Coolest Job": "Designing generative AI tools for creators looks like this: Sarah Shen, Director of Design for @adobefirefly, shares how she connects cutting-edge technology with real creative needs.",
   "’25 MAX London: Recap": "No matter where you traveled from, we're so grateful you're part of our bold, brilliant creative community. Thanks for making Adobe MAX London unforgettable.",
   "’25 MAX London: Fonts Creator Game": "Helvetica vs. Times New Roman: the ultimate font-off.",
   "’25 MAX London: Firefly Explainer": "We stopped in at Adobe MAX London to reveal 5 simple steps to better prompts for video generation. Let's see what fun scenes we came up with using the latest updates in Firefly.",
   "’25 NAB: Premiere Pro Releases": "Brewing groundbreaking innovations = our cup of tea. Steep yourself in all the NAB buzz as we recap your favorite new features.",
   "’25 NAB: Generative Extend Demo": "Adobe content producers, they're just like us. We all need a little Generative Extend sometimes.",
-  "’25 NAB: Event Coverage": "Out: Scouring your media library for a misplaced shot In: Empowering your editing workflow with Media Intelligence Using casual language, you can search for filmed subject matter, video specs, and more in an in",
+  "’25 NAB: Event Coverage": "Out: Scouring your media library for a misplaced shot. In: Empowering your editing workflow with Media Intelligence. Using casual language, you can search for filmed subject matter, video specs, and more.",
   "Cannes Lions Firefly Feature": "Cannes we just take a moment? Take a look back at Firefly's Creator Beach at.",
   "Firefly Interview Demo": "Current office mood: excitedly experimenting with the new Firefly Video Model. Go behind the curtain as the team generates powerful outputs with Text-to-Video and Image-to-Video, coming soon to beta.",
   "Creative Cloud for Students Black Friday Discount": "Deal Alert!, unlock 70% OFF @AdobeCreativeCloud with your student email.",
-  "Russell Preston Brown Employee Spotlight": "Meet Russell Preston Brown, Senior Principal Designer, who has worked at Adobe for 41 years! Outside the office, Russell is a costume maker, designer, and photographer whose curiosity for art and science bleeds",
+  "Russell Preston Brown Employee Spotlight": "Meet Russell Preston Brown, Senior Principal Designer, who has worked at Adobe for 41 years! Outside the office, Russell is a costume maker, designer, and photographer.",
   "Artist Spotlight: Aaron Gonzalez": "We love seeing creativity come to life! Aaron Gonzalez of @flosseditions took a risk to start creating art.",
   "Em Siegel Employee Spotlight": "Meet @ecs. ceramics, Staff Product Designer at Adobe.",
   "Coolest Job: Eric": "Cool job alert! @ericmatisoff is a Customer Experience Orchestration at Adobe, but he's also been the host of Adobe Summit's Sneaks for the last four years!",
   "Coolest Job: Tongyu": "Adobe Research Scientist Tongyu Zhou levels up her passion for gaming through the projects she leads every day at Adobe.",
-  "Brand Intelligence B2B Interview": "At Adobe Summit, we introduced Adobe Brand Intelligence. It took a diverse team of individuals from all over the globe at different stages of their careers to work together and launch something this big into th",
+  "Brand Intelligence B2B Interview": "At Adobe Summit, we introduced Adobe Brand Intelligence. It took a diverse team of individuals from all over the globe at different stages of their careers to work together and launch something this big.",
   "Imran Idzqandar Employee Spotlight": "Meet Imran Idzqandar, Enterprise Architect at Adobe. Outside of work, Imran is a pilot and part of the Adobe Aviators community.",
   "San Jose Semaphore": "The San Jose Semaphore has been solved! The puzzle, created by Ben Rubin, featured rotating discs at the top of Adobe's Almaden Tower that hid a message through data points of bytes and numbered colors.",
   "’26 Summit: Sneaks Celebrity Host Interview": "We went backstage at Adobe Summit to chat with @ilizas, comedian and celebrity co-host of Adobe Sneaks. Here's what she had to say about creativity, failure, and technology.",
@@ -1734,7 +1734,7 @@ function CareerTimeline() {
 
 function PlaylistShelf() {
   return (
-    <section style={{ padding: "36px 0 12px clamp(24px, 5vw, 80px)" }}>
+    <section id="library" style={{ padding: "36px 0 12px clamp(24px, 5vw, 80px)" }}>
       {LIB_ORDER.map(lib => (
         <ShelfRow key={lib} title={`${lib} Library`} items={eventStats.filter(ev => LIBRARY_OF[ev.event] === lib)} />
       ))}
@@ -2120,15 +2120,15 @@ function Nav() {
 // destinations, no dropdown, no hamburger. Contact stays the top-bar pill.
 function MobileTabBar() {
   const tabs = [
-    ["Work", "#work", "M8 5v14l11-7z", false],
-    ["Timeline", "#timeline", "M12 3v18M6 7h10M6 12h8M6 17h6", false],
-    ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2", false],
-    ["Resume", "/Miles-Spearman-Resume.pdf", "M7 3h7l4 4v14H7zM14 3v5h4M9.5 13h5M9.5 16.5h5", true],
+    ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2"],
+    ["Work", "#what-i-do", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
+    ["Timeline", "#timeline", "M12 3v18M6 7h10M6 12h8M6 17h6"],
+    ["Library", "#library", "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"],
   ];
   return (
     <nav className="mobile-tabbar" aria-label="Sections">
-      {tabs.map(([label, href, d, ext]) => (
-        <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+      {tabs.map(([label, href, d]) => (
+        <a key={label} href={href}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
           <span>{label}</span>
         </a>
@@ -2199,7 +2199,7 @@ export default function Portfolio() {
           .sp-bar { bottom: calc(56px + env(safe-area-inset-bottom)) !important; }
         }
         /* section jumps land below the fixed top nav, not tucked under it */
-        #about, #what-i-do, #work, #timeline { scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
+        #about, #what-i-do, #work, #timeline, #library { scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
         .sp-shell { scroll-margin-top: 84px; }
         .shelf-row { scrollbar-width: none; }
         .shelf-row::-webkit-scrollbar { display: none; }
@@ -2323,11 +2323,18 @@ export default function Portfolio() {
             </div>
           </FadeIn>
           <FadeIn delay={0.15}>
-            <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
-              style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", marginTop: 24, transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
-              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 60px rgba(10,102,194,0.45)"; }}
-              onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = C.mint; e.target.style.color = C.bg; e.target.style.boxShadow = `0 0 40px ${C.mint}20`; }}
-            >View My LinkedIn →</a>
+            <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap" }}>
+              <a href="mailto:milespspearman@gmail.com"
+                style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, padding: "14px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20` }}
+                onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
+              >Email me →</a>
+              <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: F, fontSize: 15, fontWeight: 600, color: C.white, background: "transparent", border: `1px solid ${C.border}`, padding: "13px 36px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, background 0.2s, color 0.2s" }}
+                onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; }}
+                onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = "transparent"; e.target.style.color = C.white; }}
+              >View My LinkedIn →</a>
+            </div>
           </FadeIn>
         </section>
 
@@ -2346,7 +2353,11 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
-        {/* ===== WORK — 3 visual grid buckets ===== */}
+        {/* ===== CAREER TIMELINE ===== */}
+        <CareerTimeline />
+
+        {/* ===== SELECTED WORK — moved below the timeline, right above the library
+             (Miles: tapping a library video should link straight back up to the player) ===== */}
         <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
           <FadeIn>
             <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
@@ -2358,9 +2369,6 @@ export default function Portfolio() {
 
           <div style={{ marginTop: 64 }}><Marquee /></div>
         </section>
-
-        {/* ===== CAREER TIMELINE — right under Selected Work (additive; libraries kept) ===== */}
-        <CareerTimeline />
 
         {/* ===== PLAYLIST SHELF ===== */}
         <PlaylistShelf />
