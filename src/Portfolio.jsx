@@ -2262,7 +2262,7 @@ function Nav() {
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
         <span className="nav-links" style={{ display: "flex", gap: 28, alignItems: "center" }}>
-          {[["About", "#about", false], ["What I Do", "#what-i-do", false], ["Work Playlist", "#work", false], ["Timeline", "#timeline", false], ["Resume", "/Miles-Spearman-Resume.pdf", true]].map(([label, href, ext]) => (
+          {[["About", "#about", false], ["What I Do", "#what-i-do", false], ["Timeline", "#timeline", false], ["Work Playlist", "#work", false], ["Resume", "/Miles-Spearman-Resume.pdf", true]].map(([label, href, ext]) => (
             <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
               onMouseLeave={e => e.target.style.color = C.gray}
