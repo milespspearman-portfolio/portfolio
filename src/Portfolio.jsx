@@ -849,7 +849,7 @@ function HeroCard({ reel, i, live = true }) {
         <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
         <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, marginTop: 3 }}>▶ {reel.plays} plays</span>
       </span>
-      <span style={{
+      <span className="wall-play" style={{
         position: "absolute", top: "38%", left: "50%", transform: `translate(-50%,-50%) scale(${h ? 1 : 0.6})`,
         width: 44, height: 44, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center",
         justifyContent: "center", opacity: h ? 1 : 0, transition: "all 0.2s", boxShadow: `0 6px 24px ${C.mint}50`,
@@ -2079,8 +2079,8 @@ function Nav() {
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
         <span className="nav-links" style={{ display: "flex", gap: 28, alignItems: "center" }}>
-          {[["About", "#about"], ["What I Do", "#what-i-do"], ["Work", "#work"]].map(([label, href]) => (
-            <a key={label} href={href} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+          {[["About", "#about", false], ["What I Do", "#what-i-do", false], ["Work", "#work", false], ["Timeline", "#timeline", false], ["Resume", "/Miles-Spearman-Resume.pdf", true]].map(([label, href, ext]) => (
+            <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
               onMouseLeave={e => e.target.style.color = C.gray}
             >{label}</a>
@@ -2109,6 +2109,30 @@ function Nav() {
           )}
         </div>
       </div>
+    </nav>
+  );
+}
+
+// ===== MOBILE TAB BAR =====
+// Spotify-style bottom nav so phones can jump between sections at a glance
+// (friend feedback: "need a menu bar to find everything at once"). Only renders
+// <=640px, where the top-bar links are hidden. Kept easy: 4 always-visible
+// destinations, no dropdown, no hamburger. Contact stays the top-bar pill.
+function MobileTabBar() {
+  const tabs = [
+    ["Work", "#work", "M8 5v14l11-7z", false],
+    ["Timeline", "#timeline", "M12 3v18M6 7h10M6 12h8M6 17h6", false],
+    ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2", false],
+    ["Resume", "/Miles-Spearman-Resume.pdf", "M7 3h7l4 4v14H7zM14 3v5h4M9.5 13h5M9.5 16.5h5", true],
+  ];
+  return (
+    <nav className="mobile-tabbar" aria-label="Sections">
+      {tabs.map(([label, href, d, ext]) => (
+        <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+          <span>{label}</span>
+        </a>
+      ))}
     </nav>
   );
 }
@@ -2152,6 +2176,30 @@ export default function Portfolio() {
         }
         @media (max-width: 900px) { .tl-brands { white-space: normal !important; overflow: visible !important; } }
         @media (max-width: 640px) { .nav-links { display: none !important; } }
+        /* Mobile section nav — Spotify-style bottom tab bar (friend: "menu bar to
+           find everything at once"). Only on phones, where the top links are hidden. */
+        .mobile-tabbar { display: none; }
+        @media (max-width: 640px) {
+          .mobile-tabbar {
+            display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 1300;
+            background: rgba(10,10,10,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid ${C.border}; padding-bottom: env(safe-area-inset-bottom);
+          }
+          .mobile-tabbar a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 4px; min-height: 54px; text-decoration: none; color: ${C.gray};
+            font: 600 10px/1 'Outfit', sans-serif; letter-spacing: 0.2px; -webkit-tap-highlight-color: transparent;
+            transition: color 0.15s;
+          }
+          .mobile-tabbar a:active { color: ${C.mint}; }
+          /* keep page content clear of the fixed tab bar */
+          .app-root { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+          /* the player's sticky transport stacks ABOVE the tab bar (Spotify pattern) */
+          .sp-bar { bottom: calc(56px + env(safe-area-inset-bottom)) !important; }
+        }
+        /* section jumps land below the fixed top nav, not tucked under it */
+        #about, #what-i-do, #work, #timeline { scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
         .sp-shell { scroll-margin-top: 84px; }
         .shelf-row { scrollbar-width: none; }
         .shelf-row::-webkit-scrollbar { display: none; }
@@ -2189,6 +2237,7 @@ export default function Portfolio() {
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; }
           .shelf-card-play { opacity: 1 !important; transform: translateY(0) !important; }
+          .wall-card .wall-play { opacity: 1 !important; transform: translate(-50%,-50%) scale(0.85) !important; }
           .nav-connect { min-height: 44px !important; }
           .tl-card { position: relative; }
           .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
@@ -2201,13 +2250,14 @@ export default function Portfolio() {
         a:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
       `}</style>
 
-      <div style={{ background: C.bg, minHeight: "100vh", color: C.white }}>
+      <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
         {/* Film grain */}
         <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 9999, opacity: 0.035,
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }} />
 
         <Nav />
+        <MobileTabBar />
 
         {/* ===== OPENING WALL ===== */}
         <OpeningWall />
