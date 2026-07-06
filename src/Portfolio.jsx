@@ -77,6 +77,7 @@ const EVENT_ROLES = {
   "Photoshop Archives": "Produced",
   "’25 IBC Amsterdam": "Hosted & on-camera talent",
   "Brand Partnerships": "Produced with the Social Creative Studio team",
+  "Adobe × NFL": "Produced in partnership with the NFL",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
 };
@@ -85,6 +86,7 @@ const EVENT_ROLES = {
 // Brand roster surfaced on the timeline node (recruiter-legible names, one quiet line — not a badge grid).
 const EVENT_BRANDS = {
   "Brand Partnerships": "Adobe × NWSL · Marvel · Golden State Warriors · Photoshop",
+  "Adobe × NFL": "Official Creativity Partner",
 };
 // Per-album Workfront-brief lines shown when an album group unfolds in a drawer.
 // Restored Jul 5 — was accidentally dropped in commit 7175fb7, causing a runtime
@@ -300,10 +302,15 @@ const portfolio = [
     event: "Brand Partnerships",
     reels: [
       { title: "Kelley O'Hara x NWSL x Adobe", sub: "@adobe · 12.7K likes · Nov 17, 2025", plays: "366.7K", role: "In-house production: produced & creatively directed", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Kelley-Ohara_11.17.25.mp4", postUrl: "https://www.instagram.com/p/DRLSGTLgiZS/" },
-      { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", role: "Produced", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
       { title: "Photoshop x Marvel: Eyes of Wakanda", sub: "@photoshop · 2.7K likes · Sep 8, 2025", plays: "299K", mp4: "/reels/2025/Brand-Partnerships/Marvel-Eyes-of-Wakanda-Photoshop_9.8.25.mp4", postUrl: "https://www.instagram.com/reel/DOWitx1Afr1/" },
       { title: "Adobe x NWSL: 2025 Creator Club", sub: "@adobe · 896 likes · Aug 12, 2025", plays: "2.7M", mp4: "/reels/2025/Brand-Partnerships/NWSL-Creator-Club_8.12.25.mp4", postUrl: "https://www.instagram.com/reel/DNRX89SpIkC/" },
       { title: "Adobe x Golden State Warriors: Creative Threads", sub: "@adobe · 1.5K likes · May 23, 2025", plays: "225.2K", mp4: "/reels/2025/Brand-Partnerships/GSW-Creative-Threads_5.23.25.mp4", postUrl: "https://www.instagram.com/reel/DKAz21sPv0q/" },
+    ],
+  },
+  {
+    event: "Adobe × NFL",
+    reels: [
+      { title: "NFL x Adobe: Behind the Lens (LCC)", sub: "@adobe · 108 likes · Jun 8, 2026", plays: "484.9K", landscape: true, mp4: "/reels/2026/Made-to-Create/Behind-the-Lens-NFL-LCC.mp4", postUrl: "https://youtu.be/emLfQR3DPME" },
     ],
   },
   {
@@ -358,7 +365,7 @@ const LIBRARY_OF = {
   "’24 IBC Amsterdam": "Events", "’25 IBC Amsterdam": "Events", // Cannes pulled Jul 4 (Miles)
   "Employee Spotlights: Season 1": "Evergreen", "Employee Spotlights: Season 2": "Evergreen", "Employee Spotlights: Season 3": "Evergreen",
   "’26 Summit": "Events", "Artist Spotlights": "Evergreen", "Always-On": "Evergreen", "Photoshop Archives": "Evergreen",
-  "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen",
+  "Side Projects": "Evergreen", "Brand Partnerships": "Evergreen", "Adobe × NFL": "Evergreen",
   "Miles Music Media": "Off The Clock", "Miles.Spearman": "Off The Clock",
 };
 const LIB_ORDER = ["Events", "Evergreen", "Off The Clock"];
