@@ -494,7 +494,7 @@ const capabilities = [
   {
     img: "/thumbs/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.jpg", imgPos: "50% 22%", title: "Making B2B Social Friendly",
     meta: "Exec Leadership, Customer Stories & Hot Takes",
-    body: "A one stop shop for my B2B work, organized the way recruiters look: hosting (Adobe Summit), customer stories (Intuit, Wyndham Hotels), exec thought leadership, and product releases. Pitched, produced, directed, and coached, concept to published. Making B2B social friendly.",
+    body: "My B2B social work at Adobe, end to end: hosting at Adobe Summit, customer stories with Intuit and Wyndham Hotels, executive thought leadership, and product releases. I pitch, produce, direct, and coach the talent, from concept to published. Making B2B social friendly.",
     linkUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN", linkLabel: "Play: Customer Story →",
   },
   {
@@ -2163,7 +2163,7 @@ function Nav() {
       <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
         <span className="nav-links" style={{ display: "flex", gap: 28, alignItems: "center" }}>
-          {[["About", "#about", false], ["What I Do", "#what-i-do", false], ["Work", "#work", false], ["Timeline", "#timeline", false], ["Resume", "/Miles-Spearman-Resume.pdf", true]].map(([label, href, ext]) => (
+          {[["About", "#about", false], ["What I Do", "#what-i-do", false], ["Work Playlist", "#work", false], ["Timeline", "#timeline", false], ["Resume", "/Miles-Spearman-Resume.pdf", true]].map(([label, href, ext]) => (
             <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
               onMouseLeave={e => e.target.style.color = C.gray}
