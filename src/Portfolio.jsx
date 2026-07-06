@@ -280,7 +280,7 @@ const portfolio = [
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
       { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "@adobe · 94 likes · May 29, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://www.linkedin.com/posts/adobe-for-business_inside-adobe-summit-sneaks-2026-activity-7466192897889996800-UEnr" },
-      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "YouTube · Apr 30, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
+      { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "YouTube · Apr 30, 2026", plays: "766", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
       { title: "’26 Summit: Anil Chakravarthy Exec Interview", sub: "LinkedIn · Apr 17, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.mp4", postUrl: "https://www.linkedin.com/posts/adobe_adobe-summit-anil-chakravarthy-ugcPost-7451028793734926336-5JmJ" },
     ],
   },
@@ -577,7 +577,7 @@ const capabilities = [
     linkUrl: "https://www.instagram.com/reel/DH9hfTmBvr-/", linkLabel: "Play: ’25 Summit Vegas →",
   },
   {
-    img: "/cards/content-strategy.jpg", imgPos: "50% 27%", title: "Content Strategy, Concept to Published",
+    img: "/cards/content-strategy.jpg", imgPos: "50% 40%", title: "Content Strategy, Concept to Published",
     meta: "IBC · MAX · Summit · 2024–2026",
     body: "“Make the Firefly Video product release fun” was my brief. So as a creative producer on this piece, I built content strategy with PMMs, PR, and editorial, then wrote the scripts myself. The proof is a format: emoji reactions, 1.5M at IBC 2024, repeated at NAB and Summit.",
     linkUrl: "https://www.instagram.com/reel/DJC2KUPPwh3/", linkLabel: "Play: ’24 IBC Amsterdam →",
@@ -597,7 +597,7 @@ const capabilities = [
   {
     img: "/thumbs/2026/Miles-Music-Media/Happy-100th-Birthday-Miles-Davis_5.25.26.jpg", imgPos: "50% 30%", title: "Staying Busy Off The Clock",
     meta: "@MilesMusicMedia IG & MilesSpearman YT",
-    body: "Off the clock I'm a creator myself: jazz history lessons and trumpet performances on @milesmusicmedia, plus my own YouTube channel. Brainstormed, researched, shot, scripted, edited, and posted as a one-person production.",
+    body: "Off the clock I'm a creator myself: jazz history lessons and trumpet performances on @milesmusicmedia, plus my own YouTube channel. Brainstormed, researched, shot, scripted, edited, and posted as a one-person production. It keeps me fluent in how creators actually build an audience.",
     linkUrl: "https://www.instagram.com/milesmusicmedia/", linkLabel: "Play: Miles Music Media →",
   },
 ];
@@ -1443,7 +1443,7 @@ function WorkPlayer() {
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
                   <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
                   {viewing.pinned && viewing.reels.some(r => !r.plays) && (
-                    <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn doesn't publish view counts — those reels show N/A.</p>
+                    <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn doesn't publish view counts, so those reels show N/A.</p>
                   )}
                 </div>
               </div>
@@ -1526,13 +1526,13 @@ function WorkPlayer() {
                     <div style={{ position: "absolute", inset: 0, borderRadius: 12, background: "rgba(10,10,10,0.88)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 20, textAlign: "center" }}>
                       <span style={{ fontSize: 26 }}>🎬</span>
                       <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: 0, lineHeight: 1.5 }}>This file hasn't landed on the server yet.</p>
-                      <a href={cur.postUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 18px", borderRadius: 100, textDecoration: "none" }}>Watch on Instagram ↗</a>
+                      <a href={cur.postUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 18px", borderRadius: 100, textDecoration: "none" }}>Watch on {platformOf(cur)} ↗</a>
                     </div>
                   )}
                 </div>
                 <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white, margin: "12px 0 2px" }}>{cur.title}</p>
                 <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: 0 }}>{subTag(cur)}</p>
-                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{cur.role || EVENT_ROLES[portfolio[track.e].event] || ""}</p>
+                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{cur.role || EVENT_ROLES[(portfolio[track.e].pinned && reelIndexByTitle(cur.title)) ? portfolio[reelIndexByTitle(cur.title).e].event : portfolio[track.e].event] || ""}</p>
               </div>
             )}
           </div>
@@ -1860,7 +1860,7 @@ function CareerTimeline() {
               {showYear && (
                 <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 82%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)}</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)} plays</span>
                 </div>
               )}
               <div style={{ position: "relative", marginBottom: 14 }}>
@@ -1911,7 +1911,7 @@ function PlaylistShelf() {
   return (
     <section id="library" style={{ padding: "36px 0 12px clamp(24px, 5vw, 80px)" }}>
       {LIB_ORDER.map(lib => (
-        <ShelfRow key={lib} title={`${lib} Library`} items={eventStats.filter(ev => LIBRARY_OF[ev.event] === lib)} />
+        <ShelfRow key={lib} title={`${lib} Library`} items={eventStats.filter(ev => LIBRARY_OF[ev.event] === lib && !ev.pinned)} />
       ))}
     </section>
   );
@@ -2061,7 +2061,7 @@ function SpecialtyDrawer({ cap, onClose, onSwitch }) {
             {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.82)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: 340 }}>{desc}</p>}
             {!h.reel.plays && h.reel.postUrl?.includes("linkedin.com") && (
               <p style={{ fontFamily: F, fontSize: 11.5, color: C.gray, lineHeight: 1.5, margin: "8px 0 0", maxWidth: 340 }}>
-                Posted on LinkedIn, which doesn't publish view counts — plays show N/A.</p>
+                Posted on LinkedIn, which doesn't publish view counts, so plays show N/A.</p>
             )}
             <a href={h.reel.postUrl} target="_blank" rel="noreferrer"
               style={{ display: "inline-block", fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
