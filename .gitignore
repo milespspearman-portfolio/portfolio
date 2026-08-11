@@ -1,0 +1,18 @@
+node_modules
+dist
+.DS_Store
+.claude/
+.~lock.*
+HANDOFF-*.md
+MILES-COPY-MARKUP.md
+TITLE-PROPOSALS.md
+WORKFRONT-BRIEF-COLLECTOR.md
+PERSONAL-CONTENT-SCOUT.md
+
+# internal working docs — never public
+/*.md
+!README.md
+research/
+
+# retired until Miles re-exports (old title) — file stays local
+public/Miles-Spearman-Resume.pdf
