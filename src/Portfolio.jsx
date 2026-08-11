@@ -94,6 +94,50 @@ function WatchFrame({ reel, radius = 12, minH }) {
   );
 }
 
+// ===== PROSE (Aug 10 2026) — the description presentation layer =====
+// Spec: research/DESCRIPTION-FORMATTING-SPEC-2026-08-10.md. Miles's ask was
+// "each sentence is their own paragraph"; the research landed on one IDEA per
+// paragraph (NN/G), which on his own copy is his instinct minus one break.
+//
+// TWO NUMBERS THIS FIXES, both measured on his running dev server:
+//  - `60ch` in Outfit renders ~88 real characters, not 60. CSS `ch` measures the
+//    `0` glyph, which in this font is ~47% wider than the average prose
+//    character. 88 is over Baymard's 75 and over WCAG 1.4.8's 80 ceiling.
+//    Conversion for Outfit: real chars ≈ ch × 1.47, so 46ch ≈ 68 characters.
+//    Hard ceiling is 54ch (80 chars) — never write more.
+//  - A 10px paragraph gap against a 23.25px line-height is 0.43 of a line. That
+//    does not read as a paragraph break, it reads as a loose line. 1.5em ≈ one
+//    full line-height, which is what makes a chunk look like a chunk.
+//
+// Takes an authored ARRAY (breaks Miles chose) or a plain STRING (breaks derived
+// at sentence boundaries). That split matters: BUCKET_INTROS reads its strings
+// out of `capabilities[].body` specifically so the role page renders the same
+// bytes he wrote, so the breaking happens in the renderer and the data stays
+// byte-identical. If a body ever needs two sentences riding together, author
+// that entry as an array — which is why this takes both.
+// The lookahead needs whitespace + a capital, so decimals survive ("2.6M plays"
+// has no space after the period). It would mis-split "U.S. Bank"; none exists,
+// and array-authoring is the escape hatch if one ever does.
+const SENTENCE_SPLIT = /(?<=[.!?])\s+(?=[A-Z“"'(])/;
+function Prose({ text, as = "div", size = 15, gap = "1.5em", measure = "46ch", color = "rgba(255,255,255,0.84)", lh = 1.55, style }) {
+  const paras = Array.isArray(text) ? text : String(text).split(SENTENCE_SPLIT);
+  // `as="span"` exists because one caller sits inside an <a>, where <div><p>
+  // would be invalid nesting. Same look, legal DOM.
+  const Wrap = as, Para = as === "span" ? "span" : "p";
+  const paraStyle = (n) => ({ fontFamily: F, fontSize: size, color, lineHeight: lh, textWrap: "pretty", margin: n ? `${gap} 0 0` : 0, ...(as === "span" ? { display: "block" } : null) });
+  // fontFamily + fontSize on the WRAPPER are load-bearing, not decoration.
+  // `ch` resolves against the font of the element it is written on. The measure
+  // lives on this wrapper, so without these the browser sizes `46ch` using the
+  // inherited fallback font's zero glyph (8.0px here) instead of Outfit's
+  // (9.84px) — a 368px column instead of 453px, ~52 characters instead of ~64.
+  // Caught by measuring the rendered line, not by reading the CSS.
+  return (
+    <Wrap style={{ fontFamily: F, fontSize: size, maxWidth: measure, ...(as === "span" ? { display: "block" } : null), ...style }}>
+      {paras.map((p, n) => <Para key={n} style={paraStyle(n)}>{p}</Para>)}
+    </Wrap>
+  );
+}
+
 const GRADS = [
   ["#0C4A2E", "#1ED760"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
 ];
@@ -409,6 +453,15 @@ const roleChipsOf = (r) => {
 // The MAX split, verbatim from the same email (only "During" recapitalized at
 // the head of the sentence). Case text on the MAX event playlists' headers.
 const MAX_SPLIT = "During the event itself we're at 12 to 15 deliverables in four days, so the hero sizzles go to our agency and I concept, host and direct those. The pre-show and post-show content is mine end to end.";
+// The split is TWO sentences and the second one — "The pre-show and post-show
+// content is mine end to end" — is the sharpest line in it. Rendered as one
+// block it sits in the tail position, which is exactly where NN/G's one-idea
+// finding says a second idea gets skipped. So it renders as two paragraphs
+// everywhere, DERIVED from the single string rather than retyped, because his
+// wording must exist in this file exactly once. `MAX_SPLIT` itself is
+// byte-unchanged and still works anywhere it is used whole.
+// Safe split: the string carries no decimals and no abbreviations (checked).
+const MAX_SPLIT_PARAS = MAX_SPLIT.split(/(?<=\.)\s+/);
 // Aug 10 panel review: printed on all three MAX playlists it landed verbatim
 // three times on one page and read as boilerplate by the third. It says one
 // true thing about how a MAX run splits, so it is said ONCE — on '25 MAX LA,
@@ -584,23 +637,49 @@ const CASE_TEXTS = {
   // way to the goal of the campaign, and the companion piece is now described by
   // what it followed rather than what it taught. His words, assembled in his
   // order. Paragraph 2 is his signed text from Aug 9, untouched.
+  // RE-SPLIT Aug 10 per research/DESCRIPTION-FORMATTING-SPEC-2026-08-10.md §D1.
+  // Words, spelling and sentence ORDER are byte-identical to the two-paragraph
+  // version above it — only the break positions moved. The rule is one IDEA per
+  // paragraph (NN/G), which lands one break short of his strict
+  // sentence-per-paragraph instinct here: sentences 1 and 2 are a setup pair and
+  // "The goal:" has no referent without the sentence before it, so they ride
+  // together. His credit opens paragraph 3 and the metric is paragraph 4 alone,
+  // which is what puts both in the position a scanner actually reads.
+  // TO TAKE HIS STRICT VERSION: split paragraph 1 at "The goal:" → 5 paragraphs.
   "Brand Partnerships": [
-    "The 2025 NWSL Creator Club was a partnership between Adobe and the NWSL. The goal: get fans creating with Adobe Express by making team pride the on-ramp. USWNT star Kelley O'Hara carried it on camera, and a companion piece followed her from the pitch to producing.",
-    "My part ran from the pitch to the concept to directing the talent, working with O'Hara and her team alongside a freelance crew. The Creator Club reel reached 2.7M plays on @adobe.",
+    "The 2025 NWSL Creator Club was a partnership between Adobe and the NWSL. The goal: get fans creating with Adobe Express by making team pride the on-ramp.",
+    "USWNT star Kelley O'Hara carried it on camera, and a companion piece followed her from the pitch to producing.",
+    "My part ran from the pitch to the concept to directing the talent, working with O'Hara and her team alongside a freelance crew.",
+    "The Creator Club reel reached 2.7M plays on @adobe.",
   ],
   // Aug 10, three paragraphs now: a new opener he wrote naming the problem the
   // format solved, his signed Aug-9 body unchanged in the middle, and a closer
   // he revised to name where the franchise actually travelled. The only touch
   // on his closer is one word: his raw line read "Summit's after", set here as
   // "the Summits after" so the possessive does not read as a typo on the page.
+  // RE-SPLIT Aug 10 per the same spec, §D2. Words byte-identical, breaks only.
+  // The one merge: the last two sentences are the result pair — the number, then
+  // what the number led to — so they ride together. The metric still OPENS that
+  // paragraph, which is the requirement. This is also the one case text where
+  // the metric is not the final sentence: his franchise line closes it, and that
+  // is his ordering, so it stays. The merge is what makes his closer read as one
+  // deliberate result beat instead of a stray addendum.
+  // TO TAKE HIS STRICT VERSION: split paragraph 4 after "@adobeacrobat."
   "’25 Summit Vegas": [
     "One-off influencer posts do not scale, so Adobe's flagship events needed a repeatable hosted format instead of a new idea every show.",
-    "The Acrobat Escape Room was a real escape room built on the Summit 2025 show floor, solved on camera with AI Assistant doing the code-cracking. I pitched the concept, wrote the script and hosted it, one of nine posts shipped across a three-day show with T13 on production. The Escape Room reel reached 2.6M plays on @adobeacrobat.",
-    "This started a franchise that continued for all future events including MAX London and the Summits after.",
+    "The Acrobat Escape Room was a real escape room built on the Summit 2025 show floor, solved on camera with AI Assistant doing the code-cracking.",
+    "I pitched the concept, wrote the script and hosted it, one of nine posts shipped across a three-day show with T13 on production.",
+    "The Escape Room reel reached 2.6M plays on @adobeacrobat. This started a franchise that continued for all future events including MAX London and the Summits after.",
   ],
+  // RE-SPLIT Aug 10 per the same spec, §D3 — and this one is his strict instinct
+  // EXACTLY: five ideas, five paragraphs, no merge. Where his rule was right the
+  // spec agrees with him. The split sentence spreads via MAX_SPLIT_PARAS so his
+  // "mine end to end" line stops being the tail of a 38-word block.
   "’25 MAX LA": [
-    MAX_SPLIT,
-    "MAX 2025 was hosted in LA and we ran a creator assignment series with James Gunn, Mark Rober and Jessica Williams: ten-minute slots, no second takes, every talking track written by me and approved before the talent walked in. I wrote those tracks with strategy and directed the talent on camera, with Addison Interactive on production. The Rober reel reached 2.2M plays on @adobe.",
+    ...MAX_SPLIT_PARAS,
+    "MAX 2025 was hosted in LA and we ran a creator assignment series with James Gunn, Mark Rober and Jessica Williams: ten-minute slots, no second takes, every talking track written by me and approved before the talent walked in.",
+    "I wrote those tracks with strategy and directed the talent on camera, with Addison Interactive on production.",
+    "The Rober reel reached 2.2M plays on @adobe.",
   ],
 };
 // (The role-page summary map that used to sit here now lives right after
@@ -2155,7 +2234,7 @@ function WorkPlayer() {
                     header width (last child, 100% basis) instead of towering in
                     the text column beside the cover. Never truncated. */}
                 {MAX_SPLIT_PLAYLISTS.includes(viewing.event) && (
-                  <p style={{ flexBasis: "100%", fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.84)", lineHeight: 1.55, maxWidth: "60ch", margin: "14px 0 0" }}>{MAX_SPLIT}</p>
+                  <Prose text={MAX_SPLIT_PARAS} style={{ flexBasis: "100%", margin: "14px 0 0" }} />
                 )}
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
@@ -2909,7 +2988,11 @@ function B2BStrip() {
         <span style={{ minWidth: 0, flex: 1 }}>
           <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em" }}>{cap.meta}</span>
           <span style={{ display: "block", fontFamily: F, fontSize: 18, fontWeight: 800, color: C.white, letterSpacing: -0.3, margin: "5px 0 0" }}>{ev.event}</span>
-          <span style={{ display: "block", fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.84)", lineHeight: 1.55, margin: "7px 0 0", maxWidth: "70ch" }}>{cap.body}</span>
+          {/* as="span": this sits inside an <a>, so <div><p> would be invalid
+              nesting. 70ch was the widest prose on the site at ~103 real
+              characters; 46ch brings it to ~68. His body string is untouched —
+              Prose derives the breaks. */}
+          <Prose as="span" text={cap.body} style={{ margin: "7px 0 0" }} />
           <span style={{ display: "block", fontFamily: F, fontSize: 13, color: C.gray, margin: "7px 0 0", fontVariantNumeric: "tabular-nums" }}>
             {ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}
           </span>
@@ -3120,7 +3203,11 @@ function BucketIntro({ bucket }) {
   const copy = BUCKET_INTROS[bucket];
   if (!copy) return null;
   return (
-    <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "0 0 34px", maxWidth: "60ch", borderLeft: `3px solid ${C.mint}`, paddingLeft: 16 }}>{copy}</p>
+    // All four intros are exactly 3 clean sentences with no setup or result
+    // pair among them (checked individually), so the derived split gives one
+    // idea per paragraph. They were the worst wall on the site: 3 sentences in
+    // one solid block behind a mint rule.
+    <Prose text={copy} lh={1.6} style={{ margin: "0 0 34px", borderLeft: `3px solid ${C.mint}`, paddingLeft: 16 }} />
   );
 }
 
@@ -3179,9 +3266,9 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
                 style={{ width: reel.landscape ? "100%" : "min(100%, 240px)", aspectRatio: reel.landscape ? "16 / 9" : "9 / 16", objectFit: reel.landscape ? "contain" : "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
                 onError={e => { e.currentTarget.style.display = "none"; }} />
               )}
-              {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: "60ch" }}>{desc}</p>}
+              {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: "46ch" }}>{desc}</p>}
               {!reel.plays && (
-                <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.5, margin: "8px 0 0", maxWidth: "60ch" }}>
+                <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.5, margin: "8px 0 0", maxWidth: "46ch" }}>
                   LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
               )}
               <a href={reel.postUrl} target="_blank" rel="noopener noreferrer"
@@ -3254,13 +3341,9 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
             '25 MAX LA that draft opens WITH the MAX split sentence, so the
             sentence renders once on this page, not twice. */}
         {mirror ? null : CASE_TEXTS[ev.event] ? (
-          <div style={{ flexBasis: "100%", margin: "10px 0 0", maxWidth: "60ch" }}>
-            {CASE_TEXTS[ev.event].map((para, n) => (
-              <p key={n} style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.84)", lineHeight: 1.55, margin: n ? "10px 0 0" : 0 }}>{para}</p>
-            ))}
-          </div>
+          <Prose text={CASE_TEXTS[ev.event]} style={{ flexBasis: "100%", margin: "10px 0 0" }} />
         ) : MAX_SPLIT_PLAYLISTS.includes(ev.event) && (
-          <p style={{ flexBasis: "100%", fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.84)", lineHeight: 1.55, maxWidth: "60ch", margin: "6px 0 0" }}>{MAX_SPLIT}</p>
+          <Prose text={MAX_SPLIT_PARAS} style={{ flexBasis: "100%", margin: "6px 0 0" }} />
         )}
       </header>
       <div style={{ paddingTop: 8 }}>
