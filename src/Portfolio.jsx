@@ -1724,7 +1724,7 @@ function CatalogTile({ reel }) {
 }
 
 function SetList() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(-1);
   const tiles = useRef([]);
   const ratios = useRef(new Map());
   const io = useRef(null);
@@ -1749,7 +1749,7 @@ function SetList() {
         entries.forEach(en => ratios.current.set(en.target, en.intersectionRatio));
         let best = 0, bestIdx = -1;
         tiles.current.forEach((el, i) => { const r = el ? (ratios.current.get(el) || 0) : 0; if (r > best) { best = r; bestIdx = i; } });
-        if (bestIdx >= 0) setActive(bestIdx);
+        setActive(bestIdx);
       }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
     }
     return io.current;
@@ -3917,10 +3917,18 @@ export default function Portfolio() {
           .set-grid > *:nth-child(1), .set-grid > *:nth-child(2) { grid-column: span 3; }
           .set-grid > *:nth-child(3), .set-grid > *:nth-child(4), .set-grid > *:nth-child(5) { grid-column: span 2; }
         }
-        @media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 640px) {
-          .set-grid { grid-template-columns: 1fr; }
+        @media (max-width: 900px) {
+          .cat-grid { grid-template-columns: repeat(3, 1fr); }
+          /* Mobile-gate fix 2: the 641-900 band (iPhone landscape, iPad mini
+             portrait) kept the 3+2 span layout, whose ~200px prose columns are
+             the same broken measure the 1400 step exists to prevent. */
+          .set-grid { grid-template-columns: repeat(2, 1fr); }
           .set-grid > * { grid-column: span 1 !important; }
+        }
+        @media (max-width: 640px) {
+          .set-grid { grid-template-columns: 1fr; row-gap: 28px; }
+          .set-grid > * { grid-column: span 1 !important; }
+          .cat-bar { font-size: 11px !important; padding: 16px 8px 28px !important; }
         }
         /* Tier-2 title bar: hover reveals it on a desktop. On touch there is no
            hover, so it is simply always up: a tile you cannot name is not a
