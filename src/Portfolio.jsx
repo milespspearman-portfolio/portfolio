@@ -468,6 +468,22 @@ const MAX_SPLIT_PARAS = MAX_SPLIT.split(/(?<=\.)\s+/);
 // where the case text already absorbs it (the absorb branch below wins, so it
 // still never renders twice on that playlist).
 const MAX_SPLIT_PLAYLISTS = ["’25 MAX LA"];
+// ===== MILES'S MAX GOAL CLAUSE (Aug 11 2026) =====
+// His pick, in chat at ~3:21 AM: "max clause 1" — option 1 of the two
+// byte-exact options in research/HOMEWORK-2026-08-10.md §B, carried into
+// research/DECISION-BATCH-2026-08-11.md Q5. Copied character for character
+// from that doc; nothing here is reworded, and no existing MAX word moved.
+// The homework's stated mechanism is that a goal clause PREPENDS the case text
+// as its opening line, so it becomes a new leading paragraph and the case text
+// that follows is untouched. With this, all three case texts open on the goal
+// (NWSL and Escape Room already did), which was tyler-lens's 3/3 note.
+const MAX_GOAL_CLAUSE = "The goal: carry MAX's launches past the venue by putting them in creators' voices.";
+// The MAX case, wherever it renders. There are TWO render sites in this file —
+// the player's album header (MAX_SPLIT_PLAYLISTS branch) and the playlist
+// section header on the role pages — and the clause has to open BOTH, so both
+// read this one array instead of MAX_SPLIT_PARAS directly. CASE_TEXTS below
+// spreads it too, so the clause exists in exactly one place.
+const MAX_CASE_PARAS = [MAX_GOAL_CLAUSE, ...MAX_SPLIT_PARAS];
 // External production partners per playlist — Miles's locked map (Jul 4),
 // Audrey pattern: share the agency. Only Miles-confirmed credits appear.
 // Brand roster surfaced on the timeline node (recruiter-legible names, one quiet line — not a badge grid).
@@ -525,6 +541,15 @@ const EVENT_CREDITS = {
   "’25 MAX London": ["Agency: Workhouse"],
   "’25 MAX LA": ["Agency: Addison Interactive"],
   "’26 Summit": ["Agency: Addison Interactive"],
+  // Aug 11 2026 — Miles answering Q6a of the decision batch, his words verbatim:
+  // "T13 shot and edited". T13 is already a locked PARTNER-MAP name (it credits
+  // the '24 MAX Miami and '25 Summit Vegas playlists above), so no new name
+  // enters the site here; only the role changes, because on the Archives they
+  // did camera and post rather than the whole production. Set in the same
+  // "Role: Name" grammar every other credit line uses. His exact phrasing was a
+  // sentence, so the ROLE is written the way the site writes roles and the words
+  // are his ("shot and edited" -> "Shot & Edited"); flagged for his glance.
+  "Photoshop Archives": ["Shot & Edited: T13"],
   // The map's "Be You (series)" row — the site's public name for it is
   // Employee Spotlights (the codename stays private, Miles Jul 4).
   "Employee Spotlights: Season 1": ["Editor: Tim Forster", "Graphic Designer: Didima Arrieta Martinez"],
@@ -675,8 +700,11 @@ const CASE_TEXTS = {
   // EXACTLY: five ideas, five paragraphs, no merge. Where his rule was right the
   // spec agrees with him. The split sentence spreads via MAX_SPLIT_PARAS so his
   // "mine end to end" line stops being the tail of a 38-word block.
+  // Aug 11 2026: MAX_CASE_PARAS replaces MAX_SPLIT_PARAS here, which prepends
+  // his goal clause as the opening paragraph (Change 2, his pick "max clause 1").
+  // Everything after it is byte-unchanged.
   "’25 MAX LA": [
-    ...MAX_SPLIT_PARAS,
+    ...MAX_CASE_PARAS,
     "MAX 2025 was hosted in LA and we ran a creator assignment series with James Gunn, Mark Rober and Jessica Williams: ten-minute slots, no second takes, every talking track written by me and approved before the talent walked in.",
     "I wrote those tracks with strategy and directed the talent on camera, with Addison Interactive on production.",
     "The Rober reel reached 2.2M plays on @adobe.",
@@ -1480,6 +1508,296 @@ const REEL_DESCS = {
   "’26 Summit: Anil Chakravarthy Exec Interview": "We asked Adobe's President of Customer Experience Orchestration Business, Anil Chakravarthy, some burning questions about AI ahead of Adobe Summit. Here's the real talk on agentic AI.",
 };
 
+// ===== "WHY IT MATTERED" (Aug 11 2026) — Semaphore =====
+// Q7 of research/DECISION-BATCH-2026-08-11.md. Tyler's frame was "it can be
+// projects that were the most challenging", and the Semaphore is the one pick
+// whose number is small on purpose. Miles's answer, ~3:21 AM: "line 1 + his add
+// 'NYC & San Jose Shoot'". Both strings are copied byte for byte — line 1 from
+// Q7 draft (1), which was itself grounded only in the existing description, and
+// the second is his own addition, typed as he typed it.
+// TWO STRINGS, two registers: the first is the reason, the second is a
+// production detail, so it renders smaller and quieter beneath it (the same
+// gray the site uses for meta lines) rather than as a second claim.
+const SEMAPHORE_WHY = [
+  "A three-year puzzle on Adobe's own tower finally cracked, and I produced the story.",
+  "NYC & San Jose Shoot",
+];
+// Keyed by reel title so the pattern is data, not a hardcoded branch: any reel
+// Miles later writes a why-line for is one entry here and renders everywhere
+// this map is read (the Set List tile + the expanded track row).
+const REEL_WHY = {
+  "San Jose Semaphore": SEMAPHORE_WHY,
+};
+
+// ===== THE SET LIST (Aug 11 2026) — the homepage work section =====
+// Heading is Miles's own ("i love the set list"). Layout is mock D, his pick at
+// ~3:32 AM after a first pass at C: "sorry im in love with D, maybe do that?...
+// as long as we make it so the links hyper link to the full playlist, or the way
+// the bottom is organized makes sense". Visual target:
+// research/mock-2026-08-11-d.html.
+//
+// D = TWO TIERS. Five featured works as IG-native 3:4 tiles, each carrying its
+// own write-up, then the rest of the catalog beneath them as art + title + count
+// and nothing else. The demoted tier is deliberately thin: tyler-lens's rule is
+// that a fill tile with no description is only honest if it stops pretending to
+// be a case, so down there it is a link, not a claim.
+//
+// WHAT LEFT THIS SLOT: the full 23-playlist WorkPlayer and the four shelf
+// carousels. Neither was deleted — both still render at #/playlist, which is now
+// the only place the Spotify shell lives. The homepage had been showing the
+// entire library twice over before a reader had been given a reason to care
+// about any single piece of it.
+//
+// HIS ROUTING CONSTRAINT, absolute: "i just don't think for D, we should be
+// linking outside of the portfolio." Every tile in both tiers is an in-site
+// link. No tile carries a postUrl.
+const SET_LIST_TITLES = [
+  "Adobe x NWSL: 2025 Creator Club",
+  "’25 Summit: Acrobat Escape Room",
+  "’25 MAX: Mark Rober’s Creator Assignment",
+  "’24 IBC: Premiere Pro AI: Emoji Reactions",
+  "San Jose Semaphore",
+];
+// Indices DERIVED by title lookup, the pinned-mirror pattern the B2B strip and
+// the Cut by Me sections already use — these are references into the one reel
+// table, never copied rows, so a play count or a file path changes in exactly
+// one place. A title that stops matching drops out rather than rendering blank.
+const SET_LIST_ITEMS = SET_LIST_TITLES
+  .map(t => { const at = reelIndexByTitle(t); return at ? { ...at, reel: portfolio[at.e].reels[at.r] } : null; })
+  .filter(Boolean);
+
+// ===== THE FIVE WRITE-UPS — selection, not authorship =====
+// Every paragraph is LIFTED whole from copy that already exists in this file.
+// Nothing is retyped, re-split, trimmed inside a sentence, or newly written.
+// What follows documents WHICH paragraphs each tile takes and why:
+//
+//   NWSL     CASE_TEXTS["Brand Partnerships"]
+//              [0] his opener, which already carries "The goal:"
+//              [3] the metric paragraph
+//            (skipped: [1] the O'Hara companion piece and [2] his crew credit —
+//             both belong to the case page, neither is this reel's story)
+//   ESCAPE   CASE_TEXTS["’25 Summit Vegas"]
+//              [0] the goal-framed opener (the problem the format solved)
+//              [1] what the thing actually was
+//              [3] the metric paragraph, which carries his franchise line
+//            (skipped: [2], the credit paragraph)
+//   MAX      CASE_TEXTS["’25 MAX LA"]
+//              [0] his goal clause (Change 2 above)
+//              [3] what the thing actually was
+//              [5] the metric paragraph
+//            (skipped: [1] and [2], the split; [4], the credit paragraph)
+//   IBC      REEL_DESCS entry, whole, one paragraph
+//   SEMAPHORE REEL_DESCS entry, whole, one paragraph
+//
+// The goal-framed openers on ESCAPE and MAX are here on purpose: the mocks
+// trimmed them and tyler-lens's single note on treatment C was that dropping
+// them is what turns a case into a caption.
+const pickParas = (paras, idx) => idx.map(n => paras[n]).filter(Boolean);
+const SET_LIST_DESCS = {
+  "Adobe x NWSL: 2025 Creator Club": pickParas(CASE_TEXTS["Brand Partnerships"], [0, 3]),
+  "’25 Summit: Acrobat Escape Room": pickParas(CASE_TEXTS["’25 Summit Vegas"], [0, 1, 3]),
+  "’25 MAX: Mark Rober’s Creator Assignment": pickParas(CASE_TEXTS["’25 MAX LA"], [0, 3, 5]),
+  "’24 IBC: Premiere Pro AI: Emoji Reactions": pickParas([REEL_DESCS["’24 IBC: Premiere Pro AI: Emoji Reactions"]], [0]),
+  "San Jose Semaphore": pickParas([REEL_DESCS["San Jose Semaphore"]], [0]),
+};
+
+// The role chips a SINGLE reel earns, in the site's five-tab vocabulary. Same
+// clauses `roleTabsFor` runs per reel (D lights Concept/Script unless his column
+// says "no concept"; P, D, H light theirs; a cut credit lights Edited) — the
+// playlist's own role LINE is deliberately not consulted, because a tile makes a
+// claim about one video, not about the run it came from. No new mapping: the
+// names are ROLE_TABS, the hues are ROLE_TAB_COLORS, the tags are his.
+const reelRoleTabs = (r) => {
+  const t = tagsOf(r);
+  return [
+    t.includes("D") && !tagNoConcept(r),
+    t.includes("P"),
+    t.includes("D"),
+    t.includes("H"),
+    cutByMeReel(r),
+  ];
+};
+
+// ===== TIER 2 — the catalog =====
+// The next 15 by plays, DERIVED: every non-pinned reel in the table, minus the
+// featured five, sorted by its own play count. Nothing is hand-listed, so the
+// grid re-ranks itself the moment the data moves. Pinned playlists are skipped
+// for the same reason every derived total skips them (they mirror reels that
+// already live elsewhere, so including them would show the same tile twice).
+const CATALOG_COUNT = 15;
+const CATALOG_ITEMS = portfolio
+  .flatMap((ev, e) => (ev.pinned ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
+  .filter(x => !SET_LIST_TITLES.includes(x.reel.title))
+  .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays))
+  .slice(0, CATALOG_COUNT);
+
+// Where a tile goes. #/case/<slug> is the deep link this site already had, and
+// it now resolves to the full playlist with that reel selected and playing (see
+// routeFromHash) — which is literally his condition, "the links hyper link to
+// the full playlist". Slug is derived from the title by the same `slugify`
+// CASE_INDEX is built with, so a tile can only ever point at a real entry.
+const caseHref = (reel) => { const s = slugify(reel.title); return s && CASE_INDEX[s] ? `#/case/${s}` : "#/playlist"; };
+
+// The play glyph + count that rides the bottom-left of every tile, both tiers.
+function TilePlays({ reel }) {
+  return (
+    <span style={{
+      position: "absolute", left: 12, bottom: 10, display: "inline-flex", alignItems: "center", gap: 6,
+      fontFamily: F, fontSize: 13, fontWeight: 600, color: C.white, fontVariantNumeric: "tabular-nums",
+      textShadow: "0 1px 3px rgba(0,0,0,0.6)", pointerEvents: "none",
+    }}><IcPlay s={11} c={C.white} />{playsLabel(reel)}</span>
+  );
+}
+
+// ONE <video> in this whole section, mounted inside whichever featured tile is
+// active — the site's one-video law, kept the way the rest of the file keeps it.
+// Active = the tile with the most of itself on screen (phones, where the tiles
+// stack and you scroll through them one at a time), or the tile the pointer is
+// on (desktop, where all five are on screen at once and the hover is the tell).
+// Every other tile is its poster, which is what `thumbOf` exists for.
+function SetListTile({ item, live, onActivate, innerRef }) {
+  const reel = item.reel;
+  const tabs = reelRoleTabs(reel);
+  const paras = SET_LIST_DESCS[reel.title] || [];
+  const why = REEL_WHY[reel.title] || null;
+  return (
+    <div style={{ minWidth: 0 }}>
+      <a href={caseHref(reel)} ref={innerRef}
+        onMouseEnter={onActivate} onFocus={onActivate}
+        aria-label={`Play ${reel.title}`}
+        style={{ position: "relative", display: "block", aspectRatio: "3 / 4", overflow: "hidden", background: "#111", textDecoration: "none" }}>
+        {live
+          ? <video src={srcOf(reel)} poster={thumbOf(reel)} muted loop playsInline autoPlay preload="metadata"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          : <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />}
+        <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.60))", pointerEvents: "none" }} />
+        <TilePlays reel={reel} />
+      </a>
+      <div style={{ padding: "13px 16px 0 0" }}>
+        <p style={{ fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, lineHeight: 1.3, margin: "0 0 4px" }}>{reel.title}</p>
+        <p style={{ fontFamily: F, fontSize: 12, color: "#888", margin: "0 0 8px", fontVariantNumeric: "tabular-nums" }}>{playsLabel(reel)} plays</p>
+        {/* Chips: only the roles this reel earned, lit in the role's own hue —
+            the same word in the same colour the matrix and the timeline use. */}
+        <span style={{ display: "flex", flexWrap: "wrap", gap: 5, margin: "0 0 7px" }}>
+          {tabs.map((on, n) => on && (
+            <span key={ROLE_TABS[n]} style={{
+              fontFamily: F, fontSize: 10.5, fontWeight: 600, lineHeight: 1.3, borderRadius: 4, padding: "2px 7px", whiteSpace: "nowrap",
+              color: ROLE_TAB_COLORS[ROLE_TABS[n]], background: tabFill(ROLE_TAB_COLORS[ROLE_TABS[n]]), border: `1px solid ${tabEdge(ROLE_TAB_COLORS[ROLE_TABS[n]])}`,
+            }}>{ROLE_TABS[n]}</span>
+          ))}
+        </span>
+        {paras.map((p, n) => (
+          <p key={n} style={{ fontFamily: F, fontSize: 13, color: "#b8b8b8", lineHeight: 1.55, margin: "0 0 9px", maxWidth: "46ch", textWrap: "pretty" }}>{p}</p>
+        ))}
+        {/* Why it mattered, his two strings, reason then production detail. */}
+        {why && (
+          <>
+            <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.55, margin: "0 0 3px", maxWidth: "46ch" }}>{why[0]}</p>
+            <p style={{ fontFamily: F, fontSize: 12, color: C.gray, lineHeight: 1.5, margin: 0, maxWidth: "46ch" }}>{why[1]}</p>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Tier 2 tile: poster, count, and a title bar that comes up on hover (and stays
+// up on touch, where there is no hover to reveal it). No video, no chips, no
+// description — the demotion is the point.
+function CatalogTile({ reel }) {
+  return (
+    <a className="cat-tile" href={caseHref(reel)} aria-label={`Play ${reel.title}`}
+      style={{ position: "relative", display: "block", aspectRatio: "3 / 4", overflow: "hidden", background: "#111", textDecoration: "none" }}>
+      <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
+        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.60))", pointerEvents: "none" }} />
+      <span className="cat-bar" style={{
+        position: "absolute", left: 0, right: 0, bottom: 0, padding: "24px 11px 32px",
+        fontFamily: F, fontSize: 12, fontWeight: 600, lineHeight: 1.3, color: C.white,
+        background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.80))",
+        textShadow: "0 1px 3px rgba(0,0,0,0.7)", pointerEvents: "none",
+      }}>{reel.title}</span>
+      <TilePlays reel={reel} />
+    </a>
+  );
+}
+
+function SetList() {
+  const [active, setActive] = useState(0);
+  const tiles = useRef([]);
+  const ratios = useRef(new Map());
+  const io = useRef(null);
+  const attachers = useRef([]);
+  // Which tile owns the section's single <video>. On a phone the tiles stack, so
+  // the observer hands it to whichever one is most on screen. On a desktop all
+  // five are fully visible at once and every ratio is 1, so the strictly-greater
+  // test below leaves it on the first tile until the pointer moves it — no
+  // thrash, no five tiles fighting over one element.
+  //
+  // The observer is wired from the REF CALLBACK, not from a mount effect, and
+  // that is load-bearing: under StrictMode React detaches every ref and
+  // re-attaches it around the double-invoked mount, so an effect that reads
+  // `tiles.current` on mount can read an array of nulls and silently observe
+  // nothing. Measured, not guessed — the first build of this did exactly that
+  // and the video never left tile 1. Observing as each node attaches cannot
+  // race, because there is no moment where the node exists and the observer
+  // has not been told about it.
+  const observer = () => {
+    if (!io.current && typeof IntersectionObserver !== "undefined") {
+      io.current = new IntersectionObserver(entries => {
+        entries.forEach(en => ratios.current.set(en.target, en.intersectionRatio));
+        let best = 0, bestIdx = -1;
+        tiles.current.forEach((el, i) => { const r = el ? (ratios.current.get(el) || 0) : 0; if (r > best) { best = r; bestIdx = i; } });
+        if (bestIdx >= 0) setActive(bestIdx);
+      }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+    }
+    return io.current;
+  };
+  // One STABLE callback per tile: a fresh closure each render would make React
+  // detach and re-attach on every state change, which is a churn loop.
+  const attach = (i) => (attachers.current[i] || (attachers.current[i] = (el) => {
+    const o = observer();
+    const prev = tiles.current[i];
+    if (prev && o) { o.unobserve(prev); ratios.current.delete(prev); }
+    tiles.current[i] = el;
+    if (el && o) o.observe(el);
+  }));
+  useEffect(() => () => { if (io.current) { io.current.disconnect(); io.current = null; } ratios.current.clear(); }, []);
+  return (
+    <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
+      {/* 1400 so five text columns are five readable columns. At the old
+          860-ish measure each one lands near 30 characters, which is a word a
+          line and reads as broken rather than as five write-ups. */}
+      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        <FadeIn>
+          <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
+          <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 26px 0", letterSpacing: -0.5 }}>The Set List</h2>
+        </FadeIn>
+        <div className="set-grid">
+          {SET_LIST_ITEMS.map((item, i) => (
+            <SetListTile key={item.reel.title} item={item} live={i === active}
+              onActivate={() => setActive(i)}
+              innerRef={attach(i)} />
+          ))}
+        </div>
+        <div className="cat-grid">
+          {CATALOG_ITEMS.map(x => <CatalogTile key={x.reel.postUrl} reel={x.reel} />)}
+        </div>
+        {/* The door. Both numbers are the site's own derived totals, the same
+            two every other count line on the site reads. */}
+        <a href="#/playlist" style={{
+          display: "block", textAlign: "center", margin: "34px auto 0", fontFamily: F, fontSize: 13,
+          color: "#8a8a8a", textDecoration: "none", fontVariantNumeric: "tabular-nums", padding: "12px 0", minHeight: 44,
+        }}
+          onMouseEnter={e => e.currentTarget.style.color = C.mint}
+          onMouseLeave={e => e.currentTarget.style.color = "#8a8a8a"}
+        >{TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays · full playlist →</a>
+      </div>
+    </section>
+  );
+}
+
 // ===== CLIENT STRIP (Aug 10 2026) — logos, not text =====
 // Miles: "I like this marquee label, just use the logos again like tyler did".
 // So the label stays and the row below it becomes real marks.
@@ -1646,11 +1964,9 @@ function HeroCard({ reel, i, live = true }) {
   // the case-link path that half of them already took — scroll to the player and
   // play this exact reel. The player's own URL-reflect effect then writes
   // #/case/<slug>, so the card lands on the reel's case link without a page swap.
-  const open = () => {
-    const work = document.getElementById("work");
-    if (work) work.scrollIntoView({ behavior: "smooth" });
-    window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: reel.e, r: reel.r } }));
-  };
+  // Aug 11: the destination moved to #/playlist with the player, so this goes
+  // through goPlay. Same reel, same "press a card and it plays" behaviour.
+  const open = () => goPlay(reel.e, reel.r);
   const vh = [26, 21, 30, 23][i % 4];
   return (
     <button className="wall-card" onClick={open} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
@@ -2142,6 +2458,10 @@ function WorkPlayer() {
   useEffect(() => {
     const h = (ev) => { setLibIdx(ev.detail.e); setVidErr(false); setProg(0); setDur(0); setTrack({ e: ev.detail.e, r: ev.detail.r }); };
     window.addEventListener("ms-play", h);
+    // A request parked by goPlay before this player existed (Aug 11): the link
+    // that fired it was on another route, so there was no listener to hear it.
+    // Consumed exactly once.
+    if (PENDING_PLAY) { const p = PENDING_PLAY; PENDING_PLAY = null; h({ detail: p }); }
     return () => window.removeEventListener("ms-play", h);
   }, []);
 
@@ -2233,8 +2553,11 @@ function WorkPlayer() {
                 {/* The MAX split is a paragraph, not a caption: it gets the full
                     header width (last child, 100% basis) instead of towering in
                     the text column beside the cover. Never truncated. */}
+                {/* MAX render site 1 of 2. MAX_CASE_PARAS (Aug 11) = his goal
+                    clause + the split, so the clause opens the MAX case here
+                    exactly as it does on the role pages. */}
                 {MAX_SPLIT_PLAYLISTS.includes(viewing.event) && (
-                  <Prose text={MAX_SPLIT_PARAS} style={{ flexBasis: "100%", margin: "14px 0 0" }} />
+                  <Prose text={MAX_CASE_PARAS} style={{ flexBasis: "100%", margin: "14px 0 0" }} />
                 )}
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
@@ -2961,11 +3284,10 @@ function B2BStrip() {
           listener then reads that fresh hash and re-opens the reel in its HOME
           playlist, bouncing the sidebar off the pinned mirror. Same reason
           HeroCard scrolls by hand instead of using an href. */}
-      <a href="#work"
+      <a href="#/playlist"
         onClick={(e) => {
           e.preventDefault();
-          document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
-          window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: idx, r: 0 } }));
+          goPlay(idx, 0);
         }}
         onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
         aria-label={`Open ${ev.event}`}
@@ -3024,11 +3346,43 @@ const routeFromHash = () => {
   const h = window.location.hash || "";
   if (/^#\/timeline\/?$/.test(h)) return { kind: "timeline", bucket: null };
   if (/^#\/playlist\/?$/.test(h)) return { kind: "playlist", bucket: null };
+  // ===== #/case/<slug> (rewritten Aug 11 2026) =====
+  // A case link used to fall through to the homepage because the homepage was
+  // where the player lived. The Set List replaced that player, so the link now
+  // resolves to #/playlist — the same full player, at its own address, which
+  // then reads the very same hash and opens the reel (WorkPlayer's deep-link
+  // effect is untouched). Same destination it always had, one route over.
+  // A slug that resolves to NOTHING still falls through to the homepage exactly
+  // as before: an old or malformed link lands on the site, never on a 404 and
+  // never on an empty player. That fallthrough is the rule; this is not it.
+  const c = h.match(/^#\/case\/(.+?)\/?$/);
+  if (c && CASE_INDEX[c[1].toLowerCase()]) return { kind: "playlist", bucket: null };
   const m = h.match(/^#\/work(?:\/([^\/?#]+))?\/?$/);
   if (!m) return { kind: "home", bucket: null };
   const bucket = m[1] ? ROLE_BY_SLUG[m[1].toLowerCase()] : null;
   return bucket ? { kind: "bucket", bucket } : { kind: "work", bucket: null };
 };
+// ===== goPlay (Aug 11 2026) — "play this exact reel" from anywhere =====
+// The homepage links that used to scroll down to the player and fire ms-play
+// (the opening wall cards, the fun row, the B2B strip, the trumpet line in the
+// About paragraph) have no player to scroll to now. They keep their exact
+// behaviour by going to the player's page instead: park the request, switch
+// route, and WorkPlayer picks it up the moment it mounts. Already on the
+// playlist page, it is the same ms-play dispatch it always was.
+// A parked request is deliberately NOT a case slug: the B2B strip opens the
+// PINNED playlist, and a slug resolves to a reel's home playlist, which would
+// bounce the sidebar off the mirror (the bug the strip's own comment records).
+let PENDING_PLAY = null;
+const goPlay = (e, r) => {
+  if (routeFromHash().kind === "playlist") {
+    (document.getElementById("playlist-player") || document.getElementById("work"))?.scrollIntoView({ behavior: "smooth" });
+    window.dispatchEvent(new CustomEvent("ms-play", { detail: { e, r } }));
+    return;
+  }
+  PENDING_PLAY = { e, r };
+  window.location.hash = "#/playlist";
+};
+
 function useHashRoute() {
   const [route, setRoute] = useState(routeFromHash);
   useEffect(() => {
@@ -3214,6 +3568,7 @@ function BucketIntro({ bucket }) {
 function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
   const [h, setH] = useState(false);
   const desc = REEL_DESCS[reel.title] || "";
+  const why = REEL_WHY[reel.title] || null;
   return (
     <div>
       <div role="button" tabIndex={0} aria-expanded={open}
@@ -3267,6 +3622,17 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
                 onError={e => { e.currentTarget.style.display = "none"; }} />
               )}
               {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: "46ch" }}>{desc}</p>}
+              {/* Why it mattered (Aug 11) — the clean slot this row already had:
+                  directly under the description, in the same column. Reason
+                  first at description weight, his production detail beneath it
+                  in the meta gray. Renders only for reels he has written one
+                  for; today that is the Semaphore. */}
+              {why && (
+                <>
+                  <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "10px 0 0", maxWidth: "46ch" }}>{why[0]}</p>
+                  <p style={{ fontFamily: F, fontSize: 12, color: C.gray, lineHeight: 1.5, margin: "3px 0 0", maxWidth: "46ch" }}>{why[1]}</p>
+                </>
+              )}
               {!reel.plays && (
                 <p style={{ fontFamily: F, fontSize: 13, color: C.gray, lineHeight: 1.5, margin: "8px 0 0", maxWidth: "46ch" }}>
                   LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
@@ -3343,7 +3709,11 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
         {mirror ? null : CASE_TEXTS[ev.event] ? (
           <Prose text={CASE_TEXTS[ev.event]} style={{ flexBasis: "100%", margin: "10px 0 0" }} />
         ) : MAX_SPLIT_PLAYLISTS.includes(ev.event) && (
-          <Prose text={MAX_SPLIT_PARAS} style={{ flexBasis: "100%", margin: "6px 0 0" }} />
+          /* MAX render site 2 of 2. On '25 MAX LA the CASE_TEXTS branch above
+             wins and already opens with the clause (it spreads MAX_CASE_PARAS);
+             this fallback carries it too so a future MAX playlist without a
+             case text still opens on his goal. */
+          <Prose text={MAX_CASE_PARAS} style={{ flexBasis: "100%", margin: "6px 0 0" }} />
         )}
       </header>
       <div style={{ paddingTop: 8 }}>
@@ -3529,6 +3899,35 @@ export default function Portfolio() {
         @keyframes drawerFade { from { opacity: 0; } }
         .marquee-scroll::-webkit-scrollbar { display: none; }
         .tl-pager::-webkit-scrollbar { display: none; }
+        /* ===== THE SET LIST (Aug 11 2026), grids from research/mock-2026-08-11-d.html.
+           1px gutters on purpose: the tiles are meant to read as one IG-native
+           block, not as five cards. Below the step the top two go half-width and
+           the bottom three go thirds; 640 stacks them, which is the phone
+           reading order (watch, then read, then the next one).
+           THE STEP IS 1400, MEASURED, not the mock's 1100: five columns inside
+           the 1400 wrap are 264px of prose, and on a 1280 laptop (the common
+           one) the same five are 212px, which in Outfit is about 30 characters
+           a line. Thirty characters is a word a line, and five columns of it
+           read as broken rather than as five write-ups. So the five-across only
+           runs where the wrap is actually at full width. */
+        .set-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; }
+        .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; margin-top: 34px; }
+        @media (max-width: 1400px) {
+          .set-grid { grid-template-columns: repeat(6, 1fr); }
+          .set-grid > *:nth-child(1), .set-grid > *:nth-child(2) { grid-column: span 3; }
+          .set-grid > *:nth-child(3), .set-grid > *:nth-child(4), .set-grid > *:nth-child(5) { grid-column: span 2; }
+        }
+        @media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 640px) {
+          .set-grid { grid-template-columns: 1fr; }
+          .set-grid > * { grid-column: span 1 !important; }
+        }
+        /* Tier-2 title bar: hover reveals it on a desktop. On touch there is no
+           hover, so it is simply always up: a tile you cannot name is not a
+           link, it is a picture. */
+        .cat-bar { opacity: 0; transition: opacity 0.18s ease; }
+        .cat-tile:hover .cat-bar, .cat-tile:focus-visible .cat-bar { opacity: 1; }
+        @media (hover: none) { .cat-bar { opacity: 1; } }
         /* R4 mobile fix: About renders as normal block flow; static headshot at card bottom, no floating swipe clip. */
         @keyframes drawerIn { from { transform: translateX(100%); } }
         @keyframes sheetIn { from { transform: translateY(100%); } }
@@ -3682,8 +4081,8 @@ export default function Portfolio() {
               <PlaysCounter />
               <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
                 I'm a social producer and content creator on Adobe's Social Creative Studio team in San Francisco. I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC. The music background shows up in how I think about rhythm, pacing, and storytelling. And yeah, I'm also a{" "}
-                <a href="#work"
-                  onClick={() => { const e = portfolio.findIndex(ev => ev.event === "Miles Music Media"); if (e !== -1) window.dispatchEvent(new CustomEvent("ms-play", { detail: { e, r: 0 } })); }}
+                <a href="#/playlist"
+                  onClick={(ev) => { const e = portfolio.findIndex(x => x.event === "Miles Music Media"); if (e !== -1) { ev.preventDefault(); goPlay(e, 0); } }}
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55`, cursor: "pointer" }}
                   onMouseEnter={ev => ev.target.style.borderBottomColor = C.mint}
                   onMouseLeave={ev => ev.target.style.borderBottomColor = `${C.mint}55`}
@@ -3790,27 +4189,20 @@ export default function Portfolio() {
         {/* ===== CAREER TIMELINE — slim: heading, derived line, door to #/timeline ===== */}
         <TimelineSummary />
 
-        {/* ===== SELECTED WORK — moved below the timeline, right above the library
-             (Miles: tapping a library video should link straight back up to the player) ===== */}
-        <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
-          <FadeIn>
-            <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work Playlist</h2>
-            {/* Panel review Aug 10: the blanket "Pitched, Produced and Directed
-                by Me" is the one claim the role pages now carefully qualify,
-                playlist by playlist, so it comes off the top of the player.
-                The claim words are DELETED, not reworded — the rest of the line
-                is untouched and every number in it is still derived. */}
-            <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns: {TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays. Pick a playlist, press play.</p>
-          </FadeIn>
+        {/* ===== THE SET LIST (Aug 11 2026) — this slot's whole contents changed.
+             OUT: <WorkPlayer /> (the 23-playlist library shell) and the four
+             <PlaylistShelf /> carousels under it. Both still exist and both
+             still render — at #/playlist, which now holds the only copy. The
+             homepage was showing the entire library twice before a reader had
+             been given a reason to care about one piece of it.
+             IN: the Set List, Miles's pick (mock D + his heading). Same slot,
+             same `id="work"`, so every existing #work anchor still lands here.
+             The client-strip Marquee that closed this section is unmoved. ===== */}
+        <SetList />
 
-          <WorkPlayer />
-
-          <div style={{ marginTop: 64 }}><Marquee /></div>
+        <section style={{ padding: "0 clamp(24px, 5vw, 80px)" }}>
+          <div style={{ maxWidth: 1400, margin: "0 auto", paddingTop: 64 }}><Marquee /></div>
         </section>
-
-        {/* ===== PLAYLIST SHELF ===== */}
-        <PlaylistShelf />
 
 
         {/* ===== CTA ===== */}
