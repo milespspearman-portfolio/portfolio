@@ -4202,10 +4202,10 @@ export default function Portfolio() {
         .tc-chips button:disabled { cursor: default; }
         @media (max-width: 900px) {
           .tc-chips { margin-left: 0 !important; }
-          .tc-chips button { min-height: 44px; padding: 8px 12px !important; font-size: 12px !important; }
+          .tc-chips button { min-height: 44px !important; padding: 8px 12px !important; font-size: 12px !important; }
           .tc-tab { flex: 1 1 calc(50% - 6px); }
         }
-        @media (max-width: 640px) { .tc-tab { flex-basis: 100%; } }
+        @media (max-width: 640px) { .tc-tab { flex-basis: 100%; } .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; } }
       `}</style>
 
       <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
