@@ -3365,6 +3365,27 @@ const _typeReels = portfolio
   .filter(ev => !ev.pinned)
   .flatMap(ev => ev.reels.map(r => ({ reel: r, type: BUCKET_OF[ev.event], roles: reelRoleTabs(r) })))
   .sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
+// The ten a row shows are picked round-robin across its pressable chips (newest
+// first within each chip), then laid out newest first. Newest-ten alone left the
+// hosting row all Event reels, so its In-House chip dimmed every card: a press
+// that lights nothing reads as broken. This way every chip you can press lights
+// at least one card, and the mock's mixed hosting row falls out of the data.
+const pickShown = (items, chips, n) => {
+  const live = chips.filter(c => c.count > 0);
+  if (!live.length) return items.slice(0, n);
+  const chosen = new Set(), cursors = live.map(() => 0);
+  const cap = Math.min(n, items.length);
+  for (let guard = 0; chosen.size < cap && guard < n * 4; guard++) {
+    let progressed = false;
+    live.forEach((c, k) => {
+      if (chosen.size >= cap) return;
+      while (cursors[k] < items.length && (chosen.has(items[cursors[k]]) || !c.test(items[cursors[k]]))) cursors[k]++;
+      if (cursors[k] < items.length) { chosen.add(items[cursors[k]]); cursors[k]++; progressed = true; }
+    });
+    if (!progressed) break;
+  }
+  return [...chosen].sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
+};
 const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
   const hosting = t.key === TYPE_CUT_HOSTING;
   const items = hosting ? _typeReels.filter(x => x.roles[3]) : _typeReels.filter(x => x.type === t.key);
@@ -3373,7 +3394,7 @@ const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
   const chips = hosting
     ? TYPE_CUT.slice(0, 4).map(u => ({ id: u.key, label: u.label, hue: u.hue, count: items.filter(x => x.type === u.key).length, test: (x) => x.type === u.key }))
     : ROLE_TABS.map((name, n) => ({ id: name, label: name, hue: ROLE_TAB_COLORS[name], count: items.filter(x => x.roles[n]).length, test: (x) => x.roles[n] }));
-  return { ...t, items, count: items.length, plays: items.reduce((sum, x) => sum + playsNum(x.reel.plays), 0), chips };
+  return { ...t, items, shown: pickShown(items, chips, TYPE_CUT_SHOW), count: items.length, plays: items.reduce((sum, x) => sum + playsNum(x.reel.plays), 0), chips };
 });
 
 const TC_MASK = "linear-gradient(90deg, transparent, black 4%, black 96%, transparent)";
@@ -3397,7 +3418,7 @@ function TypeRow({ row, hidden }) {
   const [lens, setLens] = useState(null);
   const ref = useRef(null);
   useDriftScroll(ref, 70);
-  const show = row.items.slice(0, TYPE_CUT_SHOW);
+  const show = row.shown;
   const active = row.chips.find(c => c.id === lens) || null;
   return (
     <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
