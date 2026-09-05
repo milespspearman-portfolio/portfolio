@@ -2079,7 +2079,19 @@ function useDriftScroll(ref, duration) {
     const el = ref.current; if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0, idle = 0, paused = false;
-    const speed = () => Math.max(0.3, (el.scrollWidth / 2) / (duration * 60)); // px/frame ~ old loop feel
+    // The loop period is exactly one copy of the cards (the first copy's box,
+    // trailing gap included), never scrollWidth / 2: the track's own side padding
+    // made that half a copy-and-some, so every wrap jumped ~72 px (design check,
+    // Sep 4 2026). A row that fits in one copy has nothing to loop and stays put.
+    const copy0 = el.querySelector('[data-copy="0"]');
+    if (!el.querySelector('[data-copy="1"]')) return;
+    const period = () => (copy0 ? copy0.offsetWidth : el.scrollWidth / 2);
+    const speed = () => Math.max(0.3, period() / (duration * 60)); // px/frame ~ old loop feel
+    // No frames while the row is off screen (five rows plus the hero rows would
+    // otherwise write scrollLeft 60 times a second from the bottom of the page).
+    let offscreen = false;
+    const io = new IntersectionObserver(([e]) => { offscreen = !e.isIntersecting; }, { threshold: 0 });
+    io.observe(el);
     // Chrome snaps scrollLeft to whole pixels, so a sub-pixel step on its own
     // never moves the row (measured Sep 4 2026 in headless Chrome: a 0.415 px
     // step read back as 0 and the hero row sat still). Carry the remainder
@@ -2087,12 +2099,12 @@ function useDriftScroll(ref, duration) {
     // scrollLeft and is picked up on the next frame.
     let frac = 0;
     const step = () => {
-      if (!paused && el.scrollWidth > el.clientWidth) {
+      if (!paused && !offscreen && el.scrollWidth > el.clientWidth) {
         const pos = el.scrollLeft + frac + speed();
         let whole = Math.floor(pos);
         frac = pos - whole;
-        const half = el.scrollWidth / 2;
-        if (whole >= half) whole -= half; // seamless wrap
+        const p = period();
+        if (whole >= p) whole -= p; // seamless wrap at exactly one copy
         el.scrollLeft = whole;
       }
       raf = requestAnimationFrame(step);
@@ -2102,9 +2114,9 @@ function useDriftScroll(ref, duration) {
     // while `paused`, and without this the "infinite" row dead-ends at both
     // seams under a finger.
     const onScroll = () => {
-      const half = el.scrollWidth / 2;
-      if (el.scrollLeft >= half) el.scrollLeft -= half;
-      else if (el.scrollLeft < 2 && half > el.clientWidth) el.scrollLeft += half;
+      const p = period();
+      if (el.scrollLeft >= p) el.scrollLeft -= p;
+      else if (el.scrollLeft < 2 && p > el.clientWidth) el.scrollLeft += p;
     };
     el.addEventListener("scroll", onScroll, { passive: true });
     const pause = () => { paused = true; };
@@ -2118,7 +2130,7 @@ function useDriftScroll(ref, duration) {
     el.addEventListener("touchstart", pause, { passive: true });
     el.addEventListener("touchend", pauseIdle, { passive: true });
     el.addEventListener("wheel", pauseIdle, { passive: true });
-    return () => { cancelAnimationFrame(raf); clearTimeout(idle);
+    return () => { cancelAnimationFrame(raf); clearTimeout(idle); io.disconnect();
       el.removeEventListener("scroll", onScroll);
       el.removeEventListener("mouseenter", pause); el.removeEventListener("mouseleave", resume);
       el.removeEventListener("pointerdown", pause); el.removeEventListener("pointerup", pauseIdle); el.removeEventListener("pointercancel", pauseIdle);
@@ -2133,7 +2145,7 @@ function HeroMarqueeRow({ reels, duration, offset }) {
     <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
       <div style={{ display: "flex", alignItems: "center", width: "max-content", padding: "10px clamp(24px, 5vw, 80px)" }}>
         {[0, 1].map(copy => (
-          <div key={copy} style={{ display: "flex", alignItems: "center", gap: 18, paddingRight: 18 }}>
+          <div key={copy} data-copy={copy} style={{ display: "flex", alignItems: "center", gap: 18, paddingRight: 18 }}>
             {reels.map((reel, i) => <HeroCard key={`c${copy}-${reel.postUrl}`} reel={reel} i={i + offset} live={_finePointer} />)}
           </div>
         ))}
@@ -3374,25 +3386,27 @@ const _typeReels = portfolio
   .filter(ev => !ev.pinned)
   .flatMap(ev => ev.reels.map(r => ({ reel: r, type: BUCKET_OF[ev.event], roles: reelRoleTabs(r) })))
   .sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
-// The ten a row shows are picked round-robin across its pressable chips (newest
-// first within each chip), then laid out newest first. Newest-ten alone left the
+// The ten a row shows are picked across its pressable chips (newest first
+// within each chip), then laid out newest first. Newest-ten alone left the
 // hosting row all Event reels, so its In-House chip dimmed every card: a press
 // that lights nothing reads as broken. This way every chip you can press lights
 // at least one card, and the mock's mixed hosting row falls out of the data.
 const pickShown = (items, chips, n) => {
   const live = chips.filter(c => c.count > 0);
-  if (!live.length) return items.slice(0, n);
-  const chosen = new Set(), cursors = live.map(() => 0);
   const cap = Math.min(n, items.length);
-  for (let guard = 0; chosen.size < cap && guard < n * 4; guard++) {
-    let progressed = false;
-    live.forEach((c, k) => {
-      if (chosen.size >= cap) return;
-      while (cursors[k] < items.length && (chosen.has(items[cursors[k]]) || !c.test(items[cursors[k]]))) cursors[k]++;
-      if (cursors[k] < items.length) { chosen.add(items[cursors[k]]); cursors[k]++; progressed = true; }
-    });
-    if (!progressed) break;
-  }
+  if (!live.length) return items.slice(0, cap);
+  // Slots in proportion to each chip's count, at least one each, the rest by
+  // largest remainder: "Hosted 43" now shows its share of the ten, not two.
+  const total = live.reduce((sum, c) => sum + c.count, 0);
+  const ideal = live.map(c => c.count / total * cap);
+  const slots = ideal.map(v => Math.max(1, Math.floor(v)));
+  let left = cap - slots.reduce((sum, v) => sum + v, 0);
+  const byRemainder = live.map((c, k) => k).sort((a, b) => (ideal[b] - slots[b]) - (ideal[a] - slots[a]));
+  for (let i = 0; left > 0 && byRemainder.length; i = (i + 1) % byRemainder.length, left--) slots[byRemainder[i]]++;
+  while (left < 0) { slots[slots.indexOf(Math.max(...slots))]--; left++; }
+  const chosen = new Set();
+  live.forEach((c, k) => { let want = slots[k]; for (const x of items) { if (want <= 0) break; if (!chosen.has(x) && c.test(x)) { chosen.add(x); want--; } } });
+  for (const x of items) { if (chosen.size >= cap) break; chosen.add(x); }
   return [...chosen].sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
 };
 const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
@@ -3407,17 +3421,17 @@ const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
 });
 
 const TC_MASK = "linear-gradient(90deg, transparent, black 4%, black 96%, transparent)";
-function TypeCard({ item, dim, tilt }) {
+function TypeCard({ item, dim, tilt, copy = 0 }) {
   const { reel } = item;
   return (
-    <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} data-type={item.type || ""} data-roles={item.roles.map((on, n) => on ? ROLE_TABS[n] : null).filter(Boolean).join("|")} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
+    <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} tabIndex={dim || copy === 1 ? -1 : 0} aria-hidden={copy === 1 ? "true" : undefined} data-type={item.type || ""} data-roles={item.roles.map((on, n) => on ? ROLE_TABS[n] : null).filter(Boolean).join("|")} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
       style={{ flex: "none", width: 150, display: "block", background: C.white, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, textDecoration: "none" }}>
       <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
         style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 5, display: "block", background: "#e6e6e6" }}
         onError={e => { e.currentTarget.style.visibility = "hidden"; }} />
       <span style={{ display: "block", padding: "5px 3px 3px" }}>
-        <span style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", fontFamily: F, fontSize: 9.5, lineHeight: 1.25, color: "#111", fontWeight: 600 }}>{reel.title}</span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontFamily: F, fontSize: 9, color: "#555", marginTop: 3, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}><IcPlay s={8} c="#555" />{playsLabel(reel)} plays</span>
+        <span className="tc-title" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", fontFamily: F, fontSize: 9.5, lineHeight: 1.25, color: "#111", fontWeight: 600 }}>{reel.title}</span>
+        <span className="tc-plays" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontFamily: F, fontSize: 9, color: "#555", marginTop: 3, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}><IcPlay s={8} c="#555" />{playsLabel(reel)} plays</span>
       </span>
     </a>
   );
@@ -3429,6 +3443,19 @@ function TypeRow({ row, hidden }) {
   useDriftScroll(ref, 70);
   const show = row.shown;
   const active = row.chips.find(c => c.id === lens) || null;
+  // Two copies only when one does not fit the screen: six Brand cards on a wide
+  // screen showed the same six twice (rambling + design checks, Sep 4 2026).
+  const copies = show.length * (150 + 18) > (typeof window !== "undefined" ? window.innerWidth : 1280) ? [0, 1] : [0];
+  // A pressed chip brings the first card it lights into the track's view, so
+  // the press shows its effect at once, on a phone that shows two cards at a time
+  // as much as on a desktop (his UI law). Inside the track only; the page never moves.
+  useEffect(() => {
+    const el = ref.current; if (!el || !lens) return;
+    const first = el.querySelector('[data-copy="0"] [data-card][data-dim="0"]');
+    if (!first) return;
+    const pad = parseFloat(getComputedStyle(el.firstElementChild).paddingLeft) || 0;
+    el.scrollLeft = Math.max(0, first.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft - pad);
+  }, [lens]);
   return (
     <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 12 }}>
@@ -3450,15 +3477,15 @@ function TypeRow({ row, hidden }) {
       </div>
       <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: TC_MASK, WebkitMaskImage: TC_MASK }}>
         <div style={{ display: "flex", width: "max-content", padding: "8px clamp(24px, 5vw, 80px) 12px" }}>
-          {[0, 1].map(copy => (
-            <div key={copy} style={{ display: "flex", gap: 18, paddingRight: 18 }}>
-              {show.map((item, i) => <TypeCard key={`${copy}-${item.reel.postUrl || item.reel.title}`} item={item} dim={!!active && !active.test(item)} tilt={i % 2 ? 1.4 : -1.6} />)}
+          {copies.map(copy => (
+            <div key={copy} data-copy={copy} style={{ display: "flex", gap: 18, paddingRight: 18 }}>
+              {show.map((item, i) => <TypeCard key={`${copy}-${item.reel.postUrl || item.reel.title}`} item={item} copy={copy} dim={!!active && !active.test(item)} tilt={i % 2 ? 1.4 : -1.6} />)}
             </div>
           ))}
         </div>
       </div>
       {row.count > show.length && (
-        <a href="#/playlist" style={{ display: "inline-block", fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: "4px 0 0" }}>+ {row.count - show.length} more · full playlist →</a>
+        <a href="#/playlist" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more · full playlist →</a>
       )}
     </div>
   );
@@ -3468,7 +3495,7 @@ function TypeCut() {
   const [focus, setFocus] = useState(null);
   return (
     <div data-type-cut="">
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 26 }}>
+      <div className="tc-tabs" style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 26 }}>
         {TYPE_CUT_ROWS.map(t => {
           const on = focus === t.key;
           return (
@@ -4203,7 +4230,7 @@ export default function Portfolio() {
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
         ::-webkit-scrollbar-thumb { background: ${C.darkGray}; border-radius: 3px; }
-        a:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
+        a:focus-visible, button:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
         /* ===== THE TYPE CUT (Sep 4 2026) ===== */
         .tc-sticky::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(1deg); width: 74px; height: 18px; background: rgba(255,255,255,0.28); border-left: 1px dashed rgba(0,0,0,0.08); border-right: 1px dashed rgba(0,0,0,0.08); }
         .tc-tab:hover { border-color: #3a3a3a; }
@@ -4212,9 +4239,16 @@ export default function Portfolio() {
         @media (max-width: 900px) {
           .tc-chips { margin-left: 0 !important; }
           .tc-chips button { min-height: 44px !important; padding: 8px 12px !important; font-size: 12px !important; }
-          .tc-tab { flex: 1 1 calc(50% - 6px); }
+          /* Phones: the five tabs ride one scrollable line, so the first row of work
+             sits right under them in the first screen and a pressed tab's row is
+             already in view (mobile + web checks, Sep 4 2026). */
+          .tc-tabs { flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; margin: 0 calc(-1 * clamp(24px, 5vw, 80px)) 18px; padding: 0 clamp(24px, 5vw, 80px) 6px; }
+          .tc-tabs::-webkit-scrollbar { display: none; }
+          .tc-tab { flex: 0 0 auto; }
+          .tc-title { font-size: 11px !important; }
+          .tc-plays { font-size: 10px !important; }
         }
-        @media (max-width: 640px) { .tc-tab { flex-basis: 100%; } .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; } }
+        @media (max-width: 640px) { .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; } }
       `}</style>
 
       <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
