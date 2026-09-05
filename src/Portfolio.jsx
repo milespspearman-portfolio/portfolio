@@ -2080,11 +2080,20 @@ function useDriftScroll(ref, duration) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0, idle = 0, paused = false;
     const speed = () => Math.max(0.3, (el.scrollWidth / 2) / (duration * 60)); // px/frame ~ old loop feel
+    // Chrome snaps scrollLeft to whole pixels, so a sub-pixel step on its own
+    // never moves the row (measured Sep 4 2026 in headless Chrome: a 0.415 px
+    // step read back as 0 and the hero row sat still). Carry the remainder
+    // across frames and write whole pixels; a finger-scroll still lands in
+    // scrollLeft and is picked up on the next frame.
+    let frac = 0;
     const step = () => {
       if (!paused && el.scrollWidth > el.clientWidth) {
-        el.scrollLeft += speed();
+        const pos = el.scrollLeft + frac + speed();
+        let whole = Math.floor(pos);
+        frac = pos - whole;
         const half = el.scrollWidth / 2;
-        if (el.scrollLeft >= half) el.scrollLeft -= half; // seamless wrap
+        if (whole >= half) whole -= half; // seamless wrap
+        el.scrollLeft = whole;
       }
       raf = requestAnimationFrame(step);
     };
