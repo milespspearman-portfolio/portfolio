@@ -3401,7 +3401,7 @@ const TC_MASK = "linear-gradient(90deg, transparent, black 4%, black 96%, transp
 function TypeCard({ item, dim, tilt }) {
   const { reel } = item;
   return (
-    <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
+    <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} data-type={item.type || ""} data-roles={item.roles.map((on, n) => on ? ROLE_TABS[n] : null).filter(Boolean).join("|")} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
       style={{ flex: "none", width: 150, display: "block", background: C.white, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, textDecoration: "none" }}>
       <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
         style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 5, display: "block", background: "#e6e6e6" }}
