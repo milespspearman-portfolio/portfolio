@@ -3462,13 +3462,16 @@ function TypeRow({ row, hidden }) {
         <b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b>
         <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
         <span className="tc-chips" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: "auto" }}>
-          {row.chips.map(c => {
-            const on = lens === c.id, zero = c.count === 0;
+          {/* Only the roles he has on this type's reels: a "Hosted 0" chip on a
+              six-reel row advertised an absence (recruiter check, Sep 4 2026).
+              12px is the site's own floor for role words (see the track list). */}
+          {row.chips.filter(c => c.count > 0).map(c => {
+            const on = lens === c.id;
             return (
-              <button key={c.id} type="button" data-role-chip={c.id} aria-pressed={on} disabled={zero}
+              <button key={c.id} type="button" data-role-chip={c.id} aria-pressed={on}
                 onClick={() => setLens(on ? null : c.id)}
-                style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, padding: "6px 10px", minHeight: 30, borderRadius: 999, cursor: zero ? "default" : "pointer",
-                  border: `1px solid ${on ? c.hue : "#2c2c2c"}`, background: on ? c.hue : "#141414", color: on ? "#111" : "#cfcfcf", opacity: zero ? 0.35 : 1 }}>
+                style={{ fontFamily: F, fontSize: 12, fontWeight: 600, padding: "6px 10px", minHeight: 30, borderRadius: 999, cursor: "pointer",
+                  border: `1px solid ${on ? c.hue : "#2c2c2c"}`, background: on ? c.hue : "#141414", color: on ? "#111" : "#cfcfcf" }}>
                 {c.label}<span style={{ marginLeft: 5, color: on ? "#111" : "#8a8a8a", fontVariantNumeric: "tabular-nums" }}>{c.count}</span>
               </button>
             );
@@ -4235,7 +4238,6 @@ export default function Portfolio() {
         .tc-sticky::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(1deg); width: 74px; height: 18px; background: rgba(255,255,255,0.28); border-left: 1px dashed rgba(0,0,0,0.08); border-right: 1px dashed rgba(0,0,0,0.08); }
         .tc-tab:hover { border-color: #3a3a3a; }
         .tc-card { transition: opacity 0.22s ease; }
-        .tc-chips button:disabled { cursor: default; }
         @media (max-width: 900px) {
           .tc-chips { margin-left: 0 !important; }
           .tc-chips button { min-height: 44px !important; padding: 8px 12px !important; font-size: 12px !important; }
