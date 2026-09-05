@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef, Fragment } from "react";
 
+// Sep 4 2026 — Miles retired the Spotify green sitewide. Aug 26: "the green
+// spotify was honestly not great if we didn't fully drive into it"; Aug 27:
+// "sweep the green". `mint` keeps its name (it still means "playing / press
+// this" everywhere it reads) and now resolves to white, so nothing green
+// renders on any route. The green site lives at tag spotify-live-2026-09-04.
 const C = {
-  bg: "#0A0A0A", mint: "#1ED760", pink: "#FF6B9D", red: "#FA0F00", gold: "#F5C518",
+  bg: "#0A0A0A", mint: "#FFFFFF", pink: "#FF6B9D", red: "#FA0F00", gold: "#F5C518",
   white: "#FFFFFF", gray: "#888888", darkGray: "#1A1A1A",
   glass: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.08)",
 };
@@ -139,7 +144,7 @@ function Prose({ text, as = "div", size = 15, gap = "1.5em", measure = "46ch", c
 }
 
 const GRADS = [
-  ["#0C4A2E", "#1ED760"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
+  ["#2A2A2A", "#E8E8E8"], ["#4A0C26", "#FF6B9D"], ["#0C3A4A", "#2BC8F0"], ["#2E0C4A", "#B44CF0"],
 ];
 const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, ${GRADS[i % GRADS.length][1]})`;
 
@@ -1212,10 +1217,10 @@ const groupCount = (g) => `${g.mirror ? "" : `${g.playlists.length} ${g.playlist
 
 // ===== CAREER TIMELINE data (professional work only; jazz/Off the Clock fenced out) =====
 const TL_CAT = {
-  "Event Coverage": { accent: C.mint, chip: "ON LOCATION" },
-  "In-House Production": { accent: C.gold, chip: "IN-HOUSE" },
+  "Event Coverage": { accent: C.gold, chip: "ON LOCATION" },
+  "In-House Production": { accent: "#4EA8DE", chip: "IN-HOUSE" },
   // New Aug 7 bucket — the chip is the bucket name itself, no new claim.
-  "Brand Partnerships": { accent: C.pink, chip: "BRAND PARTNERSHIPS" },
+  "Brand Partnerships": { accent: "#FF6A38", chip: "BRAND PARTNERSHIPS" },
 };
 const proEvents = eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock" && !ev.pinned);
 // Year bucket = the event's MODAL year (the year most of its reels landed in), tie-break to the
@@ -2067,8 +2072,9 @@ const funAtOf = (r) => {
 // finger-swipeable. rAF nudges scrollLeft; hover, pointer-down, or any manual
 // scroll pauses it, then it resumes after a short idle. Native momentum + a
 // hidden scrollbar give touch users a real swipe. reduced-motion: no drift.
-function HeroMarqueeRow({ reels, duration, offset }) {
-  const ref = useRef(null);
+// One drift loop for every marquee on the site: the hero rows and the Type Cut
+// rows share it, so touch-swipe, hover-pause, and reduced-motion behave the same.
+function useDriftScroll(ref, duration) {
   useEffect(() => {
     const el = ref.current; if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -2109,7 +2115,11 @@ function HeroMarqueeRow({ reels, duration, offset }) {
       el.removeEventListener("pointerdown", pause); el.removeEventListener("pointerup", pauseIdle); el.removeEventListener("pointercancel", pauseIdle);
       el.removeEventListener("touchstart", pause); el.removeEventListener("touchend", pauseIdle); el.removeEventListener("wheel", pauseIdle);
     };
-  }, [duration]);
+  }, [ref, duration]);
+}
+function HeroMarqueeRow({ reels, duration, offset }) {
+  const ref = useRef(null);
+  useDriftScroll(ref, duration);
   return (
     <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 5%, black 95%, transparent)" }}>
       <div style={{ display: "flex", alignItems: "center", width: "max-content", padding: "10px clamp(24px, 5vw, 80px)" }}>
@@ -2241,7 +2251,10 @@ function OpeningWall() {
       <div ref={veilRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.34) 0%, rgba(10,10,10,0.62) 100%)", pointerEvents: "none", willChange: "opacity" }} />
       {/* the words — evaporate on scroll */}
       <div ref={wordsRef} style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none", willChange: "opacity, transform" }}>
-        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 4, display: "block", marginBottom: 18 }}>Social Producer @Adobe | San Francisco</span>
+        {/* Aug 27 2026, Miles: "remove the green social producer at adobe maybe make
+            it something that it like a sticky note or something more creatively
+            chill". Same words, on a sticky note. */}
+        <span className="tc-sticky" data-eyebrow="" style={{ display: "inline-block", position: "relative", fontFamily: "'Caveat', cursive", fontSize: 22, fontWeight: 600, lineHeight: 1.15, color: "#3A3323", background: "#FFE97A", padding: "12px 18px 14px", borderRadius: 2, transform: "rotate(-2.5deg)", boxShadow: "0 8px 20px rgba(0,0,0,0.45)", marginBottom: 18 }}>Social Producer @Adobe | San Francisco</span>
         <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
           Creative<span style={{ color: C.mint }}>.</span><br />
           Producer<span style={{ color: C.mint }}>.</span><br />
@@ -2326,7 +2339,7 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
         <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
-        <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
+        <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
         <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>
           {ev.pinned && <span style={{ fontFamily: F, fontSize: 9, fontWeight: 800, color: C.bg, background: C.mint, borderRadius: 3, padding: "1px 4px", letterSpacing: 0.5, marginRight: 5, verticalAlign: "1px" }}>PINNED</span>}
           {ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
@@ -2344,7 +2357,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
       style={{
         display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
         padding: "8px 12px", borderRadius: 8, cursor: "pointer",
-        background: h ? "rgba(255,255,255,0.07)" : active ? "rgba(30,215,96,0.06)" : "transparent",
+        background: h ? "rgba(255,255,255,0.07)" : active ? "rgba(255,255,255,0.06)" : "transparent",
         transition: "background 0.15s",
       }}>
       <span style={{ fontFamily: F, fontSize: 13, color: C.gray, textAlign: "center" }}>
@@ -2352,7 +2365,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
       </span>
       <Thumb reel={reel} />
       <span style={{ minWidth: 0 }}>
-        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
         {/* Flex, not one nowrap span: the chips keep their full width and the
             handle line ellipsizes around them (a clipped "Cut my" is a lie).
             Wrapping (Aug 10): with up to four chips on a row, the handle line
@@ -2418,7 +2431,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
         {cur && (
           <a className="sp-ig-link" href={cur.postUrl} target="_blank" rel="noopener noreferrer"
             style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
-            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(30,215,96,0.3)"; }}
+            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
             onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
           ><span className="sp-ig-label">Open on {platformOf(cur)} </span>↗</a>
         )}
@@ -2690,7 +2703,7 @@ function ShelfCard({ ev, inPage = false }) {
       style={{
         textDecoration: "none", flexShrink: 0, width: 200, scrollSnapAlign: "start",
         background: h ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.03)",
-        border: `1px solid ${h ? "rgba(30,215,96,0.25)" : C.border}`, borderRadius: 14, padding: 14,
+        border: `1px solid ${h ? "rgba(255,255,255,0.25)" : C.border}`, borderRadius: 14, padding: 14,
         transform: h ? "translateY(-5px)" : "none", transition: "all 0.25s", display: "block",
       }}>
       <span style={{ display: "block", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", background: gradFor(ev.idx), position: "relative" }}>
@@ -3138,7 +3151,7 @@ function CareerTimeline() {
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(ev.idx); } }}
                   onMouseEnter={e => { if (!open) e.currentTarget.style.transform = "translateY(-2px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
-                  style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(30,215,96,0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
+                  style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(255,255,255,0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
                   <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0, alignSelf: open ? "start" : "center" }}>
                     <span style={{ position: "relative", width: "100%", aspectRatio: ev.coverLandscape ? "16 / 9" : "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
                       <img src={ev.cover} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
@@ -3192,7 +3205,7 @@ function TimelineSummary() {
             display: "block", maxWidth: 720, textDecoration: "none",
             padding: "26px 30px", borderRadius: 16,
             background: h ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${h ? "rgba(30,215,96,0.25)" : C.border}`,
+            border: `1px solid ${h ? "rgba(255,255,255,0.25)" : C.border}`,
             transition: "background 0.25s, border-color 0.25s",
             WebkitTapHighlightColor: "transparent",
           }}>
@@ -3299,7 +3312,7 @@ function B2BStrip() {
           display: "flex", gap: 18, marginTop: 20, maxWidth: 1180,
           padding: 16, borderRadius: 16, textDecoration: "none",
           background: h ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-          border: `1px solid ${h ? "rgba(30,215,96,0.25)" : C.border}`,
+          border: `1px solid ${h ? "rgba(255,255,255,0.25)" : C.border}`,
           transition: "background 0.25s, border-color 0.25s",
           WebkitTapHighlightColor: "transparent",
         }}>
@@ -3322,6 +3335,123 @@ function B2BStrip() {
         <span className="shelf-card-play" style={{ width: 44, height: 44, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
       </a>
     </FadeIn>
+  );
+}
+
+
+// ===== THE TYPE CUT (Sep 4 2026) — What I Do, inverted the way Miles asked =====
+// Aug 26, his words: "the colors that you used for event coverage (add
+// commercial), in house productions, off the clock, brand partnerships, etc.
+// should be the ones at top and then it goes into produced directed, etc.
+// inside of those blocks after we push into them." Aug 27: "yes hosting/talent
+// should be its own tab." One row per TYPE of work in its band hue, a fifth
+// row for every hosted reel across the types, role chips inside each row.
+// A pressed chip DIMS the cards that role does not cover; it never hides,
+// reorders, or scrolls (his UI law, Aug 26). A pressed tab keeps that row alone
+// under the tabs; pressing it again brings the rest back. Every number is
+// derived from the same rows the player uses. The mock this is built from:
+// research/mock-2026-08-26-type-cut-floating.html (v5.1, his three rulings in).
+const TYPE_CUT_HOSTING = "Hosting / Talent";
+const TYPE_CUT_SHOW = 10; // newest ten per row on the page; the rest live at #/playlist
+const TYPE_CUT = [
+  { key: "Event Coverage", label: "Commercial Event Coverage", hue: C.gold },
+  { key: "In-House Production", label: "In-House Productions", hue: "#4EA8DE" },
+  { key: "Brand Partnerships", label: "Brand Partnerships", hue: "#FF6A38" },
+  { key: "Off the Clock", label: "Off the Clock", hue: "#9B7BFF" },
+  { key: TYPE_CUT_HOSTING, label: TYPE_CUT_HOSTING, hue: "#E667C0" },
+];
+// Newest first in every row. Pinned mirrors are skipped so nothing counts twice.
+const _typeReels = portfolio
+  .filter(ev => !ev.pinned)
+  .flatMap(ev => ev.reels.map(r => ({ reel: r, type: BUCKET_OF[ev.event], roles: reelRoleTabs(r) })))
+  .sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
+const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
+  const hosting = t.key === TYPE_CUT_HOSTING;
+  const items = hosting ? _typeReels.filter(x => x.roles[3]) : _typeReels.filter(x => x.type === t.key);
+  // Inside a type row the chips are the five roles. Inside the hosting row
+  // they are the four types, so the same press shows where the hosting happened.
+  const chips = hosting
+    ? TYPE_CUT.slice(0, 4).map(u => ({ id: u.key, label: u.label, hue: u.hue, count: items.filter(x => x.type === u.key).length, test: (x) => x.type === u.key }))
+    : ROLE_TABS.map((name, n) => ({ id: name, label: name, hue: ROLE_TAB_COLORS[name], count: items.filter(x => x.roles[n]).length, test: (x) => x.roles[n] }));
+  return { ...t, items, count: items.length, plays: items.reduce((sum, x) => sum + playsNum(x.reel.plays), 0), chips };
+});
+
+const TC_MASK = "linear-gradient(90deg, transparent, black 4%, black 96%, transparent)";
+function TypeCard({ item, dim, tilt }) {
+  const { reel } = item;
+  return (
+    <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
+      style={{ flex: "none", width: 150, display: "block", background: C.white, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, textDecoration: "none" }}>
+      <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
+        style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 5, display: "block", background: "#e6e6e6" }}
+        onError={e => { e.currentTarget.style.visibility = "hidden"; }} />
+      <span style={{ display: "block", padding: "5px 3px 3px" }}>
+        <span style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", fontFamily: F, fontSize: 9.5, lineHeight: 1.25, color: "#111", fontWeight: 600 }}>{reel.title}</span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4, fontFamily: F, fontSize: 9, color: "#555", marginTop: 3, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}><IcPlay s={8} c="#555" />{playsLabel(reel)} plays</span>
+      </span>
+    </a>
+  );
+}
+
+function TypeRow({ row, hidden }) {
+  const [lens, setLens] = useState(null);
+  const ref = useRef(null);
+  useDriftScroll(ref, 70);
+  const show = row.items.slice(0, TYPE_CUT_SHOW);
+  const active = row.chips.find(c => c.id === lens) || null;
+  return (
+    <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 12 }}>
+        <b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b>
+        <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
+        <span className="tc-chips" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: "auto" }}>
+          {row.chips.map(c => {
+            const on = lens === c.id, zero = c.count === 0;
+            return (
+              <button key={c.id} type="button" data-role-chip={c.id} aria-pressed={on} disabled={zero}
+                onClick={() => setLens(on ? null : c.id)}
+                style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, padding: "6px 10px", minHeight: 30, borderRadius: 999, cursor: zero ? "default" : "pointer",
+                  border: `1px solid ${on ? c.hue : "#2c2c2c"}`, background: on ? c.hue : "#141414", color: on ? "#111" : "#cfcfcf", opacity: zero ? 0.35 : 1 }}>
+                {c.label}<span style={{ marginLeft: 5, color: on ? "#111" : "#8a8a8a", fontVariantNumeric: "tabular-nums" }}>{c.count}</span>
+              </button>
+            );
+          })}
+        </span>
+      </div>
+      <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: TC_MASK, WebkitMaskImage: TC_MASK }}>
+        <div style={{ display: "flex", width: "max-content", padding: "8px clamp(24px, 5vw, 80px) 12px" }}>
+          {[0, 1].map(copy => (
+            <div key={copy} style={{ display: "flex", gap: 18, paddingRight: 18 }}>
+              {show.map((item, i) => <TypeCard key={`${copy}-${item.reel.postUrl || item.reel.title}`} item={item} dim={!!active && !active.test(item)} tilt={i % 2 ? 1.4 : -1.6} />)}
+            </div>
+          ))}
+        </div>
+      </div>
+      {row.count > show.length && (
+        <a href="#/playlist" style={{ display: "inline-block", fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: "4px 0 0" }}>+ {row.count - show.length} more · full playlist →</a>
+      )}
+    </div>
+  );
+}
+
+function TypeCut() {
+  const [focus, setFocus] = useState(null);
+  return (
+    <div data-type-cut="">
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 26 }}>
+        {TYPE_CUT_ROWS.map(t => {
+          const on = focus === t.key;
+          return (
+            <button key={t.key} type="button" className="tc-tab" data-type-tab={t.key} aria-pressed={on} onClick={() => setFocus(on ? null : t.key)}
+              style={{ fontFamily: F, textAlign: "left", cursor: "pointer", minHeight: 44, background: on ? `${t.hue}29` : "#111", border: `1.5px solid ${on ? t.hue : "#262626"}`, borderLeft: `10px solid ${t.hue}`, borderRadius: 14, padding: "12px 16px", color: C.white }}>
+              <b style={{ display: "block", fontSize: 14.5, fontWeight: 700 }}>{t.label}</b>
+              <span style={{ fontSize: 11.5, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{t.count} videos · {fmtPlays(t.plays)}</span>
+            </button>
+          );
+        })}
+      </div>
+      {TYPE_CUT_ROWS.map(t => <TypeRow key={t.key} row={t} hidden={!!focus && focus !== t.key} />)}
+    </div>
   );
 }
 
@@ -3493,7 +3623,7 @@ function BucketCard({ b, i, onScreen }) {
         // gradient fallback and read as a coloured ring around every card.
         position: "relative", display: "block", textDecoration: "none", aspectRatio: "9 / 16",
         borderRadius: 14, overflow: "hidden", background: "#111",
-        border: `1px solid ${h ? "rgba(30,215,96,0.45)" : "rgba(255,255,255,0.12)"}`,
+        border: `1px solid ${h ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.12)"}`,
         WebkitTapHighlightColor: "transparent",
         transform: h ? "translateY(-6px)" : "none",
         transition: `transform 0.25s ${CARD_EASE}, border-color 0.25s, box-shadow 0.25s`,
@@ -3578,14 +3708,14 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
         style={{
           display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
           padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s",
-          background: open ? "rgba(30,215,96,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
+          background: open ? "rgba(255,255,255,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
         }}>
         <span style={{ fontFamily: F, fontSize: 13, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
           {open ? <EqBars /> : n + 1}
         </span>
         <Thumb reel={reel} size={44} radius={8} />
         <span style={{ minWidth: 0 }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.mint : C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
+          <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
           {/* Credit chip FIRST and always visible: "what was your role in the
               video" is the question, so it is never hover-gated and never lets
               the handle text push it out of frame. */}
@@ -3813,7 +3943,7 @@ function Nav() {
                 <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   onClick={() => setConnectOpen(false)}
                   style={{ display: "block", padding: "10px 14px", borderRadius: 8, textDecoration: "none", transition: "background 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgba(30,215,96,0.08)"}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   <span style={{ display: "block", fontFamily: F, fontSize: 13.5, fontWeight: 600, color: C.white }}>{label}</span>
                   <span style={{ display: "block", fontFamily: F, fontSize: 11, color: C.gray, marginTop: 2 }}>{sub}</span>
@@ -3875,7 +4005,7 @@ export default function Portfolio() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: ${C.bg}; overflow-x: hidden; }
@@ -4023,7 +4153,7 @@ export default function Portfolio() {
           .sp-side-divider > span:last-child { display: none; }
           /* Horizontal strip: a bare word floats. The rule anchors it to the
              group of chips that follows it. */
-          .sp-side-divider > span:first-child { border-left: 2px solid rgba(30,215,96,0.55); padding-left: 8px; font-size: 11px !important; }
+          .sp-side-divider > span:first-child { border-left: 2px solid rgba(255,255,255,0.55); padding-left: 8px; font-size: 11px !important; }
           .spec-row-expand { padding: 10px 8px 18px 26px !important; }
         }
         /* R3 B5: 44px tap targets on touch devices */
@@ -4037,13 +4167,24 @@ export default function Portfolio() {
           .nav-connect { min-height: 44px !important; }
           .tl-card { position: relative; }
           .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
-          .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #1ED760; }
+          .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #FFFFFF; }
           .tl-chips { -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent); mask-image: linear-gradient(90deg, #000 92%, transparent); scroll-padding-right: 16px; }
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
         ::-webkit-scrollbar-thumb { background: ${C.darkGray}; border-radius: 3px; }
         a:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
+        /* ===== THE TYPE CUT (Sep 4 2026) ===== */
+        .tc-sticky::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(1deg); width: 74px; height: 18px; background: rgba(255,255,255,0.28); border-left: 1px dashed rgba(0,0,0,0.08); border-right: 1px dashed rgba(0,0,0,0.08); }
+        .tc-tab:hover { border-color: #3a3a3a; }
+        .tc-card { transition: opacity 0.22s ease; }
+        .tc-chips button:disabled { cursor: default; }
+        @media (max-width: 900px) {
+          .tc-chips { margin-left: 0 !important; }
+          .tc-chips button { min-height: 44px; padding: 8px 12px !important; font-size: 12px !important; }
+          .tc-tab { flex: 1 1 calc(50% - 6px); }
+        }
+        @media (max-width: 640px) { .tc-tab { flex-basis: 100%; } }
       `}</style>
 
       <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
@@ -4146,7 +4287,7 @@ export default function Portfolio() {
         {/* ===== WHAT I'M WORKING ON NOW ===== */}
         <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
           <FadeIn>
-            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.mint}`, borderRadius: 14, padding: "26px 30px" }}>
+            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: 14, padding: "26px 30px" }}>
               <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
               {/* Aug 10 2026 — opening sentence DELETED on Miles's instruction.
                   It read: "At Adobe, I run in-house productions: talking tracks
@@ -4183,7 +4324,7 @@ export default function Portfolio() {
           <FadeIn>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
-          <RoleCardGrid />
+          <TypeCut />
           <B2BStrip />
         </section>
 
