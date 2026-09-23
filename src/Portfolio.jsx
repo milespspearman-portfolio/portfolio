@@ -1633,7 +1633,7 @@ const SET_LIST_GROUP_SIZE = 3;
 const SET_LIST_GROUPS = (() => {
   const pool = portfolio
     .flatMap((ev, e) => (ev.pinned || BUCKET_OF[ev.event] === "Off the Clock" ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
-    .filter(x => playsNum(x.reel.plays) > 0)
+    .filter(x => playsNum(x.reel.plays) > 0 && (SET_LIST_DESCS[x.reel.title] || REEL_DESCS[x.reel.title]))
     .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays));
   const taken = new Set();
   // idx = the slot in ROLE_TABS each label reads: Hosted, Edited, Produced, Directed.
@@ -1702,7 +1702,10 @@ function TilePlays({ reel }) {
 function SetListTile({ item, live, onActivate, innerRef }) {
   const reel = item.reel;
   const tabs = reelRoleTabs(reel);
-  const paras = SET_LIST_DESCS[reel.title] || (REEL_DESCS[reel.title] ? [REEL_DESCS[reel.title]] : []);
+  // His signed case write-ups keep their size; a published caption (REEL_DESCS) sits a step
+  // quieter and one paragraph only (design + tyler checks, Sep 22 2026). No new copy either way.
+  const cased = !!SET_LIST_DESCS[reel.title];
+  const paras = (SET_LIST_DESCS[reel.title] || (REEL_DESCS[reel.title] ? [REEL_DESCS[reel.title]] : [])).slice(0, cased ? 99 : 1);
   const why = REEL_WHY[reel.title] || null;
   return (
     <div style={{ minWidth: 0 }}>
@@ -1732,7 +1735,7 @@ function SetListTile({ item, live, onActivate, innerRef }) {
           ))}
         </span>
         {paras.map((p, n) => (
-          <p key={n} style={{ fontFamily: F, fontSize: 13, color: "#b8b8b8", lineHeight: 1.55, margin: "0 0 9px", maxWidth: "46ch", textWrap: "pretty" }}>{p}</p>
+          <p key={n} style={{ fontFamily: F, fontSize: cased ? 13 : 12, color: cased ? "#b8b8b8" : C.gray, lineHeight: 1.55, margin: "0 0 9px", maxWidth: "46ch", textWrap: "pretty" }}>{p}</p>
         ))}
         {/* Why it mattered, his two strings, reason then production detail. */}
         {why && (
@@ -1809,13 +1812,12 @@ function SetList() {
   }));
   useEffect(() => () => { if (io.current) { io.current.disconnect(); io.current = null; } ratios.current.clear(); }, []);
   return (
-    <section style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 40px" }}>
+    <section id="set-list" style={{ padding: "24px clamp(24px, 5vw, 80px) 40px" }}>
       {/* 1400 so five text columns are five readable columns. At the old
           860-ish measure each one lands near 30 characters, which is a word a
           line and reads as broken rather than as five write-ups. */}
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
         <FadeIn>
-          <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
           <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 26px 0", letterSpacing: -0.5 }}>The Set List</h2>
         </FadeIn>
         {/* One labelled grid per role group. `i` is the GLOBAL index across all
@@ -1824,7 +1826,7 @@ function SetList() {
         {SET_LIST_GROUPS.map((g, gi) => {
           const base = SET_LIST_GROUPS.slice(0, gi).reduce((s, x) => s + x.items.length, 0);
           return (
-            <div key={g.label} style={{ marginTop: gi === 0 ? 0 : 44 }}>
+            <div key={g.label} style={{ marginTop: gi === 0 ? 0 : 44, borderTop: gi === 0 ? "none" : "1px solid rgba(255,255,255,0.08)", paddingTop: gi === 0 ? 0 : 24 }}>
               <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>{g.label}</span>
               <div className="set-grid by-role">
                 {g.items.map((item, n) => (
@@ -4345,6 +4347,7 @@ export default function Portfolio() {
           .tc-plays { font-size: 10px !important; }
         }
         @media (max-width: 640px) { .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; } }
+        @media (max-width: 640px) { .cta-row { flex-direction: column; align-items: center; } .cta-row a { width: 100%; max-width: 320px; padding-left: 24px !important; padding-right: 24px !important; text-align: center; box-sizing: border-box; } }
       `}</style>
 
       <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
@@ -4357,7 +4360,8 @@ export default function Portfolio() {
         <MobileTabBar route={route} />
 
         {/* ===== #/work — category grid ===== */}
-        {route.kind === "work" && (<><SetList /><WorkGridPage /></>)}
+        {/* Work page (design + phone checks, Sep 22 2026): the four category doors first, the Set List under them. */}
+        {route.kind === "work" && (<><WorkGridPage /><SetList /></>)}
         {/* ===== #/work/<bucket> — the bucket's own page ===== */}
         {route.kind === "bucket" && <BucketPage bucket={route.bucket} />}
         {/* ===== #/timeline — the career timeline as its own page ===== */}
@@ -4506,7 +4510,7 @@ export default function Portfolio() {
             </p>
           </FadeIn>
           <FadeIn delay={0.2}>
-            <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+            <div className="cta-row" style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="mailto:milespspearman@gmail.com"
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; }}
@@ -4521,12 +4525,12 @@ export default function Portfolio() {
           </FadeIn>
           <FadeIn delay={0.3}>
             {/* Sep 22 2026, Miles: "remove these arrows and clean up the bottom" — one stacked list, no glyphs. */}
-            <p style={{ fontFamily: F, fontSize: 13, margin: "32px 0 0", display: "grid", gap: 8, justifyItems: "center" }}>
+            <p style={{ fontFamily: F, fontSize: 13, margin: "24px 0 0", display: "grid", gap: 0, justifyItems: "center" }}>
               {[["Off the clock: @milesmusicmedia — my jazz content", "https://www.instagram.com/milesmusicmedia"],
                 ["Instagram · @miles.spearman", "https://www.instagram.com/miles.spearman/"],
                 ["YouTube · @MilesSpearman", "https://www.youtube.com/@MilesSpearman"]].map(([label, href]) => (
                 <a key={href} href={href} target="_blank" rel="noopener noreferrer"
-                  style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+                  style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s", display: "inline-flex", alignItems: "center", minHeight: 44, padding: "6px 8px" }}
                   onMouseEnter={e => e.target.style.color = C.mint}
                   onMouseLeave={e => e.target.style.color = C.gray}
                 >{label}</a>
