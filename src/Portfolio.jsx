@@ -4342,18 +4342,23 @@ export default function Portfolio() {
                   are not a claim the work makes out loud. The About heading now
                   runs straight into the numbers, which are the proof anyway. */}
               <PlaysCounter />
-              <p style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0" }}>
-                I'm a social producer and content creator on Adobe's Social Creative Studio team in San Francisco. I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober). I also host, present, and work in front of the camera. I studied Marketing and Music at UC. The music background shows up in how I think about rhythm, pacing, and storytelling. And yeah, I'm also a{" "}
-                <a href="#/playlist"
+              {/* Sep 22 2026, Miles: "why isnt the sentences separated by a paragraph" — one sentence per paragraph, every word as it was. */}
+              <div style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0", display: "grid", gap: 12 }}>
+                <p style={{ margin: 0 }}>I'm a social producer and content creator on Adobe's Social Creative Studio team in San Francisco.</p>
+                <p style={{ margin: 0 }}>I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober).</p>
+                <p style={{ margin: 0 }}>I also host, present, and work in front of the camera.</p>
+                <p style={{ margin: 0 }}>I studied Marketing and Music at UC.</p>
+                <p style={{ margin: 0 }}>The music background shows up in how I think about rhythm, pacing, and storytelling.</p>
+                <p style={{ margin: 0 }}>And yeah, I'm also a <a href="#/playlist"
                   onClick={(ev) => { const e = portfolio.findIndex(x => x.event === "Miles Music Media"); if (e !== -1) { ev.preventDefault(); goPlay(e, 0); } }}
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55`, cursor: "pointer" }}
                   onMouseEnter={ev => ev.target.style.borderBottomColor = C.mint}
                   onMouseLeave={ev => ev.target.style.borderBottomColor = `${C.mint}55`}
-                >professional trumpet player</a> in San Francisco. Reach me anytime at{" "}
-                <a href="mailto:milespspearman@gmail.com"
+                >professional trumpet player</a> in San Francisco.</p>
+                <p style={{ margin: 0 }}>Reach me anytime at <a href="mailto:milespspearman@gmail.com"
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55` }}
-                >milespspearman@gmail.com</a>.
-              </p>
+                >milespspearman@gmail.com</a>.</p>
+              </div>
               {/* ===== THE ONE BUTTON (Aug 10 2026) =====
                   "View Resume →" is GONE from this slot, Miles's call tonight:
                   "remove 'view resume'". It was the last resume affordance on
