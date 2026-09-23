@@ -3459,6 +3459,8 @@ const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
   return { ...t, items, shown: pickShown(items, chips, TYPE_CUT_SHOW), count: items.length, plays: items.reduce((sum, x) => sum + playsNum(x.reel.plays), 0), chips };
 });
 
+// Render order (Miles, Sep 22 2026: "move hosted / talent up to the top"): the hosting row leads, the four types follow.
+const TYPE_CUT_ROWS_ORDERED = [...TYPE_CUT_ROWS.filter(t => t.key === TYPE_CUT_HOSTING), ...TYPE_CUT_ROWS.filter(t => t.key !== TYPE_CUT_HOSTING)];
 const TC_MASK = "linear-gradient(90deg, transparent, black 4%, black 96%, transparent)";
 function TypeCard({ item, dim, tilt, copy = 0 }) {
   const { reel } = item;
@@ -3538,7 +3540,7 @@ function TypeCut() {
   return (
     <div data-type-cut="">
       <div className="tc-tabs" style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 26 }}>
-        {TYPE_CUT_ROWS.map(t => {
+        {TYPE_CUT_ROWS_ORDERED.map(t => {
           const on = focus === t.key;
           return (
             <button key={t.key} type="button" className="tc-tab" data-type-tab={t.key} aria-pressed={on} onClick={() => setFocus(on ? null : t.key)}
@@ -3549,7 +3551,7 @@ function TypeCut() {
           );
         })}
       </div>
-      {TYPE_CUT_ROWS.map(t => <TypeRow key={t.key} row={t} hidden={!!focus && focus !== t.key} />)}
+      {TYPE_CUT_ROWS_ORDERED.map(t => <TypeRow key={t.key} row={t} hidden={!!focus && focus !== t.key} />)}
     </div>
   );
 }
@@ -4456,29 +4458,25 @@ export default function Portfolio() {
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.bg, background: C.mint, padding: "16px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 50px ${C.mint}30` }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; }}
-            >Email Me →</a>
+            >Email Me</a>
             <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer"
               style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, background: "transparent", border: `1px solid ${C.border}`, padding: "15px 48px", borderRadius: 100, textDecoration: "none", display: "inline-block", transition: "transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s" }}
               onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.background = "#0A66C2"; e.target.style.color = "#fff"; e.target.style.boxShadow = "0 0 70px rgba(10,102,194,0.5)"; }}
               onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.background = "transparent"; e.target.style.color = C.white; e.target.style.boxShadow = "none"; }}
-            >Connect on LinkedIn ↗</a>
+            >Connect on LinkedIn</a>
             </div>
           </FadeIn>
           <FadeIn delay={0.3}>
-            <p style={{ fontFamily: F, fontSize: 13, margin: "28px 0 0" }}>
-              <a href="https://www.instagram.com/milesmusicmedia" target="_blank" rel="noopener noreferrer"
-                style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
-                onMouseEnter={e => e.target.style.color = C.mint}
-                onMouseLeave={e => e.target.style.color = C.gray}
-              >Off the clock: 🎷 @milesmusicmedia — my jazz content ↗</a>
-            </p>
-            <p style={{ fontFamily: F, fontSize: 12.5, margin: "10px 0 0", display: "flex", gap: 18, justifyContent: "center", flexWrap: "wrap" }}>
-              {[["Instagram · @miles.spearman", "https://www.instagram.com/miles.spearman/"], ["YouTube · @MilesSpearman", "https://www.youtube.com/@MilesSpearman"]].map(([label, href]) => (
+            {/* Sep 22 2026, Miles: "remove these arrows and clean up the bottom" — one stacked list, no glyphs. */}
+            <p style={{ fontFamily: F, fontSize: 13, margin: "32px 0 0", display: "grid", gap: 8, justifyItems: "center" }}>
+              {[["Off the clock: @milesmusicmedia — my jazz content", "https://www.instagram.com/milesmusicmedia"],
+                ["Instagram · @miles.spearman", "https://www.instagram.com/miles.spearman/"],
+                ["YouTube · @MilesSpearman", "https://www.youtube.com/@MilesSpearman"]].map(([label, href]) => (
                 <a key={href} href={href} target="_blank" rel="noopener noreferrer"
                   style={{ color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
                   onMouseEnter={e => e.target.style.color = C.mint}
                   onMouseLeave={e => e.target.style.color = C.gray}
-                >{label} ↗</a>
+                >{label}</a>
               ))}
             </p>
           </FadeIn>
