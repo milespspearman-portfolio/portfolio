@@ -179,6 +179,8 @@ const EVENT_ROLES = {
   "Adobe × NFL": "Produced in partnership with the NFL",
   "Adobe MAX Product Demos": "Produced, creatively directed & coached",
   "’25 MAX Customer Stories": "Produced, creatively directed & coached",
+  // Sep 22 2026, Miles on The College Tour segment: "hosted and creative".
+  "The College Tour": "Hosted & Creative Directed",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles on YouTube": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
@@ -413,6 +415,11 @@ const REEL_TAGS = {
   "Confirmation Is a Beast but Hopefully": "EE",
   // Miles.Spearman
   "Behind the Product": "P, D",
+  // Sep 22 2026 adds. College Tour = his "hosted and creative" (D, H). The MAX
+  // Day in the Life is him on camera start to finish, so H only; no other code
+  // claimed until he tags it.
+  "The College Tour: University of Cincinnati": "D, H",
+  "’25 MAX: Day in the Life of Miles Spearman": "H",
   // Miles on YouTube — Aug 10 2026, his own words: "did everything it's the
   // same as the jazz — they join cut by me". Same code as the jazz library
   // above, so the 12 YouTube videos now read the same way the reels do.
@@ -796,6 +803,9 @@ const portfolio = [
   {
     event: "’25 MAX LA",
     reels: [
+      // Sep 22 2026, Miles: "the Day in The Life of Miles Spearman link". Plays not
+      // pulled yet, so blank (renders N/A) until the Apify pass fills it.
+      { title: "’25 MAX: Day in the Life of Miles Spearman", sub: "@adobecreativecloud · 202 likes · Oct 7, 2025", plays: "", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Miles-Day-in-the-Life_10.7.25.mp4", postUrl: "https://www.instagram.com/reel/DPg1sHMiY0x/" },
       { title: "’25 MAX: Acrobat Booth", sub: "@adobeacrobat · 1.3K likes · Oct 31, 2025", plays: "1.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat-Booth_10.31.25.mp4", postUrl: "https://www.instagram.com/p/DQe3K4Zjpv9/" },
       { title: "’25 MAX: PDF Spaces is Everywhere", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
       { title: "’25 MAX: James Gunn’s Filmmaking Assignment", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
@@ -1002,6 +1012,14 @@ const portfolio = [
     ],
   },
   {
+    // Sep 22 2026: UC's College Tour episode segment (YouTube, 3:50). Watch-only
+    // row: official YouTube thumbnail, opens on YouTube. 1,152 views seen Sep 22.
+    event: "The College Tour",
+    reels: [
+      { title: "The College Tour: University of Cincinnati", sub: "YouTube · Feb 17, 2022", plays: "1.2K", landscape: true, thumb: "/thumbs/2022/College-Tour/College-Tour-UC_2.17.22.jpg", postUrl: "https://www.youtube.com/watch?v=d4TIPsFDl5I" },
+    ],
+  },
+  {
     event: "Miles.Spearman",
     reels: [
       { title: "Behind the Product", sub: "@miles.spearman · 21 likes · Jul 3, 2026", plays: "287", mp4: "/reels/2026/Behind-the-Vision/Behind-the-Vision_7.3.26.mp4", postUrl: "https://www.instagram.com/reel/DaVOW5YB-nb/" },
@@ -1046,6 +1064,7 @@ const BUCKET_OF = {
   "Brand Partnerships": "Brand Partnerships", "Adobe × NFL": "Brand Partnerships",
   // Off the Clock — unchanged
   "Miles Music Media": "Off the Clock", "Miles.Spearman": "Off the Clock", "Miles on YouTube": "Off the Clock",
+  "The College Tour": "Off the Clock",
   // "Making B2B Social Friendly" (pinned) is deliberately ABSENT: it mirrors
   // reels from three different buckets, so it belongs to none. It stays pinned
   // at the top of the full sidebar and is skipped by every bucket total.
@@ -1082,7 +1101,9 @@ const B2B_PLAYLIST_SPEC = [
   { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
   { t: "’25 IBC: Premiere on Mobile Release", album: "Product Releases" },
 ];
-portfolio.unshift({
+// Sep 22 2026, Miles: take out "the making b2b social friendly" — the pinned
+// playlist no longer mounts (spec kept above so it can come back in one line).
+if (false) portfolio.unshift({
   event: "Making B2B Social Friendly",
   pinned: true,
   reels: B2B_PLAYLIST_SPEC.map(({ t }) => {
@@ -4347,6 +4368,22 @@ export default function Portfolio() {
           .tc-plays { font-size: 10px !important; }
         }
         @media (max-width: 640px) { .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; } }
+        /* Sep 22 2026, Miles: "the bottom section needs to be cleaned up on mobile".
+           Phone only: role chips ride ONE swipeable line (they wrapped into a
+           two-line pill cloud), and the dead gaps around the fun row, the
+           client strip, the CTA and the footer come down. Desktop untouched. */
+        @media (max-width: 640px) {
+          .tc-chips { flex-wrap: nowrap !important; overflow-x: auto; width: 100%; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); padding-right: 24px; }
+          .tc-chips::-webkit-scrollbar { display: none; }
+          .tc-chips button { flex: 0 0 auto; white-space: nowrap; }
+          .m-whatido { padding-top: 56px !important; padding-bottom: 8px !important; }
+          .m-funrow { padding-top: 0 !important; padding-bottom: 0 !important; }
+          .m-clients { padding-top: 24px !important; }
+          .m-cta { padding-top: 56px !important; padding-bottom: 40px !important; }
+          .m-links { margin-top: 16px !important; }
+          .m-links a { min-height: 40px !important; padding: 4px 8px !important; }
+          .m-foot { padding-top: 20px !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; }
+        }
         @media (max-width: 640px) { .cta-row { flex-direction: column; align-items: center; } .cta-row a { width: 100%; max-width: 320px; padding-left: 24px !important; padding-right: 24px !important; text-align: center; box-sizing: border-box; } }
       `}</style>
 
@@ -4458,7 +4495,7 @@ export default function Portfolio() {
         {/* "What I'm Working On Now" removed Sep 22 2026 (Miles). */}
 
         {/* ===== WHAT I DO — clickable cards ===== */}
-        <section id="what-i-do" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
+        <section id="what-i-do" className="m-whatido" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
           <FadeIn>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
@@ -4466,7 +4503,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== FUN ROW — emotion picks bridging What I Do into Selected Work ===== */}
-        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
+        <section className="m-funrow" style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
           <FadeIn>
             <HeroRow reels={funReels} duration={90} />
           </FadeIn>
@@ -4487,7 +4524,7 @@ export default function Portfolio() {
         {/* The Set List moved to #/work (Miles, Sep 22 2026: "i would take out setlist, id have to put it somewhere else"). */}
 
         <section style={{ padding: "0 clamp(24px, 5vw, 80px)" }}>
-          <div style={{ maxWidth: 1400, margin: "0 auto", paddingTop: 64 }}><Marquee /></div>
+          <div className="m-clients" style={{ maxWidth: 1400, margin: "0 auto", paddingTop: 64 }}><Marquee /></div>
         </section>
 
 
@@ -4499,7 +4536,7 @@ export default function Portfolio() {
             the bleed at the section edge. `clip` rather than `hidden` on
             purpose: hidden would make this section a scroll container and force
             overflow-y to auto, and the glow would lose its vertical bleed. */}
-        <section style={{ padding: "100px clamp(24px, 5vw, 80px)", textAlign: "center", position: "relative", overflowX: "clip", overflowY: "visible" }}>
+        <section className="m-cta" style={{ padding: "100px clamp(24px, 5vw, 80px)", textAlign: "center", position: "relative", overflowX: "clip", overflowY: "visible" }}>
           <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 500, height: 500, background: `radial-gradient(circle, ${C.pink}08, transparent 70%)`, pointerEvents: "none" }} />
           <FadeIn>
             <h2 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 16px 0", letterSpacing: -0.5 }}>Let's make something.</h2>
@@ -4525,7 +4562,7 @@ export default function Portfolio() {
           </FadeIn>
           <FadeIn delay={0.3}>
             {/* Sep 22 2026, Miles: "remove these arrows and clean up the bottom" — one stacked list, no glyphs. */}
-            <p style={{ fontFamily: F, fontSize: 13, margin: "24px 0 0", display: "grid", gap: 0, justifyItems: "center" }}>
+            <p className="m-links" style={{ fontFamily: F, fontSize: 13, margin: "24px 0 0", display: "grid", gap: 0, justifyItems: "center" }}>
               {[["Off the clock: @milesmusicmedia — my jazz content", "https://www.instagram.com/milesmusicmedia"],
                 ["Instagram · @miles.spearman", "https://www.instagram.com/miles.spearman/"],
                 ["YouTube · @MilesSpearman", "https://www.youtube.com/@MilesSpearman"]].map(([label, href]) => (
@@ -4541,7 +4578,7 @@ export default function Portfolio() {
         </>)}
 
         {/* ===== FOOTER ===== */}
-        <footer style={{ padding: "32px clamp(24px, 5vw, 80px)", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
+        <footer className="m-foot" style={{ padding: "32px clamp(24px, 5vw, 80px)", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
           <span style={{ fontFamily: F, fontSize: 12, color: C.gray }}>© 2026 Miles Spearman</span>
         </footer>
       </div>
