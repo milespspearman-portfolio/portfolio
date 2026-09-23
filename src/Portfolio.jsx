@@ -4350,40 +4350,7 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
-        {/* ===== WHAT I'M WORKING ON NOW ===== */}
-        <section style={{ padding: "72px clamp(24px, 5vw, 80px) 8px" }}>
-          <FadeIn>
-            <div style={{ maxWidth: 860, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: `1px solid ${C.border}`, borderLeft: `3px solid ${C.gold}`, borderRadius: 14, padding: "26px 30px" }}>
-              <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "0 0 10px" }}>What I'm Working On Now</h3>
-              {/* Aug 10 2026 — opening sentence DELETED on Miles's instruction.
-                  It read: "At Adobe, I run in-house productions: talking tracks
-                  for execs, employee interviews, and creator spotlights." His
-                  reason, verbatim: "delete the section, that removes the section
-                  about me being a host" — the line defined him as the person who
-                  runs in-house productions, which reads past the hosting the
-                  rest of the site is built on.
-                  INTERPRETATION FLAG: he said "the section", and I read that as
-                  this SENTENCE, not the whole Now box — the box's other two
-                  sentences are current facts he wrote and nothing he said asks
-                  for them to go. If he meant the whole box, deleting this
-                  <div> (and the FadeIn around it) is the one edit.
-                  The remaining text is his, untouched and unreworded. */}
-              <p style={{ fontFamily: F, fontSize: 15, color: "rgba(255,255,255,0.82)", lineHeight: 1.7, margin: 0 }}>
-                Right now I'm working on National Intern Day content, Creative Cloud campaign work, new Photoshop Archives episodes, and the product release videos I host. All of it is video that taps into our audience's culture and shows how Adobe's tools empower people to create.
-              </p>
-              <span style={{ fontFamily: F, display: "block", marginTop: 14, fontSize: 12, color: C.gray }}>Last updated: August 2026</span>
-            </div>
-          </FadeIn>
-          {/* Aug 10 2026 — the "Email me" / "View My LinkedIn" PAIR that sat here
-              is GONE and nothing replaced it in this slot. The pair asked a
-              stranger to contact him before he had seen any work, which is the
-              ask arriving ahead of the reason for it.
-              An earlier pass tonight put a work button here; his follow-up
-              (looking at the About card on his phone) put the one button up
-              THERE instead, in the slot "View Resume" used to hold. One button
-              in this region, not two — so this slot stays empty and the Now box
-              runs straight into What I Do. */}
-        </section>
+        {/* "What I'm Working On Now" removed Sep 22 2026 (Miles). */}
 
         {/* ===== WHAT I DO — clickable cards ===== */}
         <section id="what-i-do" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
