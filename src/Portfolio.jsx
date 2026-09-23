@@ -4358,7 +4358,6 @@ export default function Portfolio() {
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
           <TypeCut />
-          <B2BStrip />
         </section>
 
         {/* ===== FUN ROW — emotion picks bridging What I Do into Selected Work ===== */}
