@@ -437,14 +437,6 @@ const REEL_TAGS = {
   "Play This Jazz Lick in Your Next Solo": "EE",
 };
 
-// RESOLVED Aug 10 2026 — the hold is over, the map is empty, and it stays here
-// as the shape any future conflict gets parked in. The two rows that lived here
-// ("’24 MAX: 3 Things We Didn’t Expect", "’24 MAX: Beyond Your Job Title") had a
-// sent email calling them "mine end to end" against a column reading "D, H".
-// Miles broke the tie in one sentence: "i owned both of those end to end".
-// Both rows moved up into REEL_TAGS as "EE, H" and now render two chips each.
-const REEL_TAGS_ON_HOLD = {};
-
 const TAG_CODES = ["E", "EE", "H", "D", "P"];
 const TAG_CHIP = { E: "Cut myself", EE: "Mine end to end", H: "Hosted", D: "Directed", P: "Produced" };
 const _tagParts = (r) => (REEL_TAGS[r.title] || "").split(",").map(s => s.trim()).filter(Boolean);
@@ -1277,17 +1269,6 @@ const TL_YEARS = [...new Set(timelineNodes.map(yearOf))].sort((a, b) => b - a);
 // filtered list. Same arithmetic either way — nothing here is ever hand-typed.
 const metaOf = (evs) => ({ count: evs.length, reels: evs.reduce((s, e) => s + e.reels.length, 0), plays: evs.reduce((s, e) => s + e.totalPlays, 0) });
 const yearMeta = Object.fromEntries(TL_YEARS.map(y => [y, metaOf(timelineNodes.filter(ev => yearOf(ev) === y))]));
-// The whole spine in one line, in the exact shape the year headers already
-// print (projects · reels · plays). Nothing new is said: it is the same three
-// derived numbers, summed over every year instead of one. The homepage's slim
-// Timeline block uses it as its summary now that the scroll lives on #/timeline.
-const TL_TOTAL = {
-  count: timelineNodes.length,
-  reels: timelineNodes.reduce((s, e) => s + e.reels.length, 0),
-  plays: timelineNodes.reduce((s, e) => s + e.totalPlays, 0),
-};
-const TL_SUMMARY = `${TL_TOTAL.count} ${TL_TOTAL.count === 1 ? "project" : "projects"} · ${TL_TOTAL.reels} reels · ${fmtPlays(TL_TOTAL.plays)} plays`;
-
 // ===== TIMELINE ROLE FILTER (Aug 10 2026) =====
 // Miles: "i need the timeline to be updated now that we have the role tagging
 // completed so it can populate based on the things i owned" — and his original
@@ -1577,21 +1558,6 @@ const REEL_WHY = {
 // HIS ROUTING CONSTRAINT, absolute: "i just don't think for D, we should be
 // linking outside of the portfolio." Every tile in both tiers is an in-site
 // link. No tile carries a postUrl.
-const SET_LIST_TITLES = [
-  "Adobe x NWSL: 2025 Creator Club",
-  "’25 Summit: Acrobat Escape Room",
-  "’25 MAX: Mark Rober’s Creator Assignment",
-  "’24 IBC: Premiere Pro AI: Emoji Reactions",
-  "San Jose Semaphore",
-];
-// Indices DERIVED by title lookup, the pinned-mirror pattern the B2B strip and
-// the Cut by Me sections already use — these are references into the one reel
-// table, never copied rows, so a play count or a file path changes in exactly
-// one place. A title that stops matching drops out rather than rendering blank.
-const SET_LIST_ITEMS = SET_LIST_TITLES
-  .map(t => { const at = reelIndexByTitle(t); return at ? { ...at, reel: portfolio[at.e].reels[at.r] } : null; })
-  .filter(Boolean);
-
 // ===== THE FIVE WRITE-UPS — selection, not authorship =====
 // Every paragraph is LIFTED whole from copy that already exists in this file.
 // Nothing is retyped, re-split, trimmed inside a sentence, or newly written.
@@ -1833,7 +1799,7 @@ function SetList() {
   }));
   useEffect(() => () => { if (io.current) { io.current.disconnect(); io.current = null; } ratios.current.clear(); }, []);
   return (
-    <section id="set-list" style={{ padding: "24px clamp(24px, 5vw, 80px) 40px" }}>
+    <section id="set-list" style={{ padding: "24px clamp(24px, 5vw, 80px) 64px" }}>
       {/* 1400 so five text columns are five readable columns. At the old
           860-ish measure each one lands near 30 characters, which is a word a
           line and reads as broken rather than as five write-ups. */}
@@ -1988,8 +1954,8 @@ const MARQUEE_LABEL = "Selected Clients & Stages";
 // off: logos are scanned, not read, and a moving row makes the eye chase marks
 // it is trying to identify; and he asked for the row to WRAP on mobile, which a
 // single-line marquee cannot do (wrapping and horizontal drift are mutually
-// exclusive). The @keyframes marquee rule is deliberately left in the
-// stylesheet so restoring the drift is a one-line change if he wants it back.
+// exclusive). The unused @keyframes marquee rule was removed Sep 23 2026, so
+// restoring the drift means adding that keyframe back first.
 //
 // Uniform white-on-dark via filter: every mark is a different brand colour
 // (Adobe red, NFL red, Warriors blue, Marvel's white knockout), and a row of
@@ -2861,52 +2827,6 @@ const nearestChildIdx = (el) => {
 };
 const reelDateStr = (r) => ((r.sub || "").split(" · ").pop() || "").trim();
 
-// The "Expand" detail sheet — a bigger view of one reel with its caption and the
-// project it lived under. Poster → tap to play. Esc / scrim / ✕ to close.
-function TLDetail({ ev, reel, cat, onClose }) {
-  const [play, setPlay] = useState(false);
-  const caption = REEL_DESCS[reel.title] || "";
-  const date = reelDateStr(reel);
-  useEffect(() => {
-    const onKey = e => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
-  }, []);
-  return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1400, background: "rgba(10,10,10,0.72)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", display: "flex", alignItems: "flex-end", justifyContent: "center", animation: "drawerFade 0.25s" }}>
-      <div onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={reel.title}
-        style={{ width: "min(460px, 100%)", maxHeight: "92svh", overflowY: "auto", background: "#0D0D0D", borderRadius: "18px 18px 0 0", border: `1px solid ${C.border}`, padding: 20, animation: "sheetIn 0.3s cubic-bezier(0.22,1,0.36,1)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, marginBottom: 14 }}>
-          <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 700, color: cat.accent, textTransform: "uppercase", letterSpacing: 1.5, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{cat.chip ? cat.chip + " · " : ""}{ev.event}</span>
-          <button onClick={onClose} aria-label="Close" style={{ flex: "0 0 auto", width: 36, height: 36, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.06)", color: C.white, fontSize: 15, cursor: "pointer" }}>✕</button>
-        </div>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <div style={{ position: "relative", width: reel.landscape ? "min(94%, 380px)" : "min(66%, 220px)", aspectRatio: reel.landscape ? "16 / 9" : "9 / 16", borderRadius: 14, overflow: "hidden", background: "#000" }}>
-            {watchOnly(reel) ? <WatchFrame reel={reel} radius={14} /> : play ? (
-              <video src={srcOf(reel)} poster={thumbOf(reel)} controls autoPlay muted playsInline
-                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-            ) : (
-              <button onClick={() => setPlay(true)} aria-label={`Play ${reel.title}`}
-                style={{ position: "absolute", inset: 0, border: "none", padding: 0, background: "transparent", cursor: "pointer" }}>
-                <img src={thumbOf(reel)} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-                <span aria-hidden="true" style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 54, height: 54, borderRadius: "50%", background: "rgba(0,0,0,0.55)", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>▶</span>
-              </button>
-            )}
-          </div>
-        </div>
-        <h3 style={{ fontFamily: F, fontSize: 19, fontWeight: 800, color: C.white, margin: "16px 0 0", letterSpacing: -0.3, lineHeight: 1.22 }}>{reel.title}</h3>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: C.gray, marginTop: 6 }}>{[reel.plays ? `${reel.plays} plays` : null, date].filter(Boolean).join(" · ")}</span>
-        {caption ? (
-          <p style={{ fontFamily: F, fontSize: 13.5, color: "rgba(255,255,255,0.84)", lineHeight: 1.65, margin: "14px 0 4px", whiteSpace: "pre-line" }}>{caption}</p>
-        ) : (
-          <p style={{ fontFamily: F, fontSize: 13, color: C.gray, fontStyle: "italic", margin: "14px 0 4px" }}>No caption saved for this reel yet.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function TLExpand({ ev, reels, cat, onMinimize }) {
   const [idx, setIdx] = useState(0);              // active reel (carousel + swipe share it)
   const [playing, setPlaying] = useState(null);   // carousel: which poster is playing
@@ -3023,7 +2943,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
 // timeline should also be it's own page along with the work playlist, that way
 // everything lives in a spot"). Same spine, same nodes, same carousel — it just
 // has a permanent address now instead of being a stop on the homepage scroll.
-// The homepage keeps TimelineSummary below as the door. =====
+// The homepage door to it was removed Sep 22 2026; the nav and tab bar reach it. =====
 // ===== The timeline's role-filter chips =====
 // Five tappable chips, one per ROLE_TABS entry, plus All. Single-select — a
 // person is asking one question at a time ("what did he host?"), and two answers
@@ -3152,12 +3072,12 @@ function CareerTimeline() {
 
   let lastYear = null;
   return (
-    <section id="timeline" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 40px" }}>
+    <section id="timeline" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
       <FadeIn>
         {/* 44px tap target, the BucketPage back-link pattern: the back link is
-            the only way out of a page route. Lands on the homepage's slim
-            Timeline block, where the trip started. */}
-        <a href="#timeline" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
+            the only way out of a page route. Goes to the top of the homepage
+            (the homepage Timeline block was removed Sep 22 2026). */}
+        <a href="#/" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Timeline</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>The Work, In Order</h1>
@@ -3216,7 +3136,7 @@ function CareerTimeline() {
               {showYear && (
                 <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 82%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} reels · {fmtPlays(meta.plays)} plays</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} {meta.reels === 1 ? "reel" : "reels"} · {fmtPlays(meta.plays)} plays</span>
                 </div>
               )}
               {/* COLLAPSE SHELL. The 1fr→0fr grid trick is the same animated
@@ -3277,37 +3197,6 @@ function CareerTimeline() {
   );
 }
 
-// ===== The homepage's slim Timeline presence =====
-// Heading, the derived count line the year headers already print, and a door to
-// #/timeline. The scroll itself (every node, every carousel, every <video>)
-// moved to the page, so the homepage stays a summary and the phone stops
-// scrolling through the whole spine to reach the work below it.
-function TimelineSummary() {
-  const [h, setH] = useState(false);
-  return (
-    <section id="timeline" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
-      <FadeIn>
-        <a href="#/timeline" onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-          style={{
-            display: "block", maxWidth: 720, textDecoration: "none",
-            padding: "26px 30px", borderRadius: 16,
-            background: h ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-            border: `1px solid ${h ? "rgba(255,255,255,0.25)" : C.border}`,
-            transition: "background 0.25s, border-color 0.25s",
-            WebkitTapHighlightColor: "transparent",
-          }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12 }}>Timeline</span>
-          <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>The Work, In Order</h2>
-          <span style={{ display: "block", fontFamily: F, fontSize: 16, color: C.gray, fontVariantNumeric: "tabular-nums" }}>{TL_SUMMARY}</span>
-          {/* 44px tap target on its own line — on a phone the whole card is the
-              target, but the cue has to look pressable by itself. */}
-          <span style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 14, fontWeight: 600, color: C.mint, marginTop: 6 }}>Open Timeline →</span>
-        </a>
-      </FadeIn>
-    </section>
-  );
-}
-
 // ===== #/playlist — the Work Playlist player as its own page =====
 // The same shell the homepage runs, at a permanent address. The homepage
 // section is untouched this round; only ONE of the two ever mounts, because the
@@ -3326,9 +3215,9 @@ function TimelineSummary() {
 function PlaylistPage() {
   return (
     <>
-    <section id="work" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
+    <section id="work" className="m-playtop" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 32px" }}>
       <FadeIn>
-        {/* 44px tap target: lands on the homepage's player section. */}
+        {/* 44px tap target: goes back to the Work page (#/work). */}
         <a href="#/work" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
@@ -3348,83 +3237,13 @@ function PlaylistPage() {
 
 function PlaylistShelf({ inPage = false }) {
   return (
-    <section id="library" style={{ padding: "36px 0 12px clamp(24px, 5vw, 80px)" }}>
+    <section id="library" style={{ padding: "8px 0 40px clamp(24px, 5vw, 80px)" }}>
       {BUCKET_ORDER.map(b => (
         <ShelfRow key={b} title={`${b} Library`} items={eventStats.filter(ev => BUCKET_OF[ev.event] === b && !ev.pinned)} inPage={inPage} />
       ))}
     </section>
   );
 }
-
-// ===== ROLE CARD GRID — the four variant-D swipe cards. ONE component, two
-// placements: the homepage "What I Do" section and the #/work page. Miles's
-// call Aug 9: What I Do stops being an abstract skill list and becomes the same
-// four role groups the work is filed under, so the claim and the proof are the
-// same object. The Specialty Drawer it replaced is retired; the pattern is
-// preserved in git and in research/NAVIN-PATTERN-ANATOMY.md. =====
-// ===== B2B STRIP — the one body of work the four role groups cannot hold.
-// "Making B2B Social Friendly" spans three roles at once, which is why its
-// playlist is PINNED rather than filed, and why the role re-map left its story
-// with nowhere to live while the CTA still offers executive communications.
-// One quiet wide row restores the surface and links into the pinned playlist by
-// the same ms-play path every other in-page link uses. Every string here
-// already existed: Miles's card title, his meta line, his body verbatim, and
-// counts derived from the playlist itself. =====
-function B2BStrip() {
-  const [h, setH] = useState(false);
-  const idx = portfolio.findIndex(e => e.pinned);
-  const ev = idx >= 0 ? eventStats[idx] : null;
-  const cap = capabilities.find(c => c.title === "Making B2B Social Friendly");
-  if (!ev || !cap) return null;
-  return (
-    <FadeIn delay={0.16}>
-      {/* preventDefault + manual scroll, the HeroCard path. Letting the anchor
-          navigate to #work queues a hashchange that lands AFTER the player has
-          replaceState'd the URL to the reel's own #/case link; the deep-link
-          listener then reads that fresh hash and re-opens the reel in its HOME
-          playlist, bouncing the sidebar off the pinned mirror. Same reason
-          HeroCard scrolls by hand instead of using an href. */}
-      <a href="#/playlist"
-        onClick={(e) => {
-          e.preventDefault();
-          goPlay(idx, 0);
-        }}
-        onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-        aria-label={`Open ${ev.event}`}
-        className="b2b-strip"
-        style={{
-          // alignment lives in CSS so the phone breakpoint can stack it: at
-          // 375 a centred flex row squeezes the body into a 15-line ribbon
-          // with the thumb and the play circle floating in dead space.
-          display: "flex", gap: 18, marginTop: 20, maxWidth: 1180,
-          padding: 16, borderRadius: 16, textDecoration: "none",
-          background: h ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.03)",
-          border: `1px solid ${h ? "rgba(255,255,255,0.25)" : C.border}`,
-          transition: "background 0.25s, border-color 0.25s",
-          WebkitTapHighlightColor: "transparent",
-        }}>
-        <span style={{ width: 72, height: 72, borderRadius: 8, flexShrink: 0, overflow: "hidden", background: gradFor(ev.idx) }}>
-          <img src={ev.cover} alt="" loading="lazy" onError={e => { e.currentTarget.style.display = "none"; }}
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-        </span>
-        <span style={{ minWidth: 0, flex: 1 }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em" }}>{cap.meta}</span>
-          <span style={{ display: "block", fontFamily: F, fontSize: 18, fontWeight: 800, color: C.white, letterSpacing: -0.3, margin: "5px 0 0" }}>{ev.event}</span>
-          {/* as="span": this sits inside an <a>, so <div><p> would be invalid
-              nesting. 70ch was the widest prose on the site at ~103 real
-              characters; 46ch brings it to ~68. His body string is untouched —
-              Prose derives the breaks. */}
-          <Prose as="span" text={cap.body} style={{ margin: "7px 0 0" }} />
-          <span style={{ display: "block", fontFamily: F, fontSize: 13, color: C.gray, margin: "7px 0 0", fontVariantNumeric: "tabular-nums" }}>
-            {ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}
-          </span>
-        </span>
-        <span className="shelf-card-play" style={{ width: 44, height: 44, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
-      </a>
-    </FadeIn>
-  );
-}
-
 
 // ===== THE TYPE CUT (Sep 4 2026) — What I Do, inverted the way Miles asked =====
 // Aug 26, his words: "the colors that you used for event coverage (add
@@ -3581,7 +3400,7 @@ function KindPage({ slug }) {
     g.items.push(x);
   });
   return (
-    <section style={{ padding: "110px clamp(24px, 5vw, 80px) 60px" }}>
+    <section style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>What I Do</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5, borderLeft: `10px solid ${t.hue}`, paddingLeft: 14, lineHeight: 1.1 }}>{t.label}</h1>
@@ -3638,8 +3457,8 @@ function RoleCardGrid() {
 // `#/work` = the category grid, `#/work/<bucket-slug>` = that bucket's page,
 // `#/timeline` = the career timeline, `#/playlist` = the Work Playlist player.
 // Everything else (including `#/case/<slug>` and plain #anchors) falls through
-// to the single-page site, so old links behave exactly as before — `#/case`
-// deep-links still open the reel playing on the HOMEPAGE player, untouched.
+// to the single-page site, so old links behave exactly as before. `#/case`
+// deep-links resolve to #/playlist below (the homepage player is gone).
 const routeFromHash = () => {
   const h = window.location.hash || "";
   const kp = h.match(/^#\/kind\/([^\/?#]+)\/?$/);
@@ -3832,9 +3651,9 @@ function BucketCard({ b, i, onScreen }) {
 
 function WorkGridPage() {
   return (
-    <section id="work" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 60px" }}>
+    <section id="work" className="m-workgrid" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
       <FadeIn>
-        {/* eyebrow dropped Sep 22 2026: the Set List above already says Portfolio (tyler-lens) */}
+        {/* eyebrow dropped Sep 22 2026: the Set List below already says Portfolio (tyler-lens) */}
         <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work</h1>
         <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 36px 0", maxWidth: 560 }}>{TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays. Pick a category, press play.</p>
       </FadeIn>
@@ -4089,7 +3908,7 @@ function Nav() {
         <span className="nav-links" style={{ display: "flex", gap: 28, alignItems: "center" }}>
           {/* Resume tag removed Aug 9 2026 (Miles: show the body of work cleaner
               than a basic resume). Timeline keeps its slot. The resume PDF is
-              still one click away from the About card, deliberately. */}
+              unlinked sitewide since Aug 10 (see the About card's button note). */}
           {/* "Work" and "Playlist" are two different destinations: the role grid
               vs the player, each at its own address. The label matches the
               mobile tab bar's word for the same page (panel review Aug 10). */}
@@ -4130,12 +3949,13 @@ function Nav() {
 // ===== MOBILE TAB BAR =====
 // Spotify-style bottom nav so phones can jump between sections at a glance
 // (friend feedback: "need a menu bar to find everything at once"). Only renders
-// <=640px, where the top-bar links are hidden. Kept easy: 4 always-visible
+// <=640px, where the top-bar links are hidden. Kept easy: 5 always-visible
 // destinations, no dropdown, no hamburger. Contact stays the top-bar pill.
 // Which tab owns which route. The Work tab owns the grid AND every bucket page
 // under it; Timeline and Playlist own their own pages, so the bar says where you
-// are instead of looking identical on all five destinations. Home lights none.
-const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: "#/playlist" };
+// are instead of looking identical on all five destinations. The What I Do tab
+// owns every #/kind/* page. Home lights none.
+const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: "#/playlist", kindpage: "#what-i-do" };
 function MobileTabBar({ route }) {
   const tabs = [
     // "Work" = the #/work category grid (the top-bar links are hidden on phones,
@@ -4187,15 +4007,10 @@ export default function Portfolio() {
             scroll-behavior: auto !important;
           }
         }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes eqbar { 0%, 100% { height: 4px; } 50% { height: 13px; } }
         @keyframes cuebounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         @keyframes swipeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-110%); opacity: 0; } }
         @keyframes swipeIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes heroloop { to { transform: translateX(-50%); } }
-        .hero-marquee { animation-name: heroloop; animation-timing-function: linear; animation-iteration-count: infinite; }
-        .hero-marquee:hover { animation-play-state: paused; }
         @keyframes drawerFade { from { opacity: 0; } }
         .marquee-scroll::-webkit-scrollbar { display: none; }
         .tl-pager::-webkit-scrollbar { display: none; }
@@ -4244,13 +4059,7 @@ export default function Portfolio() {
         .cat-tile:hover .cat-bar, .cat-tile:focus-visible .cat-bar { opacity: 1; }
         @media (hover: none) { .cat-bar { opacity: 1; } }
         /* R4 mobile fix: About renders as normal block flow; static headshot at card bottom, no floating swipe clip. */
-        @keyframes drawerIn { from { transform: translateX(100%); } }
         @keyframes sheetIn { from { transform: translateY(100%); } }
-        .spec-drawer { animation: drawerIn 0.35s cubic-bezier(0.22,1,0.36,1); }
-        @media (max-width: 900px) {
-          .spec-drawer { top: auto !important; left: 0 !important; right: 0 !important; bottom: 0 !important; width: 100% !important; max-height: 86svh; border-radius: 16px 16px 0 0; border-left: none !important; animation: sheetIn 0.35s cubic-bezier(0.22,1,0.36,1); padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important; }
-          .spec-drawer .spec-grabber, .spec-grabber { display: block !important; }
-        }
         @media (max-width: 900px) { .tl-brands { white-space: normal !important; overflow: visible !important; } }
         @media (max-width: 640px) {
           .nav-links { display: none !important; }
@@ -4314,9 +4123,6 @@ export default function Portfolio() {
         .work-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 20px; max-width: 1180px; }
         @media (max-width: 640px) { .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
         @media (hover: none) { .work-grid a:active { transform: scale(0.985); } }
-        /* B2B strip: one wide row on a desktop, stacked on a phone */
-        .b2b-strip { align-items: center; }
-        @media (max-width: 720px) { .b2b-strip { flex-direction: column; align-items: flex-start; } }
         .tl-wrap { --rail: clamp(20px, 6vw, 60px); --gap: clamp(52px, 12vw, 108px); }
         @media (max-width: 900px) {
           .tl-wrap { --rail: 18px; --gap: 46px; }
@@ -4338,14 +4144,12 @@ export default function Portfolio() {
           [role="dialog"] [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; padding: 12px 10px !important; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
-          .album-chip { padding: 11px 16px !important; min-height: 44px; }
           .shelf-card-play { opacity: 1 !important; transform: translateY(0) !important; }
           .wall-card .wall-play { opacity: 1 !important; transform: translate(-50%,-50%) scale(0.85) !important; }
           .nav-connect { min-height: 44px !important; }
           .tl-card { position: relative; }
           .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
           .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #FFFFFF; }
-          .tl-chips { -webkit-mask-image: linear-gradient(90deg, #000 92%, transparent); mask-image: linear-gradient(90deg, #000 92%, transparent); scroll-padding-right: 16px; }
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
@@ -4376,10 +4180,17 @@ export default function Portfolio() {
           .tc-chips { flex-wrap: nowrap !important; overflow-x: auto; width: 100%; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); padding-right: 24px; }
           .tc-chips::-webkit-scrollbar { display: none; }
           .tc-chips button { flex: 0 0 auto; white-space: nowrap; }
-          .m-whatido { padding-top: 56px !important; padding-bottom: 8px !important; }
+          .m-about { padding-bottom: 40px !important; }
+          .about-card { padding: 32px 24px !important; }
+          .m-herorow { padding-bottom: 8px !important; }
+          .m-whatido { padding-top: 40px !important; padding-bottom: 0 !important; }
+          .m-whatido h2 { margin-bottom: 24px !important; }
           .m-funrow { padding-top: 0 !important; padding-bottom: 0 !important; }
-          .m-clients { padding-top: 24px !important; }
-          .m-cta { padding-top: 56px !important; padding-bottom: 40px !important; }
+          .m-clients { padding-top: 64px !important; }
+          .m-cta { padding-top: 32px !important; padding-bottom: 40px !important; }
+          section[id="work"], #set-list, #timeline, #library { padding-bottom: 40px !important; }
+          section.m-workgrid { padding-bottom: 8px !important; }
+          section.m-playtop { padding-bottom: 32px !important; }
           .m-links { margin-top: 16px !important; }
           .m-links a { min-height: 40px !important; padding: 4px 8px !important; }
           .m-foot { padding-top: 20px !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; }
@@ -4414,9 +4225,9 @@ export default function Portfolio() {
         <OpeningWall />
 
         {/* ===== ABOUT ===== */}
-        <section id="about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
+        <section id="about" className="m-about" style={{ padding: "60px clamp(24px, 5vw, 80px) 80px" }}>
           <FadeIn>
-            <div style={{
+            <div className="about-card" style={{
               position: "relative", maxWidth: 720, background: C.glass, backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
               border: `1px solid ${C.border}`, borderRadius: 24, padding: "48px 40px",
             }}>
@@ -4486,7 +4297,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== HERO ROW — the playing cards, twin marquees between About and WIWON ===== */}
-        <section style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
+        <section className="m-herorow" style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
           <FadeIn>
             <HeroRow />
           </FadeIn>
@@ -4495,7 +4306,7 @@ export default function Portfolio() {
         {/* "What I'm Working On Now" removed Sep 22 2026 (Miles). */}
 
         {/* ===== WHAT I DO — clickable cards ===== */}
-        <section id="what-i-do" className="m-whatido" style={{ padding: "80px clamp(24px, 5vw, 80px) 60px" }}>
+        <section id="what-i-do" className="m-whatido" style={{ padding: "80px clamp(24px, 5vw, 80px) 24px" }}>
           <FadeIn>
             <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
           </FadeIn>
@@ -4503,7 +4314,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== FUN ROW — emotion picks bridging What I Do into Selected Work ===== */}
-        <section className="m-funrow" style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
+        <section className="m-funrow" style={{ padding: "12px clamp(24px, 5vw, 80px) 40px" }}>
           <FadeIn>
             <HeroRow reels={funReels} duration={90} />
           </FadeIn>
@@ -4536,7 +4347,7 @@ export default function Portfolio() {
             the bleed at the section edge. `clip` rather than `hidden` on
             purpose: hidden would make this section a scroll container and force
             overflow-y to auto, and the glow would lose its vertical bleed. */}
-        <section className="m-cta" style={{ padding: "100px clamp(24px, 5vw, 80px)", textAlign: "center", position: "relative", overflowX: "clip", overflowY: "visible" }}>
+        <section className="m-cta" style={{ padding: "64px clamp(24px, 5vw, 80px) 80px", textAlign: "center", position: "relative", overflowX: "clip", overflowY: "visible" }}>
           <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: 500, height: 500, background: `radial-gradient(circle, ${C.pink}08, transparent 70%)`, pointerEvents: "none" }} />
           <FadeIn>
             <h2 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 16px 0", letterSpacing: -0.5 }}>Let's make something.</h2>
