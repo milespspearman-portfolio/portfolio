@@ -4414,7 +4414,7 @@ export default function Portfolio() {
         </section>
 
         {/* ===== CAREER TIMELINE — slim: heading, derived line, door to #/timeline ===== */}
-        <TimelineSummary />
+        {/* "The Work, In Order" card removed from the home (Miles, Sep 22 2026: "even the work in order i can remove and if they tap timeline then let them"). #/timeline stays in the nav. */}
 
         {/* ===== THE SET LIST (Aug 11 2026) — this slot's whole contents changed.
              OUT: <WorkPlayer /> (the 23-playlist library shell) and the four
