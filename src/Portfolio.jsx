@@ -1809,7 +1809,7 @@ function SetList() {
   }));
   useEffect(() => () => { if (io.current) { io.current.disconnect(); io.current = null; } ratios.current.clear(); }, []);
   return (
-    <section id="work" style={{ padding: "60px clamp(24px, 5vw, 80px) 40px" }}>
+    <section style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 40px" }}>
       {/* 1400 so five text columns are five readable columns. At the old
           860-ish measure each one lands near 30 characters, which is a word a
           line and reads as broken rather than as five write-ups. */}
@@ -1839,15 +1839,7 @@ function SetList() {
         <div className="cat-grid">
           {CATALOG_ITEMS.map(x => <CatalogTile key={x.reel.postUrl} reel={x.reel} />)}
         </div>
-        {/* The door. Both numbers are the site's own derived totals, the same
-            two every other count line on the site reads. */}
-        <a href="#/playlist" style={{
-          display: "block", textAlign: "center", margin: "34px auto 0", fontFamily: F, fontSize: 13,
-          color: "#8a8a8a", textDecoration: "none", fontVariantNumeric: "tabular-nums", padding: "12px 0", minHeight: 44,
-        }}
-          onMouseEnter={e => e.currentTarget.style.color = C.mint}
-          onMouseLeave={e => e.currentTarget.style.color = "#8a8a8a"}
-        >{TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays · full playlist →</a>
+        {/* The playlist door that closed the Set List is gone (web check, Sep 22 2026): Playlist is in the nav and the Work grid below carries the same totals. */}
       </div>
     </section>
   );
@@ -2756,14 +2748,14 @@ function WorkPlayer() {
 // `inPage` = this shelf is rendered on the #/playlist PAGE rather than the
 // homepage. Same card, same select path (the ms-play event the player already
 // listens for); the only difference is that the anchor must NOT navigate. On
-// the homepage `href="#work"` is a real in-page jump, but on a page route it
+// the homepage `href="#/work"` is a real in-page jump, but on a page route it
 // would set the hash to "#work", which routeFromHash reads as "home" and would
 // tear the player down mid-select. So in-page clicks preventDefault and scroll
 // the player into view by hand — the B2BStrip / HeroCard path.
 function ShelfCard({ ev, inPage = false }) {
   const [h, setH] = useState(false);
   return (
-    <a href="#work"
+    <a href="#/work"
       onClick={(e) => {
         if (inPage) {
           e.preventDefault();
@@ -3314,7 +3306,7 @@ function PlaylistPage() {
     <section id="work" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
       <FadeIn>
         {/* 44px tap target: lands on the homepage's player section. */}
-        <a href="#work" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
+        <a href="#/work" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 4.4vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work Playlist</h1>
