@@ -4309,7 +4309,7 @@ export default function Portfolio() {
         <MobileTabBar route={route} />
 
         {/* ===== #/work — category grid ===== */}
-        {route.kind === "work" && <WorkGridPage />}
+        {route.kind === "work" && (<><SetList /><WorkGridPage /></>)}
         {/* ===== #/work/<bucket> — the bucket's own page ===== */}
         {route.kind === "bucket" && <BucketPage bucket={route.bucket} />}
         {/* ===== #/timeline — the career timeline as its own page ===== */}
@@ -4425,7 +4425,7 @@ export default function Portfolio() {
              IN: the Set List, Miles's pick (mock D + his heading). Same slot,
              same `id="work"`, so every existing #work anchor still lands here.
              The client-strip Marquee that closed this section is unmoved. ===== */}
-        <SetList />
+        {/* The Set List moved to #/work (Miles, Sep 22 2026: "i would take out setlist, id have to put it somewhere else"). */}
 
         <section style={{ padding: "0 clamp(24px, 5vw, 80px)" }}>
           <div style={{ maxWidth: 1400, margin: "0 auto", paddingTop: 64 }}><Marquee /></div>
