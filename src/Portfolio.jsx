@@ -1637,7 +1637,7 @@ const SET_LIST_GROUPS = (() => {
     .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays));
   const taken = new Set();
   // idx = the slot in ROLE_TABS each label reads: Hosted, Edited, Produced, Directed.
-  return [{ label: "Hosting", idx: 3 }, { label: "Edited", idx: 4 }, { label: "Produced", idx: 1 }, { label: "Directed", idx: 2 }]
+  const groups = [{ label: "Hosting", idx: 3 }, { label: "Edited", idx: 4 }, { label: "Produced", idx: 1 }, { label: "Directed", idx: 2 }]
     .map(({ label, idx }) => {
       const items = [];
       for (const x of pool) {
@@ -1646,8 +1646,19 @@ const SET_LIST_GROUPS = (() => {
         taken.add(x.reel);
         items.push(x);
       }
-      return { label, items };
+      return { label, idx, items };
     });
+  // Miles's meaning picks (Tyler's rule: what mattered, not only what performed) always hold a slot
+  // in their first matching group; that group's last plays-ranked tile makes room. Sep 22 2026, tyler-lens.
+  MEANING_PICKS.forEach(title => {
+    const x = pool.find(q => q.reel.title === title);
+    if (!x || taken.has(x.reel)) return;
+    const g = groups.find(g => reelRoleTabs(x.reel)[g.idx]);
+    if (!g) return;
+    if (g.items.length >= SET_LIST_GROUP_SIZE) { const out = g.items.pop(); taken.delete(out.reel); }
+    g.items.push(x); taken.add(x.reel);
+  });
+  return groups;
 })();
 const SET_LIST_FEATURED = SET_LIST_GROUPS.flatMap(g => g.items);
 
@@ -1976,25 +1987,26 @@ const LOGO_MAX_W = 112; // ...but a very wide wordmark (Warriors, 5:1) is capped
                         // by width too and scales down inside the box, so one
                         // long mark cannot dominate the row optically.
 function Marquee() {
+  // Sep 22 2026, Miles: "the clients should be floating and centered". The label centers, the
+  // box lines go, and the marks drift past on the site's own drift loop (two copies, seamless),
+  // fading at both edges. Reduced-motion users get a still row they can scroll.
+  const ref = useRef(null);
+  useDriftScroll(ref, 60);
+  const marks = (copy) => clientStrip.map(c => c.logo ? (
+    <img key={`${copy}-${c.name}`} src={c.logo} alt={copy ? "" : c.name} loading="lazy"
+      style={{ height: LOGO_H, maxWidth: LOGO_MAX_W, width: "auto", objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.72, display: "block", flexShrink: 0 }} />
+  ) : (
+    <span key={`${copy}-${c.name}`} style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.72)", letterSpacing: 2, textTransform: "uppercase", flexShrink: 0, whiteSpace: "nowrap" }}>{c.name}</span>
+  ));
   return (
-    <div style={{ width: "100%", padding: "20px 0", borderTop: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}>
-      <span style={{ display: "block", fontFamily: F, fontSize: 11, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em", marginBottom: 16 }}>{MARQUEE_LABEL}</span>
-      {/* flexWrap + row-gap: wraps to as many rows as the width needs, on a
-          phone as well as a narrow desktop window. alignItems center puts the
-          text entries on the marks' optical centre line. */}
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", columnGap: "clamp(24px, 4vw, 44px)", rowGap: 18 }}>
-        {clientStrip.map(c => c.logo ? (
-          <img key={c.name} src={c.logo} alt={c.name} loading="lazy"
-            style={{
-              height: LOGO_H, maxWidth: LOGO_MAX_W, width: "auto", objectFit: "contain",
-              filter: "brightness(0) invert(1)", opacity: 0.72, display: "block", flexShrink: 0,
-            }} />
-        ) : (
-          // Text fallback for the four brands with no officially sourceable
-          // mark. Sized to sit at the marks' weight rather than shrink away:
-          // a text entry here is a real client, not a placeholder.
-          <span key={c.name} style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.72)", letterSpacing: 2, textTransform: "uppercase", flexShrink: 0, whiteSpace: "nowrap" }}>{c.name}</span>
-        ))}
+    <div style={{ width: "100%", padding: "8px 0 0" }}>
+      <span style={{ display: "block", textAlign: "center", fontFamily: F, fontSize: 11, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em", marginBottom: 18 }}>{MARQUEE_LABEL}</span>
+      <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, black 10%, black 90%, transparent)" }}>
+        <div style={{ display: "flex", alignItems: "center", width: "max-content", padding: "6px clamp(24px, 5vw, 80px)" }}>
+          {[0, 1].map(copy => (
+            <div key={copy} data-copy={copy} aria-hidden={copy === 1 ? "true" : undefined} style={{ display: "flex", alignItems: "center", gap: 44, paddingRight: 44 }}>{marks(copy)}</div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -3425,6 +3437,12 @@ const _typeReels = portfolio
   .filter(ev => !ev.pinned)
   .flatMap(ev => ev.reels.map(r => ({ reel: r, type: BUCKET_OF[ev.event], roles: reelRoleTabs(r) })))
   .sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
+// Kind pages (Miles, Sep 22 2026: "these naming things should be tappable to go to a page of work,
+// and then it should be separated by event etc. or by year"). Slug per row; the page groups the
+// row's reels by the playlist they came from, newest first, with each playlist's date window.
+const KIND_BY_SLUG = Object.fromEntries(TYPE_CUT.map(t => [bucketSlug(t.key), t]));
+const EVENT_OF_REEL = new Map();
+portfolio.forEach(ev => ev.reels.forEach(r => EVENT_OF_REEL.set(r, ev)));
 // The ten a row shows are picked across its pressable chips (newest first
 // within each chip), then laid out newest first. Newest-ten alone left the
 // hosting row all Event reels, so its In-House chip dimmed every card: a press
@@ -3500,7 +3518,7 @@ function TypeRow({ row, hidden }) {
   return (
     <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 12 }}>
-        <b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b>
+        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ textDecoration: "none" }}><b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b></a>
         <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
         <span className="tc-chips" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: "auto" }}>
           {/* Only the roles he has on this type's reels: a "Hosted 0" chip on a
@@ -3529,9 +3547,43 @@ function TypeRow({ row, hidden }) {
         </div>
       </div>
       {row.count > show.length && (
-        <a href="#/playlist" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more · full playlist →</a>
+        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more →</a>
       )}
     </div>
+  );
+}
+
+// ===== KIND PAGE (Sep 22 2026) — one What I Do row, every reel, grouped by playlist, newest first =====
+function KindPage({ slug }) {
+  const t = KIND_BY_SLUG[slug];
+  const row = t ? TYPE_CUT_ROWS.find(r => r.key === t.key) : null;
+  useEffect(() => { if (!t) return; const old = document.title; document.title = `${t.label} — Miles Spearman`; return () => { document.title = old; }; }, [t && t.label]);
+  if (!t || !row) return null;
+  const groups = [];
+  row.items.forEach(x => {
+    const ev = EVENT_OF_REEL.get(x.reel); if (!ev) return;
+    let g = groups.find(g => g.ev === ev); if (!g) { g = { ev, items: [] }; groups.push(g); }
+    g.items.push(x);
+  });
+  return (
+    <section style={{ padding: "110px clamp(24px, 5vw, 80px) 60px" }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>What I Do</span>
+        <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5, borderLeft: `10px solid ${t.hue}`, paddingLeft: 14, lineHeight: 1.1 }}>{t.label}</h1>
+        <p style={{ fontFamily: F, fontSize: 13, color: "#9a9a9a", margin: "0 0 10px 0", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays · newest first</p>
+        {groups.map(g => (
+          <div key={g.ev.event} style={{ marginTop: 40 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
+              <b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white }}>{g.ev.event}</b>
+              <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{g.items.length} {g.items.length === 1 ? "video" : "videos"} · {fmtWindow({ reels: g.items.map(x => x.reel) })}</span>
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 18, padding: "6px 0 10px" }}>
+              {g.items.map((x, i) => <TypeCard key={x.reel.postUrl || x.reel.title} item={x} dim={false} tilt={(i % 2 ? 1 : -1) * 0.6} />)}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -3575,6 +3627,8 @@ function RoleCardGrid() {
 // deep-links still open the reel playing on the HOMEPAGE player, untouched.
 const routeFromHash = () => {
   const h = window.location.hash || "";
+  const kp = h.match(/^#\/kind\/([^\/?#]+)\/?$/);
+  if (kp && KIND_BY_SLUG[kp[1].toLowerCase()]) return { kind: "kindpage", bucket: null, slug: kp[1].toLowerCase() };
   if (/^#\/timeline\/?$/.test(h)) return { kind: "timeline", bucket: null };
   if (/^#\/playlist\/?$/.test(h)) return { kind: "playlist", bucket: null };
   // ===== #/case/<slug> (rewritten Aug 11 2026) =====
@@ -3765,7 +3819,7 @@ function WorkGridPage() {
   return (
     <section id="work" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 60px" }}>
       <FadeIn>
-        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
+        {/* eyebrow dropped Sep 22 2026: the Set List above already says Portfolio (tyler-lens) */}
         <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work</h1>
         <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 36px 0", maxWidth: 560 }}>{TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays. Pick a category, press play.</p>
       </FadeIn>
@@ -4316,6 +4370,8 @@ export default function Portfolio() {
         {route.kind === "bucket" && <BucketPage bucket={route.bucket} />}
         {/* ===== #/timeline — the career timeline as its own page ===== */}
         {route.kind === "timeline" && <CareerTimeline />}
+        {/* ===== #/kind/<slug> — one What I Do row, every reel, by playlist ===== */}
+        {route.kind === "kindpage" && <KindPage slug={route.slug} />}
         {/* ===== #/playlist — the Work Playlist player as its own page ===== */}
         {route.kind === "playlist" && <PlaylistPage />}
 
