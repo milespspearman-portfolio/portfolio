@@ -1623,6 +1623,34 @@ const reelRoleTabs = (r) => {
   ];
 };
 
+// ===== THE SET LIST, BY ROLE (Sep 22 2026, Miles) =====
+// "the set list should be categorized by the hosting, edited, produced,
+// directed". Membership is DERIVED from his own role tags, never hand-listed:
+// every non-pinned reel outside Off the Clock, ranked by its own play count,
+// dealt into the four groups in this order. A reel is taken by the FIRST group
+// it qualifies for, so it appears exactly once on the page.
+const SET_LIST_GROUP_SIZE = 3;
+const SET_LIST_GROUPS = (() => {
+  const pool = portfolio
+    .flatMap((ev, e) => (ev.pinned || BUCKET_OF[ev.event] === "Off the Clock" ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
+    .filter(x => playsNum(x.reel.plays) > 0)
+    .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays));
+  const taken = new Set();
+  // idx = the slot in ROLE_TABS each label reads: Hosted, Edited, Produced, Directed.
+  return [{ label: "Hosting", idx: 3 }, { label: "Edited", idx: 4 }, { label: "Produced", idx: 1 }, { label: "Directed", idx: 2 }]
+    .map(({ label, idx }) => {
+      const items = [];
+      for (const x of pool) {
+        if (items.length === SET_LIST_GROUP_SIZE) break;
+        if (taken.has(x.reel) || !reelRoleTabs(x.reel)[idx]) continue;
+        taken.add(x.reel);
+        items.push(x);
+      }
+      return { label, items };
+    });
+})();
+const SET_LIST_FEATURED = SET_LIST_GROUPS.flatMap(g => g.items);
+
 // ===== TIER 2 — the catalog =====
 // The next 15 by plays, DERIVED: every non-pinned reel in the table, minus the
 // featured five, sorted by its own play count. Nothing is hand-listed, so the
@@ -1632,7 +1660,7 @@ const reelRoleTabs = (r) => {
 const CATALOG_COUNT = 15;
 const CATALOG_ITEMS = portfolio
   .flatMap((ev, e) => (ev.pinned ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
-  .filter(x => !SET_LIST_TITLES.includes(x.reel.title))
+  .filter(x => !SET_LIST_FEATURED.some(f => f.reel.title === x.reel.title))
   .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays))
   .slice(0, CATALOG_COUNT);
 
@@ -1663,7 +1691,7 @@ function TilePlays({ reel }) {
 function SetListTile({ item, live, onActivate, innerRef }) {
   const reel = item.reel;
   const tabs = reelRoleTabs(reel);
-  const paras = SET_LIST_DESCS[reel.title] || [];
+  const paras = SET_LIST_DESCS[reel.title] || (REEL_DESCS[reel.title] ? [REEL_DESCS[reel.title]] : []);
   const why = REEL_WHY[reel.title] || null;
   return (
     <div style={{ minWidth: 0 }}>
@@ -1779,13 +1807,24 @@ function SetList() {
           <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
           <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 26px 0", letterSpacing: -0.5 }}>The Set List</h2>
         </FadeIn>
-        <div className="set-grid">
-          {SET_LIST_ITEMS.map((item, i) => (
-            <SetListTile key={item.reel.title} item={item} live={i === active}
-              onActivate={() => setActive(i)}
-              innerRef={attach(i)} />
-          ))}
-        </div>
+        {/* One labelled grid per role group. `i` is the GLOBAL index across all
+            four groups (0-11) so the section's single <video> still moves
+            between tiles exactly as it did across the flat five. */}
+        {SET_LIST_GROUPS.map((g, gi) => {
+          const base = SET_LIST_GROUPS.slice(0, gi).reduce((s, x) => s + x.items.length, 0);
+          return (
+            <div key={g.label} style={{ marginTop: gi === 0 ? 0 : 44 }}>
+              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>{g.label}</span>
+              <div className="set-grid by-role">
+                {g.items.map((item, n) => (
+                  <SetListTile key={item.reel.title} item={item} live={base + n === active}
+                    onActivate={() => setActive(base + n)}
+                    innerRef={attach(base + n)} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
         <div className="cat-grid">
           {CATALOG_ITEMS.map(x => <CatalogTile key={x.reel.postUrl} reel={x.reel} />)}
         </div>
@@ -4101,11 +4140,16 @@ export default function Portfolio() {
            read as broken rather than as five write-ups. So the five-across only
            runs where the wrap is actually at full width. */
         .set-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; }
+        /* Role-grouped Set List (Sep 22 2026): three per group, and it mirrors
+           the same responsive ladder .set-grid already steps down. */
+        .set-grid.by-role { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; margin-top: 34px; }
         @media (max-width: 1400px) {
           .set-grid { grid-template-columns: repeat(6, 1fr); }
           .set-grid > *:nth-child(1), .set-grid > *:nth-child(2) { grid-column: span 3; }
           .set-grid > *:nth-child(3), .set-grid > *:nth-child(4), .set-grid > *:nth-child(5) { grid-column: span 2; }
+          .set-grid.by-role { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+          .set-grid.by-role > * { grid-column: span 1 !important; }
         }
         @media (max-width: 900px) {
           .cat-grid { grid-template-columns: repeat(3, 1fr); }
@@ -4113,10 +4157,12 @@ export default function Portfolio() {
              portrait) kept the 3+2 span layout, whose ~200px prose columns are
              the same broken measure the 1400 step exists to prevent. */
           .set-grid { grid-template-columns: repeat(2, 1fr); }
+          .set-grid.by-role { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .set-grid > * { grid-column: span 1 !important; }
         }
         @media (max-width: 640px) {
           .set-grid { grid-template-columns: 1fr; row-gap: 28px; }
+          .set-grid.by-role { grid-template-columns: 1fr; }
           .set-grid > * { grid-column: span 1 !important; }
           .cat-bar { font-size: 11px !important; padding: 16px 8px 28px !important; }
         }
