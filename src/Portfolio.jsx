@@ -3213,8 +3213,8 @@ function CareerTimeline() {
 }
 
 // ===== #/playlist — the Work Playlist player as its own page =====
-// The same shell the homepage runs, at a permanent address. The homepage
-// section is untouched this round; only ONE of the two ever mounts, because the
+// The Work Playlist shell at its own address, the only copy since Aug 11 2026 (the homepage
+// player and shelves were removed). Only ONE player ever mounts, because the
 // homepage sections don't render on a page route (the #/work pages already work
 // this way), so the player's single <video> stays single. `id="work"` is kept so
 // the player's own #/case scroll-into-view target exists here too.
@@ -3223,7 +3223,7 @@ function CareerTimeline() {
 // four library carousels render here too, BELOW the player: the player stays the
 // page's opening act and the shelves are the browse layer under it. Same
 // components, same copy, same derived count lines — the shelf takes one boolean
-// and nothing else changes. The homepage shelves are untouched.
+// and nothing else changes.
 // The shelf is a SIBLING of the section, not a child: it draws its own left
 // padding and bleeds its rows off the right edge, which double-padding inside
 // the section would undo.
@@ -3273,7 +3273,7 @@ function PlaylistShelf({ inPage = false }) {
 // derived from the same rows the player uses. The mock this is built from:
 // research/mock-2026-08-26-type-cut-floating.html (v5.1, his three rulings in).
 const TYPE_CUT_HOSTING = "Hosting / Talent";
-const TYPE_CUT_SHOW = 10; // newest ten per row on the page; the rest live at #/playlist
+const TYPE_CUT_SHOW = 10; // newest ten per row on the page; the rest live at #/kind/<slug>
 const TYPE_CUT = [
   { key: "Event Coverage", label: "Commercial Event Coverage", hue: C.gold },
   { key: "In-House Production", label: "In-House Productions", hue: "#4EA8DE" },
@@ -3333,7 +3333,7 @@ function TypeCard({ item, dim, tilt, copy = 0 }) {
   const { reel } = item;
   return (
     <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} tabIndex={dim || copy === 1 ? -1 : 0} aria-hidden={copy === 1 ? "true" : undefined} data-type={item.type || ""} data-roles={item.roles.map((on, n) => on ? ROLE_TABS[n] : null).filter(Boolean).join("|")} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
-      style={{ flex: "none", width: 150, display: "block", background: C.white, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, textDecoration: "none" }}>
+      style={{ flex: "none", width: 150, display: "block", background: C.white, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, pointerEvents: dim ? "none" : undefined, textDecoration: "none" }}>
       <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
         style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 5, display: "block", background: "#e6e6e6" }}
         onError={e => { e.currentTarget.style.visibility = "hidden"; }} />
@@ -3395,9 +3395,9 @@ function TypeRow({ row, hidden }) {
           ))}
         </div>
       </div>
-      {row.count > show.length && (
+      {row.count > show.length ? (
         <a href={`#/kind/${bucketSlug(row.key)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more →</a>
-      )}
+      ) : <span aria-hidden="true" style={{ display: "block", minHeight: 44 }} />}
     </div>
   );
 }
@@ -3406,7 +3406,7 @@ function TypeRow({ row, hidden }) {
 function KindPage({ slug }) {
   const t = KIND_BY_SLUG[slug];
   const row = t ? TYPE_CUT_ROWS.find(r => r.key === t.key) : null;
-  useEffect(() => { if (!t) return; const old = document.title; document.title = `${t.label} — Miles Spearman`; return () => { document.title = old; }; }, [t && t.label]);
+  useEffect(() => { if (!t) return; const old = document.title; document.title = `${t.label} | Miles Spearman`; return () => { document.title = old; }; }, [t && t.label]);
   if (!t || !row) return null;
   const groups = [];
   row.items.forEach(x => {
