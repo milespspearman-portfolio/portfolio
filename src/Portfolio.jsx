@@ -2103,8 +2103,8 @@ const funAtOf = (r) => {
 
 // Hero marquee rows (Miles Jul 4): square album-art tiles drifting left in an
 // infinite loop. Hover pauses the row so the magnet/click still work. Sets are
-// duplicated for a seamless -50% loop. Two placements: top row (biggest plays,
-// About -> WIWON) and fun row (emotion picks, What I Do -> Selected Work).
+// duplicated (two copies) for a seamless wrap. Two placements: top row (biggest plays,
+// About -> What I Do) and fun row (emotion picks, What I Do -> client strip).
 // JS scroll-advance marquee (Miles Jul 4 + mobile research): auto-drifts AND is
 // finger-swipeable. rAF nudges scrollLeft; hover, pointer-down, or any manual
 // scroll pauses it, then it resumes after a short idle. Native momentum + a
@@ -2498,14 +2498,14 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
   );
 }
 
-// The homepage Work Playlist. The old `bucket` prop that scoped this player to
+// The Work Playlist (on #/playlist only since Aug 11 2026). The old `bucket` prop that scoped this player to
 // one type bucket was RETIRED Aug 9 2026: #/work/<bucket> is now the Navin page
 // (BucketPage), which needs no sidebar, no second Now Playing pane and no
 // transport bar. This component is the single-page player and nothing else.
 function WorkPlayer() {
   const rows = eventStats;
-  // Open on the pinned B2B playlist (index 0 after the pinned-first sort) —
-  // the chip that reads first should also be the one that's selected.
+  // Open on the pinned B2B playlist when it mounts (index 0 after the pinned-first
+  // sort). It is off since Sep 22 2026, so findIndex is -1 and this opens row 0.
   const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.pinned)));
   const [track, setTrack] = useState(null); // { e, r } indices into portfolio
   const [playing, setPlaying] = useState(false);
@@ -2745,7 +2745,7 @@ function WorkPlayer() {
 // the homepage `href="#/work"` is a real in-page jump, but on a page route it
 // would set the hash to "#work", which routeFromHash reads as "home" and would
 // tear the player down mid-select. So in-page clicks preventDefault and scroll
-// the player into view by hand — the B2BStrip / HeroCard path.
+// the player into view by hand (the same path goPlay takes).
 function ShelfCard({ ev, inPage = false }) {
   const [h, setH] = useState(false);
   return (
