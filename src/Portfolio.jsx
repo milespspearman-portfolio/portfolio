@@ -833,12 +833,13 @@ const portfolio = [
   // Cannes pulled Jul 4 per Miles ("just take out cannes for now, i post
   // production producing on it but now it just looks weird") — restore by
   // uncommenting when the story around it is right.
-  // {
-  //   event: "Cannes",
-  //   reels: [
-  //     { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
-  //   ],
-  // },
+  // Restored 2026-09-26 per Miles ("add any videos that have been parked inside of the website").
+  {
+    event: "Cannes",
+    reels: [
+      { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
+    ],
+  },
   {
     event: "Employee Spotlights: Season 1",
     reels: [
@@ -1051,7 +1052,8 @@ const BUCKET_OF = {
   // Event Coverage — the on-location event runs
   "’24 MAX Miami": "Event Coverage", "’25 MAX LA": "Event Coverage", "’25 MAX London": "Event Coverage",
   "’25 Summit Vegas": "Event Coverage", "’24 NAB Vegas": "Event Coverage", "’25 NAB Vegas": "Event Coverage", "’26 NAB Vegas": "Event Coverage",
-  "’24 IBC Amsterdam": "Event Coverage", "’25 IBC Amsterdam": "Event Coverage", "’26 Summit": "Event Coverage", // Cannes pulled Jul 4 (Miles)
+  "’24 IBC Amsterdam": "Event Coverage", "’25 IBC Amsterdam": "Event Coverage", "’26 Summit": "Event Coverage",
+  "Cannes": "Event Coverage", // restored Sep 26 2026 (Miles)
   // In-House Production — evergreen producing, employee/always-on, side projects
   "Employee Spotlights: Season 1": "In-House Production", "Employee Spotlights: Season 2": "In-House Production", "Employee Spotlights: Season 3": "In-House Production",
   "Artist Spotlights": "In-House Production", "Always-On": "In-House Production", "Photoshop Archives": "In-House Production",
@@ -3417,6 +3419,10 @@ function KindPage({ slug }) {
   return (
     <section style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        {/* 44px tap target, the Timeline back-link pattern (Sep 26 2026): back to
+            the homepage What I Do section, the row this page opened from. */}
+        <a href="#what-i-do" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
+          onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← What I Do</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>What I Do</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5, borderLeft: `10px solid ${t.hue}`, paddingLeft: 14, lineHeight: 1.1 }}>{t.label}</h1>
         <p style={{ fontFamily: F, fontSize: 13, color: "#9a9a9a", margin: "0 0 10px 0", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays · newest first</p>
