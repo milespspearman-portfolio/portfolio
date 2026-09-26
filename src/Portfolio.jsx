@@ -3428,7 +3428,7 @@ function KindPage({ slug }) {
         {/* 44px tap target, the Timeline back-link pattern (Sep 26 2026): back to
             the homepage What I Do section, the row this page opened from. */}
         <a href="#what-i-do" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
-          onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← What I Do</a>
+          onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>What I Do</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5, borderLeft: `10px solid ${t.hue}`, paddingLeft: 14, lineHeight: 1.1 }}>{t.label}</h1>
         <p style={{ fontFamily: F, fontSize: 13, color: "#9a9a9a", margin: "0 0 10px 0", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays · newest first</p>
@@ -3908,10 +3908,11 @@ function BucketPage({ bucket }) {
 function Nav({ route }) {
   const [scrolled, setScrolled] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
+  const btnRef = useRef(null); // Escape hands focus back to the Connect button
   useEffect(() => {
     if (!connectOpen) return;
     const close = () => setConnectOpen(false);
-    const esc = (e) => { if (e.key === "Escape") setConnectOpen(false); };
+    const esc = (e) => { if (e.key === "Escape") { setConnectOpen(false); btnRef.current?.focus(); } };
     const t = setTimeout(() => window.addEventListener("click", close), 0);
     window.addEventListener("keydown", esc);
     return () => { clearTimeout(t); window.removeEventListener("click", close); window.removeEventListener("keydown", esc); };
@@ -3949,7 +3950,7 @@ function Nav({ route }) {
           ))}
         </span>
         <div style={{ position: "relative" }}>
-          <button onClick={() => setConnectOpen(o => !o)} aria-expanded={connectOpen} aria-haspopup="true" className="nav-connect"
+          <button ref={btnRef} onClick={() => setConnectOpen(o => !o)} aria-expanded={connectOpen} aria-haspopup="true" className="nav-connect"
             style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 20px", borderRadius: 100, border: "none", cursor: "pointer", transition: "opacity 0.2s" }}
             onMouseEnter={e => e.target.style.opacity = "0.85"}
             onMouseLeave={e => e.target.style.opacity = "1"}
@@ -4015,7 +4016,7 @@ export default function Portfolio() {
   // back to the single page, a plain #anchor has to be re-applied by hand — the
   // browser already tried to scroll before the sections mounted.
   useEffect(() => {
-    if (route.kind !== "home") { window.scrollTo(0, 0); return; }
+    if (route.kind !== "home") { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); return; }
     const h = window.location.hash;
     if (!h || h.length < 2 || h.startsWith("#/")) return;
     const el = document.getElementById(h.slice(1));
@@ -4211,7 +4212,7 @@ export default function Portfolio() {
           section.m-workgrid { padding-bottom: 8px !important; }
           section.m-playtop { padding-bottom: 32px !important; }
           .m-links { margin-top: 16px !important; }
-          .m-links a { min-height: 40px !important; padding: 4px 8px !important; }
+          .m-links a { min-height: 44px !important; padding: 4px 8px !important; }
           .m-foot { padding-top: 20px !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; }
           .cta-row { flex-direction: column; align-items: center; }
           .cta-row a { width: 100%; max-width: 320px; padding-left: 24px !important; padding-right: 24px !important; text-align: center; box-sizing: border-box; }
