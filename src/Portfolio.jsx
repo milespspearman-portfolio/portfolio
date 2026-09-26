@@ -2504,9 +2504,17 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
 // transport bar. This component is the single-page player and nothing else.
 function WorkPlayer() {
   const rows = eventStats;
-  // Open on the pinned B2B playlist when it mounts (index 0 after the pinned-first
-  // sort). It is off since Sep 22 2026, so findIndex is -1 and this opens row 0.
-  const [libIdx, setLibIdx] = useState(() => Math.max(0, portfolio.findIndex(e => e.pinned)));
+  // Opening playlist, a derived rule (Sep 26 2026): a pinned playlist wins if one
+  // exists (the B2B mirror has been off since Sep 22 2026). Otherwise open on the
+  // playlist with the MOST TOTAL PLAYS among events whose BUCKET_OF is not
+  // "Off the Clock". Never "newest first": adding a small new event must not
+  // change what the page opens on.
+  const [libIdx, setLibIdx] = useState(() => {
+    const p = portfolio.findIndex(e => e.pinned);
+    if (p !== -1) return p;
+    return eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock")
+      .reduce((a, b) => (b.totalPlays > a.totalPlays ? b : a)).idx;
+  });
   const [track, setTrack] = useState(null); // { e, r } indices into portfolio
   const [playing, setPlaying] = useState(false);
   const [prog, setProg] = useState(0);
