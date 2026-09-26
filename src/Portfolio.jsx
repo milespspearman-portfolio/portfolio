@@ -1063,8 +1063,8 @@ const BUCKET_OF = {
   "Miles Music Media": "Off the Clock", "Miles.Spearman": "Off the Clock", "Miles on YouTube": "Off the Clock",
   "The College Tour": "Off the Clock",
   // "Making B2B Social Friendly" (pinned) is deliberately ABSENT: it mirrors
-  // reels from three different buckets, so it belongs to none. It stays pinned
-  // at the top of the full sidebar and is skipped by every bucket total.
+  // reels from three different buckets, so it belongs to none. When it mounts it
+  // pins to the top of the #/playlist sidebar and every bucket total skips it (off since Sep 22 2026).
 };
 const BUCKET_ORDER = ["Event Coverage", "In-House Production", "Brand Partnerships", "Off the Clock"];
 const bucketSlug = (b) => b.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
@@ -1146,7 +1146,7 @@ const TOTAL_LIKES = portfolio.reduce((s, ev) => s + (ev.pinned ? 0 : ev.reels.re
 
 // ===== ROLE GROUPS (Aug 9 2026, "Scheme 1" — Miles confirmed) =====
 // #/work groups by WHAT MILES DID, not by what kind of shoot it was. The type
-// buckets above are NOT deleted: they still drive the homepage sidebar, the
+// buckets above are NOT deleted: they still drive the #/playlist sidebar, the
 // sort and the timeline, and they now also supply the small type word on each
 // playlist section, so the "Event coverage" fact survives without new copy.
 //
@@ -1366,9 +1366,9 @@ const capabilities = [
 // talent-marketing body -> the produced page; the concept-to-published body ->
 // Cut by Me, because the reels it names (the emoji-reaction format, 1.5M at IBC
 // 2024) are literally the reels on that page; off-the-clock body -> Off the
-// Clock. Two bodies stay on no role page: "Making B2B Social Friendly" (its
-// work is the pinned playlist on the homepage) and "Directing & On-Camera
-// Coaching" (its page already carries the hosting body).
+// Clock. Three bodies render nowhere today: "Making B2B Social Friendly" (the
+// pinned playlist it pointed at is off since Sep 22 2026), "Directing & On-Camera
+// Coaching", and "Content Strategy, Concept to Published" (Cut by Me uses its own intro below).
 const capBody = (t) => (capabilities.find(c => c.title === t) || {}).body || "";
 // Cut by Me carries its own summary rather than a What I Do body: Miles wrote
 // this one for the page at the push gate. His words, unedited.
@@ -1541,7 +1541,7 @@ const REEL_WHY = {
   "San Jose Semaphore": SEMAPHORE_WHY,
 };
 
-// ===== THE SET LIST (Aug 11 2026) — the homepage work section =====
+// ===== THE SET LIST (Aug 11 2026) — on #/work since Sep 22 2026, under the category grid =====
 // Heading is Miles's own ("i love the set list"). Layout is mock D, his pick at
 // ~3:32 AM after a first pass at C: "sorry im in love with D, maybe do that?...
 // as long as we make it so the links hyper link to the full playlist, or the way
