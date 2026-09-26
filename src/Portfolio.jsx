@@ -4026,7 +4026,6 @@ export default function Portfolio() {
         @keyframes cuebounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
         @keyframes swipeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-110%); opacity: 0; } }
         @keyframes swipeIn { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes drawerFade { from { opacity: 0; } }
         .marquee-scroll::-webkit-scrollbar { display: none; }
         .tl-pager::-webkit-scrollbar { display: none; }
         /* ===== THE SET LIST (Aug 11 2026), grids from research/mock-2026-08-11-d.html.
@@ -4052,60 +4051,14 @@ export default function Portfolio() {
           .set-grid.by-role { grid-template-columns: repeat(3, minmax(0, 1fr)); }
           .set-grid.by-role > * { grid-column: span 1 !important; }
         }
-        @media (max-width: 900px) {
-          .cat-grid { grid-template-columns: repeat(3, 1fr); }
-          /* Mobile-gate fix 2: the 641-900 band (iPhone landscape, iPad mini
-             portrait) kept the 3+2 span layout, whose ~200px prose columns are
-             the same broken measure the 1400 step exists to prevent. */
-          .set-grid { grid-template-columns: repeat(2, 1fr); }
-          .set-grid.by-role { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .set-grid > * { grid-column: span 1 !important; }
-        }
-        @media (max-width: 640px) {
-          .set-grid { grid-template-columns: 1fr; row-gap: 28px; }
-          .set-grid.by-role { grid-template-columns: 1fr; }
-          .set-grid > * { grid-column: span 1 !important; }
-          .cat-bar { font-size: 11px !important; padding: 16px 8px 28px !important; }
-        }
         /* Tier-2 title bar: hover reveals it on a desktop. On touch there is no
            hover, so it is simply always up: a tile you cannot name is not a
            link, it is a picture. */
         .cat-bar { opacity: 0; transition: opacity 0.18s ease; }
         .cat-tile:hover .cat-bar, .cat-tile:focus-visible .cat-bar { opacity: 1; }
-        @media (hover: none) { .cat-bar { opacity: 1; } }
-        /* R4 mobile fix: About renders as normal block flow; static headshot at card bottom, no floating swipe clip. */
-        @keyframes sheetIn { from { transform: translateY(100%); } }
-        @media (max-width: 900px) { .tl-brands { white-space: normal !important; overflow: visible !important; } }
-        @media (max-width: 640px) {
-          .nav-links { display: none !important; }
-          /* Phones: the row-level IG link costs the title cell ~44px it can't
-             spare, and the transport bar already carries the IG CTA. */
-          .tracklist-ig { display: none !important; }
-          .track-plays { min-width: 40px !important; }
-        }
         /* Mobile section nav — Spotify-style bottom tab bar (friend: "menu bar to
            find everything at once"). Only on phones, where the top links are hidden. */
         .mobile-tabbar { display: none; }
-        @media (max-width: 640px) {
-          .mobile-tabbar {
-            display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
-            position: fixed; left: 0; right: 0; bottom: 0; z-index: 1300;
-            background: rgba(10,10,10,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid ${C.border}; padding-bottom: env(safe-area-inset-bottom);
-          }
-          .mobile-tabbar a {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; min-height: 54px; text-decoration: none; color: ${C.gray};
-            font: 600 10px/1 'Outfit', sans-serif; letter-spacing: 0.2px; -webkit-tap-highlight-color: transparent;
-            transition: color 0.15s;
-          }
-          .mobile-tabbar a:active { color: ${C.mint}; }
-          .mobile-tabbar a[aria-current="page"] { color: ${C.mint}; }
-          /* keep page content clear of the fixed tab bar */
-          .app-root { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
-          /* the player's sticky transport stacks ABOVE the tab bar (Spotify pattern) */
-          .sp-bar { bottom: calc(56px + env(safe-area-inset-bottom)) !important; }
-        }
         /* section jumps land below the fixed top nav, not tucked under it */
         #about, #what-i-do, #work, #timeline, #library { scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
         .sp-shell { scroll-margin-top: 84px; }
@@ -4117,45 +4070,14 @@ export default function Portfolio() {
         .sp-main { flex: 1; min-width: 0; overflow-y: auto; }
         .sp-now { width: 300px; min-width: 300px; border-left: 1px solid ${C.border}; padding: 16px; overflow-y: auto; }
         @media (max-width: 1080px) { .sp-now { width: 250px; min-width: 250px; } }
-        @media (max-width: 900px) {
-          .sp-body { flex-direction: column; height: auto; }
-          .sp-side { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid ${C.border}; }
-          .sp-side-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 6px; padding: 4px 12px 12px; }
-          .sp-side-row { min-width: 210px; }
-          .sp-main { max-height: 460px; }
-          .sp-now { width: 100%; min-width: 0; border-left: none; border-bottom: 1px solid ${C.border}; order: -1; display: flex; flex-direction: column; align-items: center; }
-          .sp-now > div { width: min(62vw, 300px); }
-          .sp-now p { align-self: center; text-align: center; }
-          .sp-cover { width: 84px !important; height: 84px !important; font-size: 36px !important; }
-          /* R3 B4: transport bar sticky so play/seek stay under the thumb; keep IG CTA (glyph only) */
-          .sp-bar { grid-template-columns: minmax(0,1fr) auto !important; position: sticky; bottom: 0; z-index: 5; background: ${C.bg}; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
-          .sp-progress { width: 100% !important; }
-          .sp-ig-link { padding: 11px !important; }
-          .sp-ig-link .sp-ig-label { display: none; }
-        }
         /* #/work category grid, variant D: four 9:16 swipe cards across on a
            desktop, two up on a phone. */
         .work-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 20px; max-width: 1180px; }
-        @media (max-width: 640px) { .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
-        @media (hover: none) { .work-grid a:active { transform: scale(0.985); } }
         .tl-wrap { --rail: clamp(20px, 6vw, 60px); --gap: clamp(52px, 12vw, 108px); }
-        @media (max-width: 900px) {
-          .tl-wrap { --rail: 18px; --gap: 46px; }
-          .tl-year { top: calc(64px + env(safe-area-inset-top)) !important; }
-          .tl-card { grid-template-columns: 68px 1fr !important; gap: 16px !important; padding: 16px !important; }
-        }
-        /* Landscape reels in the mobile Now Playing pane need the wide escape */
-        @media (max-width: 900px) {
-          .sp-now > div.sp-now-ls { width: 100%; max-width: 400px; }
-          .sp-side-divider { padding: 0 4px !important; align-items: center; }
-          .sp-side-divider > span:last-child { display: none; }
-          /* Horizontal strip: a bare word floats. The rule anchors it to the
-             group of chips that follows it. */
-          .sp-side-divider > span:first-child { border-left: 2px solid rgba(255,255,255,0.55); padding-left: 8px; font-size: 11px !important; }
-          .spec-row-expand { padding: 10px 8px 18px 26px !important; }
-        }
         /* R3 B5: 44px tap targets on touch devices */
         @media (hover: none) {
+          .cat-bar { opacity: 1; }
+          .work-grid a:active { transform: scale(0.985); }
           [role="dialog"] [aria-label="Close"], .shelf-arrow { width: 44px !important; height: 44px !important; }
           .sp-bar button { min-width: 44px; min-height: 44px; }
           .tracklist-ig { opacity: 1 !important; padding: 12px 10px !important; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
@@ -4175,6 +4097,39 @@ export default function Portfolio() {
         .tc-tab:hover { border-color: #3a3a3a; }
         .tc-card { transition: opacity 0.22s ease; }
         @media (max-width: 900px) {
+          .cat-grid { grid-template-columns: repeat(3, 1fr); }
+          /* Mobile-gate fix 2: the 641-900 band (iPhone landscape, iPad mini
+             portrait) kept the 3+2 span layout, whose ~200px prose columns are
+             the same broken measure the 1400 step exists to prevent. */
+          .set-grid { grid-template-columns: repeat(2, 1fr); }
+          .set-grid.by-role { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .set-grid > * { grid-column: span 1 !important; }
+          .tl-brands { white-space: normal !important; overflow: visible !important; }
+          .sp-body { flex-direction: column; height: auto; }
+          .sp-side { width: 100%; min-width: 0; border-right: none; border-bottom: 1px solid ${C.border}; }
+          .sp-side-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; gap: 6px; padding: 4px 12px 12px; }
+          .sp-side-row { min-width: 210px; }
+          .sp-main { max-height: 460px; }
+          .sp-now { width: 100%; min-width: 0; border-left: none; border-bottom: 1px solid ${C.border}; order: -1; display: flex; flex-direction: column; align-items: center; }
+          .sp-now > div { width: min(62vw, 300px); }
+          .sp-now p { align-self: center; text-align: center; }
+          .sp-cover { width: 84px !important; height: 84px !important; font-size: 36px !important; }
+          /* R3 B4: transport bar sticky so play/seek stay under the thumb; keep IG CTA (glyph only) */
+          .sp-bar { grid-template-columns: minmax(0,1fr) auto !important; position: sticky; bottom: 0; z-index: 5; background: ${C.bg}; padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+          .sp-progress { width: 100% !important; }
+          .sp-ig-link { padding: 11px !important; }
+          .sp-ig-link .sp-ig-label { display: none; }
+          .tl-wrap { --rail: 18px; --gap: 46px; }
+          .tl-year { top: calc(64px + env(safe-area-inset-top)) !important; }
+          .tl-card { grid-template-columns: 68px 1fr !important; gap: 16px !important; padding: 16px !important; }
+          /* Landscape reels in the mobile Now Playing pane need the wide escape */
+          .sp-now > div.sp-now-ls { width: 100%; max-width: 400px; }
+          .sp-side-divider { padding: 0 4px !important; align-items: center; }
+          .sp-side-divider > span:last-child { display: none; }
+          /* Horizontal strip: a bare word floats. The rule anchors it to the
+             group of chips that follows it. */
+          .sp-side-divider > span:first-child { border-left: 2px solid rgba(255,255,255,0.55); padding-left: 8px; font-size: 11px !important; }
+          .spec-row-expand { padding: 10px 8px 18px 26px !important; }
           .tc-chips { margin-left: 0 !important; }
           .tc-chips button { min-height: 44px !important; padding: 8px 12px !important; font-size: 12px !important; }
           /* Phones: the five tabs ride one scrollable line, so the first row of work
@@ -4186,12 +4141,40 @@ export default function Portfolio() {
           .tc-title { font-size: 11px !important; }
           .tc-plays { font-size: 10px !important; }
         }
-        @media (max-width: 640px) { .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; } }
         /* Sep 22 2026, Miles: "the bottom section needs to be cleaned up on mobile".
            Phone only: role chips ride ONE swipeable line (they wrapped into a
            two-line pill cloud), and the dead gaps around the fun row, the
            client strip, the CTA and the footer come down. Desktop untouched. */
         @media (max-width: 640px) {
+          .set-grid { grid-template-columns: 1fr; row-gap: 28px; }
+          .set-grid.by-role { grid-template-columns: 1fr; }
+          .set-grid > * { grid-column: span 1 !important; }
+          .cat-bar { font-size: 11px !important; padding: 16px 8px 28px !important; }
+          .nav-links { display: none !important; }
+          /* Phones: the row-level IG link costs the title cell ~44px it can't
+             spare, and the transport bar already carries the IG CTA. */
+          .tracklist-ig { display: none !important; }
+          .track-plays { min-width: 40px !important; }
+          .mobile-tabbar {
+            display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 1300;
+            background: rgba(10,10,10,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid ${C.border}; padding-bottom: env(safe-area-inset-bottom);
+          }
+          .mobile-tabbar a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 4px; min-height: 54px; text-decoration: none; color: ${C.gray};
+            font: 600 10px/1 'Outfit', sans-serif; letter-spacing: 0.2px; -webkit-tap-highlight-color: transparent;
+            transition: color 0.15s;
+          }
+          .mobile-tabbar a:active { color: ${C.mint}; }
+          .mobile-tabbar a[aria-current="page"] { color: ${C.mint}; }
+          /* keep page content clear of the fixed tab bar */
+          .app-root { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+          /* the player's sticky transport stacks ABOVE the tab bar (Spotify pattern) */
+          .sp-bar { bottom: calc(56px + env(safe-area-inset-bottom)) !important; }
+          .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+          .tc-sticky { font-size: 18px !important; padding: 10px 14px 12px !important; }
           .tc-chips { flex-wrap: nowrap !important; overflow-x: auto; width: 100%; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); padding-right: 24px; }
           .tc-chips::-webkit-scrollbar { display: none; }
           .tc-chips button { flex: 0 0 auto; white-space: nowrap; }
@@ -4209,8 +4192,9 @@ export default function Portfolio() {
           .m-links { margin-top: 16px !important; }
           .m-links a { min-height: 40px !important; padding: 4px 8px !important; }
           .m-foot { padding-top: 20px !important; padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; }
+          .cta-row { flex-direction: column; align-items: center; }
+          .cta-row a { width: 100%; max-width: 320px; padding-left: 24px !important; padding-right: 24px !important; text-align: center; box-sizing: border-box; }
         }
-        @media (max-width: 640px) { .cta-row { flex-direction: column; align-items: center; } .cta-row a { width: 100%; max-width: 320px; padding-left: 24px !important; padding-right: 24px !important; text-align: center; box-sizing: border-box; } }
       `}</style>
 
       <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
