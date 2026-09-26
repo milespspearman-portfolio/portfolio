@@ -833,13 +833,12 @@ const portfolio = [
   // Cannes pulled Jul 4 per Miles ("just take out cannes for now, i post
   // production producing on it but now it just looks weird") — restore by
   // uncommenting when the story around it is right.
-  // Restored 2026-09-26 per Miles ("add any videos that have been parked inside of the website").
-  {
-    event: "Cannes",
-    reels: [
-      { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
-    ],
-  },
+  // {
+  //   event: "Cannes",
+  //   reels: [
+  //     { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
+  //   ],
+  // },
   {
     event: "Employee Spotlights: Season 1",
     reels: [
@@ -1052,8 +1051,7 @@ const BUCKET_OF = {
   // Event Coverage — the on-location event runs
   "’24 MAX Miami": "Event Coverage", "’25 MAX LA": "Event Coverage", "’25 MAX London": "Event Coverage",
   "’25 Summit Vegas": "Event Coverage", "’24 NAB Vegas": "Event Coverage", "’25 NAB Vegas": "Event Coverage", "’26 NAB Vegas": "Event Coverage",
-  "’24 IBC Amsterdam": "Event Coverage", "’25 IBC Amsterdam": "Event Coverage", "’26 Summit": "Event Coverage",
-  "Cannes": "Event Coverage", // restored Sep 26 2026 (Miles)
+  "’24 IBC Amsterdam": "Event Coverage", "’25 IBC Amsterdam": "Event Coverage", "’26 Summit": "Event Coverage", // Cannes pulled Jul 4 (Miles)
   // In-House Production — evergreen producing, employee/always-on, side projects
   "Employee Spotlights: Season 1": "In-House Production", "Employee Spotlights: Season 2": "In-House Production", "Employee Spotlights: Season 3": "In-House Production",
   "Artist Spotlights": "In-House Production", "Always-On": "In-House Production", "Photoshop Archives": "In-House Production",
