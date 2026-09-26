@@ -3498,14 +3498,14 @@ const routeFromHash = () => {
 };
 // ===== goPlay (Aug 11 2026) — "play this exact reel" from anywhere =====
 // The homepage links that used to scroll down to the player and fire ms-play
-// (the opening wall cards, the fun row, the B2B strip, the trumpet line in the
+// (the opening wall cards, the fun row, the trumpet line in the
 // About paragraph) have no player to scroll to now. They keep their exact
 // behaviour by going to the player's page instead: park the request, switch
 // route, and WorkPlayer picks it up the moment it mounts. Already on the
 // playlist page, it is the same ms-play dispatch it always was.
-// A parked request is deliberately NOT a case slug: the B2B strip opens the
-// PINNED playlist, and a slug resolves to a reel's home playlist, which would
-// bounce the sidebar off the mirror (the bug the strip's own comment records).
+// A parked request is deliberately NOT a case slug: {e, r} names the exact
+// playlist row, while a slug resolves to the reel's home playlist and would
+// bounce the sidebar off a mirror (the parked B2B playlist, off since Sep 22 2026).
 let PENDING_PLAY = null;
 const goPlay = (e, r) => {
   if (routeFromHash().kind === "playlist") {
@@ -3893,14 +3893,16 @@ function BucketPage({ bucket }) {
 }
 
 // ===== NAV =====
-function Nav() {
+function Nav({ route }) {
   const [scrolled, setScrolled] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
   useEffect(() => {
     if (!connectOpen) return;
     const close = () => setConnectOpen(false);
+    const esc = (e) => { if (e.key === "Escape") setConnectOpen(false); };
     const t = setTimeout(() => window.addEventListener("click", close), 0);
-    return () => { clearTimeout(t); window.removeEventListener("click", close); };
+    window.addEventListener("keydown", esc);
+    return () => { clearTimeout(t); window.removeEventListener("click", close); window.removeEventListener("keydown", esc); };
   }, [connectOpen]);
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
@@ -3928,9 +3930,9 @@ function Nav() {
               vs the player, each at its own address. The label matches the
               mobile tab bar's word for the same page (panel review Aug 10). */}
           {[["Work", "#/work", false], ["About", "#about", false], ["What I Do", "#what-i-do", false], ["Timeline", "#/timeline", false], ["Playlist", "#/playlist", false]].map(([label, href, ext]) => (
-            <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: C.gray, textDecoration: "none", transition: "color 0.2s" }}
+            <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} {...(route && TAB_FOR_ROUTE[route.kind] === href ? { "aria-current": "page" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: route && TAB_FOR_ROUTE[route.kind] === href ? C.white : C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
-              onMouseLeave={e => e.target.style.color = C.gray}
+              onMouseLeave={e => e.target.style.color = e.target.getAttribute("aria-current") ? C.white : C.gray}
             >{label}</a>
           ))}
         </span>
@@ -4006,6 +4008,13 @@ export default function Portfolio() {
     if (!h || h.length < 2 || h.startsWith("#/")) return;
     const el = document.getElementById(h.slice(1));
     if (el) requestAnimationFrame(() => el.scrollIntoView());
+  }, [route.kind, route.bucket, route.slug]);
+  // One tab title per page route (web checks Aug 22 + Sep 4, review Sep 23 §4).
+  useEffect(() => {
+    const name = route.kind === "bucket" ? route.bucket : ({ work: "Work", timeline: "Timeline", playlist: "Work Playlist" })[route.kind];
+    if (!name) return;
+    const old = document.title; document.title = `${name} | Miles Spearman`;
+    return () => { document.title = old; };
   }, [route.kind, route.bucket]);
   return (
     <>
@@ -4203,7 +4212,7 @@ export default function Portfolio() {
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }} />
 
-        <Nav />
+        <Nav route={route} />
         <MobileTabBar route={route} />
 
         {/* ===== #/work — category grid ===== */}
@@ -4295,7 +4304,7 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
-        {/* ===== HERO ROW — the playing cards, twin marquees between About and WIWON ===== */}
+        {/* ===== HERO ROW — the playing cards, twin marquees between About and What I Do ===== */}
         <section className="m-herorow" style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
           <FadeIn>
             <HeroRow />
@@ -4312,25 +4321,15 @@ export default function Portfolio() {
           <TypeCut />
         </section>
 
-        {/* ===== FUN ROW — emotion picks bridging What I Do into Selected Work ===== */}
+        {/* ===== FUN ROW — emotion picks bridging What I Do into the client strip ===== */}
         <section className="m-funrow" style={{ padding: "12px clamp(24px, 5vw, 80px) 40px" }}>
           <FadeIn>
             <HeroRow reels={funReels} duration={90} />
           </FadeIn>
         </section>
 
-        {/* ===== CAREER TIMELINE — slim: heading, derived line, door to #/timeline ===== */}
         {/* "The Work, In Order" card removed from the home (Miles, Sep 22 2026: "even the work in order i can remove and if they tap timeline then let them"). #/timeline stays in the nav. */}
 
-        {/* ===== THE SET LIST (Aug 11 2026) — this slot's whole contents changed.
-             OUT: <WorkPlayer /> (the 23-playlist library shell) and the four
-             <PlaylistShelf /> carousels under it. Both still exist and both
-             still render — at #/playlist, which now holds the only copy. The
-             homepage was showing the entire library twice before a reader had
-             been given a reason to care about one piece of it.
-             IN: the Set List, Miles's pick (mock D + his heading). Same slot,
-             same `id="work"`, so every existing #work anchor still lands here.
-             The client-strip Marquee that closed this section is unmoved. ===== */}
         {/* The Set List moved to #/work (Miles, Sep 22 2026: "i would take out setlist, id have to put it somewhere else"). */}
 
         <section style={{ padding: "0 clamp(24px, 5vw, 80px)" }}>
