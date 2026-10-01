@@ -308,8 +308,10 @@ const REEL_TAGS = {
   "’25 MAX: “Coolest Job” @Adobe | Firefly Feature": "D, P, H",
   "’25 MAX: Mark Rober’s Creator Assignment": "D, P, H",
   "’25 MAX: Jessica Williams’ Creator Assignment": "D, P, H",
+  "’25 MAX: Project Trace Erase: Adobe Researcher Sneaks Interview": "In this video, Research Scientist Lingzhi Zhang takes you behind the scenes of the demo. His team is exploring powerful new ways to remove objects and reflections in a single click while keeping important details intact. The crowd's reaction says everything.",
   "’25 MAX: Navin’s Coolest Job": "D, P, H",
   "’25 MAX: Sarah Shen’s Coolest Job": "D, P, H",
+  "’25 MAX: Project Trace Erase: Adobe Researcher Sneaks Interview": "D, P, H",
   // ’25 MAX London
   "’25 MAX London: Recap": "D, P, H",
   "’25 MAX London: Arches of Inspiration": "D, P, H",
@@ -804,6 +806,9 @@ const portfolio = [
       { title: "’25 MAX: “Coolest Job” @Adobe | Firefly Feature", sub: "@adobelife · 30.5K likes · Nov 14, 2025", plays: "747.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Coolest-Job_11.14.25.mp4", postUrl: "https://www.instagram.com/p/DRC8V6JAkO1/" },
       { title: "’25 MAX: Mark Rober’s Creator Assignment", sub: "@adobe · 11.3K likes · Nov 19, 2025", plays: "2.2M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Mark-Rober_11.19.25.mp4", postUrl: "https://www.instagram.com/p/DRN6VRIjVhq/" },
       { title: "’25 MAX: Jessica Williams’ Creator Assignment", sub: "@adobe · 6.8K likes · Nov 20, 2025", plays: "264.3K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Jessica-Williams_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRQdSOoDjDv/" },
+      // Oct 1 2026, Miles: "i donb't see the Adobe Sneaks video that got like several millions views under MAX 25".
+      // Apify pull Oct 1 (2,829,771 plays). His credit (Oct 1): Concept · Directed · Produced · Hosted.
+      { title: "’25 MAX: Project Trace Erase: Adobe Researcher Sneaks Interview", sub: "@adobelife · 45.6K likes · Nov 20, 2025", plays: "2.8M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Trace-Erase-Sneaks_11.20.25.mp4", postUrl: "https://www.instagram.com/p/DRSgqgKjBaq/" },
       { title: "’25 MAX: Navin’s Coolest Job", sub: "@adobe · 201 likes · Feb 13, 2026", plays: "85.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Navin_2.13.26.mp4", postUrl: "https://www.instagram.com/p/DUtyVGskjGb/" },
       { title: "’25 MAX: Sarah Shen’s Coolest Job", sub: "@adobe · 198 likes · Feb 20, 2026", plays: "35.7K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/MAX-2025-LA/Firefly-Coolest-Job-Deep-Dives-Sarah_2.20.26.mp4", postUrl: "https://www.instagram.com/p/DU9ZnA-D_Xu/" },
     ],
