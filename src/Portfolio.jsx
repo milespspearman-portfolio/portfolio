@@ -2893,6 +2893,11 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
         <div style={{ maxWidth: 420, margin: "12px auto 0", padding: "0 18px" }}>
           <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25, textAlign: "center" }}>{active.title}</span>
           <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4, textAlign: "center" }}>{[active.plays ? `${active.plays} plays` : null, reelDateStr(active) || null, `${idx + 1} / ${reels.length}`, "swipe"].filter(Boolean).join(" · ")}</span>
+          {active.postUrl && (
+            <a href={active.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+              style={{ display: "block", fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.mint, textDecoration: "none", marginTop: 8, textAlign: "center" }}>
+              Watch on {platformOf(active)} ↗</a>
+          )}
           {desc ? (
             <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", whiteSpace: "pre-line" }}>{desc}</p>
           ) : (
@@ -2937,6 +2942,11 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
           <button onClick={e => { e.stopPropagation(); setView("swipe"); }}
             style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
             Expand</button>
+          {active.postUrl && (
+            <a href={active.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+              style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.mint, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 18px", minHeight: 40, boxSizing: "border-box", display: "inline-flex", alignItems: "center", textDecoration: "none" }}>
+              Watch on {platformOf(active)} ↗</a>
+          )}
           <TLMiniBtn onMinimize={onMinimize} />
         </div>
       </div>
