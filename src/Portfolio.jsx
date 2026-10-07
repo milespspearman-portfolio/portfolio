@@ -1067,6 +1067,12 @@ const BUCKET_OF = {
   // pins to the top of the #/playlist sidebar and every bucket total skips it (off since Sep 22 2026).
 };
 const BUCKET_ORDER = ["Event Coverage", "In-House Production", "Brand Partnerships", "Off the Clock"];
+// Oct 6 2026 cross-check: the same category read "Commercial Event Coverage" on the
+// home page, "ON LOCATION" on the timeline and "Event Coverage" in the playlist.
+// One display name per bucket now, the home page's (What I Do rows), and every
+// surface prints it. The bucket keys above stay the data; only the label is shared.
+const TYPE_LABEL = { "Event Coverage": "Commercial Event Coverage", "In-House Production": "In-House Productions", "Brand Partnerships": "Brand Partnerships", "Off the Clock": "Off the Clock" };
+const typeLabel = (b) => TYPE_LABEL[b] || b;
 const bucketSlug = (b) => b.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
 // Bucket order first, most recent projects first within each (Miles's call).
@@ -1231,14 +1237,14 @@ const ROLE_BY_SLUG = Object.fromEntries(roleStats.map(g => [g.slug, g.name]));
 // The one derived count string every role surface prints, card and page. A
 // mirror group's "playlists" are the homes its reels were pulled from, not
 // collections of its own, so that segment is dropped rather than reworded.
-const groupCount = (g) => `${g.mirror ? "" : `${g.playlists.length} ${g.playlists.length === 1 ? "playlist" : "playlists"} · `}${g.reelCount} ${g.reelCount === 1 ? "reel" : "reels"}${g.totalPlays > 0 ? ` · ${fmtPlays(g.totalPlays)} plays` : ""}`;
+const groupCount = (g) => `${g.mirror ? "" : `${g.playlists.length} ${g.playlists.length === 1 ? "playlist" : "playlists"} · `}${g.reelCount} ${g.reelCount === 1 ? "video" : "videos"}${g.totalPlays > 0 ? ` · ${fmtPlays(g.totalPlays)} plays` : ""}`;
 
 // ===== CAREER TIMELINE data (professional work only; jazz/Off the Clock fenced out) =====
 const TL_CAT = {
-  "Event Coverage": { accent: C.gold, chip: "ON LOCATION" },
-  "In-House Production": { accent: "#4EA8DE", chip: "IN-HOUSE" },
+  "Event Coverage": { accent: C.gold, chip: typeLabel("Event Coverage") },
+  "In-House Production": { accent: "#4EA8DE", chip: typeLabel("In-House Production") },
   // New Aug 7 bucket — the chip is the bucket name itself, no new claim.
-  "Brand Partnerships": { accent: "#FF6A38", chip: "BRAND PARTNERSHIPS" },
+  "Brand Partnerships": { accent: "#FF6A38", chip: typeLabel("Brand Partnerships") },
 };
 const proEvents = eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock" && !ev.pinned);
 // Year bucket = the event's MODAL year (the year most of its reels landed in), tie-break to the
@@ -2033,7 +2039,7 @@ function HeroCard({ reel, i, live = true }) {
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9))" }} />
       <span style={{ position: "absolute", left: 10, right: 10, bottom: 9, textAlign: "left" }}>
         <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, marginTop: 3 }}>▶ {reel.plays} plays</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, marginTop: 3 }}>▶ {playsLabel(reel)} plays</span>
       </span>
       <span className="wall-play" style={{
         position: "absolute", top: "38%", left: "50%", transform: `translate(-50%,-50%) scale(${h ? 1 : 0.6})`,
@@ -2400,7 +2406,7 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
         <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>
           {ev.pinned && <span style={{ fontFamily: F, fontSize: 9, fontWeight: 800, color: C.bg, background: C.mint, borderRadius: 3, padding: "1px 4px", letterSpacing: 0.5, marginRight: 5, verticalAlign: "1px" }}>PINNED</span>}
-          {ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
+          {ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
       </span>
       {isSourceOfAudio && <EqBars />}
     </button>
@@ -2459,7 +2465,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
             </div>
           </>
         ) : (
-          <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Pick a reel · {TOTAL_REELS} in the library</p>
+          <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Pick a video · {TOTAL_REELS} in the library</p>
         )}
       </div>
       {/* Center: transport + progress */}
@@ -2594,7 +2600,7 @@ function WorkPlayer() {
             <aside className="sp-side">
               <div style={{ padding: "16px 16px 10px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
                 <span style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white }}>Your Library</span>
-                <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{sideReels} reels · {fmtPlays(sidePlays)} plays</span>
+                <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{sideReels} videos · {fmtPlays(sidePlays)} plays</span>
               </div>
               <div className="sp-side-list">
                 {rows.map((ev, n) => (
@@ -2604,7 +2610,7 @@ function WorkPlayer() {
                         buckets. */}
                     {!ev.pinned && (n === 0 || rows[n - 1].pinned || BUCKET_OF[rows[n - 1].event] !== BUCKET_OF[ev.event]) && (
                       <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
-                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{BUCKET_OF[ev.event]}</span>
+                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{typeLabel(BUCKET_OF[ev.event])}</span>
                         <span style={{ flex: 1, height: 1, background: C.border }} />
                       </div>
                     )}
@@ -2624,7 +2630,7 @@ function WorkPlayer() {
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
                   {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "reel" : "reels"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
+                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "video" : "videos"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
                   {viewing.reels.some(r => !r.plays) && (
                     <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
                   )}
@@ -2777,7 +2783,7 @@ function ShelfCard({ ev, inPage = false }) {
         <span className="shelf-card-play" style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
       </span>
       <span style={{ display: "block", marginTop: 12, fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-      <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
+      <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
     </a>
   );
 }
@@ -2900,7 +2906,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
         </div>
         <div style={{ maxWidth: 420, margin: "12px auto 0", padding: "0 18px" }}>
           <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25, textAlign: "center" }}>{active.title}</span>
-          <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4, textAlign: "center" }}>{[active.plays ? `${active.plays} plays` : null, reelDateStr(active) || null, `${idx + 1} / ${reels.length}`, "swipe"].filter(Boolean).join(" · ")}</span>
+          <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4, textAlign: "center" }}>{[`${playsLabel(active)} plays`, reelDateStr(active) || null, `${idx + 1} / ${reels.length}`, "swipe"].filter(Boolean).join(" · ")}</span>
           {active.postUrl && (
             <a href={active.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
               style={{ display: "block", fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.mint, textDecoration: "none", marginTop: 8, textAlign: "center" }}>
@@ -2908,9 +2914,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
           )}
           {desc ? (
             <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", whiteSpace: "pre-line" }}>{desc}</p>
-          ) : (
-            <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, fontStyle: "italic", margin: "12px 0 0", textAlign: "center" }}>No caption saved for this reel yet.</p>
-          )}
+          ) : null /* Oct 6 2026: no placeholder line. Every other surface shows nothing when a video has no description (the bucket-page rule: "A reel with no entry shows none"). */}
         </div>
         <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
           <button onClick={e => { e.stopPropagation(); setView("carousel"); }} aria-label="Minimize to carousel"
@@ -2945,7 +2949,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
       </div>
       <div style={{ textAlign: "center", marginTop: 12, padding: "0 16px" }}>
         <span style={{ display: "block", fontFamily: F, fontSize: 15, fontWeight: 700, color: C.white, lineHeight: 1.25 }}>{active.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{[active.plays ? `${active.plays} plays` : null, reelDateStr(active) || null, "tap to open"].filter(Boolean).join(" · ")}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{[`${playsLabel(active)} plays`, reelDateStr(active) || null, "tap to open"].filter(Boolean).join(" · ")}</span>
         <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center", marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={e => { e.stopPropagation(); setView("swipe"); }}
             style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
@@ -3159,7 +3163,7 @@ function CareerTimeline() {
               {showYear && (
                 <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 82%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} {meta.reels === 1 ? "reel" : "reels"} · {fmtPlays(meta.plays)} plays</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} {meta.reels === 1 ? "video" : "videos"} · {fmtPlays(meta.plays)} plays</span>
                 </div>
               )}
               {/* COLLAPSE SHELL. The 1fr→0fr grid trick is the same animated
@@ -3198,7 +3202,7 @@ function CareerTimeline() {
                     <span style={{ display: "block", fontFamily: F, fontSize: "clamp(18px, 2.4vw, 26px)", fontWeight: 800, color: C.white, letterSpacing: -0.4, lineHeight: 1.12 }}>{ev.event}</span>
                     {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
                     {EVENT_BRANDS[ev.event] && <span className="tl-brands" style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
-                    <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{reels.length} {reels.length === 1 ? "reel" : "reels"}</span>
+                    <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{reels.length} {reels.length === 1 ? "video" : "videos"}</span>
                     {ev.totalPlays > 0 && <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{fmtPlays(ev.totalPlays)} plays</span>}
                   </span>
                 </div>
@@ -3262,7 +3266,7 @@ function PlaylistShelf({ inPage = false }) {
   return (
     <section id="library" style={{ padding: "8px 0 40px clamp(24px, 5vw, 80px)" }}>
       {BUCKET_ORDER.map(b => (
-        <ShelfRow key={b} title={`${b} Library`} items={eventStats.filter(ev => BUCKET_OF[ev.event] === b && !ev.pinned)} inPage={inPage} />
+        <ShelfRow key={b} title={`${typeLabel(b)} Library`} items={eventStats.filter(ev => BUCKET_OF[ev.event] === b && !ev.pinned)} inPage={inPage} />
       ))}
     </section>
   );
@@ -3283,8 +3287,8 @@ function PlaylistShelf({ inPage = false }) {
 const TYPE_CUT_HOSTING = "Hosting / Talent";
 const TYPE_CUT_SHOW = 10; // newest ten per row on the page; the rest live at #/kind/<slug>
 const TYPE_CUT = [
-  { key: "Event Coverage", label: "Commercial Event Coverage", hue: C.gold },
-  { key: "In-House Production", label: "In-House Productions", hue: "#4EA8DE" },
+  { key: "Event Coverage", label: typeLabel("Event Coverage"), hue: C.gold },
+  { key: "In-House Production", label: typeLabel("In-House Production"), hue: "#4EA8DE" },
   { key: "Brand Partnerships", label: "Brand Partnerships", hue: "#FF6A38" },
   { key: "Off the Clock", label: "Off the Clock", hue: "#9B7BFF" },
   { key: TYPE_CUT_HOSTING, label: TYPE_CUT_HOSTING, hue: "#E667C0" },
@@ -3814,7 +3818,7 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
               straight out of BUCKET_OF. Neutral, never mint: the mint in this
               block is the role line, and mint means one thing at a time. */}
           {BUCKET_OF[ev.event] && (
-            <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em", marginBottom: 5 }}>{BUCKET_OF[ev.event]}</span>
+            <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em", marginBottom: 5 }}>{typeLabel(BUCKET_OF[ev.event])}</span>
           )}
           <h2 style={{ fontFamily: F, fontSize: "clamp(20px, 2.2vw, 28px)", fontWeight: 800, color: C.white, letterSpacing: -0.5, lineHeight: 1.15, margin: 0 }}>{ev.event}</h2>
           {ev.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{ev.role} by Miles Spearman</p>}
@@ -3841,7 +3845,7 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
             })}
           </span>
           <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: "5px 0 0", fontVariantNumeric: "tabular-nums" }}>
-            {ev.reels.length} {ev.reels.length === 1 ? "reel" : "reels"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}{ev.window ? ` · ${ev.window}` : ""}
+            {ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}{ev.window ? ` · ${ev.window}` : ""}
           </p>
           {handles && <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: "3px 0 0" }}>{handles}</p>}
           {/* Credits, Tyler grammar, one per line. Locked names only. */}
