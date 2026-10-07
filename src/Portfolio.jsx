@@ -308,7 +308,6 @@ const REEL_TAGS = {
   "’25 MAX: “Coolest Job” @Adobe | Firefly Feature": "D, P, H",
   "’25 MAX: Mark Rober’s Creator Assignment": "D, P, H",
   "’25 MAX: Jessica Williams’ Creator Assignment": "D, P, H",
-  "’25 MAX: Project Trace Erase: Adobe Researcher Sneaks Interview": "In this video, Research Scientist Lingzhi Zhang takes you behind the scenes of the demo. His team is exploring powerful new ways to remove objects and reflections in a single click while keeping important details intact. The crowd's reaction says everything.",
   "’25 MAX: Navin’s Coolest Job": "D, P, H",
   "’25 MAX: Sarah Shen’s Coolest Job": "D, P, H",
   "’25 MAX: Project Trace Erase: Adobe Researcher Sneaks Interview": "D, P, H",
@@ -869,7 +868,8 @@ const portfolio = [
       { title: "Brand Intelligence B2B Interview", sub: "@adobe · 277 likes · May 18, 2026", plays: "19.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/B2B-Interview-Brand-Intelligence_5.18.26.mp4", postUrl: "https://www.instagram.com/p/DYfgGfajprE/" },
       { title: "Coolest Job: Tongyu", sub: "@adobe · 230 likes · May 15, 2026", plays: "18.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Tongyu-Coolest-Job_5.15.26.mp4", postUrl: "https://www.instagram.com/p/DYX7HIrkqyB/" },
       { title: "Coolest Job: Eric", sub: "@adobe · 254 likes · May 14, 2026", plays: "17.4K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/Eric-Coolest-Job_5.14.26.mp4", postUrl: "https://www.instagram.com/p/DYU72ovgswY/" },
-      { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "YouTube · May 29, 2026", plays: "", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://youtu.be/WIrwwJNthxc" },
+      // Oct 6 2026: plays read from the YouTube watch page (viewCount 152). It was blank ("N/A") after the Oct 1 switch from LinkedIn to YouTube, and N/A is only for LinkedIn and IG carousels.
+      { title: "’26 Summit: Behind the Scenes of Sneaks", sub: "YouTube · May 29, 2026", plays: "152", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/BTS-Sneaks-2026.mp4", postUrl: "https://youtu.be/WIrwwJNthxc" },
       { title: "’26 Summit: Words of Wisdom with Iliza Shlesinger", sub: "YouTube · Apr 30, 2026", plays: "766", role: "Produced & Coached", landscape: true, mp4: "/reels/2026/Summit-2026/Words-of-Wisdom-Iliza.mp4", postUrl: "https://youtu.be/Yppr9COGl0o" },
       { title: "’26 Summit: Anil Chakravarthy Exec Interview", sub: "LinkedIn · Apr 17, 2026", plays: "", role: "Produced, creatively directed & coached", mp4: "/reels/2026/Summit-2026/Anil-Chakravarthy-Pre-Summit.mp4", postUrl: "https://www.linkedin.com/posts/adobe_adobe-summit-anil-chakravarthy-ugcPost-7451028793734926336-5JmJ" },
     ],
@@ -1441,6 +1441,8 @@ const caseFromHash = () => { const m = window.location.hash.match(/^#\/case\/(.+
 // caption lines (verbatim, emoji/CTA trimmed) or Miles's own words; more land
 // with the Workfront ingest. A reel with no entry shows none. NEVER invent one.
 const REEL_DESCS = {
+  // Oct 6 2026: the Oct 1 commit (399dc58) put this caption in REEL_TAGS, where the tag row below it overwrote it. Moved here, verbatim.
+  "’25 MAX: Project Trace Erase: Adobe Researcher Sneaks Interview": "In this video, Research Scientist Lingzhi Zhang takes you behind the scenes of the demo. His team is exploring powerful new ways to remove objects and reflections in a single click while keeping important details intact. The crowd's reaction says everything.",
   "Adobe x NWSL: 2025 Creator Club": "Say hello to the 2025 Creator Club, brought to you by Adobe and the NWSL. A love letter to the fans who bring the game to life, with Adobe Express templates to rep your team your way.",
   "Adobe x Golden State Warriors: Creative Threads": "At the Adobe x Warriors Creative Threads workshops, emerging Bay Area artists design sneakers that speak louder than words, facilitated by The Campus Worldwide.",
   "Photoshop x Marvel: Eyes of Wakanda": "How the team behind Marvel Animation's Eyes of Wakanda illustrated the series, and how custom brushes in Photoshop helped bring it to life.",
@@ -3161,7 +3163,7 @@ function CareerTimeline() {
           return (
             <Fragment key={ev.idx}>
               {showYear && (
-                <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 82%, transparent)` }}>
+                <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 94%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
                   <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} {meta.reels === 1 ? "video" : "videos"} · {fmtPlays(meta.plays)} plays</span>
                 </div>
@@ -3198,7 +3200,7 @@ function CareerTimeline() {
                     )}
                   </span>
                   <span style={{ minWidth: 0 }}>
-                    <span style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: cat.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
+                    <span className="tl-cat" style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: cat.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
                     <span style={{ display: "block", fontFamily: F, fontSize: "clamp(18px, 2.4vw, 26px)", fontWeight: 800, color: C.white, letterSpacing: -0.4, lineHeight: 1.12 }}>{ev.event}</span>
                     {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
                     {EVENT_BRANDS[ev.event] && <span className="tl-brands" style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
@@ -4155,6 +4157,8 @@ export default function Portfolio() {
           /* Horizontal strip: a bare word floats. The rule anchors it to the
              group of chips that follows it. */
           .sp-side-divider > span:first-child { border-left: 2px solid rgba(255,255,255,0.55); padding-left: 8px; font-size: 11px !important; }
+          /* Oct 6 2026 (mobile check): the category names are longer now ("Commercial Event Coverage"); let the label wrap so the first playlist still shows. */
+          .sp-side-divider > span:first-child { white-space: normal !important; max-width: 150px; line-height: 1.25; letter-spacing: 1.5px !important; }
           .spec-row-expand { padding: 10px 8px 18px 26px !important; }
           .tc-chips { margin-left: 0 !important; }
           .tc-chips button { min-height: 44px !important; padding: 8px 12px !important; font-size: 12px !important; }
@@ -4171,6 +4175,8 @@ export default function Portfolio() {
            Phone only: role chips ride ONE swipeable line (they wrapped into a
            two-line pill cloud), and the dead gaps around the fun row, the
            client strip, the CTA and the footer come down. Desktop untouched. */
+        /* Oct 6 2026 (mobile check): at 375 "IN-HOUSE PRODUCTIONS" fits one line on timeline cards with 1.5px tracking. */
+        @media (max-width: 400px) { .tl-cat { letter-spacing: 1.5px !important; } }
         @media (max-width: 640px) {
           .set-grid { grid-template-columns: 1fr; row-gap: 28px; }
           .set-grid.by-role { grid-template-columns: 1fr; }
