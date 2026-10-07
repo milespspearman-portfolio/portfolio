@@ -3106,7 +3106,7 @@ function CareerTimeline() {
         {/* 44px tap target, the BucketPage back-link pattern: the back link is
             the only way out of a page route. Goes to the top of the homepage
             (the homepage Timeline block was removed Sep 22 2026). */}
-        <a href="#/" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
+        <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Timeline</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>The Work, In Order</h1>
