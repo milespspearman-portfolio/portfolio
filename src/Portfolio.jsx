@@ -3241,6 +3241,477 @@ function CareerTimeline() {
 // The shelf is a SIBLING of the section, not a child: it draws its own left
 // padding and bleeds its rows off the right edge, which double-padding inside
 // the section would undo.
+// ===== THE FEED (Oct 6 2026): #/feed, a hidden page. No nav link, no home link. =====
+// Miles, Sep 26 2026, 3:16 AM (verbatim): "i think there's also a possibility of
+// making something where it looks like a scrolling so it's like, if you'd prefer
+// to scroll, and then it has the options that I have on my home page, and it's a
+// curated playlist. Where I say "choose your algorithm, and they can choose
+// hosting , creative direction and edited, aand then it can just start scrolling
+// through videos and the description is the mini brief wiht the people on the
+// project". At 3:47 AM he set the five doors. Oct 6: build it now, hidden, so he
+// can try it on his phone at #/feed; what it replaces is his call later.
+// Spec: research/SPEC-2026-10-06-feed-build.md. Look and mechanics: the Feed Cut
+// v2 mock (research/mock-2026-09-26-feed-cut-LITE-code-only.html) and the measured
+// platform numbers in research/FEED-REFERENCE-2026-09-26-shorts-reels-tiktok.md.
+// Nothing on this page is typed. Every door, count, title and credit is read off
+// the same rows the home page, the timeline and the playlist read:
+//   the door    Hosting = reelRoleTabs[3] · Creative Direction = [2] (Directed; the
+//               site has no separate CD tag) · Edited = [4] · Produced = [1] ·
+//               Off the Clock = BUCKET_OF. Pinned playlists are skipped, so N per
+//               door is the home page's count for the same tag.
+//   the eight   one per playlist, highest plays first. A door with fewer than eight
+//               playlists (Off the Clock has four) takes a second round, each
+//               playlist's next best, before any playlist gives a third.
+//   the opener  dealt in door order: a door whose top pick already opens another
+//               door opens on its next pick instead (the video stays in its set).
+// One <video> for the whole route, made once and moved into the active card's
+// slot, so a phone that allowed sound on it keeps allowing it card to card.
+const FEED_SIZE = 8;
+const FEED_WATCH_MS = 8000; // Auto holds a watch-only row (no mp4, nothing to end) for 8 s
+let _feedDoors = null;
+// Built on first use, not at module load: the Off the Clock hue is read from the
+// What I Do rows (TYPE_CUT), which are defined further down this file.
+const feedDoors = () => {
+  if (_feedDoors) return _feedDoors;
+  const rows = portfolio.filter(ev => !ev.pinned)
+    .flatMap(ev => ev.reels.map(reel => ({ reel, ev: ev.event, roles: reelRoleTabs(reel) })));
+  const byPlays = (a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays);
+  const sum = (xs) => xs.reduce((s, x) => s + playsNum(x.reel.plays), 0);
+  const defs = [
+    { id: "hosting", label: "Hosting", hue: ROLE_TAB_COLORS.Hosted, test: x => x.roles[3] },
+    { id: "creative-direction", label: "Creative Direction", hue: ROLE_TAB_COLORS.Directed, test: x => x.roles[2] },
+    { id: "edited", label: "Edited", hue: ROLE_TAB_COLORS.Edited, test: x => x.roles[4] },
+    { id: "produced", label: "Produced", hue: ROLE_TAB_COLORS.Produced, test: x => x.roles[1] },
+    { id: "off-the-clock", label: "Off the Clock", hue: TYPE_CUT.find(t => t.key === "Off the Clock").hue, test: x => BUCKET_OF[x.ev] === "Off the Clock" },
+  ];
+  const openers = new Set();
+  _feedDoors = defs.map(({ test, ...door }) => {
+    const all = rows.filter(test).sort(byPlays);
+    const items = [], per = new Map(); // per = videos taken from each playlist so far
+    for (let round = 0; items.length < Math.min(FEED_SIZE, all.length); round++) {
+      const before = items.length;
+      for (const x of all) {
+        if (items.length === FEED_SIZE) break;
+        if ((per.get(x.ev) || 0) !== round || items.includes(x)) continue;
+        items.push(x); per.set(x.ev, round + 1);
+      }
+      if (items.length === before) break;
+    }
+    items.sort(byPlays);
+    const first = items.findIndex(x => !openers.has(x.reel));
+    if (first > 0) items.unshift(...items.splice(first, 1));
+    if (items[0]) openers.add(items[0].reel);
+    return { ...door, items, count: all.length, plays: sum(all), setPlays: sum(items) };
+  });
+  return _feedDoors;
+};
+
+const FEED_CSS = `
+.fd-choose { font-family: ${F}; color: ${C.white}; max-width: 1240px; margin: 0 auto; padding: calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px; }
+.fd-choose h1 { font-size: clamp(38px, 6vw, 72px); font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin: 0 0 32px; }
+.fd-doors { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+.fd-doors > li { min-width: 0; }
+.fd-door { display: flex; flex-direction: column; color: ${C.white}; text-decoration: none; border-radius: 14px; outline: none; }
+.fd-fr { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden; background: ${C.darkGray}; }
+.fd-door .fd-fr { max-height: 44vh; }
+.fd-fr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.35s; }
+.fd-door .fd-fr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0) 45%); }
+.fd-k { position: absolute; z-index: 1; top: 10px; left: 10px; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.55); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.fd-tx { display: block; min-width: 0; }
+.fd-hue { display: block; height: 3px; border-radius: 2px; margin: 12px 0 8px; }
+.fd-l { display: block; font-size: 20px; font-weight: 600; letter-spacing: -0.3px; line-height: 1.1; }
+.fd-m { display: block; font-size: 14px; color: ${C.gray}; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.fd-m b { color: ${C.gold}; font-weight: 600; }
+.fd-door:hover .fd-fr img, .fd-door:focus-visible .fd-fr img { transform: scale(1.03); }
+.fd-door:focus-visible .fd-fr { box-shadow: 0 0 0 2px ${C.white}; }
+
+.fd-run { position: fixed; z-index: 900; top: calc(64px + env(safe-area-inset-top)); left: 0; right: 0; bottom: 0; display: grid; grid-template-rows: 44px minmax(0, 1fr); background: ${C.bg}; color: ${C.white}; font-family: ${F}; }
+.fd-run button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.fd-bar { display: flex; align-items: center; gap: 12px; padding: 0 clamp(24px, 5vw, 80px); min-width: 0; }
+.fd-back { display: inline-flex; align-items: center; min-height: 44px; font-size: 13px; color: ${C.gray}; text-decoration: none; white-space: nowrap; flex: none; }
+.fd-back:hover, .fd-back:focus-visible { color: ${C.white}; }
+.fd-name { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.fd-name i { align-self: center; flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.fd-name b { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.fd-name small { font-size: 12px; color: ${C.gray}; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fd-ctl { margin-left: auto; display: flex; gap: 4px; flex: none; }
+.fd-run .fd-tog { display: flex; align-items: center; min-height: 44px; padding: 0 2px; }
+.fd-tog > span { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.35); background: rgba(0,0,0,0.35); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; }
+.fd-tog[aria-pressed="false"] > span { color: ${C.gray}; border-color: ${C.border}; }
+.fd-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.fd-tog[aria-pressed="false"] .fd-dot { background: transparent; box-shadow: inset 0 0 0 1px ${C.gray}; }
+.fd-run .fd-tog:disabled { cursor: default; opacity: 0.5; }
+.fd-sc { overflow-y: scroll; overflow-x: hidden; scroll-snap-type: y mandatory; overscroll-behavior: contain; scrollbar-width: none; outline: none; }
+.fd-sc::-webkit-scrollbar { display: none; }
+.fd-card { position: relative; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; display: flex; justify-content: center; padding: 8px 24px 16px; }
+.fd-stage { position: relative; height: 100%; aspect-ratio: 9 / 16; max-width: 100%; flex: none; }
+.fd-media { position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: #000; cursor: pointer; isolation: isolate; display: flex; align-items: center; }
+.fd-media > img, .fd-vslot, .fd-video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.fd-vslot { z-index: 1; }
+.fd-media > a { z-index: 2; }
+.fd-segs { position: absolute; z-index: 4; top: 8px; left: 8px; right: 8px; display: flex; gap: 4px; pointer-events: none; }
+.fd-segs i { flex: 1; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(255,255,255,0.3); }
+.fd-segs b { display: block; height: 100%; width: 0; background: ${C.white}; }
+.fd-segs b[data-cur] { background: var(--hue); }
+.fd-pz { position: absolute; z-index: 5; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; pointer-events: none; padding-left: 4px; }
+.fd-brief { position: absolute; right: calc(100% + 16px); bottom: 0; width: min(300px, calc((100vw - 100%) / 2 - 40px)); max-height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; font-size: 14.5px; line-height: 1.45; }
+.fd-brief::-webkit-scrollbar { display: none; }
+.fd-tdesk { font-size: 22px; font-weight: 600; line-height: 1.18; letter-spacing: -0.2px; margin: 12px 0 6px; text-wrap: pretty; }
+.fd-run .fd-ttl { display: none; }
+.fd-ctx { font-size: 13px; color: ${C.gray}; margin: 0 0 8px; }
+.fd-plays { font-size: 15px; font-weight: 600; color: ${C.gold}; margin: 0 0 14px; font-variant-numeric: tabular-nums; }
+.fd-desc { margin: 0 0 14px; }
+.fd-ppl { margin: 0 0 10px; }
+.fd-ppl h3 { font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: ${C.gray}; margin: 0 0 4px; }
+.fd-ppl p { font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.82); }
+.fd-watch { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 700; color: ${C.white}; text-decoration: none; white-space: nowrap; }
+.fd-watch:hover, .fd-watch:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+.fd-edge { position: absolute; z-index: 7; right: 24px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 16px; }
+.fd-run .fd-edge button { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; }
+.fd-run .fd-edge button:hover { background: rgba(255,255,255,0.18); }
+.fd-edge button[data-off] { visibility: hidden; }
+.fd-end { flex-direction: column; overflow-y: auto; text-align: center; padding: 16px 24px 32px; }
+.fd-endin { margin: auto; display: flex; flex-direction: column; align-items: center; }
+.fd-rc { font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.fd-rc b { color: ${C.gold}; font-weight: 600; white-space: nowrap; }
+.fd-od { list-style: none; display: flex; gap: 16px; justify-content: center; margin: 28px 0 32px; }
+.fd-od li { width: 120px; min-width: 0; }
+.fd-od a { display: block; color: ${C.white}; text-decoration: none; text-align: left; }
+.fd-od .fd-fr { border-radius: 10px; }
+.fd-od a:hover .fd-fr img, .fd-od a:focus-visible .fd-fr img { transform: scale(1.03); }
+.fd-od .fd-hue { margin: 8px 0 6px; }
+.fd-od .fd-l { font-size: 14px; line-height: 1.2; }
+.fd-od .fd-m { font-size: 12px; margin-top: 2px; }
+.fd-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.fd-cta a { display: inline-flex; align-items: center; min-height: 48px; padding: 0 32px; border-radius: 100px; font-size: 15px; font-weight: 700; color: ${C.white}; text-decoration: none; border: 1px solid ${C.border}; }
+.fd-cta a:first-child { background: ${C.white}; color: ${C.bg}; border-color: ${C.white}; }
+
+@media (max-width: 899px) {
+  .fd-bar { gap: 10px; padding: 0 8px 0 16px; }
+  .fd-name { flex-direction: column; align-items: flex-start; gap: 0; }
+  .fd-name i { display: none; }
+  .fd-name b { font-size: 14px; max-width: 100%; line-height: 1.2; }
+  .fd-name small { font-size: 11px; line-height: 1.2; }
+  .fd-tog > span { padding: 0 9px; letter-spacing: 1px; gap: 5px; }
+  .fd-card { padding: 0 4px 4px; }
+  .fd-media { border-radius: 10px; }
+  .fd-brief { z-index: 6; left: 0; right: 0; bottom: 0; width: auto; padding: 64px 16px 8px; border-radius: 0 0 10px 10px; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.5) 55%, rgba(0,0,0,0)); pointer-events: none; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
+  .fd-brief a, .fd-brief button { pointer-events: auto; }
+  .fd-tdesk { display: none; }
+  .fd-run .fd-ttl { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 4px 0; text-align: left; font-size: 17px; font-weight: 600; line-height: 1.25; }
+  .fd-ttl span { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .fd-ttl svg { flex: none; transition: transform 0.2s; }
+  .fd-card.fd-open .fd-ttl svg { transform: rotate(180deg); }
+  .fd-card:not(.fd-open) .fd-more { display: none; }
+  .fd-card.fd-open .fd-brief { pointer-events: auto; max-height: 80%; padding-top: 12px; background: rgba(10,10,10,0.92); text-shadow: none; }
+  .fd-plays { margin-bottom: 0; font-size: 14px; }
+  .fd-card.fd-open .fd-plays { margin-bottom: 12px; }
+  .fd-watch { min-height: 40px; }
+  .fd-end { padding: 20px 16px 24px; }
+  .fd-od { gap: 8px; width: 100%; margin: 20px 0 24px; }
+  .fd-od li { flex: 1; width: auto; }
+  .fd-od .fd-l { font-size: 12.5px; }
+  .fd-od .fd-m { font-size: 11px; }
+  .fd-cta a { padding: 0 24px; }
+}
+@media (max-width: 767px) {
+  .fd-choose { padding: calc(88px + env(safe-area-inset-top)) 16px 40px; }
+  .fd-choose h1 { font-size: 38px; margin-bottom: 16px; }
+  .fd-doors { grid-template-columns: 1fr; gap: 6px; }
+  .fd-door { flex-direction: row; align-items: center; gap: 14px; padding: 6px 0 10px; border-bottom: 1px solid ${C.border}; border-radius: 0; }
+  .fd-door .fd-fr { width: 60px; flex: none; max-height: none; border-radius: 8px; }
+  .fd-door .fd-k { width: 20px; height: 20px; font-size: 10px; top: 5px; left: 5px; }
+  .fd-door .fd-tx { flex: 1; }
+  .fd-door .fd-hue { margin: 0 0 6px; max-width: 80px; }
+  .fd-door .fd-l { font-size: 19px; }
+  .fd-door .fd-m { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  .fd-run { bottom: calc(56px + env(safe-area-inset-bottom)); }
+  .fd-edge { display: none; }
+}
+`;
+
+function FeedPage({ door }) {
+  const doors = feedDoors();
+  const d = doors.find(x => x.id === door);
+  return (
+    <>
+      <style>{FEED_CSS}</style>
+      {d ? <FeedRun key={d.id} door={d} doors={doors} /> : <FeedChooser doors={doors} />}
+    </>
+  );
+}
+
+// #/feed: the five doors, each on its real opener frame. Keys 1 to 5 open them.
+function FeedChooser({ doors }) {
+  useEffect(() => {
+    const key = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || "")) return;
+      const k = Number(e.key);
+      if (k >= 1 && k <= doors.length) window.location.hash = `#/feed/${doors[k - 1].id}`;
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [doors]);
+  return (
+    <section className="fd-choose">
+      <h1>Choose your algorithm</h1>
+      <ul className="fd-doors">
+        {doors.map((d, i) => (
+          <li key={d.id}>
+            <a className="fd-door" href={`#/feed/${d.id}`} aria-keyshortcuts={String(i + 1)}>
+              <span className="fd-fr">
+                {d.items[0] && <img src={thumbOf(d.items[0].reel)} alt="" decoding="async" />}
+                <span className="fd-k" aria-hidden="true">{i + 1}</span>
+              </span>
+              <span className="fd-tx">
+                <span className="fd-hue" style={{ background: d.hue }} />
+                <span className="fd-l">{d.label}</span>
+                <span className="fd-m">{d.count} videos · <b>{fmtPlays(d.plays)} plays</b></span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+// #/feed/<door>: vertical snap scroll, one card per screen, the brief beside the
+// stage on a desktop and over it on a phone, the receipt card last.
+function FeedRun({ door, doors }) {
+  const n = door.items.length;
+  const [idx, setIdx] = useState(0);
+  const [auto, setAuto] = useState(!_reduceMotion);
+  const [muted, setMuted] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const [open, setOpen] = useState(-1); // phone: the card whose brief is pulled up
+  const rootRef = useRef(null), scRef = useRef(null);
+  const live = useRef({ idx: 0, auto: !_reduceMotion, muted: true });
+  live.current = { idx, auto, muted };
+  const [video] = useState(() => {
+    const v = document.createElement("video");
+    v.muted = true; v.defaultMuted = true; v.playsInline = true; v.preload = "auto";
+    v.setAttribute("muted", ""); v.setAttribute("playsinline", "");
+    v.className = "fd-video";
+    return v;
+  });
+  const go = (i) => {
+    const sc = scRef.current; if (!sc) return;
+    sc.scrollTo({ top: Math.max(0, Math.min(n, i)) * sc.clientHeight, behavior: _reduceMotion ? "auto" : "smooth" });
+  };
+
+  // The feed owns the screen: the page under it does not scroll while it is up.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; video.pause(); video.removeAttribute("src"); video.load(); video.remove(); };
+  }, [video]);
+
+  // Which card is up: read once the scroll settles.
+  useEffect(() => {
+    const sc = scRef.current; if (!sc) return;
+    let t = 0;
+    const settle = () => { clearTimeout(t); setIdx(Math.max(0, Math.min(n, Math.round(sc.scrollTop / Math.max(1, sc.clientHeight))))); };
+    const onScroll = () => { clearTimeout(t); t = setTimeout(settle, 120); };
+    const onResize = () => { sc.scrollTop = live.current.idx * sc.clientHeight; };
+    sc.addEventListener("scroll", onScroll, { passive: true });
+    sc.addEventListener("scrollend", settle);
+    window.addEventListener("resize", onResize);
+    return () => { clearTimeout(t); sc.removeEventListener("scroll", onScroll); sc.removeEventListener("scrollend", settle); window.removeEventListener("resize", onResize); };
+  }, [n]);
+
+  // The one <video> follows the active card. Watch-only rows and the receipt card get none.
+  useEffect(() => {
+    setPaused(false); setOpen(-1);
+    if (idx >= n && live.current.auto) setAuto(false); // the last card never rolls into another door
+    const x = door.items[idx];
+    if (!x || watchOnly(x.reel)) { video.pause(); video.remove(); return; }
+    const slot = scRef.current && scRef.current.querySelector(`[data-vslot="${idx}"]`);
+    const src = srcOf(x.reel);
+    if (video.getAttribute("src") !== src) video.src = src;
+    video.poster = thumbOf(x.reel);
+    video.style.objectFit = x.reel.landscape ? "contain" : "cover";
+    if (slot && video.parentNode !== slot) slot.appendChild(video);
+    try { video.currentTime = 0; } catch (e) { /* not seekable yet; it starts at 0 anyway */ }
+    video.muted = live.current.muted;
+    const me = idx;
+    const p = video.play();
+    if (p && p.catch) p.catch((err) => {
+      if ((err && err.name === "AbortError") || live.current.idx !== me) return;
+      // Sound was on and the browser would not start a new clip with it: start muted rather than sit still.
+      if (!video.muted) { video.muted = true; setMuted(true); video.play().catch(() => setPaused(true)); }
+      else setPaused(true);
+    });
+  }, [idx, n, door, video]);
+
+  // Auto off = loop the clip; Auto on = let it end and move on.
+  useEffect(() => { video.loop = !auto; }, [auto, video]);
+  useEffect(() => {
+    const end = () => { if (live.current.auto) go(live.current.idx + 1); };
+    video.addEventListener("ended", end);
+    return () => video.removeEventListener("ended", end);
+  }, [video]);
+
+  // Progress (the active segment) and the watch-only hold, ten times a second.
+  useEffect(() => {
+    let last = performance.now(), held = 0, at = -1;
+    const t = setInterval(() => {
+      const now = performance.now(), dt = now - last; last = now;
+      const { idx: i, auto: a } = live.current;
+      if (i !== at) { held = 0; at = i; }
+      const x = door.items[i];
+      if (!x) return;
+      let p;
+      if (watchOnly(x.reel)) {
+        if (a) held += dt;
+        p = a ? Math.min(held / FEED_WATCH_MS, 1) : 1;
+        if (a && held >= FEED_WATCH_MS) { held = 0; go(i + 1); }
+      } else p = video.duration ? video.currentTime / video.duration : 0;
+      const seg = scRef.current && scRef.current.querySelector(`[data-cur="${i}"]`);
+      if (seg) seg.style.width = `${(p * 100).toFixed(1)}%`;
+    }, 100);
+    return () => clearInterval(t);
+  }, [door, video]);
+
+  // Any touch, wheel, key or tap hands control to the viewer: Auto goes off.
+  useEffect(() => {
+    const root = rootRef.current; if (!root) return;
+    const off = (e) => { if (e.target && e.target.closest && e.target.closest("[data-fd-auto]")) return; if (live.current.auto) setAuto(false); };
+    const key = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const tag = (e.target && e.target.tagName) || "";
+      if ((e.key === "Enter" || e.key === " ") && (tag === "BUTTON" || tag === "A")) return;
+      if (live.current.auto) setAuto(false);
+      if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "j") { e.preventDefault(); go(live.current.idx + 1); }
+      else if (e.key === "ArrowUp" || e.key === "PageUp" || e.key === "k") { e.preventDefault(); go(live.current.idx - 1); }
+    };
+    root.addEventListener("wheel", off, { passive: true });
+    root.addEventListener("touchstart", off, { passive: true });
+    root.addEventListener("pointerdown", off);
+    window.addEventListener("keydown", key);
+    return () => { root.removeEventListener("wheel", off); root.removeEventListener("touchstart", off); root.removeEventListener("pointerdown", off); window.removeEventListener("keydown", key); };
+  }, []);
+
+  const toggleSound = () => {
+    const m = !muted; setMuted(m); video.muted = m;
+    if (!m && video.parentNode && video.paused) video.play().then(() => setPaused(false)).catch(() => {});
+  };
+  const togglePlay = (i) => {
+    const x = door.items[i];
+    if (i !== idx || !x || watchOnly(x.reel)) return;
+    if (video.paused) video.play().then(() => setPaused(false)).catch(() => {});
+    else { video.pause(); setPaused(true); }
+  };
+  const chev = (d) => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>;
+  return (
+    <>
+      {/* Holds the page's height so the footer stays below the fold, under the feed. */}
+      <div aria-hidden="true" style={{ height: "100svh" }} />
+      <div ref={rootRef} className="fd-run" style={{ "--hue": door.hue }}>
+        <div className="fd-bar">
+          <a className="fd-back" href="#/feed">← Back</a>
+          <span className="fd-name"><i style={{ background: door.hue }} /><b>{door.label}</b><small>{n} of {door.count}</small></span>
+          <span className="fd-ctl">
+            <button type="button" className="fd-tog" data-fd-auto="" aria-pressed={auto} disabled={_reduceMotion} onClick={() => setAuto(a => !a && !_reduceMotion)}><span><i className="fd-dot" />Auto</span></button>
+            <button type="button" className="fd-tog" aria-pressed={!muted} onClick={toggleSound}><span><IcVol s={14} c="currentColor" muted={muted} />Sound</span></button>
+          </span>
+        </div>
+        <div ref={scRef} className="fd-sc">
+          {door.items.map((x, i) => (
+            <FeedCard key={x.reel.postUrl || x.reel.title} x={x} i={i} n={n} near={Math.abs(i - idx) <= 1}
+              paused={paused && i === idx} open={open === i}
+              onOpen={() => setOpen(o => (o === i ? -1 : i))} onTap={() => togglePlay(i)} />
+          ))}
+          <FeedEnd door={door} doors={doors} />
+        </div>
+        <div className="fd-edge">
+          <button type="button" aria-label="↑" aria-keyshortcuts="ArrowUp" {...(idx <= 0 ? { "data-off": "", tabIndex: -1, "aria-hidden": "true" } : {})} onClick={() => go(idx - 1)}>{chev("M6 15l6-6 6 6")}</button>
+          <button type="button" aria-label="↓" aria-keyshortcuts="ArrowDown" {...(idx >= n ? { "data-off": "", tabIndex: -1, "aria-hidden": "true" } : {})} onClick={() => go(idx + 1)}>{chev("M6 9l6 6 6-6")}</button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// One card: the stage (poster, the video slot or a WatchFrame, the eight-segment
+// progress bar) and the mini brief. The brief's words all come from the data:
+// chips, title, type · playlist · date, plays, his description, the credits.
+function FeedCard({ x, i, n, near, paused, open, onOpen, onTap }) {
+  const { reel, ev } = x;
+  const land = !!reel.landscape;
+  const desc = SET_LIST_DESCS[reel.title] || REEL_DESCS[reel.title];
+  const people = reelCreditsOf(reel).length ? reelCreditsOf(reel) : (EVENT_CREDITS[ev] || []);
+  const type = typeLabel(BUCKET_OF[ev]);
+  const ctx = [type, ev !== type ? ev : null, reelDateStr(reel) || null].filter(Boolean);
+  return (
+    <section className={`fd-card${open ? " fd-open" : ""}`} data-i={i} aria-label={reel.title}>
+      <div className="fd-stage">
+        <div className="fd-media" onClick={onTap}>
+          {watchOnly(reel) ? <WatchFrame reel={reel} radius={0} /> : (<>
+            {thumbOf(reel) && <img src={thumbOf(reel)} alt="" loading={near ? "eager" : "lazy"} decoding="async" style={{ objectFit: land ? "contain" : "cover" }} />}
+            <div className="fd-vslot" data-vslot={i} />
+          </>)}
+          <div className="fd-segs" aria-hidden="true">
+            {Array.from({ length: n }, (_, j) => <i key={j}><b {...(j === i ? { "data-cur": i } : { style: { width: j < i ? "100%" : "0%" } })} /></i>)}
+          </div>
+          {paused && <span className="fd-pz" aria-hidden="true"><IcPlay s={24} c={C.white} /></span>}
+        </div>
+        <div className="fd-brief">
+          <CreditChip reel={reel} md />
+          <h2 className="fd-tdesk">{reel.title}</h2>
+          <button type="button" className="fd-ttl" aria-expanded={open} onClick={onOpen}>
+            <span>{reel.title}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg>
+          </button>
+          <p className="fd-ctx fd-more">{ctx.map((c, k) => <Fragment key={k}>{k ? " · " : ""}<span style={{ whiteSpace: "nowrap" }}>{c}</span></Fragment>)}</p>
+          <p className="fd-plays">{playsLabel(reel)} plays</p>
+          <div className="fd-more">
+            {desc && <div className="fd-desc"><Prose text={desc} size={14} gap="0.75em" measure="none" lh={1.5} color="rgba(255,255,255,0.82)" /></div>}
+            {people.length > 0 && (
+              <div className="fd-ppl">
+                <h3>People on the project</h3>
+                {people.map(p => <p key={p}>{p}</p>)}
+              </div>
+            )}
+          </div>
+          {reel.postUrl && <a className="fd-watch" href={reel.postUrl} target="_blank" rel="noopener noreferrer">Watch on {platformOf(reel)} ↗</a>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// The last card: what this door held, the other four doors, the two CTAs. It never
+// rolls into another door; the viewer picks one.
+function FeedEnd({ door, doors }) {
+  const n = door.items.length;
+  return (
+    <section className="fd-card fd-end" data-i={n}>
+      <div className="fd-endin">
+        <p className="fd-rc">{n} of {door.count} videos · <b>{fmtPlays(door.setPlays)} plays</b></p>
+        <ul className="fd-od">
+          {doors.filter(o => o.id !== door.id).map(o => (
+            <li key={o.id}>
+              <a href={`#/feed/${o.id}`}>
+                <span className="fd-fr">{o.items[0] && <img src={thumbOf(o.items[0].reel)} alt="" loading="lazy" decoding="async" />}</span>
+                <span className="fd-hue" style={{ background: o.hue }} />
+                <span className="fd-l">{o.label}</span>
+                <span className="fd-m">{o.count} videos · {fmtPlays(o.plays)} plays</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="fd-cta">
+          <a href="mailto:milespspearman@gmail.com">Email Me</a>
+          <a href="https://www.linkedin.com/in/milesspearman/" target="_blank" rel="noopener noreferrer">Connect on LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PlaylistPage() {
   return (
     <>
@@ -3498,6 +3969,9 @@ const routeFromHash = () => {
   if (kp && KIND_BY_SLUG[kp[1].toLowerCase()]) return { kind: "kindpage", bucket: null, slug: kp[1].toLowerCase() };
   if (/^#\/timeline\/?$/.test(h)) return { kind: "timeline", bucket: null };
   if (/^#\/playlist\/?$/.test(h)) return { kind: "playlist", bucket: null };
+  // #/feed is the chooser, #/feed/<door-id> opens that door (an unknown id shows the chooser).
+  const fd = h.match(/^#\/feed(?:\/([^\/?#]+))?\/?$/);
+  if (fd) return { kind: "feed", bucket: null, door: fd[1] ? fd[1].toLowerCase() : null };
   // ===== #/case/<slug> (rewritten Aug 11 2026) =====
   // A case link used to fall through to the homepage because the homepage was
   // where the player lived. The Set List replaced that player, so the link now
@@ -3991,7 +4465,8 @@ function Nav({ route }) {
 // under it; Timeline and Playlist own their own pages, so the bar says where you
 // are instead of looking identical on all five destinations. The What I Do tab
 // owns every #/kind/* page. Home lights none.
-const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: "#/playlist", kindpage: "#what-i-do" };
+// The feed is hidden (no tab of its own), so it lights none.
+const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: "#/playlist", kindpage: "#what-i-do", feed: null };
 function MobileTabBar({ route }) {
   const tabs = [
     // "Work" = the #/work category grid (the top-bar links are hidden on phones,
@@ -4030,7 +4505,7 @@ export default function Portfolio() {
   }, [route.kind, route.bucket, route.slug]);
   // One tab title per page route (web checks Aug 22 + Sep 4, review Sep 23 §4).
   useEffect(() => {
-    const name = route.kind === "bucket" ? route.bucket : ({ work: "Work", timeline: "Timeline", playlist: "Work Playlist" })[route.kind];
+    const name = route.kind === "bucket" ? route.bucket : ({ work: "Work", timeline: "Timeline", playlist: "Work Playlist", feed: "Feed" })[route.kind];
     if (!name) return;
     const old = document.title; document.title = `${name} | Miles Spearman`;
     return () => { document.title = old; };
@@ -4249,6 +4724,7 @@ export default function Portfolio() {
         {route.kind === "kindpage" && <KindPage slug={route.slug} />}
         {/* ===== #/playlist — the Work Playlist player as its own page ===== */}
         {route.kind === "playlist" && <PlaylistPage />}
+        {route.kind === "feed" && <FeedPage door={route.door} />}
 
         {/* ===== Default route: the single-page site, unchanged ===== */}
         {route.kind === "home" && (<>
