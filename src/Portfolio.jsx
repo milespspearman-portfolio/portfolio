@@ -3320,7 +3320,7 @@ const feedDoors = () => {
 };
 
 const FEED_CSS = `
-.fd-choose { font-family: ${F}; color: ${C.white}; padding: calc(104px + env(safe-area-inset-top)) 64px 64px; }
+.fd-choose { font-family: ${F}; color: ${C.white}; padding: calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px; }
 .fd-choose h1 { font-size: clamp(38px, 6vw, 72px); font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin: 0 0 10px; }
 .fd-sub { font-size: 15px; color: ${C.gray}; margin: 0 0 32px; }
 .fd-doors { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
@@ -3450,6 +3450,9 @@ const FEED_CSS = `
 @media (max-width: 640px) {
   .fd-run { z-index: 1100; top: 0; padding-top: env(safe-area-inset-top); bottom: calc(56px + env(safe-area-inset-bottom)); }
   .fd-edge { display: none; }
+  .fd-bar { touch-action: none; }
+  .fd-card { align-items: center; }
+  .fd-stage { height: min(100%, calc((100vw - 8px) * 16 / 9)); }
 }
 @media (hover: none) { .fd-k { display: none; } }
 `;
@@ -3495,7 +3498,7 @@ function FeedChooser({ doors }) {
               <span className="fd-tx">
                 <span className="fd-hue" style={{ background: d.hue }} />
                 <span className="fd-l">{d.label}</span>
-                <span className="fd-m">{d.count} videos · <b>{fmtPlays(d.plays)} plays</b></span>
+                <span className="fd-m">{d.items.length} videos · <b>{fmtPlays(d.setPlays)} plays</b></span>
               </span>
             </a>
           </li>
