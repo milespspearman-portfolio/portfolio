@@ -1405,7 +1405,8 @@ const DESIGN_NORTH_STAR = ["Creative.", "Organized.", "Easy to work with."];
 // (by title, never by hardcoded index).
 // RENDERS NOWHERE TONIGHT — on purpose. This is the answer captured before it
 // gets lost; the surface that shows it is a later decision, and inventing one
-// now would put copy on the site he has not seen. Nothing reads this constant.
+// now would put copy on the site he has not seen. Oct 10 2026: the feed reads it
+// (feedDoors seeds each door with these first); no words from it render.
 // His note on the second pick, verbatim: "the IBC emoji format".
 const MEANING_PICKS = [
   "’25 MAX: Mark Rober’s Creator Assignment",
@@ -3284,31 +3285,44 @@ const feedDoors = () => {
     { id: "produced", label: "Produced", hue: ROLE_TAB_COLORS.Produced, test: x => x.roles[1] },
     { id: "off-the-clock", label: "Off the Clock", hue: TYPE_CUT.find(t => t.key === "Off the Clock").hue, test: x => BUCKET_OF[x.ev] === "Off the Clock" },
   ];
-  const openers = new Set();
+  // His picks (MEANING_PICKS + the Set List reels) go in first, one per playlist,
+  // highest plays first among themselves; the round-robin fills the rest.
+  const picks = new Set([...MEANING_PICKS, ...Object.keys(SET_LIST_DESCS)]);
+  const openers = new Set(), built = {};
   _feedDoors = defs.map(({ test, ...door }) => {
     const all = rows.filter(test).sort(byPlays);
+    // Produced skips what Creative Direction already holds (the two tags overlap most).
+    const taken = door.id === "produced" && built["creative-direction"] ? new Set(built["creative-direction"].items.map(x => x.reel)) : null;
+    const pool = taken ? all.filter(x => !taken.has(x.reel)) : all;
     const items = [], per = new Map(); // per = videos taken from each playlist so far
-    for (let round = 0; items.length < Math.min(FEED_SIZE, all.length); round++) {
+    for (const x of pool) {
+      if (items.length === FEED_SIZE) break;
+      if (!picks.has(x.reel.title) || per.has(x.ev)) continue;
+      items.push(x); per.set(x.ev, 1);
+    }
+    const lead = items.length;
+    for (let round = 0; items.length < Math.min(FEED_SIZE, pool.length); round++) {
       const before = items.length;
-      for (const x of all) {
+      for (const x of pool) {
         if (items.length === FEED_SIZE) break;
         if ((per.get(x.ev) || 0) !== round || items.includes(x)) continue;
         items.push(x); per.set(x.ev, round + 1);
       }
       if (items.length === before) break;
     }
-    items.sort(byPlays);
+    items.splice(lead, items.length - lead, ...items.slice(lead).sort(byPlays));
     const first = items.findIndex(x => !openers.has(x.reel));
     if (first > 0) items.unshift(...items.splice(first, 1));
     if (items[0]) openers.add(items[0].reel);
-    return { ...door, items, count: all.length, plays: sum(all), setPlays: sum(items) };
+    return (built[door.id] = { ...door, items, count: all.length, plays: sum(all), setPlays: sum(items) });
   });
   return _feedDoors;
 };
 
 const FEED_CSS = `
-.fd-choose { font-family: ${F}; color: ${C.white}; max-width: 1240px; margin: 0 auto; padding: calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px; }
-.fd-choose h1 { font-size: clamp(38px, 6vw, 72px); font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin: 0 0 32px; }
+.fd-choose { font-family: ${F}; color: ${C.white}; padding: calc(104px + env(safe-area-inset-top)) 64px 64px; }
+.fd-choose h1 { font-size: clamp(38px, 6vw, 72px); font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin: 0 0 10px; }
+.fd-sub { font-size: 15px; color: ${C.gray}; margin: 0 0 32px; }
 .fd-doors { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .fd-doors > li { min-width: 0; }
 .fd-door { display: flex; flex-direction: column; color: ${C.white}; text-decoration: none; border-radius: 14px; outline: none; }
@@ -3319,9 +3333,9 @@ const FEED_CSS = `
 .fd-k { position: absolute; z-index: 1; top: 10px; left: 10px; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.55); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .fd-tx { display: block; min-width: 0; }
 .fd-hue { display: block; height: 3px; border-radius: 2px; margin: 12px 0 8px; }
-.fd-l { display: block; font-size: 20px; font-weight: 600; letter-spacing: -0.3px; line-height: 1.1; }
+.fd-l { display: block; font-size: 20px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.1; }
 .fd-m { display: block; font-size: 14px; color: ${C.gray}; margin-top: 4px; font-variant-numeric: tabular-nums; }
-.fd-m b { color: ${C.gold}; font-weight: 600; }
+.fd-m b { color: ${C.gray}; font-weight: inherit; }
 .fd-door:hover .fd-fr img, .fd-door:focus-visible .fd-fr img { transform: scale(1.03); }
 .fd-door:focus-visible .fd-fr { box-shadow: 0 0 0 2px ${C.white}; }
 
@@ -3356,16 +3370,22 @@ const FEED_CSS = `
 .fd-pz { position: absolute; z-index: 5; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; pointer-events: none; padding-left: 4px; }
 .fd-brief { position: absolute; right: calc(100% + 16px); bottom: 0; width: min(300px, calc((100vw - 100%) / 2 - 40px)); max-height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; font-size: 14.5px; line-height: 1.45; }
 .fd-brief::-webkit-scrollbar { display: none; }
-.fd-tdesk { font-size: 22px; font-weight: 600; line-height: 1.18; letter-spacing: -0.2px; margin: 12px 0 6px; text-wrap: pretty; }
+.fd-tdesk { font-size: 22px; font-weight: 800; line-height: 1.18; letter-spacing: -0.2px; margin: 12px 0 6px; text-wrap: pretty; }
 .fd-run .fd-ttl { display: none; }
 .fd-ctx { font-size: 13px; color: ${C.gray}; margin: 0 0 8px; }
-.fd-plays { font-size: 15px; font-weight: 600; color: ${C.gold}; margin: 0 0 14px; font-variant-numeric: tabular-nums; }
+.fd-plays { font-size: 15px; font-weight: 600; color: ${C.red}; margin: 0 0 14px; font-variant-numeric: tabular-nums; }
 .fd-desc { margin: 0 0 14px; }
 .fd-ppl { margin: 0 0 10px; }
 .fd-ppl h3 { font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: ${C.gray}; margin: 0 0 4px; }
 .fd-ppl p { font-size: 14px; line-height: 1.4; color: rgba(255,255,255,0.82); }
 .fd-watch { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 700; color: ${C.white}; text-decoration: none; white-space: nowrap; }
 .fd-watch:hover, .fd-watch:focus-visible { text-decoration: underline; text-underline-offset: 3px; }
+.fd-rail { position: absolute; left: calc(100% + 4px); bottom: 0; width: 72px; display: flex; flex-direction: column; align-items: center; }
+.fd-rb { height: 78px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; font-size: 11px; line-height: 1.1; color: rgba(255,255,255,0.8); text-decoration: none; text-align: center; }
+.fd-rb i { width: 48px; height: 48px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; }
+.fd-rb:hover i, .fd-rb:focus-visible i { background: rgba(255,255,255,0.18); }
+.fd-rb em { font-style: normal; height: 26px; line-height: 13px; display: block; }
+@media (min-width: 900px) { .fd-brief .fd-watch { display: none; } }
 .fd-edge { position: absolute; z-index: 7; right: 24px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 16px; }
 .fd-run .fd-edge button { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; }
 .fd-run .fd-edge button:hover { background: rgba(255,255,255,0.18); }
@@ -3373,7 +3393,7 @@ const FEED_CSS = `
 .fd-end { flex-direction: column; overflow-y: auto; text-align: center; padding: 16px 24px 32px; }
 .fd-endin { margin: auto; display: flex; flex-direction: column; align-items: center; }
 .fd-rc { font-size: clamp(20px, 2.4vw, 28px); font-weight: 600; line-height: 1.3; font-variant-numeric: tabular-nums; }
-.fd-rc b { color: ${C.gold}; font-weight: 600; white-space: nowrap; }
+.fd-rc b { color: ${C.red}; font-weight: 600; white-space: nowrap; }
 .fd-od { list-style: none; display: flex; gap: 16px; justify-content: center; margin: 28px 0 32px; }
 .fd-od li { width: 120px; min-width: 0; }
 .fd-od a { display: block; color: ${C.white}; text-decoration: none; text-align: left; }
@@ -3395,10 +3415,11 @@ const FEED_CSS = `
   .fd-tog > span { padding: 0 9px; letter-spacing: 1px; gap: 5px; }
   .fd-card { padding: 0 4px 4px; }
   .fd-media { border-radius: 10px; }
-  .fd-brief { z-index: 6; left: 0; right: 0; bottom: 0; width: auto; padding: 64px 16px 8px; border-radius: 0 0 10px 10px; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.5) 55%, rgba(0,0,0,0)); pointer-events: none; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
+  .fd-rail { display: none; }
+  .fd-brief { z-index: 6; left: 0; right: 0; bottom: 0; width: auto; padding: 40px 16px 8px; border-radius: 0 0 10px 10px; background: linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.5) 55%, rgba(0,0,0,0)); pointer-events: none; text-shadow: 0 1px 6px rgba(0,0,0,0.6); }
   .fd-brief a, .fd-brief button { pointer-events: auto; }
   .fd-tdesk { display: none; }
-  .fd-run .fd-ttl { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 4px 0; text-align: left; font-size: 17px; font-weight: 600; line-height: 1.25; }
+  .fd-run .fd-ttl { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 4px 0; text-align: left; font-size: 17px; font-weight: 800; line-height: 1.25; }
   .fd-ttl span { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .fd-ttl svg { flex: none; transition: transform 0.2s; }
   .fd-card.fd-open .fd-ttl svg { transform: rotate(180deg); }
@@ -3406,7 +3427,6 @@ const FEED_CSS = `
   .fd-card.fd-open .fd-brief { pointer-events: auto; max-height: 80%; padding-top: 12px; background: rgba(10,10,10,0.92); text-shadow: none; }
   .fd-plays { margin-bottom: 0; font-size: 14px; }
   .fd-card.fd-open .fd-plays { margin-bottom: 12px; }
-  .fd-watch { min-height: 40px; }
   .fd-end { padding: 20px 16px 24px; }
   .fd-od { gap: 8px; width: 100%; margin: 20px 0 24px; }
   .fd-od li { flex: 1; width: auto; }
@@ -3416,7 +3436,8 @@ const FEED_CSS = `
 }
 @media (max-width: 767px) {
   .fd-choose { padding: calc(88px + env(safe-area-inset-top)) 16px 40px; }
-  .fd-choose h1 { font-size: 38px; margin-bottom: 16px; }
+  .fd-choose h1 { font-size: 38px; margin-bottom: 8px; }
+  .fd-sub { margin-bottom: 16px; }
   .fd-doors { grid-template-columns: 1fr; gap: 6px; }
   .fd-door { flex-direction: row; align-items: center; gap: 14px; padding: 6px 0 10px; border-bottom: 1px solid ${C.border}; border-radius: 0; }
   .fd-door .fd-fr { width: 60px; flex: none; max-height: none; border-radius: 8px; }
@@ -3427,9 +3448,10 @@ const FEED_CSS = `
   .fd-door .fd-m { font-size: 13px; }
 }
 @media (max-width: 640px) {
-  .fd-run { bottom: calc(56px + env(safe-area-inset-bottom)); }
+  .fd-run { z-index: 1100; top: 0; padding-top: env(safe-area-inset-top); bottom: calc(56px + env(safe-area-inset-bottom)); }
   .fd-edge { display: none; }
 }
+@media (hover: none) { .fd-k { display: none; } }
 `;
 
 function FeedPage({ door }) {
@@ -3443,13 +3465,17 @@ function FeedPage({ door }) {
   );
 }
 
+// A door opened from the chooser goes Back with history.back(); one opened any
+// other way (a shared link, the end card) goes Back to #/feed.
+const markFromChooser = () => { try { sessionStorage.fdFromChooser = "1"; } catch (e) { /* storage off: Back uses #/feed */ } };
+
 // #/feed: the five doors, each on its real opener frame. Keys 1 to 5 open them.
 function FeedChooser({ doors }) {
   useEffect(() => {
     const key = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || "")) return;
       const k = Number(e.key);
-      if (k >= 1 && k <= doors.length) window.location.hash = `#/feed/${doors[k - 1].id}`;
+      if (k >= 1 && k <= doors.length) { markFromChooser(); window.location.hash = `#/feed/${doors[k - 1].id}`; }
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
@@ -3457,10 +3483,11 @@ function FeedChooser({ doors }) {
   return (
     <section className="fd-choose">
       <h1>Choose your algorithm</h1>
+      <p className="fd-sub">Social Producer @Adobe | San Francisco</p>
       <ul className="fd-doors">
         {doors.map((d, i) => (
           <li key={d.id}>
-            <a className="fd-door" href={`#/feed/${d.id}`} aria-keyshortcuts={String(i + 1)}>
+            <a className="fd-door" href={`#/feed/${d.id}`} aria-keyshortcuts={String(i + 1)} onClick={markFromChooser}>
               <span className="fd-fr">
                 {d.items[0] && <img src={thumbOf(d.items[0].reel)} alt="" decoding="async" />}
                 <span className="fd-k" aria-hidden="true">{i + 1}</span>
@@ -3487,6 +3514,9 @@ function FeedRun({ door, doors }) {
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
   const [open, setOpen] = useState(-1); // phone: the card whose brief is pulled up
+  // Read without clearing here (StrictMode runs this twice); cleared in the effect below.
+  const [fromChooser] = useState(() => { try { return sessionStorage.fdFromChooser === "1"; } catch (e) { return false; } });
+  useEffect(() => { try { sessionStorage.removeItem("fdFromChooser"); } catch (e) { /* nothing to clear */ } }, []);
   const rootRef = useRef(null), scRef = useRef(null);
   const live = useRef({ idx: 0, auto: !_reduceMotion, muted: true });
   live.current = { idx, auto, muted };
@@ -3541,7 +3571,7 @@ function FeedRun({ door, doors }) {
     if (p && p.catch) p.catch((err) => {
       if ((err && err.name === "AbortError") || live.current.idx !== me) return;
       // Sound was on and the browser would not start a new clip with it: start muted rather than sit still.
-      if (!video.muted) { video.muted = true; setMuted(true); video.play().catch(() => setPaused(true)); }
+      if (err && err.name === "NotAllowedError" && !video.muted) { video.muted = true; setMuted(true); video.play().catch(() => setPaused(true)); }
       else setPaused(true);
     });
   }, [idx, n, door, video]);
@@ -3582,7 +3612,10 @@ function FeedRun({ door, doors }) {
     const key = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const tag = (e.target && e.target.tagName) || "";
+      if (e.key === "Escape") { window.location.hash = "#/feed"; return; }
       if ((e.key === "Enter" || e.key === " ") && (tag === "BUTTON" || tag === "A")) return;
+      // Only the keys that move the feed take Auto off (Tab, 1 to 5 and the rest leave it alone).
+      if (!["ArrowUp", "ArrowDown", "j", "k", "PageUp", "PageDown", " ", "Home", "End"].includes(e.key)) return;
       if (live.current.auto) setAuto(false);
       if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "j") { e.preventDefault(); go(live.current.idx + 1); }
       else if (e.key === "ArrowUp" || e.key === "PageUp" || e.key === "k") { e.preventDefault(); go(live.current.idx - 1); }
@@ -3611,11 +3644,11 @@ function FeedRun({ door, doors }) {
       <div aria-hidden="true" style={{ height: "100svh" }} />
       <div ref={rootRef} className="fd-run" style={{ "--hue": door.hue }}>
         <div className="fd-bar">
-          <a className="fd-back" href="#/feed">← Back</a>
-          <span className="fd-name"><i style={{ background: door.hue }} /><b>{door.label}</b><small>{n} of {door.count}</small></span>
+          <a className="fd-back" href="#/feed" onClick={e => { if (fromChooser) { e.preventDefault(); window.history.back(); } }}>← Back</a>
+          <span className="fd-name"><i style={{ background: door.hue }} /><b>{door.label}</b>{idx < n && <small>{idx + 1} of {n}</small>}</span>
           <span className="fd-ctl">
             <button type="button" className="fd-tog" data-fd-auto="" aria-pressed={auto} disabled={_reduceMotion} onClick={() => setAuto(a => !a && !_reduceMotion)}><span><i className="fd-dot" />Auto</span></button>
-            <button type="button" className="fd-tog" aria-pressed={!muted} onClick={toggleSound}><span><IcVol s={14} c="currentColor" muted={muted} />Sound</span></button>
+            <button type="button" className="fd-tog" data-fd-auto="" aria-pressed={!muted} onClick={toggleSound}><span><IcVol s={14} c="currentColor" muted={muted} />Sound</span></button>
           </span>
         </div>
         <div ref={scRef} className="fd-sc">
@@ -3627,8 +3660,8 @@ function FeedRun({ door, doors }) {
           <FeedEnd door={door} doors={doors} />
         </div>
         <div className="fd-edge">
-          <button type="button" aria-label="↑" aria-keyshortcuts="ArrowUp" {...(idx <= 0 ? { "data-off": "", tabIndex: -1, "aria-hidden": "true" } : {})} onClick={() => go(idx - 1)}>{chev("M6 15l6-6 6 6")}</button>
-          <button type="button" aria-label="↓" aria-keyshortcuts="ArrowDown" {...(idx >= n ? { "data-off": "", tabIndex: -1, "aria-hidden": "true" } : {})} onClick={() => go(idx + 1)}>{chev("M6 9l6 6 6-6")}</button>
+          <button type="button" aria-label="Previous video" aria-keyshortcuts="ArrowUp" {...(idx <= 0 ? { "data-off": "", tabIndex: -1, "aria-hidden": "true" } : {})} onClick={() => go(idx - 1)}>{chev("M6 15l6-6 6 6")}</button>
+          <button type="button" aria-label="Next video" aria-keyshortcuts="ArrowDown" {...(idx >= n ? { "data-off": "", tabIndex: -1, "aria-hidden": "true" } : {})} onClick={() => go(idx + 1)}>{chev("M6 9l6 6 6-6")}</button>
         </div>
       </div>
     </>
@@ -3645,10 +3678,12 @@ function FeedCard({ x, i, n, near, paused, open, onOpen, onTap }) {
   const people = reelCreditsOf(reel).length ? reelCreditsOf(reel) : (EVENT_CREDITS[ev] || []);
   const type = typeLabel(BUCKET_OF[ev]);
   const ctx = [type, ev !== type ? ev : null, reelDateStr(reel) || null].filter(Boolean);
+  const more = !!desc || people.length > 0; // nothing to pull up: the title is just a title
+  const watchLabel = `Watch ${reel.title} on ${platformOf(reel)}`;
   return (
     <section className={`fd-card${open ? " fd-open" : ""}`} data-i={i} aria-label={reel.title}>
       <div className="fd-stage">
-        <div className="fd-media" onClick={onTap}>
+        <div className="fd-media" onClick={open ? onOpen : onTap}>
           {watchOnly(reel) ? <WatchFrame reel={reel} radius={0} /> : (<>
             {thumbOf(reel) && <img src={thumbOf(reel)} alt="" loading={near ? "eager" : "lazy"} decoding="async" style={{ objectFit: land ? "contain" : "cover" }} />}
             <div className="fd-vslot" data-vslot={i} />
@@ -3661,10 +3696,12 @@ function FeedCard({ x, i, n, near, paused, open, onOpen, onTap }) {
         <div className="fd-brief">
           <CreditChip reel={reel} md />
           <h2 className="fd-tdesk">{reel.title}</h2>
-          <button type="button" className="fd-ttl" aria-expanded={open} onClick={onOpen}>
-            <span>{reel.title}</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg>
-          </button>
+          {more ? (
+            <button type="button" className="fd-ttl" aria-expanded={open} onClick={onOpen}>
+              <span>{reel.title}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg>
+            </button>
+          ) : <div className="fd-ttl"><span>{reel.title}</span></div>}
           <p className="fd-ctx fd-more">{ctx.map((c, k) => <Fragment key={k}>{k ? " · " : ""}<span style={{ whiteSpace: "nowrap" }}>{c}</span></Fragment>)}</p>
           <p className="fd-plays">{playsLabel(reel)} plays</p>
           <div className="fd-more">
@@ -3676,8 +3713,16 @@ function FeedCard({ x, i, n, near, paused, open, onOpen, onTap }) {
               </div>
             )}
           </div>
-          {reel.postUrl && <a className="fd-watch" href={reel.postUrl} target="_blank" rel="noopener noreferrer">Watch on {platformOf(reel)} ↗</a>}
+          {reel.postUrl && <a className="fd-watch" href={reel.postUrl} target="_blank" rel="noopener noreferrer" aria-label={watchLabel}>Watch on {platformOf(reel)} ↗</a>}
         </div>
+        {reel.postUrl && (
+          <div className="fd-rail">
+            <a className="fd-rb" href={reel.postUrl} target="_blank" rel="noopener noreferrer" aria-label={watchLabel}>
+              <i><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 4h6v6" /><path d="M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg></i>
+              <em>Watch on<br />{platformOf(reel)}</em>
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );
