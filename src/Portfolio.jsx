@@ -2732,7 +2732,7 @@ function WorkPlayer() {
                     <div style={{ position: "absolute", inset: 0, borderRadius: 12, background: "rgba(10,10,10,0.88)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 20, textAlign: "center" }}>
                       <span style={{ fontSize: 26 }}>🎬</span>
                       <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: 0, lineHeight: 1.5 }}>This file hasn't landed on the server yet.</p>
-                      <a href={cur.postUrl} target="_blank" rel="noopener noreferrer" style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 18px", borderRadius: 100, textDecoration: "none" }}>Watch on {platformOf(cur)} ↗</a>
+                      <a href={cur.postUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, textDecoration: "none" }}><span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 18px", borderRadius: 100 }}>Watch on {platformOf(cur)} ↗</span></a>
                     </div>
                   )}
                 </div>
@@ -3910,7 +3910,7 @@ function TypeRow({ row, hidden }) {
   return (
     <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 12 }}>
-        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ textDecoration: "none" }}><b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b></a>
+        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", minHeight: 44, margin: "-11.5px 0" }}><b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b></a>
         <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
         <span className="tc-chips" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: "auto" }}>
           {/* Only the roles he has on this type's reels: a "Hosted 0" chip on a
@@ -4471,7 +4471,7 @@ function Nav({ route }) {
       borderBottom: scrolled ? `1px solid ${C.border}` : "1px solid transparent",
       transition: "all 0.35s ease",
     }}>
-      <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none" }}>Miles Spearman</a>
+      <a href="#" style={{ fontFamily: F, fontSize: 16, fontWeight: 700, color: C.white, letterSpacing: -0.5, textDecoration: "none", display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 8px", marginLeft: -8 }}>Miles Spearman</a>
       <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
         <span className="nav-links" style={{ display: "flex", gap: 28, alignItems: "center" }}>
           {/* Resume tag removed Aug 9 2026 (Miles: show the body of work cleaner
