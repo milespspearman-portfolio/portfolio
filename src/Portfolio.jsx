@@ -4562,12 +4562,18 @@ export default function Portfolio() {
     if (el) requestAnimationFrame(() => el.scrollIntoView());
   }, [route.kind, route.bucket, route.slug]);
   // One tab title per page route (web checks Aug 22 + Sep 4, review Sep 23 §4).
+  // Oct 11 2026: a #/case/<slug> tab carries that video's own title (verbatim
+  // from the data) and a feed door names its door; everything else unchanged.
+  // Keyed on the route object, which is rebuilt on every hashchange, so a
+  // case-to-case or door-to-door hop re-titles the tab.
   useEffect(() => {
-    const name = route.kind === "bucket" ? route.bucket : ({ work: "Work", timeline: "Timeline", playlist: "Work Playlist", feed: "Feed" })[route.kind];
+    let name = route.kind === "bucket" ? route.bucket : ({ work: "Work", timeline: "Timeline", playlist: "Work Playlist", feed: "Feed" })[route.kind];
+    if (route.kind === "playlist") { const hit = caseFromHash(); if (hit) name = portfolio[hit.e].reels[hit.r].title; }
+    if (route.kind === "feed" && route.door) { const d = feedDoors().find(x => x.id === route.door); if (d) name = `${d.label} Feed`; }
     if (!name) return;
     const old = document.title; document.title = `${name} | Miles Spearman`;
     return () => { document.title = old; };
-  }, [route.kind, route.bucket]);
+  }, [route]);
   return (
     <>
       <style>{`
