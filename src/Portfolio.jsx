@@ -4575,6 +4575,8 @@ export default function Portfolio() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: ${C.bg}; overflow-x: hidden; }
+        .skip-link { position: absolute; left: 12px; top: -64px; z-index: 10000; font-family: ${F}; font-size: 14px; font-weight: 600; color: ${C.white}; background: ${C.darkGray}; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 12px 16px; text-decoration: none; transition: top 0.15s ease; }
+        .skip-link:focus { top: 12px; outline: 2px solid ${C.white}; outline-offset: 2px; }
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
             animation-duration: 0.001ms !important;
@@ -4763,6 +4765,14 @@ export default function Portfolio() {
       `}</style>
 
       <div className="app-root" style={{ background: C.bg, minHeight: "100svh", color: C.white }}>
+        {/* Skip link (Oct 10 2026 health pass): first stop for keyboard users. The
+            site routes on the hash, so the jump is done by hand (focus + scroll)
+            instead of changing the hash to #main, which would read as a route. */}
+        <a href="#main" className="skip-link" onClick={e => {
+          e.preventDefault();
+          const m = document.getElementById("main");
+          if (m) { m.focus({ preventScroll: true }); m.scrollIntoView(); }
+        }}>Skip to content</a>
         {/* Film grain */}
         <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 9999, opacity: 0.035,
           backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
@@ -4771,6 +4781,7 @@ export default function Portfolio() {
         <Nav route={route} />
         <MobileTabBar route={route} />
 
+        <div id="main" tabIndex={-1} style={{ outline: "none" }}>
         {/* ===== #/work — category grid ===== */}
         {/* Work page (design + phone checks, Sep 22 2026): the four category doors first, the Set List under them. */}
         {route.kind === "work" && (<><WorkGridPage /><SetList /></>)}
@@ -4942,6 +4953,7 @@ export default function Portfolio() {
           </FadeIn>
         </section>
         </>)}
+        </div>
 
         {/* ===== FOOTER ===== */}
         <footer className="m-foot" style={{ padding: "32px clamp(24px, 5vw, 80px)", borderTop: `1px solid ${C.border}`, display: "flex", justifyContent: "center" }}>
