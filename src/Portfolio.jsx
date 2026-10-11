@@ -151,36 +151,37 @@ const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, $
 // What Miles did on each playlist's videos — his words, retag per playlist as needed.
 // Aug 7 2026: the six hosted event runs read "Creative Directed, Hosted, & Produced"
 // — Miles's exact line for those runs (his comma before the ampersand, verbatim).
+// Oct 11 2026: every line in his noun style ("Creative Director, Producer, Host"), his yes; same words, same order.
 const EVENT_ROLES = {
-  "Side Projects": "Created, produced & hosted",
+  "Side Projects": "Creative Director, Producer, Shooter, Editor", // Oct 11 2026, his words
   "’24 IBC Amsterdam": "Creative Director, Producer, Host", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced")
   "’24 MAX Miami": "Creative Director, Producer, Host", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced")
-  "’24 NAB Vegas": "Creative Directed, Hosted, & Produced",
-  "’25 Summit Vegas": "Creative Directed, Hosted, & Produced",
+  "’24 NAB Vegas": "Creative Director, Producer, Shooter, Editor", // Oct 11 2026, his words
+  "’25 Summit Vegas": "Creative Director, Producer, Host",
   // Aug 10 2026, Miles's own correction — "MAX LA i concpeted,scripted,
   // produced and hosted and directed i did it all". The old line ("Created,
   // produced & hosted") dimmed Concept/Script and Directed, contradicting his
   // signed MAX case text on the same page. This is the standard line of its
   // group, his comma style, verbatim.
-  "’25 MAX LA": "Creative Directed, Hosted, & Produced",
-  "’25 MAX London": "Creative Directed, Hosted, & Produced",
+  "’25 MAX LA": "Creative Director, Producer, Host",
+  "’25 MAX London": "Creative Director, Producer, Host",
   "’25 NAB Vegas": "Producer", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced"; videos are tagged Mine end to end, no host tag)
-  "Cannes": "Produced",
-  "Employee Spotlights: Season 1": "Produced & creatively directed",
-  "Employee Spotlights: Season 2": "Produced & creatively directed",
-  "Employee Spotlights: Season 3": "Produced & creatively directed",
-  "’26 Summit": "Produced",
-  "’26 NAB Vegas": "Produced",
-  "Artist Spotlights": "Produced & creatively directed",
-  "Always-On": "Produced",
-  "Photoshop Archives": "Produced",
-  "’25 IBC Amsterdam": "Hosted & on-camera talent",
-  "Brand Partnerships": "Produced with the in-house team",
-  "Adobe × NFL": "Produced in partnership with the NFL",
-  "Adobe MAX Product Demos": "Produced, creatively directed & coached",
-  "’25 MAX Customer Stories": "Produced, creatively directed & coached",
+  "Cannes": "Producer",
+  "Employee Spotlights: Season 1": "Producer, Creative Director",
+  "Employee Spotlights: Season 2": "Producer, Creative Director",
+  "Employee Spotlights: Season 3": "Producer, Creative Director",
+  "’26 Summit": "Producer",
+  "’26 NAB Vegas": "Producer",
+  "Artist Spotlights": "Producer, Creative Director",
+  "Always-On": "Producer",
+  "Photoshop Archives": "Producer",
+  "’25 IBC Amsterdam": "Host, On-Camera Talent",
+  "Brand Partnerships": "Producer, with the in-house team",
+  "Adobe × NFL": "Producer, in partnership with the NFL",
+  "Adobe MAX Product Demos": "Producer, Creative Director, Coach",
+  "’25 MAX Customer Stories": "Producer, Creative Director, Coach",
   // Sep 22 2026, Miles on The College Tour segment: "hosted and creative".
-  "The College Tour": "Hosted & Creative Directed",
+  "The College Tour": "Host, Creative Director",
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles on YouTube": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
