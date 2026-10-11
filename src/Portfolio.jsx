@@ -153,8 +153,8 @@ const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, $
 // — Miles's exact line for those runs (his comma before the ampersand, verbatim).
 const EVENT_ROLES = {
   "Side Projects": "Created, produced & hosted",
-  "’24 IBC Amsterdam": "Creative Directed, Hosted, & Produced",
-  "’24 MAX Miami": "Creative Directed, Hosted, & Produced",
+  "’24 IBC Amsterdam": "Creative Director, Producer, Host", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced")
+  "’24 MAX Miami": "Creative Director, Producer, Host", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced")
   "’24 NAB Vegas": "Creative Directed, Hosted, & Produced",
   "’25 Summit Vegas": "Creative Directed, Hosted, & Produced",
   // Aug 10 2026, Miles's own correction — "MAX LA i concpeted,scripted,
@@ -164,7 +164,7 @@ const EVENT_ROLES = {
   // group, his comma style, verbatim.
   "’25 MAX LA": "Creative Directed, Hosted, & Produced",
   "’25 MAX London": "Creative Directed, Hosted, & Produced",
-  "’25 NAB Vegas": "Creative Directed, Hosted, & Produced",
+  "’25 NAB Vegas": "Producer", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced"; videos are tagged Mine end to end, no host tag)
   "Cannes": "Produced",
   "Employee Spotlights: Season 1": "Produced & creatively directed",
   "Employee Spotlights: Season 2": "Produced & creatively directed",
