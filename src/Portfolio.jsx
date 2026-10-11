@@ -3314,6 +3314,16 @@ const feedDoors = () => {
     const first = items.findIndex(x => !openers.has(x.reel));
     if (first > 0) items.unshift(...items.splice(first, 1));
     if (items[0]) openers.add(items[0].reel);
+    // Spacing pass (Oct 10 2026): past his picks (and a pulled-forward opener),
+    // no two cards in a row from the same playlist. A card that repeats the one
+    // before it trades places with the next card from a different playlist, which
+    // moves up and keeps everyone else in order. Same eight, same opener; when no
+    // other playlist is left, the run stays as it is.
+    for (let i = Math.max(1, first >= lead ? lead + 1 : lead); i < items.length; i++) {
+      if (items[i].ev !== items[i - 1].ev) continue;
+      const j = items.findIndex((x, k) => k > i && x.ev !== items[i - 1].ev);
+      if (j > i) items.splice(i, 0, ...items.splice(j, 1));
+    }
     return (built[door.id] = { ...door, items, count: all.length, plays: sum(all), setPlays: sum(items) });
   });
   return _feedDoors;
