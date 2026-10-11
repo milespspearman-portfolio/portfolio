@@ -153,10 +153,10 @@ const gradFor = (i) => `linear-gradient(135deg, ${GRADS[i % GRADS.length][0]}, $
 // — Miles's exact line for those runs (his comma before the ampersand, verbatim).
 // Oct 11 2026: every line in his noun style ("Creative Director, Producer, Host"), his yes; same words, same order.
 const EVENT_ROLES = {
-  "Side Projects": "Creative Director, Producer, Shooter, Editor", // Oct 11 2026, his words
+  "Side Projects": "Host", // Oct 11 2026, his words: Taco Bell x Upworthy "I was just the host"; UC "i did edit" (per-video role on the reel)
   "’24 IBC Amsterdam": "Creative Director, Producer, Host", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced")
   "’24 MAX Miami": "Creative Director, Producer, Host", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced")
-  "’24 NAB Vegas": "Creative Director, Producer, Shooter, Editor", // Oct 11 2026, his words
+  "’24 NAB Vegas": "Creative Director, Producer, Shooter, Editor, Host", // Oct 11 2026, his words ("i did it all, i hosted, edited, produced")
   "’25 Summit Vegas": "Creative Director, Producer, Host",
   // Aug 10 2026, Miles's own correction — "MAX LA i concpeted,scripted,
   // produced and hosted and directed i did it all". The old line ("Created,
@@ -181,7 +181,7 @@ const EVENT_ROLES = {
   "Adobe MAX Product Demos": "Producer, Creative Director, Coach",
   "’25 MAX Customer Stories": "Producer, Creative Director, Coach",
   // Sep 22 2026, Miles on The College Tour segment: "hosted and creative".
-  "The College Tour": "Host, Creative Director",
+  "The College Tour": "Host", // Oct 11 2026, his words: "for The College Tour I was just the host" (was "Host, Creative Director")
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles on YouTube": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
@@ -420,7 +420,7 @@ const REEL_TAGS = {
   // Sep 22 2026 adds. College Tour = his "hosted and creative" (D, H). The MAX
   // Day in the Life is him on camera start to finish, so H only; no other code
   // claimed until he tags it.
-  "The College Tour: University of Cincinnati": "D, H",
+  "The College Tour: University of Cincinnati": "H", // Oct 11 2026, his correction: "just the host" (was D, H)
   "’25 MAX: Day in the Life of Miles Spearman": "H",
   // Miles on YouTube — Aug 10 2026, his own words: "did everything it's the
   // same as the jazz — they join cut by me". Same code as the jazz library
@@ -741,8 +741,8 @@ const portfolio = [
   {
     event: "Side Projects",
     reels: [
-      { title: "@UofCincy Social", sub: "@uofcincy · 621 likes · Jul 7, 2022", plays: "5.5K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2022/UC/UC_7.7.22.mp4", postUrl: "https://www.instagram.com/p/CfuYwU7J0Zv/" },
-      { title: "TacoBell x Upworthy Feature", sub: "@upworthy · 6.6K likes · Dec 4, 2024", plays: "425.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Upworthy/Upworthy_12.4.24.mp4", postUrl: "https://www.instagram.com/p/DDKtoQgSz8q/" },
+      { title: "@UofCincy Social", sub: "@uofcincy · 621 likes · Jul 7, 2022", plays: "5.5K", role: "Host, Editor", mp4: "~/Downloads/Claude/miles-portfolio-reels/2022/UC/UC_7.7.22.mp4", postUrl: "https://www.instagram.com/p/CfuYwU7J0Zv/" },
+      { title: "TacoBell x Upworthy Feature", sub: "@upworthy · 6.6K likes · Dec 4, 2024", plays: "425.9K", role: "Host", mp4: "~/Downloads/Claude/miles-portfolio-reels/2024/Upworthy/Upworthy_12.4.24.mp4", postUrl: "https://www.instagram.com/p/DDKtoQgSz8q/" },
     ],
   },
 
