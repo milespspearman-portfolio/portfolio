@@ -4435,8 +4435,10 @@ function Nav({ route }) {
           {/* Oct 11 2026: "Feed" (#/feed, the chooser) took the Playlist's seat in the nav at his ask; #/playlist stays alive behind every tile and #/case link.
               "Work" and "Playlist" are two different destinations: the role grid
               vs the player, each at its own address. The label matches the
-              mobile tab bar's word for the same page (panel review Aug 10). */}
-          {[["Work", "#/work", false], ["About", "#about", false], ["What I Do", "#what-i-do", false], ["Timeline", "#/timeline", false], ["Feed", "#/feed", false]].map(([label, href, ext]) => (
+              mobile tab bar's word for the same page (panel review Aug 10).
+              Oct 11 2026: "What I Do" left the menu at his yes; four links now
+              (Work, About, Timeline, Feed). The #what-i-do section stays. */}
+          {[["Work", "#/work", false], ["About", "#about", false], ["Timeline", "#/timeline", false], ["Feed", "#/feed", false]].map(([label, href, ext]) => (
             <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} {...(route && TAB_FOR_ROUTE[route.kind] === href ? { "aria-current": "page" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: route && TAB_FOR_ROUTE[route.kind] === href ? C.white : C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
               onMouseLeave={e => e.target.style.color = e.target.getAttribute("aria-current") ? C.white : C.gray}
@@ -4473,21 +4475,21 @@ function Nav({ route }) {
 // ===== MOBILE TAB BAR =====
 // Spotify-style bottom nav so phones can jump between sections at a glance
 // (friend feedback: "need a menu bar to find everything at once"). Only renders
-// <=640px, where the top-bar links are hidden. Kept easy: 5 always-visible
+// <=640px, where the top-bar links are hidden. Kept easy: 4 always-visible
 // destinations, no dropdown, no hamburger. Contact stays the top-bar pill.
 // Which tab owns which route. The Work tab owns the grid AND every bucket page
 // under it; Timeline and Playlist own their own pages, so the bar says where you
-// are instead of looking identical on all five destinations. The What I Do tab
-// owns every #/kind/* page. Home lights none.
+// are instead of looking identical on all four destinations. Oct 11 2026: What
+// I Do left the menu (his yes); the section and its #/kind/* pages stay, and a
+// kind page lights Work. Home lights none.
 // The feed is hidden (no tab of its own), so it lights none.
-const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: null, kindpage: "#what-i-do", feed: "#/feed" };
+const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: null, kindpage: "#/work", feed: "#/feed" };
 function MobileTabBar({ route }) {
   const tabs = [
     // "Work" = the #/work category grid (the top-bar links are hidden on phones,
     // so the new page needs a tab of its own to be reachable).
     ["Work", "#/work", "M4 7.5h16v12H4zM9 7.5V5.5a2 2 0 012-2h2a2 2 0 012 2v2"],
     ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2"],
-    ["What I Do", "#what-i-do", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
     ["Timeline", "#/timeline", "M12 3v18M6 7h10M6 12h8M6 17h6"],
     ["Feed", "#/feed", "M7 3h10a1 1 0 011 1v16a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1zM10 17.5h4"],
   ];
