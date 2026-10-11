@@ -796,9 +796,9 @@ const portfolio = [
   {
     event: "’25 MAX LA",
     reels: [
-      // Sep 22 2026, Miles: "the Day in The Life of Miles Spearman link". Plays not
-      // pulled yet, so blank (renders N/A) until the Apify pass fills it.
-      { title: "’25 MAX: Day in the Life of Miles Spearman", sub: "@adobecreativecloud · 202 likes · Oct 7, 2025", plays: "", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Miles-Day-in-the-Life_10.7.25.mp4", postUrl: "https://www.instagram.com/reel/DPg1sHMiY0x/" },
+      // Sep 22 2026, Miles: "the Day in The Life of Miles Spearman link". Plays
+      // pulled Sep 28 2026 via Apify for the Also brief (30,803); filled Oct 11 on his yes.
+      { title: "’25 MAX: Day in the Life of Miles Spearman", sub: "@adobecreativecloud · 202 likes · Oct 7, 2025", plays: "30.8K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Miles-Day-in-the-Life_10.7.25.mp4", postUrl: "https://www.instagram.com/reel/DPg1sHMiY0x/" },
       { title: "’25 MAX: Acrobat Booth", sub: "@adobeacrobat · 1.3K likes · Oct 31, 2025", plays: "1.6M", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat-Booth_10.31.25.mp4", postUrl: "https://www.instagram.com/p/DQe3K4Zjpv9/" },
       { title: "’25 MAX: PDF Spaces is Everywhere", sub: "@adobeacrobat · 257 likes · Nov 7, 2025", plays: "30.1K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/Acrobat_11.7.25.mp4", postUrl: "https://www.instagram.com/p/DQxFwiPDDxp/" },
       { title: "’25 MAX: James Gunn’s Filmmaking Assignment", sub: "@adobe · 4.8K likes · Nov 13, 2025", plays: "705.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/MAX-2025-LA/James-Gunn_11.13.25.mp4", postUrl: "https://www.instagram.com/p/DRAp2luAU89/" },
