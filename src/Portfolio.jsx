@@ -1140,7 +1140,7 @@ const ROLE_GROUP_ORDER = [ROLE_CUT, ROLE_HOSTED, ROLE_PRODUCED, ROLE_OFF];
 const roleClassOf = (ev) => {
   const r = EVENT_ROLES[ev.event] || "";
   if (/1-Person Production/i.test(r)) return ROLE_OFF;
-  if (/hosted/i.test(r)) return ROLE_HOSTED;
+  if (/host/i.test(r)) return ROLE_HOSTED; // Oct 11 2026: his lines now say "Host" as well as "Hosted"
   // Everything else is a produced credit. Written as a fallback on purpose:
   // a playlist with an unfamiliar role line lands in the closest class rather
   // than falling off the site.
