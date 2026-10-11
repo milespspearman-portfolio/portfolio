@@ -1062,9 +1062,6 @@ const BUCKET_OF = {
   // Off the Clock — unchanged
   "Miles Music Media": "Off the Clock", "Miles.Spearman": "Off the Clock", "Miles on YouTube": "Off the Clock",
   "The College Tour": "Off the Clock",
-  // "Making B2B Social Friendly" (pinned) is deliberately ABSENT: it mirrors
-  // reels from three different buckets, so it belongs to none. When it mounts it
-  // pins to the top of the #/playlist sidebar and every bucket total skips it (off since Sep 22 2026).
 };
 const BUCKET_ORDER = ["Event Coverage", "In-House Production", "Brand Partnerships", "Off the Clock"];
 // Oct 6 2026 cross-check: the same category read "Commercial Event Coverage" on the
@@ -1078,44 +1075,8 @@ const bucketSlug = (b) => b.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^
 // Bucket order first, most recent projects first within each (Miles's call).
 // Off the Clock keeps his authored order: Miles Music Media, then Miles.Spearman.
 const reelDate = (r) => Date.parse(r.sub.split(" · ").pop()) || 0;
-// ===== B2B playlist (Miles Jul 6): the same reels as the "Making B2B Social
-// Friendly" square, surfaced as a playlist PINNED to the top of the sidebar.
-// The event is `pinned` — reels are REFERENCES to reels
-// that already live in other playlists, so every derived total (TOTAL_REELS,
-// TOTAL_PLAYS, likes), the timeline, and the opening wall skip it to avoid
-// double-counting.
-const B2B_PLAYLIST_SPEC = [
-  { t: "’26 Summit: Sneaks Celebrity Host Interview", album: "’26 Summit" },
-  { t: "’26 Summit: Anil Chakravarthy Exec Interview", album: "’26 Summit" },
-  { t: "’26 Summit: Words of Wisdom with Iliza Shlesinger", album: "’26 Summit" },
-  { t: "’25 Summit: Ken Jeong Interview", album: "’25 Summit" },
-  { t: "’25 Summit: Acrobat Escape Room", album: "’25 Summit" },
-  { t: "’25 Summit: Hosted Event Recap", album: "’25 Summit" },
-  { t: "’25 Summit: “Describe Your Job” Interviews", album: "’25 Summit" },
-  { t: "’25 Summit: Escalator ‘Hot’ Takes", album: "’25 Summit" },
-  { t: "’25 Summit: Sneaks Emoji Reactions", album: "’25 Summit" },
-  { t: "’25 MAX Customer Story: Wyndham Hotels", album: "Customer Stories" },
-  { t: "’25 MAX Customer Story: Intuit", album: "Customer Stories" },
-  { t: "Exec Thought Leadership: TikTok Your Ad Has Just 10 Seconds to Live", album: "Exec Thought Leadership" },
-  { t: "Exec Thought Leadership: Global Consumers Prefer Content in Their Own Language", album: "Exec Thought Leadership" },
-  { t: "Exec Thought Leadership: Humans Now Have a Shorter Attention Span Than a Goldfish", album: "Exec Thought Leadership" },
-  { t: "GenStudio for Performance Marketing Demo", album: "Product Releases" },
-  { t: "Brand Intelligence B2B Interview", album: "Product Releases" },
-  { t: "’26 Summit: Behind the Scenes of Sneaks", album: "Product Releases" },
-  { t: "’25 IBC: Premiere on Mobile Release", album: "Product Releases" },
-];
-// Sep 22 2026, Miles: take out "the making b2b social friendly" — the pinned
-// playlist no longer mounts (spec kept above so it can come back in one line).
-if (false) portfolio.unshift({
-  event: "Making B2B Social Friendly",
-  pinned: true,
-  reels: B2B_PLAYLIST_SPEC.map(({ t }) => {
-    for (const ev of portfolio) { const r = ev.reels.find(x => x.title === t); if (r) return r; }
-    return null;
-  }).filter(Boolean),
-});
+// Sep 22 2026, Miles: the "Making B2B Social Friendly" pinned playlist is out; retired for good Oct 11 2026 (spec parked in research/PARKED-2026-10-11-b2b-playlist-spec.md).
 portfolio.sort((a, b) => {
-  if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1; // B2B stays on top
   const la = BUCKET_ORDER.indexOf(BUCKET_OF[a.event]), lb = BUCKET_ORDER.indexOf(BUCKET_OF[b.event]);
   if (la !== lb) return la - lb;
   if (BUCKET_OF[a.event] === "Off the Clock") return 0; // authored order
@@ -1142,13 +1103,11 @@ const eventStats = portfolio.map((ev, i) => {
     window: fmtWindow(ev), // posting window, derived from reel dates only
   };
 });
-// Pinned virtual playlists hold REFERENCES to reels owned by other events —
-// every total skips them so nothing is counted twice.
-const TOTAL_REELS = portfolio.reduce((s, ev) => s + (ev.pinned ? 0 : ev.reels.length), 0);
-const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + (ev.pinned ? 0 : ev.totalPlays), 0);
+const TOTAL_REELS = portfolio.reduce((s, ev) => s + ev.reels.length, 0);
+const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
 // Likes live inside each reel's sub string ("· 1.8K likes ·") — derived, never typed
 const likesNum = (sub) => { const m = sub.match(/([\d.]+K|[\d.]+M|\d+) likes/i); return m ? playsNum(m[1]) : 0; };
-const TOTAL_LIKES = portfolio.reduce((s, ev) => s + (ev.pinned ? 0 : ev.reels.reduce((a, r) => a + likesNum(r.sub), 0)), 0);
+const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a + likesNum(r.sub), 0), 0);
 
 // ===== ROLE GROUPS (Aug 9 2026, "Scheme 1" — Miles confirmed) =====
 // #/work groups by WHAT MILES DID, not by what kind of shoot it was. The type
@@ -1179,7 +1138,6 @@ const ROLE_PRODUCED = "Produced In-House";
 const ROLE_OFF = "Off the Clock";
 const ROLE_GROUP_ORDER = [ROLE_CUT, ROLE_HOSTED, ROLE_PRODUCED, ROLE_OFF];
 const roleClassOf = (ev) => {
-  if (ev.pinned) return null; // the B2B mirror spans three roles, so it joins none
   const r = EVENT_ROLES[ev.event] || "";
   if (/1-Person Production/i.test(r)) return ROLE_OFF;
   if (/hosted/i.test(r)) return ROLE_HOSTED;
@@ -1199,10 +1157,8 @@ const roleClassOf = (ev) => {
 // answer on the YouTube channel ("did everything it's the same as the jazz —
 // they join cut by me") added a ninth section, "Miles on YouTube", 12 more
 // reels: 36 becomes 48. Mirrors move no derived
-// total — TOTAL_REELS / TOTAL_PLAYS read `portfolio`, which this never joins —
-// exactly how the pinned B2B playlist behaves.
+// total — TOTAL_REELS / TOTAL_PLAYS read `portfolio`, which this never joins.
 const cutByMeSections = eventStats.flatMap(ev => {
-  if (ev.pinned) return [];
   const reels = ev.reels.filter(cutByMeReel);
   if (!reels.length) return [];
   const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
@@ -1218,7 +1174,7 @@ const cutByMeSections = eventStats.flatMap(ev => {
 // rule: the real frame from the group's top-played reel, never emoji/stock.
 const roleStats = ROLE_GROUP_ORDER.map(name => {
   const mirror = name === ROLE_CUT;
-  const found = mirror ? cutByMeSections : eventStats.filter(ev => !ev.pinned && roleClassOf(ev) === name);
+  const found = mirror ? cutByMeSections : eventStats.filter(ev => roleClassOf(ev) === name);
   // Panel review Aug 10: the Produced page opened on a 77.9K playlist of N/A
   // rows while the 2.7M run sat eleventh. Its sections lead with reach. Only
   // this group is re-sorted — the hosted event runs read as a run of shows and
@@ -1246,7 +1202,7 @@ const TL_CAT = {
   // New Aug 7 bucket — the chip is the bucket name itself, no new claim.
   "Brand Partnerships": { accent: "#FF6A38", chip: typeLabel("Brand Partnerships") },
 };
-const proEvents = eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock" && !ev.pinned);
+const proEvents = eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock");
 // Year bucket = the event's MODAL year (the year most of its reels landed in), tie-break to the
 // later year. Keeps "'25 MAX LA" under 2025 even though a couple of reels slipped into 2026.
 const yearOf = (ev) => {
@@ -1299,7 +1255,7 @@ const TL_NODE_ROLES = Object.fromEntries(timelineNodes.map(ev => [ev.idx, roleTa
 // Opening wall: top Adobe reels + MAX London + the personal side (musician line earns its backdrop)
 const _allFlat = (() => {
   const flat = [];
-  portfolio.forEach((ev, e) => { if (ev.pinned) return; ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })); });
+  portfolio.forEach((ev, e) => { ev.reels.forEach((r, i) => flat.push({ ...r, e, r: i, event: ev.event })); });
   flat.sort((a, b) => playsNum(b.plays) - playsNum(a.plays));
   return flat;
 })();
@@ -1373,7 +1329,7 @@ const capabilities = [
 // Cut by Me, because the reels it names (the emoji-reaction format, 1.5M at IBC
 // 2024) are literally the reels on that page; off-the-clock body -> Off the
 // Clock. Three bodies render nowhere today: "Making B2B Social Friendly" (the
-// pinned playlist it pointed at is off since Sep 22 2026), "Directing & On-Camera
+// playlist it pointed at was retired Oct 11 2026), "Directing & On-Camera
 // Coaching", and "Content Strategy, Concept to Published" (Cut by Me uses its own intro below).
 const capBody = (t) => (capabilities.find(c => c.title === t) || {}).body || "";
 // Cut by Me carries its own summary rather than a What I Do body: Miles wrote
@@ -1414,25 +1370,12 @@ const MEANING_PICKS = [
   "San Jose Semaphore",
 ];
 
-// "The Set List" — each capability (copy verbatim above) is paired to a reel in
-// the portfolio. Indices {e,r} are DERIVED by title lookup (never hardcoded) so
-// clicking a capability deep-links into the Work player via the ms-play event.
-const reelIndexByTitle = (title) => {
-  for (let e = 0; e < portfolio.length; e++) {
-    if (portfolio[e].pinned) continue; // resolve to the reel's HOME playlist, not the pinned mirror
-    const r = portfolio[e].reels.findIndex(x => x.title === title);
-    if (r !== -1) return { e, r };
-  }
-  return null;
-};
-
 // Phase-1 deep-links: #/case/<slug> opens one reel playing. The slug is DERIVED
-// from the reel title (never hardcoded) so links track the data. Pinned mirror is
-// skipped so a slug resolves to the reel's HOME playlist; first title wins on ties.
+// from the reel title (never hardcoded) so links track the data. First title wins
+// on ties.
 const slugify = (s) => (s || "").toLowerCase().replace(/['’"]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const CASE_INDEX = {};
 portfolio.forEach((ev, e) => {
-  if (ev.pinned) return;
   ev.reels.forEach((reel, r) => { const s = slugify(reel.title); if (s && !(s in CASE_INDEX)) CASE_INDEX[s] = { e, r }; });
 });
 // Parse #/case/<slug> → {e,r} (or null). Unknown/malformed slug returns null (no-op).
@@ -1648,13 +1591,13 @@ const reelRoleTabs = (r) => {
 // ===== THE SET LIST, BY ROLE (Sep 22 2026, Miles) =====
 // "the set list should be categorized by the hosting, edited, produced,
 // directed". Membership is DERIVED from his own role tags, never hand-listed:
-// every non-pinned reel outside Off the Clock, ranked by its own play count,
+// every reel outside Off the Clock, ranked by its own play count,
 // dealt into the four groups in this order. A reel is taken by the FIRST group
 // it qualifies for, so it appears exactly once on the page.
 const SET_LIST_GROUP_SIZE = 3;
 const SET_LIST_GROUPS = (() => {
   const pool = portfolio
-    .flatMap((ev, e) => (ev.pinned || BUCKET_OF[ev.event] === "Off the Clock" ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
+    .flatMap((ev, e) => (BUCKET_OF[ev.event] === "Off the Clock" ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
     .filter(x => playsNum(x.reel.plays) > 0 && (SET_LIST_DESCS[x.reel.title] || REEL_DESCS[x.reel.title]))
     .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays));
   const taken = new Set();
@@ -1685,14 +1628,12 @@ const SET_LIST_GROUPS = (() => {
 const SET_LIST_FEATURED = SET_LIST_GROUPS.flatMap(g => g.items);
 
 // ===== TIER 2 — the catalog =====
-// The next 15 by plays, DERIVED: every non-pinned reel in the table, minus the
+// The next 15 by plays, DERIVED: every reel in the table, minus the
 // featured five, sorted by its own play count. Nothing is hand-listed, so the
-// grid re-ranks itself the moment the data moves. Pinned playlists are skipped
-// for the same reason every derived total skips them (they mirror reels that
-// already live elsewhere, so including them would show the same tile twice).
+// grid re-ranks itself the moment the data moves.
 const CATALOG_COUNT = 15;
 const CATALOG_ITEMS = portfolio
-  .flatMap((ev, e) => (ev.pinned ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
+  .flatMap((ev, e) => ev.reels.map((reel, r) => ({ e, r, reel })))
   .filter(x => !SET_LIST_FEATURED.some(f => f.reel.title === x.reel.title))
   .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays))
   .slice(0, CATALOG_COUNT);
@@ -2429,7 +2370,6 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
       <span style={{ minWidth: 0, flex: 1 }}>
         <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
         <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>
-          {ev.pinned && <span style={{ fontFamily: F, fontSize: 9, fontWeight: 800, color: C.bg, background: C.mint, borderRadius: 3, padding: "1px 4px", letterSpacing: 0.5, marginRight: 5, verticalAlign: "1px" }}>PINNED</span>}
           {ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
       </span>
       {isSourceOfAudio && <EqBars />}
@@ -2534,14 +2474,11 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
 // transport bar. This component is the single-page player and nothing else.
 function WorkPlayer() {
   const rows = eventStats;
-  // Opening playlist, a derived rule (Sep 26 2026): a pinned playlist wins if one
-  // exists (the B2B mirror has been off since Sep 22 2026). Otherwise open on the
+  // Opening playlist, a derived rule (Sep 26 2026): open on the
   // playlist with the MOST TOTAL PLAYS among events whose BUCKET_OF is not
   // "Off the Clock". Never "newest first": adding a small new event must not
   // change what the page opens on.
   const [libIdx, setLibIdx] = useState(() => {
-    const p = portfolio.findIndex(e => e.pinned);
-    if (p !== -1) return p;
     return eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock")
       .reduce((a, b) => (b.totalPlays > a.totalPlays ? b : a)).idx;
   });
@@ -2629,10 +2566,8 @@ function WorkPlayer() {
               <div className="sp-side-list">
                 {rows.map((ev, n) => (
                   <Fragment key={ev.event}>
-                    {/* Type-bucket dividers (Miles's 4 buckets). The pinned B2B
-                        mirror sits above them all, unlabelled — it spans three
-                        buckets. */}
-                    {!ev.pinned && (n === 0 || rows[n - 1].pinned || BUCKET_OF[rows[n - 1].event] !== BUCKET_OF[ev.event]) && (
+                    {/* Type-bucket dividers (Miles's 4 buckets). */}
+                    {(n === 0 || BUCKET_OF[rows[n - 1].event] !== BUCKET_OF[ev.event]) && (
                       <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
                         <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{typeLabel(BUCKET_OF[ev.event])}</span>
                         <span style={{ flex: 1, height: 1, background: C.border }} />
@@ -2759,7 +2694,7 @@ function WorkPlayer() {
                 </div>
                 <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white, margin: "12px 0 2px" }}>{cur.title}</p>
                 <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: 0 }}><CreditChip reel={cur} big />{subTag(cur)}</p>
-                <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{cur.role || EVENT_ROLES[(portfolio[track.e].pinned && reelIndexByTitle(cur.title)) ? portfolio[reelIndexByTitle(cur.title).e].event : portfolio[track.e].event] || ""}</p>
+                <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{cur.role || EVENT_ROLES[portfolio[track.e].event] || ""}</p>
               </div>
             )}
           </div>
@@ -3295,7 +3230,7 @@ let _feedDoors = null;
 // What I Do rows (TYPE_CUT), which are defined further down this file.
 const feedDoors = () => {
   if (_feedDoors) return _feedDoors;
-  const rows = portfolio.filter(ev => !ev.pinned)
+  const rows = portfolio
     .flatMap(ev => ev.reels.map(reel => ({ reel, ev: ev.event, roles: reelRoleTabs(reel) })));
   const byPlays = (a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays);
   const sum = (xs) => xs.reduce((s, x) => s + playsNum(x.reel.plays), 0);
@@ -3818,7 +3753,7 @@ function PlaylistShelf({ inPage = false }) {
   return (
     <section id="library" style={{ padding: "8px 0 40px clamp(24px, 5vw, 80px)" }}>
       {BUCKET_ORDER.map(b => (
-        <ShelfRow key={b} title={`${typeLabel(b)} Library`} items={eventStats.filter(ev => BUCKET_OF[ev.event] === b && !ev.pinned)} inPage={inPage} />
+        <ShelfRow key={b} title={`${typeLabel(b)} Library`} items={eventStats.filter(ev => BUCKET_OF[ev.event] === b)} inPage={inPage} />
       ))}
     </section>
   );
@@ -3845,9 +3780,8 @@ const TYPE_CUT = [
   { key: "Off the Clock", label: "Off the Clock", hue: "#9B7BFF" },
   { key: TYPE_CUT_HOSTING, label: TYPE_CUT_HOSTING, hue: "#E667C0" },
 ];
-// Newest first in every row. Pinned mirrors are skipped so nothing counts twice.
+// Newest first in every row.
 const _typeReels = portfolio
-  .filter(ev => !ev.pinned)
   .flatMap(ev => ev.reels.map(r => ({ reel: r, type: BUCKET_OF[ev.event], roles: reelRoleTabs(r) })))
   .sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
 // Kind pages (Miles, Sep 22 2026: "these naming things should be tappable to go to a page of work,
@@ -4076,7 +4010,7 @@ const routeFromHash = () => {
 // playlist page, it is the same ms-play dispatch it always was.
 // A parked request is deliberately NOT a case slug: {e, r} names the exact
 // playlist row, while a slug resolves to the reel's home playlist and would
-// bounce the sidebar off a mirror (the parked B2B playlist, off since Sep 22 2026).
+// bounce the sidebar off a mirror (the B2B playlist, retired Oct 11 2026).
 let PENDING_PLAY = null;
 const goPlay = (e, r) => {
   if (routeFromHash().kind === "playlist") {
