@@ -4432,10 +4432,11 @@ function Nav({ route }) {
           {/* Resume tag removed Aug 9 2026 (Miles: show the body of work cleaner
               than a basic resume). Timeline keeps its slot. The resume PDF is
               unlinked sitewide since Aug 10 (see the About card's button note). */}
-          {/* "Work" and "Playlist" are two different destinations: the role grid
+          {/* Oct 11 2026: "Feed" (#/feed, the chooser) took the Playlist's seat in the nav at his ask; #/playlist stays alive behind every tile and #/case link.
+              "Work" and "Playlist" are two different destinations: the role grid
               vs the player, each at its own address. The label matches the
               mobile tab bar's word for the same page (panel review Aug 10). */}
-          {[["Work", "#/work", false], ["About", "#about", false], ["What I Do", "#what-i-do", false], ["Timeline", "#/timeline", false], ["Playlist", "#/playlist", false]].map(([label, href, ext]) => (
+          {[["Work", "#/work", false], ["About", "#about", false], ["What I Do", "#what-i-do", false], ["Timeline", "#/timeline", false], ["Feed", "#/feed", false]].map(([label, href, ext]) => (
             <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} {...(route && TAB_FOR_ROUTE[route.kind] === href ? { "aria-current": "page" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: route && TAB_FOR_ROUTE[route.kind] === href ? C.white : C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
               onMouseLeave={e => e.target.style.color = e.target.getAttribute("aria-current") ? C.white : C.gray}
@@ -4479,7 +4480,7 @@ function Nav({ route }) {
 // are instead of looking identical on all five destinations. The What I Do tab
 // owns every #/kind/* page. Home lights none.
 // The feed is hidden (no tab of its own), so it lights none.
-const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: "#/playlist", kindpage: "#what-i-do", feed: null };
+const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: null, kindpage: "#what-i-do", feed: "#/feed" };
 function MobileTabBar({ route }) {
   const tabs = [
     // "Work" = the #/work category grid (the top-bar links are hidden on phones,
@@ -4488,7 +4489,7 @@ function MobileTabBar({ route }) {
     ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2"],
     ["What I Do", "#what-i-do", "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"],
     ["Timeline", "#/timeline", "M12 3v18M6 7h10M6 12h8M6 17h6"],
-    ["Playlist", "#/playlist", "M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"],
+    ["Feed", "#/feed", "M7 3h10a1 1 0 011 1v16a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1zM10 17.5h4"],
   ];
   const activeTab = route ? TAB_FOR_ROUTE[route.kind] : null;
   return (
