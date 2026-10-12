@@ -343,6 +343,7 @@ const REEL_TAGS = {
   // ’26 NAB Vegas
   "’26 NAB: Object Matte (OTG)": "D, P",
   "’26 NAB: Color Mode (OTG)": "D, P",
+  "’26 NAB: what’s going on with @AdobeVideo at #NAB2026?": "P", // Oct 11 2026, his words: "NAB 26 title is producer"
   // ’25 IBC Amsterdam
   "’25 IBC: Recap": "P, H",
   "’25 IBC: Favorite Premiere Transitions": "P, H",
@@ -880,6 +881,11 @@ const portfolio = [
     reels: [
       { title: "’26 NAB: Object Matte (OTG)", sub: "@adobevideo · 9.7K likes · Apr 23, 2026", plays: "1.1M", mp4: "/reels/2026/NAB-2026/Object-Matte-OTG_4.23.26.mp4", postUrl: "https://www.instagram.com/reel/DXfDr0Kj6Ug/" },
       { title: "’26 NAB: Color Mode (OTG)", sub: "@adobevideo · 2K likes · Apr 22, 2026", plays: "452.6K", mp4: "/reels/2026/NAB-2026/ColorMode-OTG_4.22.26.mp4", postUrl: "https://www.instagram.com/reel/DXcYL0dFCYo/" },
+      // Oct 11 2026, his call ("NAB 26 title is producer"): the NAB '26 YouTube video the
+      // Sep 26 audit left open lands here as a watch-only row (no mp4 on disk, so it carries
+      // YouTube's own thumbnail by URL and opens there). Title verbatim from YouTube's oEmbed;
+      // plays read from the watch page (viewCount 199,186, Oct 11 2026).
+      { title: "’26 NAB: what’s going on with @AdobeVideo at #NAB2026?", sub: "YouTube · Apr 19, 2026", plays: "199.2K", landscape: true, thumb: "https://i.ytimg.com/vi/YyvrjaG2kBw/maxresdefault.jpg", postUrl: "https://www.youtube.com/watch?v=YyvrjaG2kBw" },
     ],
   },
   {
@@ -3227,8 +3233,8 @@ function CareerTimeline() {
 const FEED_SIZE = 8;
 const FEED_WATCH_MS = 8000; // Auto holds a watch-only row (no mp4, nothing to end) for 8 s
 let _feedDoors = null;
-// Built on first use, not at module load: the Off the Clock hue is read from the
-// What I Do rows (TYPE_CUT), which are defined further down this file.
+// Built on first use, not at module load (it reads BUCKET_OF and the picks, and it
+// stays lazy so the door list is computed once, when the feed is first opened).
 const feedDoors = () => {
   if (_feedDoors) return _feedDoors;
   const rows = portfolio
@@ -3240,7 +3246,9 @@ const feedDoors = () => {
     { id: "creative-direction", label: "Creative Direction", hue: ROLE_TAB_COLORS.Directed, test: x => x.roles[2] },
     { id: "edited", label: "Edited", hue: ROLE_TAB_COLORS.Edited, test: x => x.roles[4] },
     { id: "produced", label: "Produced", hue: ROLE_TAB_COLORS.Produced, test: x => x.roles[1] },
-    { id: "off-the-clock", label: "Off the Clock", hue: TYPE_CUT.find(t => t.key === "Off the Clock").hue, test: x => BUCKET_OF[x.ev] === "Off the Clock" },
+    // Oct 11 2026: its own hue in the feed. The What I Do purple (#9B7BFF) is also the
+    // Edited role color, so two doors read as one on the chooser; green sits apart from the five.
+    { id: "off-the-clock", label: "Off the Clock", hue: "#3DDC97", test: x => BUCKET_OF[x.ev] === "Off the Clock" },
   ];
   // His picks (MEANING_PICKS + the Set List reels) go in first, one per playlist,
   // highest plays first among themselves; the round-robin fills the rest.
@@ -4799,6 +4807,14 @@ export default function Portfolio() {
                 <p style={{ margin: 0 }}>Reach me anytime at <a href="mailto:milespspearman@gmail.com"
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55` }}
                 >milespspearman@gmail.com</a>.</p>
+              </div>
+              {/* Recognition (Oct 11 2026, his go): his line from the Sep 26 Tyler cut,
+                  verbatim, 3:46 AM that night: "we can just say 'Global Marketing
+                  Organization: Be Genuine Award.'" It replaced five play-count lines
+                  there ("the things you have in here are not really awards"). */}
+              <div style={{ fontFamily: F, margin: "0 0 4px" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: C.gray, marginBottom: 8 }}>Recognition</div>
+                <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.6 }}>Global Marketing Organization: Be Genuine Award.</div>
               </div>
               {/* ===== THE ONE BUTTON (Aug 10 2026) =====
                   "View Resume →" is GONE from this slot, Miles's call tonight:
