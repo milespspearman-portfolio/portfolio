@@ -6,10 +6,18 @@ import { useState, useEffect, useRef, Fragment } from "react";
 // this" everywhere it reads) and now resolves to white, so nothing green
 // renders on any route. The green site lives at tag spotify-live-2026-09-04.
 const C = {
-  bg: "#0A0A0A", mint: "#FFFFFF", pink: "#FF6B9D", red: "#FA0F00", gold: "#F5C518",
-  white: "#FFFFFF", gray: "#888888", darkGray: "#1A1A1A",
-  glass: "rgba(255,255,255,0.05)", border: "rgba(255,255,255,0.08)",
+  bg: "var(--c-bg)", mint: "var(--c-mint)", pink: "#FF6B9D", red: "#FA0F00", gold: "#F5C518",
+  white: "var(--c-white)", gray: "var(--c-gray)", darkGray: "var(--c-darkGray)",
+  glass: "var(--c-glass)", border: "var(--c-border)", goldInk: "var(--c-goldInk)",
 };
+// Oct 11 2026 day/night toggle: the palette values are CSS variables, set per
+// theme in THEME_CSS (dark values are the hexes above, unchanged). red, gold and
+// pink stay literal hexes because hue code appends hex alpha to them.
+// alpha(): a palette colour at P% opacity (replaces the old `${C.x}NN` suffix).
+const alpha = (c, p) => `color-mix(in srgb, ${c} ${p}%, transparent)`;
+// inkHue(): a role/category hue used as TEXT. Dark: the hue itself. Light: gold
+// takes goldInk, the others are deepened (--c-hue-ink) so they read on the light bed.
+const inkHue = (h) => h === C.gold ? C.goldInk : `color-mix(in srgb, ${h} var(--c-hue-ink), #000)`;
 const F = `'Outfit', sans-serif`;
 
 function useInView(t = 0.08) {
@@ -92,7 +100,7 @@ function WatchFrame({ reel, radius = 12, minH }) {
       {thumbOf(reel) && <img src={thumbOf(reel)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(10,10,10,0.15) 40%, rgba(10,10,10,0.82))" }} />
       <span style={{ position: "absolute", left: 0, right: 0, bottom: 14, display: "flex", flexDirection: "column", alignItems: "center", gap: 8, padding: "0 12px" }}>
-        {reel.runtime && <span style={{ fontFamily: F, fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.82)", letterSpacing: 1.5, textTransform: "uppercase" }}>Full episode · {reel.runtime}</span>}
+        {reel.runtime && <span style={{ fontFamily: F, fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.82)" /* on media */, letterSpacing: 1.5, textTransform: "uppercase" }}>Full episode · {reel.runtime}</span>}
         <span style={{ fontFamily: F, fontSize: 13, fontWeight: 700, color: C.bg, background: C.mint, padding: "9px 20px", borderRadius: 100, whiteSpace: "nowrap" }}>Watch on {platformOf(reel)} ↗</span>
       </span>
     </a>
@@ -124,7 +132,7 @@ function WatchFrame({ reel, radius = 12, minH }) {
 // has no space after the period). It would mis-split "U.S. Bank"; none exists,
 // and array-authoring is the escape hatch if one ever does.
 const SENTENCE_SPLIT = /(?<=[.!?])\s+(?=[A-Z“"'(])/;
-function Prose({ text, as = "div", size = 15, gap = "1.5em", measure = "46ch", color = "rgba(255,255,255,0.84)", lh = 1.55, style }) {
+function Prose({ text, as = "div", size = 15, gap = "1.5em", measure = "46ch", color = "rgba(var(--c-ink-rgb),0.84)", lh = 1.55, style }) {
   const paras = Array.isArray(text) ? text : String(text).split(SENTENCE_SPLIT);
   // `as="span"` exists because one caller sits inside an <a>, where <div><p>
   // would be invalid nesting. Same look, legal DOM.
@@ -723,16 +731,16 @@ const CASE_TEXTS = {
 const handlesOf = (ev) => [...new Set(ev.reels.map(r => handleTag(r)))].join(", ");
 
 // Transport icons
-const IcPlay = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M4 1.5l10.5 6.5L4 14.5z" /></svg>;
-const IcPause = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M3.5 2h3.2v12H3.5zM9.3 2h3.2v12H9.3z" /></svg>;
-const IcPrev = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M13 2.5v11L5.5 8zM3 2.5h2v11H3z" /></svg>;
-const IcNext = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true"><path d="M3 2.5v11L10.5 8zM11 2.5h2v11h-2z" /></svg>;
+const IcPlay = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M4 1.5l10.5 6.5L4 14.5z" /></svg>;
+const IcPause = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M3.5 2h3.2v12H3.5zM9.3 2h3.2v12H9.3z" /></svg>;
+const IcPrev = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M13 2.5v11L5.5 8zM3 2.5h2v11H3z" /></svg>;
+const IcNext = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M3 2.5v11L10.5 8zM11 2.5h2v11h-2z" /></svg>;
 const IcVol = ({ s = 16, c = C.gray, muted = false }) => (
-  <svg width={s} height={s} viewBox="0 0 16 16" fill={c} aria-hidden="true">
+  <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true">
     <path d="M2 6h2.5L8 3v10L4.5 10H2z" />
     {muted
-      ? <path d="M10.2 5.8l4 4M14.2 5.8l-4 4" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round" />
-      : <path d="M10.5 5.5a3.5 3.5 0 010 5M12 3.5a6 6 0 010 9" stroke={c} strokeWidth="1.4" fill="none" strokeLinecap="round" />}
+      ? <path d="M10.2 5.8l4 4M14.2 5.8l-4 4" style={{ stroke: c }} strokeWidth="1.4" fill="none" strokeLinecap="round" />
+      : <path d="M10.5 5.5a3.5 3.5 0 010 5M12 3.5a6 6 0 010 9" style={{ stroke: c }} strokeWidth="1.4" fill="none" strokeLinecap="round" />}
   </svg>
 );
 
@@ -1657,9 +1665,9 @@ function TilePlays({ reel }) {
   return (
     <span style={{
       position: "absolute", left: 12, bottom: 10, display: "inline-flex", alignItems: "center", gap: 6,
-      fontFamily: F, fontSize: 13, fontWeight: 600, color: C.white, fontVariantNumeric: "tabular-nums",
+      fontFamily: F, fontSize: 13, fontWeight: 600, color: "#FFFFFF" /* on media */, fontVariantNumeric: "tabular-nums",
       textShadow: "0 1px 3px rgba(0,0,0,0.6)", pointerEvents: "none",
-    }}><IcPlay s={11} c={C.white} />{playsLabel(reel)}</span>
+    }}><IcPlay s={11} c="#FFFFFF" />{playsLabel(reel)}</span>
   );
 }
 
@@ -1693,24 +1701,24 @@ function SetListTile({ item, live, onActivate, innerRef }) {
       </a>
       <div style={{ padding: "13px 16px 0 0" }}>
         <p style={{ fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, lineHeight: 1.3, margin: "0 0 4px" }}>{reel.title}</p>
-        <p style={{ fontFamily: F, fontSize: 12, color: "#888", margin: "0 0 8px", fontVariantNumeric: "tabular-nums" }}>{playsLabel(reel)} plays</p>
+        <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: "0 0 8px", fontVariantNumeric: "tabular-nums" }}>{playsLabel(reel)} plays</p>
         {/* Chips: only the roles this reel earned, lit in the role's own hue —
             the same word in the same colour the matrix and the timeline use. */}
         <span style={{ display: "flex", flexWrap: "wrap", gap: 5, margin: "0 0 7px" }}>
           {tabs.map((on, n) => on && (
             <span key={ROLE_TABS[n]} style={{
               fontFamily: F, fontSize: 10.5, fontWeight: 600, lineHeight: 1.3, borderRadius: 4, padding: "2px 7px", whiteSpace: "nowrap",
-              color: ROLE_TAB_COLORS[ROLE_TABS[n]], background: tabFill(ROLE_TAB_COLORS[ROLE_TABS[n]]), border: `1px solid ${tabEdge(ROLE_TAB_COLORS[ROLE_TABS[n]])}`,
+              color: inkHue(ROLE_TAB_COLORS[ROLE_TABS[n]]), background: tabFill(ROLE_TAB_COLORS[ROLE_TABS[n]]), border: `1px solid ${tabEdge(ROLE_TAB_COLORS[ROLE_TABS[n]])}`,
             }}>{ROLE_TABS[n]}</span>
           ))}
         </span>
         {paras.map((p, n) => (
-          <p key={n} style={{ fontFamily: F, fontSize: cased ? 13 : 12, color: cased ? "#b8b8b8" : C.gray, lineHeight: 1.55, margin: "0 0 9px", maxWidth: "46ch", textWrap: "pretty" }}>{p}</p>
+          <p key={n} style={{ fontFamily: F, fontSize: cased ? 13 : 12, color: cased ? "var(--c-sub)" : C.gray, lineHeight: 1.55, margin: "0 0 9px", maxWidth: "46ch", textWrap: "pretty" }}>{p}</p>
         ))}
         {/* Why it mattered, his two strings, reason then production detail. */}
         {why && (
           <>
-            <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.55, margin: "0 0 3px", maxWidth: "46ch" }}>{why[0]}</p>
+            <p style={{ fontFamily: F, fontSize: 13, color: "rgba(var(--c-ink-rgb),0.84)", lineHeight: 1.55, margin: "0 0 3px", maxWidth: "46ch" }}>{why[0]}</p>
             <p style={{ fontFamily: F, fontSize: 12, color: C.gray, lineHeight: 1.5, margin: 0, maxWidth: "46ch" }}>{why[1]}</p>
           </>
         )}
@@ -1731,7 +1739,7 @@ function CatalogTile({ reel }) {
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.60))", pointerEvents: "none" }} />
       <span className="cat-bar" style={{
         position: "absolute", left: 0, right: 0, bottom: 0, padding: "24px 11px 32px",
-        fontFamily: F, fontSize: 12, fontWeight: 600, lineHeight: 1.3, color: C.white,
+        fontFamily: F, fontSize: 12, fontWeight: 600, lineHeight: 1.3, color: "#FFFFFF" /* on media */,
         background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.80))",
         textShadow: "0 1px 3px rgba(0,0,0,0.7)", pointerEvents: "none",
       }}>{reel.title}</span>
@@ -1796,7 +1804,7 @@ function SetList() {
         {SET_LIST_GROUPS.map((g, gi) => {
           const base = SET_LIST_GROUPS.slice(0, gi).reduce((s, x) => s + x.items.length, 0);
           return (
-            <div key={g.label} style={{ marginTop: gi === 0 ? 0 : 44, borderTop: gi === 0 ? "none" : "1px solid rgba(255,255,255,0.08)", paddingTop: gi === 0 ? 0 : 24 }}>
+            <div key={g.label} style={{ marginTop: gi === 0 ? 0 : 44, borderTop: gi === 0 ? "none" : "1px solid rgba(var(--c-ink-rgb),0.08)", paddingTop: gi === 0 ? 0 : 24 }}>
               <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>{g.label}</span>
               <div className="set-grid by-role">
                 {g.items.map((item, n) => (
@@ -1960,7 +1968,7 @@ function Marquee() {
     <img key={`${copy}-${c.name}`} src={c.logo} alt={copy ? "" : c.name} loading="lazy"
       style={{ height: LOGO_H, maxWidth: LOGO_MAX_W, width: "auto", objectFit: "contain", filter: "brightness(0) invert(1)", opacity: 0.72, display: "block", flexShrink: 0 }} />
   ) : (
-    <span key={`${copy}-${c.name}`} style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.72)", letterSpacing: 2, textTransform: "uppercase", flexShrink: 0, whiteSpace: "nowrap" }}>{c.name}</span>
+    <span key={`${copy}-${c.name}`} style={{ fontFamily: F, fontSize: 14, fontWeight: 600, color: "rgba(var(--c-ink-rgb),0.72)", letterSpacing: 2, textTransform: "uppercase", flexShrink: 0, whiteSpace: "nowrap" }}>{c.name}</span>
   ));
   return (
     <div style={{ width: "100%", padding: "8px 0 0" }}>
@@ -1993,9 +2001,9 @@ function HeroCard({ reel, i, live = true }) {
       aria-label={`Play ${reel.title}`}
       style={{
         position: "relative", height: `clamp(170px, ${vh}vh, 300px)`, aspectRatio: "9 / 16", borderRadius: 14, overflow: "hidden", flexShrink: 0,
-        border: `1px solid ${h ? `${C.mint}A6` : C.border}`, padding: 0, cursor: "pointer",
+        border: `1px solid ${h ? alpha(C.mint, 65) : C.border}`, padding: 0, cursor: "pointer",
         background: "#111",
-        boxShadow: h ? `0 26px 70px rgba(0,0,0,0.55), 0 0 0 1px ${C.mint}40, 0 10px 40px ${C.mint}33` : "0 16px 48px rgba(0,0,0,0.45)",
+        boxShadow: h ? `0 26px 70px rgba(0,0,0,0.55), 0 0 0 1px ${alpha(C.mint, 25)}, 0 10px 40px ${alpha(C.mint, 20)}` : "0 16px 48px rgba(0,0,0,0.45)",
         // Magnet: the hovered card straightens (rotate 0), lifts, and scales up.
         transform: h ? "translateY(-10px) scale(1.06) rotate(0deg)" : `rotate(${TILTS[i % TILTS.length]}deg)`,
         transition: "transform 0.32s cubic-bezier(0.22,1,0.36,1), box-shadow 0.32s ease, border-color 0.32s ease",
@@ -2010,13 +2018,13 @@ function HeroCard({ reel, i, live = true }) {
       <span style={{ position: "absolute", inset: 0, background: "rgba(10,10,10,0.55)", opacity: h ? 0 : 1, transition: "opacity 0.3s ease", pointerEvents: "none" }} />
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.9))" }} />
       <span style={{ position: "absolute", left: 10, right: 10, bottom: 9, textAlign: "left" }}>
-        <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 700, color: C.white, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
-        <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, marginTop: 3 }}>▶ {playsLabel(reel)} plays</span>
+        <span style={{ fontFamily: F, fontSize: 11.5, fontWeight: 700, color: "#FFFFFF" /* on media */, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{reel.title}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 10.5, fontWeight: 600, color: "#FFFFFF" /* on media */, marginTop: 3 }}>▶ {playsLabel(reel)} plays</span>
       </span>
       <span className="wall-play" style={{
         position: "absolute", top: "38%", left: "50%", transform: `translate(-50%,-50%) scale(${h ? 1 : 0.6})`,
         width: 44, height: 44, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center",
-        justifyContent: "center", opacity: h ? 1 : 0, transition: "all 0.2s", boxShadow: `0 6px 24px ${C.mint}50`,
+        justifyContent: "center", opacity: h ? 1 : 0, transition: "all 0.2s", boxShadow: `0 6px 24px ${alpha(C.mint, 31)}`,
       }}><IcPlay s={15} /></span>
     </button>
   );
@@ -2284,7 +2292,7 @@ function OpeningWall() {
         })}
       </div>
       {/* dim so type owns the frame — lifts on scroll (opacity via ref, no re-render) */}
-      <div ref={veilRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(10,10,10,0.34) 0%, rgba(10,10,10,0.62) 100%)", pointerEvents: "none", willChange: "opacity" }} />
+      <div ref={veilRef} style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(var(--c-bg-rgb),0.34) 0%, rgba(var(--c-bg-rgb),0.62) 100%)", pointerEvents: "none", willChange: "opacity" }} />
       {/* the words — evaporate on scroll */}
       <div ref={wordsRef} style={{ position: "relative", textAlign: "center", padding: "0 24px", pointerEvents: "none", willChange: "opacity, transform" }}>
         {/* Aug 27 2026, Miles: "remove the green social producer at adobe maybe make
@@ -2294,9 +2302,9 @@ function OpeningWall() {
         <h1 style={{ fontFamily: F, fontWeight: 800, fontSize: "clamp(44px, 8.5vw, 110px)", lineHeight: 0.98, letterSpacing: -2.5, margin: 0, color: C.white }}>
           Creative<span style={{ color: C.mint }}>.</span><br />
           Producer<span style={{ color: C.mint }}>.</span><br />
-          <span style={{ color: "#F5C518" }}>Musician.</span>
+          <span style={{ color: C.goldInk }}>Musician.</span>
         </h1>
-        <span style={{ display: "inline-flex", marginTop: 34, animation: "cuebounce 1.8s ease-in-out infinite", fontFamily: F, fontSize: 13, fontWeight: 600, color: C.gray, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 18px", background: "rgba(10,10,10,0.6)" }}>↓ scroll</span>
+        <span style={{ display: "inline-flex", marginTop: 34, animation: "cuebounce 1.8s ease-in-out infinite", fontFamily: F, fontSize: 13, fontWeight: 600, color: C.gray, border: `1px solid ${C.border}`, borderRadius: 100, padding: "9px 18px", background: "rgba(var(--c-bg-rgb),0.6)" }}>↓ scroll</span>
       </div>
     </section>
   );
@@ -2340,8 +2348,8 @@ function CreditChip({ reel, big = false, md = false }) {
       {chips.map(credit => (
         <span key={credit} title={`${credit} (Miles Spearman)`} style={{
           // Never mint: mint already means "playing" or "press this" on this site.
-          display: "inline-block", fontFamily: F, fontSize: sz, fontWeight: 600, color: "rgba(255,255,255,0.72)",
-          background: "rgba(255,255,255,0.06)", border: `1px solid ${C.border}`, borderRadius: 4,
+          display: "inline-block", fontFamily: F, fontSize: sz, fontWeight: 600, color: "rgba(var(--c-ink-rgb),0.72)",
+          background: "rgba(var(--c-ink-rgb),0.06)", border: `1px solid ${C.border}`, borderRadius: 4,
           padding: big ? "4px 9px" : md ? "2px 8px" : "1px 6px", whiteSpace: "nowrap", lineHeight: 1.3,
           // Never shrink: a half-rendered credit reads as a different claim.
           flexShrink: 0,
@@ -2368,14 +2376,14 @@ function SideRow({ ev, active, isSourceOfAudio, onClick }) {
       style={{
         display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left",
         padding: 8, borderRadius: 10, border: "none", cursor: "pointer", fontFamily: F,
-        background: active ? "rgba(255,255,255,0.08)" : h ? "rgba(255,255,255,0.04)" : "transparent",
+        background: active ? "rgba(var(--c-ink-rgb),0.08)" : h ? "rgba(var(--c-ink-rgb),0.04)" : "transparent",
         transition: "background 0.15s",
       }}>
       <span style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
         <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
       </span>
       <span style={{ minWidth: 0, flex: 1 }}>
-        <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
+        <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
         <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>
           {ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
       </span>
@@ -2392,7 +2400,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
       style={{
         display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
         padding: "8px 12px", borderRadius: 8, cursor: "pointer",
-        background: h ? "rgba(255,255,255,0.07)" : active ? "rgba(255,255,255,0.06)" : "transparent",
+        background: h ? "rgba(var(--c-ink-rgb),0.07)" : active ? "rgba(var(--c-ink-rgb),0.06)" : "transparent",
         transition: "background 0.15s",
       }}>
       <span style={{ fontFamily: F, fontSize: 13, color: C.gray, textAlign: "center" }}>
@@ -2400,7 +2408,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
       </span>
       <Thumb reel={reel} />
       <span style={{ minWidth: 0 }}>
-        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
+        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
         {/* Flex, not one nowrap span: the chips keep their full width and the
             handle line ellipsizes around them (a clipped "Cut my" is a lie).
             Wrapping (Aug 10): with up to four chips on a row, the handle line
@@ -2424,7 +2432,7 @@ function TrackRow({ reel, i, active, playing, onPlay }) {
 function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute }) {
   const pct = dur ? (prog / dur) * 100 : 0;
   return (
-    <div className="sp-bar" style={{ borderTop: `1px solid ${C.border}`, background: "rgba(10,10,10,0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", padding: "10px 16px", display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", alignItems: "center", gap: 12 }}>
+    <div className="sp-bar" style={{ borderTop: `1px solid ${C.border}`, background: "rgba(var(--c-bg-rgb),0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", padding: "10px 16px", display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", alignItems: "center", gap: 12 }}>
       {/* Left: track + "artist" */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
         {cur ? (
@@ -2444,7 +2452,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           <button onClick={() => onStep(-1)} disabled={!cur} aria-label="Previous reel" style={{ background: "none", border: "none", cursor: cur ? "pointer" : "default", opacity: cur ? 0.85 : 0.3, padding: 4 }}><IcPrev /></button>
           <button onClick={onToggle} disabled={!cur} aria-label={playing ? "Pause" : "Play"}
-            style={{ width: 36, height: 36, borderRadius: "50%", background: cur ? C.mint : "rgba(255,255,255,0.15)", border: "none", cursor: cur ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s" }}
+            style={{ width: 36, height: 36, borderRadius: "50%", background: cur ? C.mint : "rgba(var(--c-ink-rgb),0.15)", border: "none", cursor: cur ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s" }}
             onMouseEnter={e => { if (cur) e.currentTarget.style.transform = "scale(1.08)"; }}
             onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
             {playing ? <IcPause s={13} /> : <IcPlay s={13} />}
@@ -2454,7 +2462,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
         <div className="sp-progress" style={{ display: "flex", alignItems: "center", gap: 8, width: "min(38vw, 420px)" }}>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums", width: 30, textAlign: "right" }}>{fmtTime(prog)}</span>
           <div onClick={cur ? onSeek : undefined} role="slider" aria-label="Seek" aria-valuemin={0} aria-valuemax={Math.round(dur || 0)} aria-valuenow={Math.round(prog || 0)}
-            style={{ flex: 1, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)", cursor: cur ? "pointer" : "default", position: "relative" }}>
+            style={{ flex: 1, height: 4, borderRadius: 2, background: "rgba(var(--c-ink-rgb),0.15)", cursor: cur ? "pointer" : "default", position: "relative" }}>
             <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${pct}%`, borderRadius: 2, background: C.mint }} />
           </div>
           <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums", width: 30 }}>{fmtTime(dur)}</span>
@@ -2466,7 +2474,7 @@ function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep
         {cur && (
           <a className="sp-ig-link" href={cur.postUrl} target="_blank" rel="noopener noreferrer"
             style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
-            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(255,255,255,0.3)"; }}
+            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(var(--c-ink-rgb),0.3)"; }}
             onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
           ><span className="sp-ig-label">Open on {platformOf(cur)} </span>↗</a>
         )}
@@ -2562,7 +2570,7 @@ function WorkPlayer() {
     <>
       {/* Player shell */}
       <FadeIn>
-        <div ref={shellRef} className="sp-shell" style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden", background: "#0D0D0D", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
+        <div ref={shellRef} className="sp-shell" style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden", background: "var(--c-shell)", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
           <div className="sp-body">
             {/* Sidebar — Your Library */}
             <aside className="sp-side">
@@ -2588,14 +2596,14 @@ function WorkPlayer() {
 
             {/* Detail panel — album view */}
             <main className="sp-main">
-              <div style={{ padding: "28px 24px 20px", display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, ${GRADS[viewing.idx % GRADS.length][0]}, rgba(13,13,13,0) 96%)` }}>
+              <div style={{ padding: "28px 24px 20px", display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, color-mix(in srgb, ${GRADS[viewing.idx % GRADS.length][0]} var(--c-tint), transparent), rgba(13,13,13,0) 96%)` }}>
                 <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), overflow: "hidden", boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>
                   <img src={viewing.cover} alt="" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
                 </span>
                 <div style={{ minWidth: 0 }}>
                   <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
                   <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
-                  {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
+                  {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(var(--c-ink-rgb),0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
                   <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "video" : "videos"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
                   {viewing.reels.some(r => !r.plays) && (
                     <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
@@ -2613,7 +2621,7 @@ function WorkPlayer() {
               </div>
               <div style={{ padding: "12px 24px 8px" }}>
                 <button onClick={() => playTrack(viewing.idx, 0)} aria-label={`Play ${viewing.event}`}
-                  style={{ width: 48, height: 48, borderRadius: "50%", background: C.mint, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 24px ${C.mint}35`, transition: "transform 0.15s" }}
+                  style={{ width: 48, height: 48, borderRadius: "50%", background: C.mint, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 24px ${alpha(C.mint, 21)}`, transition: "transform 0.15s" }}
                   onMouseEnter={e => e.currentTarget.style.transform = "scale(1.06)"}
                   onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
                   <IcPlay s={17} />
@@ -2740,13 +2748,13 @@ function ShelfCard({ ev, inPage = false }) {
       onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
       style={{
         textDecoration: "none", flexShrink: 0, width: 200, scrollSnapAlign: "start",
-        background: h ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.03)",
-        border: `1px solid ${h ? "rgba(255,255,255,0.25)" : C.border}`, borderRadius: 14, padding: 14,
+        background: h ? "rgba(var(--c-ink-rgb),0.07)" : "rgba(var(--c-ink-rgb),0.03)",
+        border: `1px solid ${h ? "rgba(var(--c-ink-rgb),0.25)" : C.border}`, borderRadius: 14, padding: 14,
         transform: h ? "translateY(-5px)" : "none", transition: "all 0.25s", display: "block",
       }}>
       <span style={{ display: "block", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", background: gradFor(ev.idx), position: "relative" }}>
         <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-        <span className="shelf-card-play" style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={16} /></span>
+        <span className="shelf-card-play" style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${alpha(C.mint, 31)}` }}><IcPlay s={16} /></span>
       </span>
       <span style={{ display: "block", marginTop: 12, fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
       <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
@@ -2765,9 +2773,9 @@ function ShelfRow({ title, items, inPage = false }) {
           <div style={{ display: "flex", gap: 8 }}>
             {[["‹", -1], ["›", 1]].map(([glyph, d]) => (
               <button key={glyph} className="shelf-arrow" onClick={() => scroll(d)} aria-label={`Scroll ${title} ${d < 0 ? "left" : "right"}`}
-                style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.04)", color: C.white, fontFamily: F, fontSize: 18, cursor: "pointer", lineHeight: 1, transition: "background 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}
-                onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(var(--c-ink-rgb),0.04)", color: C.white, fontFamily: F, fontSize: 18, cursor: "pointer", lineHeight: 1, transition: "background 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(var(--c-ink-rgb),0.12)"}
+                onMouseLeave={e => e.currentTarget.style.background = "rgba(var(--c-ink-rgb),0.04)"}
               >{glyph}</button>
             ))}
           </div>
@@ -2796,7 +2804,7 @@ function TLMiniBtn({ onMinimize }) {
 function TLMinimizeX({ onMinimize }) {
   return (
     <button onClick={e => { e.stopPropagation(); onMinimize(); }} aria-label="Minimize this reel"
-      style={{ position: "absolute", top: 8, right: 2, width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", color: C.white, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, lineHeight: 1, zIndex: 5 }}>✕</button>
+      style={{ position: "absolute", top: 8, right: 2, width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(var(--c-surface-rgb),0.5)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", color: C.white, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, lineHeight: 1, zIndex: 5 }}>✕</button>
   );
 }
 const nearestChildIdx = (el) => {
@@ -2843,7 +2851,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
     return (
       <div data-tl-open="" style={{ position: "relative", padding: "12px 0 8px" }}>
         <button onClick={e => { e.stopPropagation(); setView("carousel"); }} aria-label="Back to carousel"
-          style={{ position: "absolute", top: 8, right: 2, width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", color: C.white, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, lineHeight: 1, zIndex: 5 }}>✕</button>
+          style={{ position: "absolute", top: 8, right: 2, width: 40, height: 40, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(var(--c-surface-rgb),0.5)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", color: C.white, cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 14, lineHeight: 1, zIndex: 5 }}>✕</button>
         <div ref={swRef} onScroll={() => track(swRef)} className="tl-pager"
           style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}>
           {reels.map((r, i) => {
@@ -2867,7 +2875,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
         </div>
         <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: 12 }}>
           {reels.map((r, i) => (
-            <span key={r.postUrl} aria-hidden="true" style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 3, background: i === idx ? cat.accent : "rgba(255,255,255,0.25)", transition: "width 0.2s, background 0.2s" }} />
+            <span key={r.postUrl} aria-hidden="true" style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 3, background: i === idx ? cat.accent : "rgba(var(--c-ink-rgb),0.25)", transition: "width 0.2s, background 0.2s" }} />
           ))}
         </div>
         <div style={{ maxWidth: 420, margin: "12px auto 0", padding: "0 18px" }}>
@@ -2879,12 +2887,12 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
               Watch on {platformOf(active)} ↗</a>
           )}
           {desc ? (
-            <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", whiteSpace: "pre-line" }}>{desc}</p>
+            <p style={{ fontFamily: F, fontSize: 13, color: "rgba(var(--c-ink-rgb),0.84)", lineHeight: 1.6, margin: "12px 0 0", whiteSpace: "pre-line" }}>{desc}</p>
           ) : null /* Oct 6 2026: no placeholder line. Every other surface shows nothing when a video has no description (the bucket-page rule: "A reel with no entry shows none"). */}
         </div>
         <div style={{ display: "flex", justifyContent: "center", marginTop: 16 }}>
           <button onClick={e => { e.stopPropagation(); setView("carousel"); }} aria-label="Minimize to carousel"
-            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
+            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: "#0A0A0A", background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
             ▲ Minimize</button>
         </div>
       </div>
@@ -2910,7 +2918,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
       </div>
       <div style={{ display: "flex", gap: 6, justifyContent: "center", marginTop: 12 }}>
         {reels.map((r, i) => (
-          <span key={r.postUrl} aria-hidden="true" style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 3, background: i === idx ? cat.accent : "rgba(255,255,255,0.25)", transition: "width 0.2s, background 0.2s" }} />
+          <span key={r.postUrl} aria-hidden="true" style={{ width: i === idx ? 18 : 6, height: 6, borderRadius: 3, background: i === idx ? cat.accent : "rgba(var(--c-ink-rgb),0.25)", transition: "width 0.2s, background 0.2s" }} />
         ))}
       </div>
       <div style={{ textAlign: "center", marginTop: 12, padding: "0 16px" }}>
@@ -2918,7 +2926,7 @@ function TLExpand({ ev, reels, cat, onMinimize }) {
         <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 4 }}>{[`${playsLabel(active)} plays`, reelDateStr(active) || null, "tap to open"].filter(Boolean).join(" · ")}</span>
         <div style={{ display: "flex", gap: 10, alignItems: "center", justifyContent: "center", marginTop: 12, flexWrap: "wrap" }}>
           <button onClick={e => { e.stopPropagation(); setView("swipe"); }}
-            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
+            style={{ fontFamily: F, fontSize: 12.5, fontWeight: 700, color: "#0A0A0A", background: cat.accent, border: "none", borderRadius: 100, padding: "9px 20px", minHeight: 40, cursor: "pointer" }}>
             Expand</button>
           {active.postUrl && (
             <a href={active.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
@@ -2960,7 +2968,7 @@ function TLRoleFilter({ value, onPick }) {
     <div role="group" aria-label="Filter the timeline by role" className="tl-filter"
       style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "0 0 26px" }}>
       <button type="button" aria-pressed={value === null} onClick={() => onPick(null)}
-        style={{ ...base, color: value === null ? C.white : "rgba(255,255,255,0.45)", background: value === null ? "rgba(255,255,255,0.08)" : "transparent", border: `1px solid ${value === null ? "rgba(255,255,255,0.22)" : C.border}` }}>All</button>
+        style={{ ...base, color: value === null ? C.white : "rgba(var(--c-ink-rgb),0.45)", background: value === null ? "rgba(var(--c-ink-rgb),0.08)" : "transparent", border: `1px solid ${value === null ? "rgba(var(--c-ink-rgb),0.22)" : C.border}` }}>All</button>
       {ROLE_TABS.map(tab => {
         const hue = ROLE_TAB_COLORS[tab];
         const on = value === tab;
@@ -2972,9 +2980,9 @@ function TLRoleFilter({ value, onPick }) {
             onClick={() => onPick(on ? null : tab)}
             style={{
               ...base,
-              color: on || idle ? hue : "rgba(255,255,255,0.30)",
+              color: on || idle ? inkHue(hue) : "rgba(var(--c-ink-rgb),0.30)",
               background: on ? tabFill(hue) : "transparent",
-              border: `1px solid ${on ? tabEdge(hue) : idle ? `${hue}3D` : "rgba(255,255,255,0.07)"}`,
+              border: `1px solid ${on ? tabEdge(hue) : idle ? `${hue}3D` : "rgba(var(--c-ink-rgb),0.07)"}`,
             }}>{tab}</button>
         );
       })}
@@ -3129,7 +3137,7 @@ function CareerTimeline() {
               {showYear && (
                 <div className="tl-year" style={{ position: "sticky", top: 76, zIndex: 3, padding: "16px 0 8px", background: `linear-gradient(180deg, ${C.bg} 0%, ${C.bg} 94%, transparent)` }}>
                   <span style={{ fontFamily: F, fontSize: "clamp(40px, 8vw, 84px)", fontWeight: 800, color: C.red, letterSpacing: -3, lineHeight: 0.9, display: "block" }}>{yr}</span>
-                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(255,255,255,0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} {meta.reels === 1 ? "video" : "videos"} · {fmtPlays(meta.plays)} plays</span>
+                  <span style={{ fontFamily: F, fontSize: 10.5, color: "rgba(var(--c-ink-rgb),0.55)", letterSpacing: 1, textTransform: "uppercase" }}>{meta.count} {meta.count === 1 ? "project" : "projects"} · {meta.reels} {meta.reels === 1 ? "video" : "videos"} · {fmtPlays(meta.plays)} plays</span>
                 </div>
               )}
               {/* COLLAPSE SHELL. The 1fr→0fr grid trick is the same animated
@@ -3151,7 +3159,7 @@ function CareerTimeline() {
                   onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(ev.idx); } }}
                   onMouseEnter={e => { if (!open) e.currentTarget.style.transform = "translateY(-2px)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; }}
-                  style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(255,255,255,0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
+                  style={{ display: "grid", gridTemplateColumns: "84px 1fr", gap: 16, alignItems: "center", padding: 14, borderRadius: 14, cursor: "pointer", background: open ? "rgba(var(--c-ink-rgb),0.06)" : C.glass, border: `1px solid ${open ? cat.accent + "66" : C.border}`, transition: "border-color 0.2s, background 0.2s, transform 0.2s" }}>
                   <span style={{ display: "flex", flexDirection: "column", gap: 8, minWidth: 0, alignSelf: open ? "start" : "center" }}>
                     <span style={{ position: "relative", width: "100%", aspectRatio: ev.coverLandscape ? "16 / 9" : "9 / 16", borderRadius: 10, overflow: "hidden", background: "#111", display: "block" }}>
                       <img src={ev.cover} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
@@ -3159,14 +3167,14 @@ function CareerTimeline() {
                     </span>
                     {open && (
                       <button onClick={e => { e.stopPropagation(); toggle(ev.idx); }} aria-label="Minimize this reel"
-                        style={{ width: "100%", fontFamily: F, fontSize: 10, fontWeight: 700, color: C.bg, background: cat.accent, border: "none", borderRadius: 8, padding: "8px 2px", cursor: "pointer", letterSpacing: 0.2, whiteSpace: "nowrap" }}>
+                        style={{ width: "100%", fontFamily: F, fontSize: 10, fontWeight: 700, color: "#0A0A0A", background: cat.accent, border: "none", borderRadius: 8, padding: "8px 2px", cursor: "pointer", letterSpacing: 0.2, whiteSpace: "nowrap" }}>
                         ▲ Minimize</button>
                     )}
                   </span>
                   <span style={{ minWidth: 0 }}>
-                    <span className="tl-cat" style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: cat.accent, letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
+                    <span className="tl-cat" style={{ display: "block", fontFamily: F, fontSize: 10, fontWeight: 700, color: inkHue(cat.accent), letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>{cat.chip}</span>
                     <span style={{ display: "block", fontFamily: F, fontSize: "clamp(18px, 2.4vw, 26px)", fontWeight: 800, color: C.white, letterSpacing: -0.4, lineHeight: 1.12 }}>{ev.event}</span>
-                    {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(255,255,255,0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
+                    {ev.role && <span style={{ display: "block", fontFamily: F, fontSize: 12.5, color: "rgba(var(--c-ink-rgb),0.72)", marginTop: 4, lineHeight: 1.4 }}>{ev.role}</span>}
                     {EVENT_BRANDS[ev.event] && <span className="tl-brands" style={{ display: "block", fontFamily: F, fontSize: 11.5, color: C.gray, marginTop: 5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{EVENT_BRANDS[ev.event]}</span>}
                     <span style={{ display: "block", fontFamily: F, fontSize: 12, color: C.gray, marginTop: 6 }}>{reels.length} {reels.length === 1 ? "video" : "videos"}</span>
                     {ev.totalPlays > 0 && <span style={{ display: "inline-block", fontFamily: F, fontSize: 22, fontWeight: 800, color: C.red, fontVariantNumeric: "tabular-nums", marginTop: 6 }}>{fmtPlays(ev.totalPlays)} plays</span>}
@@ -3293,6 +3301,40 @@ const feedDoors = () => {
   });
   return _feedDoors;
 };
+
+// Oct 11 2026 day/night toggle. <html data-theme> is set before first paint by
+// the inline script in index.html; the Nav button flips it. The feed player
+// (.fd-run) re-declares the dark values so it stays a dark room in both themes.
+const THEME_CSS = `
+:root {
+  --c-bg: #0A0A0A; --c-white: #FFFFFF; --c-mint: #FFFFFF; --c-gray: #888888; --c-darkGray: #1A1A1A;
+  --c-glass: rgba(255,255,255,0.05); --c-border: rgba(255,255,255,0.08); --c-goldInk: #F5C518;
+  --c-ink-rgb: 255,255,255; --c-surface-rgb: 0,0,0; --c-bg-rgb: 10,10,10; --c-hue-ink: 100%; --c-tint: 100%;
+  --c-pop: #141414; --c-shell: #0D0D0D; --c-card: #111; --c-line: #262626; --c-lineHi: #3a3a3a;
+  --c-chipLine: #2c2c2c; --c-chipInk: #cfcfcf; --c-meta: #9a9a9a; --c-meta2: #8a8a8a; --c-sub: #b8b8b8;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --c-bg: #F5F5F2; --c-white: #0A0A0A; --c-mint: #0A0A0A; --c-gray: #6B6B6B; --c-darkGray: #ECECEA;
+  --c-glass: rgba(0,0,0,0.04); --c-border: rgba(0,0,0,0.10); --c-goldInk: #A67C00;
+  --c-ink-rgb: 10,10,10; --c-surface-rgb: 255,255,255; --c-bg-rgb: 245,245,242; --c-hue-ink: 60%; --c-tint: 35%;
+  --c-pop: #FFFFFF; --c-shell: #FFFFFF; --c-card: #FFFFFF; --c-line: #DCDCD8; --c-lineHi: #B5B5B0;
+  --c-chipLine: #D6D6D2; --c-chipInk: #3A3A3A; --c-meta: #6B6B6B; --c-meta2: #6B6B6B; --c-sub: #4A4A4A;
+  color-scheme: light;
+}
+.fd-run {
+  --c-bg: #0A0A0A; --c-white: #FFFFFF; --c-mint: #FFFFFF; --c-gray: #888888; --c-darkGray: #1A1A1A;
+  --c-glass: rgba(255,255,255,0.05); --c-border: rgba(255,255,255,0.08); --c-goldInk: #F5C518;
+  --c-ink-rgb: 255,255,255; --c-surface-rgb: 0,0,0; --c-bg-rgb: 10,10,10; --c-hue-ink: 100%; --c-tint: 100%;
+  --c-pop: #141414; --c-shell: #0D0D0D; --c-card: #111; --c-line: #262626; --c-lineHi: #3a3a3a;
+  --c-chipLine: #2c2c2c; --c-chipInk: #cfcfcf; --c-meta: #9a9a9a; --c-meta2: #8a8a8a; --c-sub: #b8b8b8;
+  color-scheme: dark;
+}
+body { transition: background-color .2s, color .2s; }
+.theme-tog { width: 36px; height: 36px; flex: none; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid var(--c-border); background: var(--c-glass); color: var(--c-white); cursor: pointer; padding: 0; position: relative; }
+.theme-tog:hover { background: rgba(var(--c-ink-rgb),0.10); }
+@media (max-width: 640px) { .theme-tog::before { content: ""; position: absolute; inset: -4px; } }
+`;
 
 const FEED_CSS = `
 .fd-choose { font-family: ${F}; color: ${C.white}; padding: calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px; }
@@ -3840,7 +3882,7 @@ function TypeCard({ item, dim, tilt, copy = 0 }) {
   const { reel } = item;
   return (
     <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} tabIndex={dim || copy === 1 ? -1 : 0} aria-hidden={copy === 1 ? "true" : undefined} data-type={item.type || ""} data-roles={item.roles.map((on, n) => on ? ROLE_TABS[n] : null).filter(Boolean).join("|")} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
-      style={{ flex: "none", width: 150, display: "block", background: C.white, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, pointerEvents: dim ? "none" : undefined, textDecoration: "none" }}>
+      style={{ flex: "none", width: 150, display: "block", background: "#FFFFFF" /* polaroid card */, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, pointerEvents: dim ? "none" : undefined, textDecoration: "none" }}>
       <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
         style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 5, display: "block", background: "#e6e6e6" }}
         onError={e => { e.currentTarget.style.visibility = "hidden"; }} />
@@ -3875,7 +3917,7 @@ function TypeRow({ row, hidden }) {
     <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 12 }}>
         <a href={`#/kind/${bucketSlug(row.key)}`} style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", minHeight: 44, margin: "-11.5px 0" }}><b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b></a>
-        <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
+        <span style={{ fontFamily: F, fontSize: 12, color: "var(--c-meta)", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
         <span className="tc-chips" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: "auto" }}>
           {/* Only the roles he has on this type's reels: a "Hosted 0" chip on a
               six-reel row advertised an absence (recruiter check, Sep 4 2026).
@@ -3886,8 +3928,8 @@ function TypeRow({ row, hidden }) {
               <button key={c.id} type="button" data-role-chip={c.id} aria-pressed={on}
                 onClick={() => setLens(on ? null : c.id)}
                 style={{ fontFamily: F, fontSize: 12, fontWeight: 600, padding: "6px 10px", minHeight: 30, borderRadius: 999, cursor: "pointer",
-                  border: `1px solid ${on ? c.hue : "#2c2c2c"}`, background: on ? c.hue : "#141414", color: on ? "#111" : "#cfcfcf" }}>
-                {c.label}<span style={{ marginLeft: 5, color: on ? "#111" : "#8a8a8a", fontVariantNumeric: "tabular-nums" }}>{c.count}</span>
+                  border: `1px solid ${on ? c.hue : "var(--c-chipLine)"}`, background: on ? c.hue : "var(--c-pop)", color: on ? "#111" : "var(--c-chipInk)" }}>
+                {c.label}<span style={{ marginLeft: 5, color: on ? "#111" : "var(--c-meta2)", fontVariantNumeric: "tabular-nums" }}>{c.count}</span>
               </button>
             );
           })}
@@ -3903,7 +3945,7 @@ function TypeRow({ row, hidden }) {
         </div>
       </div>
       {row.count > show.length ? (
-        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "#8a8a8a", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more →</a>
+        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "var(--c-meta2)", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more →</a>
       ) : <span aria-hidden="true" style={{ display: "block", minHeight: 44 }} />}
     </div>
   );
@@ -3930,12 +3972,12 @@ function KindPage({ slug }) {
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>What I Do</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5, borderLeft: `10px solid ${t.hue}`, paddingLeft: 14, lineHeight: 1.1 }}>{t.label}</h1>
-        <p style={{ fontFamily: F, fontSize: 13, color: "#9a9a9a", margin: "0 0 10px 0", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays · newest first</p>
+        <p style={{ fontFamily: F, fontSize: 13, color: "var(--c-meta)", margin: "0 0 10px 0", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays · newest first</p>
         {groups.map(g => (
           <div key={g.ev.event} style={{ marginTop: 40 }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
               <b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white }}>{g.ev.event}</b>
-              <span style={{ fontFamily: F, fontSize: 12, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{g.items.length} {g.items.length === 1 ? "video" : "videos"} · {fmtWindow({ reels: g.items.map(x => x.reel) })}</span>
+              <span style={{ fontFamily: F, fontSize: 12, color: "var(--c-meta)", fontVariantNumeric: "tabular-nums" }}>{g.items.length} {g.items.length === 1 ? "video" : "videos"} · {fmtWindow({ reels: g.items.map(x => x.reel) })}</span>
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 18, padding: "6px 0 10px" }}>
               {g.items.map((x, i) => <TypeCard key={x.reel.postUrl || x.reel.title} item={x} dim={false} tilt={(i % 2 ? 1 : -1) * 0.6} />)}
@@ -3956,9 +3998,9 @@ function TypeCut() {
           const on = focus === t.key;
           return (
             <button key={t.key} type="button" className="tc-tab" data-type-tab={t.key} aria-pressed={on} onClick={() => setFocus(on ? null : t.key)}
-              style={{ fontFamily: F, textAlign: "left", cursor: "pointer", minHeight: 44, background: on ? `${t.hue}29` : "#111", border: `1.5px solid ${on ? t.hue : "#262626"}`, borderLeft: `10px solid ${t.hue}`, borderRadius: 14, padding: "12px 16px", color: C.white }}>
+              style={{ fontFamily: F, textAlign: "left", cursor: "pointer", minHeight: 44, background: on ? `${t.hue}29` : "var(--c-card)", border: `1.5px solid ${on ? t.hue : "var(--c-line)"}`, borderLeft: `10px solid ${t.hue}`, borderRadius: 14, padding: "12px 16px", color: C.white }}>
               <b style={{ display: "block", fontSize: 14.5, fontWeight: 700 }}>{t.label}</b>
-              <span style={{ fontSize: 11.5, color: "#9a9a9a", fontVariantNumeric: "tabular-nums" }}>{t.count} videos · {fmtPlays(t.plays)}</span>
+              <span style={{ fontSize: 11.5, color: "var(--c-meta)", fontVariantNumeric: "tabular-nums" }}>{t.count} videos · {fmtPlays(t.plays)}</span>
             </button>
           );
         })}
@@ -4141,7 +4183,7 @@ function BucketCard({ b, i, onScreen }) {
         // gradient fallback and read as a coloured ring around every card.
         position: "relative", display: "block", textDecoration: "none", aspectRatio: "9 / 16",
         borderRadius: 14, overflow: "hidden", background: "#111",
-        border: `1px solid ${h ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.12)"}`,
+        border: `1px solid ${h ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.12)"}` /* on media */,
         WebkitTapHighlightColor: "transparent",
         transform: h ? "translateY(-6px)" : "none",
         transition: `transform 0.25s ${CARD_EASE}, border-color 0.25s, box-shadow 0.25s`,
@@ -4158,7 +4200,7 @@ function BucketCard({ b, i, onScreen }) {
       {/* IG-story progress dashes: how many moments, which one you are on */}
       <span aria-hidden="true" style={{ position: "absolute", top: 10, left: 12, right: 12, display: "flex", gap: 5, zIndex: 3 }}>
         {roster.map((r, n) => (
-          <span key={r.postUrl} style={{ flex: 1, height: 2.5, borderRadius: 2, background: n === cur.i ? C.white : "rgba(255,255,255,0.35)", transition: "background 0.25s" }} />
+          <span key={r.postUrl} style={{ flex: 1, height: 2.5, borderRadius: 2, background: n === cur.i ? "#FFFFFF" /* on media */ : "rgba(255,255,255,0.35)", transition: "background 0.25s" }} />
         ))}
       </span>
       <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.92))", pointerEvents: "none" }} />
@@ -4168,9 +4210,9 @@ function BucketCard({ b, i, onScreen }) {
           would land on top of the words. Stacked, it cannot collide at any
           width and still reads as the mock's affordance. */}
       <span style={{ position: "absolute", left: 14, right: 14, bottom: 12, display: "flex", flexDirection: "column", gap: 10 }}>
-        <span className="shelf-card-play" style={{ alignSelf: "flex-end", width: 40, height: 40, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 6px 24px ${C.mint}50` }}><IcPlay s={15} /></span>
+        <span className="shelf-card-play" style={{ alignSelf: "flex-end", width: 40, height: 40, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, boxShadow: `0 6px 24px ${alpha(C.mint, 31)}` }}><IcPlay s={15} /></span>
         <span style={{ display: "block" }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: "clamp(15px, 1.1vw + 11px, 19px)", fontWeight: 800, color: C.white, letterSpacing: -0.3, lineHeight: 1.1 }}>{b.name}</span>
+          <span style={{ display: "block", fontFamily: F, fontSize: "clamp(15px, 1.1vw + 11px, 19px)", fontWeight: 800, color: "#FFFFFF" /* on media */, letterSpacing: -0.3, lineHeight: 1.1 }}>{b.name}</span>
           <span style={{ display: "block", fontFamily: F, fontSize: 12, color: "#b8b8b8", marginTop: 5, lineHeight: 1.35, fontVariantNumeric: "tabular-nums" }}>{groupCount(b)}</span>
         </span>
       </span>
@@ -4226,14 +4268,14 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
         style={{
           display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
           padding: "10px 8px", borderRadius: 8, cursor: "pointer", transition: "background 0.15s",
-          background: open ? "rgba(255,255,255,0.06)" : h ? "rgba(255,255,255,0.05)" : "transparent",
+          background: open ? "rgba(var(--c-ink-rgb),0.06)" : h ? "rgba(var(--c-ink-rgb),0.05)" : "transparent",
         }}>
         <span style={{ fontFamily: F, fontSize: 13, color: open ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", textAlign: "center", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
           {open ? <EqBars /> : n + 1}
         </span>
         <Thumb reel={reel} size={44} radius={8} />
         <span style={{ minWidth: 0 }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.white : "rgba(255,255,255,0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
+          <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
           {/* Credit chip FIRST and always visible: "what was your role in the
               video" is the question, so it is never hover-gated and never lets
               the handle text push it out of frame. */}
@@ -4269,7 +4311,7 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
                 style={{ width: reel.landscape ? "100%" : "min(100%, 240px)", aspectRatio: reel.landscape ? "16 / 9" : "9 / 16", objectFit: reel.landscape ? "contain" : "cover", borderRadius: 12, background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", display: "block" }}
                 onError={e => { e.currentTarget.style.display = "none"; }} />
               )}
-              {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: "46ch" }}>{desc}</p>}
+              {desc && <p style={{ fontFamily: F, fontSize: 13, color: "rgba(var(--c-ink-rgb),0.84)", lineHeight: 1.6, margin: "12px 0 0", maxWidth: "46ch" }}>{desc}</p>}
               {/* Why it mattered (Aug 11) — the clean slot this row already had:
                   directly under the description, in the same column. Reason
                   first at description weight, his production detail beneath it
@@ -4277,7 +4319,7 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
                   for; today that is the Semaphore. */}
               {why && (
                 <>
-                  <p style={{ fontFamily: F, fontSize: 13, color: "rgba(255,255,255,0.84)", lineHeight: 1.6, margin: "10px 0 0", maxWidth: "46ch" }}>{why[0]}</p>
+                  <p style={{ fontFamily: F, fontSize: 13, color: "rgba(var(--c-ink-rgb),0.84)", lineHeight: 1.6, margin: "10px 0 0", maxWidth: "46ch" }}>{why[0]}</p>
                   <p style={{ fontFamily: F, fontSize: 12, color: C.gray, lineHeight: 1.5, margin: "3px 0 0", maxWidth: "46ch" }}>{why[1]}</p>
                 </>
               )}
@@ -4335,9 +4377,9 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
                   style={{
                     fontFamily: F, fontSize: 12, fontWeight: 600, lineHeight: 1.3, borderRadius: 4,
                     padding: "3px 8px", whiteSpace: "nowrap",
-                    color: on ? hue : "rgba(255,255,255,0.30)",
+                    color: on ? inkHue(hue) : "rgba(var(--c-ink-rgb),0.30)",
                     background: on ? tabFill(hue) : "transparent",
-                    border: `1px solid ${on ? tabEdge(hue) : "rgba(255,255,255,0.07)"}`,
+                    border: `1px solid ${on ? tabEdge(hue) : "rgba(var(--c-ink-rgb),0.07)"}`,
                   }}>{ROLE_TABS[n]}</span>
               );
             })}
@@ -4407,6 +4449,32 @@ function BucketPage({ bucket }) {
 }
 
 // ===== NAV =====
+// Day/night: the pick lives on <html data-theme> (set before paint in
+// index.html) and in localStorage.theme once he taps. No "system" third state.
+function useTheme() {
+  const [theme, setTheme] = useState(() => (typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "light") ? "light" : "dark");
+  const flip = () => {
+    const next = theme === "light" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", next);
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute("content", next === "light" ? "#F5F5F2" : "#0A0A0A");
+    try { localStorage.setItem("theme", next); } catch (e) { /* private mode: the flip still works for this visit */ }
+    setTheme(next);
+  };
+  return [theme, flip];
+}
+function ThemeToggle() {
+  const [theme, flip] = useTheme();
+  const label = theme === "light" ? "Switch to dark mode" : "Switch to light mode";
+  return (
+    <button type="button" className="theme-tog" onClick={flip} aria-label={label} title={label}>
+      {theme === "light"
+        ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>}
+    </button>
+  );
+}
+
 function Nav({ route }) {
   const [scrolled, setScrolled] = useState(false);
   const [connectOpen, setConnectOpen] = useState(false);
@@ -4429,7 +4497,7 @@ function Nav({ route }) {
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000, boxSizing: "border-box",
       padding: "env(safe-area-inset-top) clamp(24px, 5vw, 80px) 0", height: "calc(64px + env(safe-area-inset-top))",
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      background: scrolled ? "rgba(10,10,10,0.92)" : "transparent",
+      background: scrolled ? "rgba(var(--c-bg-rgb),0.92)" : "transparent",
       backdropFilter: scrolled ? "blur(20px)" : "none",
       WebkitBackdropFilter: scrolled ? "blur(20px)" : "none",
       borderBottom: scrolled ? `1px solid ${C.border}` : "1px solid transparent",
@@ -4454,6 +4522,8 @@ function Nav({ route }) {
             >{label}</a>
           ))}
         </span>
+        <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <ThemeToggle />
         <div style={{ position: "relative" }}>
           <button ref={btnRef} onClick={() => setConnectOpen(o => !o)} aria-expanded={connectOpen} aria-haspopup="true" className="nav-connect"
             style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 20px", borderRadius: 100, border: "none", cursor: "pointer", transition: "opacity 0.2s" }}
@@ -4461,13 +4531,13 @@ function Nav({ route }) {
             onMouseLeave={e => e.target.style.opacity = "1"}
           >Connect {connectOpen ? "▴" : "▾"}</button>
           {connectOpen && (
-            <div style={{ position: "absolute", right: 0, top: "calc(100% + 10px)", background: "#141414", border: `1px solid ${C.border}`, borderRadius: 12, padding: 6, minWidth: 220, boxShadow: "0 18px 50px rgba(0,0,0,0.6)", zIndex: 1100 }}>
+            <div style={{ position: "absolute", right: 0, top: "calc(100% + 10px)", background: "var(--c-pop)", border: `1px solid ${C.border}`, borderRadius: 12, padding: 6, minWidth: 220, boxShadow: "0 18px 50px rgba(0,0,0,0.6)", zIndex: 1100 }}>
               {[["Email me", "mailto:milespspearman@gmail.com", "stays right here", false],
                 ["Connect on LinkedIn ↗", "https://www.linkedin.com/in/milesspearman/", "opens LinkedIn in a new tab", true]].map(([label, href, sub, ext]) => (
                 <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                   onClick={() => setConnectOpen(false)}
                   style={{ display: "block", padding: "10px 14px", borderRadius: 8, textDecoration: "none", transition: "background 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(var(--c-ink-rgb),0.08)"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
                   <span style={{ display: "block", fontFamily: F, fontSize: 13.5, fontWeight: 600, color: C.white }}>{label}</span>
                   <span style={{ display: "block", fontFamily: F, fontSize: 11, color: C.gray, marginTop: 2 }}>{sub}</span>
@@ -4476,6 +4546,7 @@ function Nav({ route }) {
             </div>
           )}
         </div>
+        </span>
       </div>
     </nav>
   );
@@ -4543,12 +4614,13 @@ export default function Portfolio() {
   }, [route]);
   return (
     <>
+      <style>{THEME_CSS}</style>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: ${C.bg}; overflow-x: hidden; }
-        .skip-link { position: absolute; left: 12px; top: -64px; z-index: 10000; font-family: ${F}; font-size: 14px; font-weight: 600; color: ${C.white}; background: ${C.darkGray}; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; padding: 12px 16px; text-decoration: none; transition: top 0.15s ease; }
+        .skip-link { position: absolute; left: 12px; top: -64px; z-index: 10000; font-family: ${F}; font-size: 14px; font-weight: 600; color: ${C.white}; background: ${C.darkGray}; border: 1px solid rgba(var(--c-ink-rgb),0.3); border-radius: 8px; padding: 12px 16px; text-decoration: none; transition: top 0.15s ease; }
         .skip-link:focus { top: 12px; outline: 2px solid ${C.white}; outline-offset: 2px; }
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
@@ -4621,8 +4693,8 @@ export default function Portfolio() {
           .wall-card .wall-play { opacity: 1 !important; transform: translate(-50%,-50%) scale(0.85) !important; }
           .nav-connect { min-height: 44px !important; }
           .tl-card { position: relative; }
-          .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: #888; pointer-events: none; }
-          .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: #FFFFFF; }
+          .tl-card::after { content: "TAP \\25B6"; position: absolute; bottom: 12px; right: 14px; font: 700 9px/1 'Outfit', sans-serif; letter-spacing: 1px; color: ${C.gray}; pointer-events: none; }
+          .tl-card[aria-expanded="true"]::after { content: "PLAYING"; color: ${C.white}; }
         }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: ${C.bg}; }
@@ -4630,7 +4702,7 @@ export default function Portfolio() {
         a:focus-visible, button:focus-visible { outline: 2px solid ${C.mint}; outline-offset: 2px; }
         /* ===== THE TYPE CUT (Sep 4 2026) ===== */
         .tc-sticky::before { content: ""; position: absolute; top: -9px; left: 50%; transform: translateX(-50%) rotate(1deg); width: 74px; height: 18px; background: rgba(255,255,255,0.28); border-left: 1px dashed rgba(0,0,0,0.08); border-right: 1px dashed rgba(0,0,0,0.08); }
-        .tc-tab:hover { border-color: #3a3a3a; }
+        .tc-tab:hover { border-color: var(--c-lineHi); }
         .tc-card { transition: opacity 0.22s ease; }
         @media (max-width: 900px) {
           .cat-grid { grid-template-columns: repeat(3, 1fr); }
@@ -4664,7 +4736,7 @@ export default function Portfolio() {
           .sp-side-divider > span:last-child { display: none; }
           /* Horizontal strip: a bare word floats. The rule anchors it to the
              group of chips that follows it. */
-          .sp-side-divider > span:first-child { border-left: 2px solid rgba(255,255,255,0.55); padding-left: 8px; font-size: 11px !important; }
+          .sp-side-divider > span:first-child { border-left: 2px solid rgba(var(--c-ink-rgb),0.55); padding-left: 8px; font-size: 11px !important; }
           /* Oct 6 2026 (mobile check): the category names are longer now ("Commercial Event Coverage"); let the label wrap so the first playlist still shows. */
           .sp-side-divider > span:first-child { white-space: normal !important; max-width: 150px; line-height: 1.25; letter-spacing: 1.5px !important; }
           .spec-row-expand { padding: 10px 8px 18px 26px !important; }
@@ -4698,7 +4770,7 @@ export default function Portfolio() {
           .mobile-tabbar {
             display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
             position: fixed; left: 0; right: 0; bottom: 0; z-index: 1300;
-            background: rgba(10,10,10,0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(var(--c-bg-rgb),0.94); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid ${C.border}; padding-bottom: env(safe-area-inset-bottom);
           }
           .mobile-tabbar a {
@@ -4792,7 +4864,7 @@ export default function Portfolio() {
                   runs straight into the numbers, which are the proof anyway. */}
               <PlaysCounter />
               {/* Sep 22 2026, Miles: "why isnt the sentences separated by a paragraph" — one sentence per paragraph, every word as it was. */}
-              <div style={{ fontFamily: F, fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.75, margin: "0 0 32px 0", display: "grid", gap: 12 }}>
+              <div style={{ fontFamily: F, fontSize: 16, color: "rgba(var(--c-ink-rgb),0.85)", lineHeight: 1.75, margin: "0 0 32px 0", display: "grid", gap: 12 }}>
                 <p style={{ margin: 0 }}>I'm a social producer and content creator on Adobe's Social Creative Studio team in San Francisco.</p>
                 <p style={{ margin: 0 }}>I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end (James Gunn, Ken Jeong, Mark Rober).</p>
                 <p style={{ margin: 0 }}>I also host, present, and work in front of the camera.</p>
@@ -4800,12 +4872,12 @@ export default function Portfolio() {
                 <p style={{ margin: 0 }}>The music background shows up in how I think about rhythm, pacing, and storytelling.</p>
                 <p style={{ margin: 0 }}>And yeah, I'm also a <a href="#/playlist"
                   onClick={(ev) => { const e = portfolio.findIndex(x => x.event === "Miles Music Media"); if (e !== -1) { ev.preventDefault(); goPlay(e, 0); } }}
-                  style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55`, cursor: "pointer" }}
+                  style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${alpha(C.mint, 33)}`, cursor: "pointer" }}
                   onMouseEnter={ev => ev.target.style.borderBottomColor = C.mint}
-                  onMouseLeave={ev => ev.target.style.borderBottomColor = `${C.mint}55`}
+                  onMouseLeave={ev => ev.target.style.borderBottomColor = alpha(C.mint, 33)}
                 >professional trumpet player</a> in San Francisco.</p>
                 <p style={{ margin: 0 }}>Reach me anytime at <a href="mailto:milespspearman@gmail.com"
-                  style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${C.mint}55` }}
+                  style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${alpha(C.mint, 33)}` }}
                 >milespspearman@gmail.com</a>.</p>
               </div>
               {/* Recognition (Oct 11 2026, his go): his line from the Sep 26 Tyler cut,
@@ -4814,7 +4886,7 @@ export default function Portfolio() {
                   there ("the things you have in here are not really awards"). */}
               <div style={{ fontFamily: F, margin: "0 0 4px" }}>
                 <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: C.gray, marginBottom: 8 }}>Recognition</div>
-                <div style={{ fontSize: 16, color: "rgba(255,255,255,0.85)", lineHeight: 1.6 }}>Global Marketing Organization: Be Genuine Award.</div>
+                <div style={{ fontSize: 16, color: "rgba(var(--c-ink-rgb),0.85)", lineHeight: 1.6 }}>Global Marketing Organization: Be Genuine Award.</div>
               </div>
               {/* ===== THE ONE BUTTON (Aug 10 2026) =====
                   "View Resume →" is GONE from this slot, Miles's call tonight:
@@ -4839,7 +4911,7 @@ export default function Portfolio() {
                   fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, textDecoration: "none",
                   display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
                   padding: "14px 36px", borderRadius: 100, minHeight: 44,
-                  transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${C.mint}20`,
+                  transition: "transform 0.2s, box-shadow 0.2s", boxShadow: `0 0 40px ${alpha(C.mint, 13)}`,
                 }}
                 onMouseEnter={e => e.currentTarget.style.transform = "translateY(-2px)"}
                 onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}

@@ -22,6 +22,20 @@
     <meta name="twitter:description" content="I'm a social producer and content creator at Adobe in San Francisco. I direct on-location video at events like Adobe MAX and Summit, coach executives on camera, and produce talent interviews end-to-end." />
     <meta name="twitter:image" content="https://milesspearman.com/og-card.jpg?v=20261006" />
     <meta name="theme-color" content="#0A0A0A" />
+    <!-- Day/night (Oct 11 2026): set data-theme before first paint so there is no
+         flash. A saved pick (localStorage.theme) wins; otherwise the device setting. -->
+    <script>
+      (function () {
+        var t;
+        try { t = localStorage.getItem("theme"); } catch (e) {}
+        if (t !== "light" && t !== "dark") {
+          t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute("content", t === "light" ? "#F5F5F2" : "#0A0A0A");
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
