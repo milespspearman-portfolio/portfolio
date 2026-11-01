@@ -78,7 +78,9 @@ const playsNum = (p) => { const n = parseFloat(p); if (isNaN(n)) return 0; retur
 // Display-only; the plays field stays "" so no derived total moves.
 const playsLabel = (r) => r.plays || "N/A";
 // Platform name from a reel's post URL — link labels say the real source.
-const platformOf = (r) => r.postUrl?.includes("linkedin.com") ? "LinkedIn" : (r.postUrl?.includes("youtu") ? "YouTube" : "Instagram");
+// Nov 1 2026: Frame.io review links (f.io short links) were falling through to
+// "Instagram"; they name their own host now.
+const platformOf = (r) => r.postUrl?.includes("linkedin.com") ? "LinkedIn" : (r.postUrl?.includes("youtu") ? "YouTube" : (/\/\/(f\.io|([^/]*\.)?frame\.io)\//.test(r.postUrl || "") ? "Frame.io" : "Instagram"));
 // Miles Jul 6: bare "@adobe" is vague now that LinkedIn/YouTube reels carry
 // source tags — IG handles get an explicit " IG" suffix at display time.
 // Data subs stay verbatim; likes/date parsing is untouched.
@@ -194,6 +196,8 @@ const EVENT_ROLES = {
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles on YouTube": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Making B2B Social Friendly": "Pitched, Produced and Directed",
+  // Nov 1 2026, his words for the Trevor Noah and Alysa Liu videos: "shot, edited, and creative directed" (first letter capped at the head of the line).
+  "’26 Adobe For All": "Shot, edited, and creative directed",
 };
 // What a playlist was FOR, in one line — the goal, not the job. Sits directly
 // under the role line in the playlist header, small and gray, the same quiet
@@ -642,6 +646,9 @@ const tabEdge = (hue) => `${hue}66`;
 // reels would have the site contradict itself.
 const MATRIX_OVERRIDES = {
   "’25 MAX LA": { "Edited": false },
+  // Nov 1 2026: his line for this playlist says "edited", but the regex only reads an
+  // edit credit from tags, so his word lights the cell. No tag added (no chip, no Cut by Me).
+  "’26 Adobe For All": { "Edited": true },
 };
 // A playlist cell lights if the role LINE says so, or if any reel inside it
 // carries the matching tag from Miles's pass (Aug 10) — union, never override,
@@ -906,6 +913,16 @@ const portfolio = [
     ],
   },
   {
+    // Nov 1 2026, Miles: "we also need to add trevor noah and alysia liu's videos up on to my
+    // portfolio as shot, edited, and creative directed." Finals from T9 05_FINALS (Sep 21),
+    // transcoded to the site's 720p spec; each opens on its Frame.io review link.
+    event: "’26 Adobe For All",
+    reels: [
+      { title: "’26 Adobe For All: Trevor Noah", sub: "Adobe For All · Sep 21, 2026", plays: "", role: "Shot, edited, and creative directed", landscape: true, mp4: "/reels/2026/AFA/Trevor-Noah-AFA_9.21.26.mp4", postUrl: "https://f.io/poqjN3_T" },
+      { title: "’26 Adobe For All: Alysa Liu", sub: "Adobe For All · Sep 21, 2026", plays: "", role: "Shot, edited, and creative directed", landscape: true, mp4: "/reels/2026/AFA/Alysa-Liu-AFA_9.21.26.mp4", postUrl: "https://f.io/Uid2nbTl" },
+    ],
+  },
+  {
     event: "Artist Spotlights",
     reels: [
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
@@ -1071,6 +1088,9 @@ const BUCKET_OF = {
   "Employee Spotlights: Season 1": "In-House Production", "Employee Spotlights: Season 2": "In-House Production", "Employee Spotlights: Season 3": "In-House Production",
   "Artist Spotlights": "In-House Production", "Always-On": "In-House Production", "Photoshop Archives": "In-House Production",
   "Side Projects": "In-House Production", "Adobe MAX Product Demos": "In-House Production", "’25 MAX Customer Stories": "In-House Production",
+  // Nov 1 2026: Adobe For All is an internal Adobe event, so it files with the internal work
+  // (Intern Day lives in Always-On here), not the commercial trade-show runs. Default, his veto.
+  "’26 Adobe For All": "In-House Production",
   // Brand Partnerships — the NWSL/O'Hara playlist plus the NFL partnership.
   // More reels land here later; the group grows, no placeholder rows.
   "Brand Partnerships": "Brand Partnerships", "Adobe × NFL": "Brand Partnerships",
