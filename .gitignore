@@ -13,6 +13,3 @@ PERSONAL-CONTENT-SCOUT.md
 /*.md
 !README.md
 research/
-
-# retired until Miles re-exports (old title) — file stays local
-public/Miles-Spearman-Resume.pdf
