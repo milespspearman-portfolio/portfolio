@@ -1150,10 +1150,13 @@ const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a 
 // sort and the timeline, and they now also supply the small type word on each
 // playlist section, so the "Event coverage" fact survives without new copy.
 //
-// Membership is DERIVED by reading each playlist's own EVENT_ROLES line. No
-// playlist is hand-assigned to a group and none can be dropped: a role line
-// that names hosting is a hosted run, the "1-Person Production" line is the
-// off-the-clock class, and every remaining credit is a produced credit.
+// Membership is HAND-ASSIGNED in one explicit map, ROLE_CLASS_OF below (Nov 7
+// 2026). Every playlist has exactly one line there and none can be dropped:
+// there is no fallback class, a playlist with no line throws at module load,
+// and scripts/check-role-map.mjs fails `npm run build` with the same name.
+// (Until Nov 7 membership was derived from each playlist's EVENT_ROLES line,
+// with "Produced In-House" as the fallback; that is what the Aug 10 note
+// below describes.)
 const ROLE_CUT = "Cut by Me";
 // Aug 10 2026 — Miles renamed both cards. The old labels stacked his whole
 // credit line into the group name ("Hosted, Creative Directed, & Produced" /
@@ -1164,23 +1167,71 @@ const ROLE_CUT = "Cut by Me";
 // membership still derives from those lines (roleClassOf below reads the line,
 // never the group name), the chips are untouched, and BUCKET_INTROS stays keyed
 // by these constants so each page keeps the same summary it had.
-// Slugs re-derive from the name, so #/work/hosted-on-camera and
-// #/work/produced-in-house are the new routes. The two OLD slugs now miss
+// Slugs re-derive from the name, so #/work/hosted-on-camera and (Aug 10 to
+// Nov 7) #/work/produced-in-house were the routes. Old slugs miss
 // ROLE_BY_SLUG, and routeFromHash already falls back to the #/work grid for an
 // unknown slug (never a 404), which is the graceful landing for an old link.
+// Nov 7 2026: "Produced In-House" split into two shelves, "Produced" and
+// "In-House Series" (placeholder names; Miles's names win). Their slugs are
+// #/work/produced and #/work/in-house-series; #/work/produced-in-house now
+// lands on the #/work grid by the fallback above.
 const ROLE_HOSTED = "Hosted on Camera";
-const ROLE_PRODUCED = "Produced In-House";
+const ROLE_PRODUCED = "Produced";          // placeholder name (Nov 7 2026); Miles's name wins
+const ROLE_INHOUSE = "In-House Series";    // placeholder name (Nov 7 2026); Miles's name wins
 const ROLE_OFF = "Off the Clock";
-const ROLE_GROUP_ORDER = [ROLE_CUT, ROLE_HOSTED, ROLE_PRODUCED, ROLE_OFF];
-const roleClassOf = (ev) => {
-  const r = EVENT_ROLES[ev.event] || "";
-  if (/1-Person Production/i.test(r)) return ROLE_OFF;
-  if (/host/i.test(r)) return ROLE_HOSTED; // Oct 11 2026: his lines now say "Host" as well as "Hosted"
-  // Everything else is a produced credit. Written as a fallback on purpose:
-  // a playlist with an unfamiliar role line lands in the closest class rather
-  // than falling off the site.
-  return ROLE_PRODUCED;
+const ROLE_GROUP_ORDER = [ROLE_CUT, ROLE_HOSTED, ROLE_PRODUCED, ROLE_INHOUSE, ROLE_OFF];
+
+// Every playlist in `portfolio` has exactly one line here. There is no
+// fallback: a playlist with no line throws at module load (dev goes white
+// with the playlist name in the console) and scripts/check-role-map.mjs fails
+// `npm run build` with the same name. Nov 7 2026.
+const ROLE_CLASS_OF = {
+  // Hosted on Camera — his role line names hosting (same nine as before)
+  "Side Projects": ROLE_HOSTED,
+  "The College Tour": ROLE_HOSTED,
+  "’24 IBC Amsterdam": ROLE_HOSTED,
+  "’24 MAX Miami": ROLE_HOSTED,
+  "’24 NAB Vegas": ROLE_HOSTED,
+  "’25 IBC Amsterdam": ROLE_HOSTED,
+  "’25 MAX LA": ROLE_HOSTED,
+  "’25 MAX London": ROLE_HOSTED,
+  "’25 Summit Vegas": ROLE_HOSTED,
+  // Produced — event runs, brand work and exec/customer content he produced but did not host
+  "Cannes": ROLE_PRODUCED,
+  "’25 NAB Vegas": ROLE_PRODUCED,
+  "’26 NAB Vegas": ROLE_PRODUCED,
+  "’26 Summit": ROLE_PRODUCED,
+  "Adobe × NFL": ROLE_PRODUCED,
+  "Brand Partnerships": ROLE_PRODUCED,
+  "Adobe MAX Product Demos": ROLE_PRODUCED,
+  "’25 MAX Customer Stories": ROLE_PRODUCED,
+  "’26 Adobe For All": ROLE_PRODUCED, // default placement; Miles may move it to In-House Series
+  // In-House Series — the recurring @adobelife series
+  "Employee Spotlights: Season 1": ROLE_INHOUSE,
+  "Employee Spotlights: Season 2": ROLE_INHOUSE,
+  "Employee Spotlights: Season 3": ROLE_INHOUSE,
+  "Artist Spotlights": ROLE_INHOUSE,
+  "Always-On": ROLE_INHOUSE,
+  "Photoshop Archives": ROLE_INHOUSE,
+  // Off the Clock — unchanged three
+  "Miles Music Media": ROLE_OFF,
+  "Miles.Spearman": ROLE_OFF,
+  "Miles on YouTube": ROLE_OFF,
 };
+
+const roleClassOf = (ev) => {
+  const c = ROLE_CLASS_OF[ev.event];
+  if (!c) throw new Error(`ROLE_CLASS_OF has no entry for playlist "${ev.event}". Add one in src/Portfolio.jsx.`);
+  return c;
+};
+
+// Reverse check: no stale or misspelled key. Runs once at module load.
+{
+  const names = new Set(portfolio.map(ev => ev.event));
+  for (const k of Object.keys(ROLE_CLASS_OF)) {
+    if (!names.has(k)) throw new Error(`ROLE_CLASS_OF names "${k}", which is not a playlist in portfolio.`);
+  }
+}
 
 // "Cut by Me" is a REEL-level collection, not a playlist. It mirrors every reel
 // Miles names as his own edit — his Aug-1 email (ROLE_CREDITS, keyed by
@@ -1214,7 +1265,9 @@ const roleStats = ROLE_GROUP_ORDER.map(name => {
   // rows while the 2.7M run sat eleventh. Its sections lead with reach. Only
   // this group is re-sorted — the hosted event runs read as a run of shows and
   // their order is the order they happened in.
-  const playlists = name === ROLE_PRODUCED ? [...found].sort((a, b) => b.totalPlays - a.totalPlays) : found;
+  // Nov 7 2026: both produced-type shelves (Produced, In-House Series) lead with reach.
+  const byReach = name === ROLE_PRODUCED || name === ROLE_INHOUSE;
+  const playlists = byReach ? [...found].sort((a, b) => b.totalPlays - a.totalPlays) : found;
   const reels = playlists.flatMap(ev => ev.reels);
   const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
   return {
@@ -1373,7 +1426,8 @@ const CUT_BY_ME_INTRO = "I came up hands-on at the camera, shooting and editing 
 const BUCKET_INTROS = {
   [ROLE_CUT]: CUT_BY_ME_INTRO,
   [ROLE_HOSTED]: capBody("On-Camera Hosting & Producing"),
-  [ROLE_PRODUCED]: capBody("Producing: Talent Marketing & Employee Comms"),
+  [ROLE_PRODUCED]: "",  // Miles writes this line. BucketIntro renders nothing until then. Nov 7 2026.
+  [ROLE_INHOUSE]: "",   // Miles writes this line. BucketIntro renders nothing until then. Nov 7 2026.
   [ROLE_OFF]: capBody("Staying Busy Off The Clock"),
 };
 
