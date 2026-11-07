@@ -18,12 +18,13 @@ const slice = (startLine, endLine) => {
 const portfolioText = slice("const portfolio = [", "];");
 const mapText = slice("const ROLE_CLASS_OF = {", "};");
 
-const playlists = new Set([...portfolioText.matchAll(/\bevent:\s*"([^"]*)"/g)].map(m => m[1]));
-const keys = new Set(
-  mapText.split("\n")
-    .filter(l => !l.trim().startsWith("//"))
-    .flatMap(l => [...l.matchAll(/"([^"]*)"\s*:/g)].map(m => m[1]))
-);
+// Comment lines do not count on either side. A playlist row that is commented
+// out in `portfolio` (Cannes, pulled Jul 4 2026 on Miles's word) is not live,
+// and the browser-side check would throw on a map line for it.
+const live = (text) => text.split("\n").filter(l => !l.trim().startsWith("//")).join("\n");
+
+const playlists = new Set([...live(portfolioText).matchAll(/\bevent:\s*"([^"]*)"/g)].map(m => m[1]));
+const keys = new Set([...live(mapText).matchAll(/"([^"]*)"\s*:/g)].map(m => m[1]));
 
 const missing = [...playlists].filter(n => !keys.has(n));
 const extra = [...keys].filter(n => !playlists.has(n));

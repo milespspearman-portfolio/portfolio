@@ -1197,7 +1197,7 @@ const ROLE_CLASS_OF = {
   "’25 MAX London": ROLE_HOSTED,
   "’25 Summit Vegas": ROLE_HOSTED,
   // Produced — event runs, brand work and exec/customer content he produced but did not host
-  "Cannes": ROLE_PRODUCED,
+  // Cannes: no line. Its row is commented out above (pulled Jul 4 2026 on Miles's word); it gets a line here the day it returns.
   "’25 NAB Vegas": ROLE_PRODUCED,
   "’26 NAB Vegas": ROLE_PRODUCED,
   "’26 Summit": ROLE_PRODUCED,
