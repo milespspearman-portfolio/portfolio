@@ -198,6 +198,8 @@ const EVENT_ROLES = {
   "Making B2B Social Friendly": "Pitched, Produced and Directed",
   // Nov 1 2026, his words for the Trevor Noah and Alysa Liu videos: "shot, edited, and creative directed" (first letter capped at the head of the line).
   "’26 Adobe For All": "Shot, edited, and creative directed",
+  // Nov 4 2026, his words: "I was producer on YAWA credit, You Asked We Answered Creative Cloud Series."
+  "You Asked We Answered Creative Cloud Series": "Producer",
 };
 // What a playlist was FOR, in one line — the goal, not the job. Sits directly
 // under the role line in the playlist header, small and gray, the same quiet
@@ -356,6 +358,19 @@ const REEL_TAGS = {
   "’26 NAB: Object Matte (OTG)": "D, P",
   "’26 NAB: Color Mode (OTG)": "D, P",
   "’26 NAB: what’s going on with @AdobeVideo at #NAB2026?": "P", // Oct 11 2026, his words: "NAB 26 title is producer"
+  // You Asked We Answered Creative Cloud Series, Nov 4 2026, his words: "I was producer on YAWA credit"
+  "’26 YAWA: Creative Cloud SVG Import": "P",
+  "’26 YAWA: Creative Cloud Enhanced Font Browser": "P",
+  "’26 YAWA: Photoshop Selection Tools": "P",
+  "’26 YAWA: Photoshop Dynamic Text": "P",
+  "’26 YAWA: Photoshop Adjustment Layers": "P",
+  "’26 YAWA: Lightroom Assisted Culling": "P",
+  "’26 YAWA: Lightroom Distraction Removal": "P",
+  "’26 YAWA: Lightroom Improved Search": "P",
+  "’26 YAWA: Design Smart File Naming": "P",
+  "’26 YAWA: Design Align Tools": "P",
+  "’26 YAWA: Premiere Pro Effects & Transitions": "P",
+  "’26 YAWA: After Effects 3D Depth": "P",
   // ’25 IBC Amsterdam
   "’25 IBC: Recap": "P, H",
   "’25 IBC: Favorite Premiere Transitions": "P, H",
@@ -923,6 +938,28 @@ const portfolio = [
     ],
   },
   {
+    // Nov 4 2026, Miles: "I was producer on YAWA credit, You Asked We Answered Creative Cloud Series." Finals from
+    // Frame.io; dates are the final-delivery dates on Frame.io, not post dates; no public post URLs yet, so plays
+    // stay blank ("we can find the data on those later", Nov 1) and the link opens the Frame.io share.
+    event: "You Asked We Answered Creative Cloud Series",
+    reels: [
+      { title: "’26 YAWA: Creative Cloud SVG Import", sub: "You Asked We Answered · Aug 21, 2026", plays: "", mp4: "/reels/2026/YAWA/CC-SVG-Import.mp4", postUrl: "https://f.io/nhcjVEkP" },
+      { title: "’26 YAWA: Creative Cloud Enhanced Font Browser", sub: "You Asked We Answered · Aug 27, 2026", plays: "", mp4: "/reels/2026/YAWA/CC-Enhanced-Font-Browser.mp4", postUrl: "https://f.io/h2_Eslan" },
+      { title: "’26 YAWA: Photoshop Selection Tools", sub: "You Asked We Answered · Aug 13, 2026", plays: "", mp4: "/reels/2026/YAWA/PS-Selection-Tools.mp4", postUrl: "https://f.io/GuZj9OHY" },
+      { title: "’26 YAWA: Photoshop Dynamic Text", sub: "You Asked We Answered · Aug 14, 2026", plays: "", mp4: "/reels/2026/YAWA/PS-Dynamic-Text.mp4", postUrl: "https://f.io/Hsrka0r5" },
+      { title: "’26 YAWA: Photoshop Adjustment Layers", sub: "You Asked We Answered · Aug 27, 2026", plays: "", mp4: "/reels/2026/YAWA/PS-Adjustment-Layers.mp4", postUrl: "https://f.io/cD8hAYcv" },
+      { title: "’26 YAWA: Lightroom Assisted Culling", sub: "You Asked We Answered · Aug 13, 2026", plays: "", mp4: "/reels/2026/YAWA/LR-Assisted-Culling.mp4", postUrl: "https://f.io/a5uIgObZ" },
+      // carousel: the slides stitched into one video, the NFL treatment (Nov 4 2026, his words: "like we did with nfl")
+      { title: "’26 YAWA: Lightroom Distraction Removal", sub: "You Asked We Answered · Aug 21, 2026", plays: "", mp4: "/reels/2026/YAWA/LR-Distraction-Removal.mp4", postUrl: "https://f.io/Eix3c_4Z" },
+      { title: "’26 YAWA: Lightroom Improved Search", sub: "You Asked We Answered · Aug 27, 2026", plays: "", mp4: "/reels/2026/YAWA/LR-Improved-Search.mp4", postUrl: "https://f.io/ES8Eputp" },
+      { title: "’26 YAWA: Design Smart File Naming", sub: "You Asked We Answered · Aug 27, 2026", plays: "", mp4: "/reels/2026/YAWA/Design-Smart-File-Naming.mp4", postUrl: "https://f.io/XhJsJOQa" },
+      { title: "’26 YAWA: Design Align Tools", sub: "You Asked We Answered · Aug 13, 2026", plays: "", mp4: "/reels/2026/YAWA/Design-Align-Tools.mp4", postUrl: "https://f.io/ASLTCKfj" },
+      // carousel: the slides stitched into one video, the NFL treatment (Nov 4 2026, his words: "like we did with nfl")
+      { title: "’26 YAWA: Premiere Pro Effects & Transitions", sub: "You Asked We Answered · Aug 21, 2026", plays: "", mp4: "/reels/2026/YAWA/Video-Pr-Effects-Transitions.mp4", postUrl: "https://f.io/oSOcbyAz" },
+      { title: "’26 YAWA: After Effects 3D Depth", sub: "You Asked We Answered · Aug 13, 2026", plays: "", mp4: "/reels/2026/YAWA/Video-Ae-3D-Depth.mp4", postUrl: "https://f.io/_0qNY-eM" },
+    ],
+  },
+  {
     event: "Artist Spotlights",
     reels: [
       { title: "San Jose Semaphore", sub: "@adobe · 3K likes · Jun 18, 2026", plays: "90.6K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Evergreen-Producing/San-Jose-Semaphore_6.18.26.mp4", postUrl: "https://www.instagram.com/p/DZvKdPzFG65/" },
@@ -1091,6 +1128,7 @@ const BUCKET_OF = {
   // Nov 1 2026: Adobe For All is an internal Adobe event, so it files with the internal work
   // (Intern Day lives in Always-On here), not the commercial trade-show runs. Default, his veto.
   "’26 Adobe For All": "In-House Production",
+  "You Asked We Answered Creative Cloud Series": "In-House Production", // Nov 4 2026: the 12 YAWA pieces, Producer
   // Brand Partnerships — the NWSL/O'Hara playlist plus the NFL partnership.
   // More reels land here later; the group grows, no placeholder rows.
   "Brand Partnerships": "Brand Partnerships", "Adobe × NFL": "Brand Partnerships",
