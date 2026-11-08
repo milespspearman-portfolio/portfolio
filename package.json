@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/check-role-map.mjs",
+    "prebuild": "node scripts/check-kind-map.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },

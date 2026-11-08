@@ -1124,7 +1124,7 @@ const BUCKET_OF = {
   // In-House Production — evergreen producing, employee/always-on, side projects
   "Employee Spotlights: Season 1": "In-House Production", "Employee Spotlights: Season 2": "In-House Production", "Employee Spotlights: Season 3": "In-House Production",
   "Artist Spotlights": "In-House Production", "Always-On": "In-House Production", "Photoshop Archives": "In-House Production",
-  "Side Projects": "In-House Production", "Adobe MAX Product Demos": "In-House Production", "’25 MAX Customer Stories": "In-House Production",
+  "Adobe MAX Product Demos": "In-House Production", "’25 MAX Customer Stories": "In-House Production",
   // Nov 1 2026: Adobe For All is an internal Adobe event, so it files with the internal work
   // (Intern Day lives in Always-On here), not the commercial trade-show runs. Default, his veto.
   "’26 Adobe For All": "In-House Production",
@@ -1132,9 +1132,12 @@ const BUCKET_OF = {
   // Brand Partnerships — the NWSL/O'Hara playlist plus the NFL partnership.
   // More reels land here later; the group grows, no placeholder rows.
   "Brand Partnerships": "Brand Partnerships", "Adobe × NFL": "Brand Partnerships",
+  // Nov 7 2026: Miles, "Partnerships include The College Tour , Taco Bell"
+  "Side Projects": "Brand Partnerships",
+  // Nov 7 2026: Miles, "Partnerships include The College Tour , Taco Bell"
+  "The College Tour": "Brand Partnerships",
   // Off the Clock — unchanged
   "Miles Music Media": "Off the Clock", "Miles.Spearman": "Off the Clock", "Miles on YouTube": "Off the Clock",
-  "The College Tour": "Off the Clock",
 };
 const BUCKET_ORDER = ["Event Coverage", "In-House Production", "Brand Partnerships", "Off the Clock"];
 // Oct 6 2026 cross-check: the same category read "Commercial Event Coverage" on the
@@ -1182,97 +1185,36 @@ const TOTAL_PLAYS = eventStats.reduce((s, ev) => s + ev.totalPlays, 0);
 const likesNum = (sub) => { const m = sub.match(/([\d.]+K|[\d.]+M|\d+) likes/i); return m ? playsNum(m[1]) : 0; };
 const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a + likesNum(r.sub), 0), 0);
 
-// ===== ROLE GROUPS (Aug 9 2026, "Scheme 1" — Miles confirmed) =====
-// #/work groups by WHAT MILES DID, not by what kind of shoot it was. The type
-// buckets above are NOT deleted: they still drive the #/playlist sidebar, the
-// sort and the timeline, and they now also supply the small type word on each
-// playlist section, so the "Event coverage" fact survives without new copy.
-//
-// Membership is HAND-ASSIGNED in one explicit map, ROLE_CLASS_OF below (Nov 7
-// 2026). Every playlist has exactly one line there and none can be dropped:
-// there is no fallback class, a playlist with no line throws at module load,
-// and scripts/check-role-map.mjs fails `npm run build` with the same name.
-// (Until Nov 7 membership was derived from each playlist's EVENT_ROLES line,
-// with "Produced In-House" as the fallback; that is what the Aug 10 note
-// below describes.)
-const ROLE_CUT = "Cut by Me";
-// Aug 10 2026 — Miles renamed both cards. The old labels stacked his whole
-// credit line into the group name ("Hosted, Creative Directed, & Produced" /
-// "Produced & Creatively Directed") and read as a resume line on a card that is
-// meant to be a shelf label. His new names are short and plain.
-// SCOPE OF THE RENAME: the GROUP DISPLAY NAME only. Every playlist's own
-// EVENT_ROLES line is untouched and still says exactly what he did on that run,
-// membership still derives from those lines (roleClassOf below reads the line,
-// never the group name), the chips are untouched, and BUCKET_INTROS stays keyed
-// by these constants so each page keeps the same summary it had.
-// Slugs re-derive from the name, so #/work/hosted-on-camera and (Aug 10 to
-// Nov 7) #/work/produced-in-house were the routes. Old slugs miss
-// ROLE_BY_SLUG, and routeFromHash already falls back to the #/work grid for an
-// unknown slug (never a 404), which is the graceful landing for an old link.
-// Nov 7 2026: "Produced In-House" split into two shelves, "Produced" and
-// "In-House Series" (placeholder names; Miles's names win). Their slugs are
-// #/work/produced and #/work/in-house-series; #/work/produced-in-house now
-// lands on the #/work grid by the fallback above.
-const ROLE_HOSTED = "Hosted on Camera";
-const ROLE_PRODUCED = "Produced";          // placeholder name (Nov 7 2026); Miles's name wins
-const ROLE_INHOUSE = "In-House Series";    // placeholder name (Nov 7 2026); Miles's name wins
-const ROLE_OFF = "Off the Clock";
-const ROLE_GROUP_ORDER = [ROLE_CUT, ROLE_HOSTED, ROLE_PRODUCED, ROLE_INHOUSE, ROLE_OFF];
+// ===== #/work shelves (Nov 7 2026) =====
+// Sorted by what the work IS, the way Wheaton, Tyler and Herman sort theirs.
+// Role stays a credit on every row (CreditChip + the role line) and in the Feed.
+// Miles, Jul 19 2026: "Commercial , Events , In-House Productions, Hosting/Creative Direction".
+// Four kind shelves from BUCKET_OF/TYPE_LABEL plus Hosting, the one role shelf.
+// (Until Nov 7 2026 #/work grouped by role through ROLE_CLASS_OF: Cut by Me,
+// Hosted on Camera, Produced, In-House Series, Off the Clock. The undo tag keeps
+// that code. Old slugs such as #/work/hosted-on-camera miss the shelf lookup and
+// routeFromHash falls back to the #/work grid, never a 404.)
+// A playlist with no BUCKET_OF line throws at module load and
+// scripts/check-kind-map.mjs fails `npm run build` with the same name.
+const SHELF_HOSTING = "Hosting"; // same label as the Feed door he approved Oct 11 2026
+const SHELF_ORDER = [
+  typeLabel("Event Coverage"),      // "Commercial Event Coverage"
+  typeLabel("In-House Production"), // "In-House Productions"
+  typeLabel("Brand Partnerships"),  // "Brand Partnerships"
+  SHELF_HOSTING,
+  typeLabel("Off the Clock"),       // "Off the Clock"
+];
 
-// Every playlist in `portfolio` has exactly one line here. There is no
-// fallback: a playlist with no line throws at module load (dev goes white
-// with the playlist name in the console) and scripts/check-role-map.mjs fails
-// `npm run build` with the same name. Nov 7 2026.
-const ROLE_CLASS_OF = {
-  // Hosted on Camera — his role line names hosting (same nine as before)
-  "Side Projects": ROLE_HOSTED,
-  "The College Tour": ROLE_HOSTED,
-  "’24 IBC Amsterdam": ROLE_HOSTED,
-  "’24 MAX Miami": ROLE_HOSTED,
-  "’24 NAB Vegas": ROLE_HOSTED,
-  "’25 IBC Amsterdam": ROLE_HOSTED,
-  "’25 MAX LA": ROLE_HOSTED,
-  "’25 MAX London": ROLE_HOSTED,
-  "’25 Summit Vegas": ROLE_HOSTED,
-  // Produced — event runs, brand work and exec/customer content he produced but did not host
-  // Cannes: no line. Its row is commented out above (pulled Jul 4 2026 on Miles's word); it gets a line here the day it returns.
-  "’25 NAB Vegas": ROLE_PRODUCED,
-  "’26 NAB Vegas": ROLE_PRODUCED,
-  "’26 Summit": ROLE_PRODUCED,
-  "Adobe × NFL": ROLE_PRODUCED,
-  "Brand Partnerships": ROLE_PRODUCED,
-  "Adobe MAX Product Demos": ROLE_PRODUCED,
-  "’25 MAX Customer Stories": ROLE_PRODUCED,
-  "’26 Adobe For All": ROLE_PRODUCED, // default placement; Miles may move it to In-House Series
-  // In-House Series — the recurring @adobelife series
-  "Employee Spotlights: Season 1": ROLE_INHOUSE,
-  "Employee Spotlights: Season 2": ROLE_INHOUSE,
-  "Employee Spotlights: Season 3": ROLE_INHOUSE,
-  "Artist Spotlights": ROLE_INHOUSE,
-  "Always-On": ROLE_INHOUSE,
-  "Photoshop Archives": ROLE_INHOUSE,
-  // Nov 7 2026: the YAWA row landed on main from the cloud session while this split was on its branch; the gate
-  // caught it ("missing from ROLE_CLASS_OF"). Filed here on the same grounds as its BUCKET_OF line (In-House
-  // Production, his Nov 4 "Producer on YAWA credit") and his Nov 7 words grouping "the yawa stuff" with the
-  // in-house productions. Default placement; Miles may move it to Produced.
-  "You Asked We Answered Creative Cloud Series": ROLE_INHOUSE,
-  // Off the Clock — unchanged three
-  "Miles Music Media": ROLE_OFF,
-  "Miles.Spearman": ROLE_OFF,
-  "Miles on YouTube": ROLE_OFF,
+const kindOf = (ev) => {
+  const b = BUCKET_OF[ev.event];
+  if (!b) throw new Error(`BUCKET_OF has no entry for playlist "${ev.event}". Add one in src/Portfolio.jsx.`);
+  return b;
 };
-
-const roleClassOf = (ev) => {
-  const c = ROLE_CLASS_OF[ev.event];
-  if (!c) throw new Error(`ROLE_CLASS_OF has no entry for playlist "${ev.event}". Add one in src/Portfolio.jsx.`);
-  return c;
-};
-
 // Reverse check: no stale or misspelled key. Runs once at module load.
 {
   const names = new Set(portfolio.map(ev => ev.event));
-  for (const k of Object.keys(ROLE_CLASS_OF)) {
-    if (!names.has(k)) throw new Error(`ROLE_CLASS_OF names "${k}", which is not a playlist in portfolio.`);
+  for (const k of Object.keys(BUCKET_OF)) {
+    if (!names.has(k)) throw new Error(`BUCKET_OF names "${k}", which is not a playlist in portfolio.`);
   }
 }
 
@@ -1287,6 +1229,8 @@ const roleClassOf = (ev) => {
 // they join cut by me") added a ninth section, "Miles on YouTube", 12 more
 // reels: 36 becomes 48. Mirrors move no derived
 // total — TOTAL_REELS / TOTAL_PLAYS read `portfolio`, which this never joins.
+// Nov 7 2026: Cut by Me left #/work in the kind flip (the Feed's Edited door
+// covers it). Kept so one SHELF_ORDER line can bring it back as a mirror shelf.
 const cutByMeSections = eventStats.flatMap(ev => {
   const reels = ev.reels.filter(cutByMeReel);
   if (!reels.length) return [];
@@ -1298,18 +1242,34 @@ const cutByMeSections = eventStats.flatMap(ev => {
   }];
 });
 
-// Group-level stats for the #/work grid. Every number DERIVED from the same
+// Hosting is a MIRROR shelf (the Cut by Me pattern above): one section per home
+// playlist, holding only the reels Miles hosted. "Hosted" = reelRoleTabs(r)[3],
+// the same test the Feed's Hosting door runs, so the site has one definition.
+// LAZY on purpose: reelRoleTabs is a const defined further down this file, and
+// calling it at module load is a TDZ ReferenceError in the browser that
+// `vite build` does not catch. Built on first use, from a component or route.
+let _hostedSections = null;
+const hostedSections = () => _hostedSections || (_hostedSections = eventStats.flatMap(ev => {
+  const reels = ev.reels.filter(r => reelRoleTabs(r)[3]);
+  if (!reels.length) return [];
+  const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
+  return [{
+    ...ev, reels, cover: thumbOf(top),
+    totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0),
+    window: fmtWindow({ reels }),
+  }];
+}));
+
+// Shelf-level stats for the #/work grid. Every number DERIVED from the same
 // rows the player uses, never hand-typed. Card art follows the playlist-cover
-// rule: the real frame from the group's top-played reel, never emoji/stock.
-const roleStats = ROLE_GROUP_ORDER.map(name => {
-  const mirror = name === ROLE_CUT;
-  const found = mirror ? cutByMeSections : eventStats.filter(ev => roleClassOf(ev) === name);
-  // Panel review Aug 10: the Produced page opened on a 77.9K playlist of N/A
-  // rows while the 2.7M run sat eleventh. Its sections lead with reach. Only
-  // this group is re-sorted — the hosted event runs read as a run of shows and
-  // their order is the order they happened in.
-  // Nov 7 2026: both produced-type shelves (Produced, In-House Series) lead with reach.
-  const byReach = name === ROLE_PRODUCED || name === ROLE_INHOUSE;
+// rule: the real frame from the shelf's top-played reel, never emoji/stock.
+// Lazy for the same TDZ reason as hostedSections.
+let _shelfStats = null;
+const shelfStats = () => _shelfStats || (_shelfStats = SHELF_ORDER.map(name => {
+  const mirror = name === SHELF_HOSTING;
+  const found = mirror ? hostedSections() : eventStats.filter(ev => typeLabel(kindOf(ev)) === name);
+  // Reach-first only where the shelf is a set of productions, not a run of shows.
+  const byReach = name === typeLabel("In-House Production") || name === typeLabel("Brand Partnerships");
   const playlists = byReach ? [...found].sort((a, b) => b.totalPlays - a.totalPlays) : found;
   const reels = playlists.flatMap(ev => ev.reels);
   const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
@@ -1319,8 +1279,8 @@ const roleStats = ROLE_GROUP_ORDER.map(name => {
     totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0),
     cover: top ? thumbOf(top) : "",
   };
-}).filter(g => g.playlists.length);
-const ROLE_BY_SLUG = Object.fromEntries(roleStats.map(g => [g.slug, g.name]));
+}).filter(g => g.playlists.length));
+const shelfBySlug = (slug) => (shelfStats().find(g => g.slug === slug) || {}).name || null;
 // The one derived count string every role surface prints, card and page. A
 // mirror group's "playlists" are the homes its reels were pulled from, not
 // collections of its own, so that segment is dropped rather than reworded.
@@ -1465,13 +1425,12 @@ const capabilities = [
 const capBody = (t) => (capabilities.find(c => c.title === t) || {}).body || "";
 // Cut by Me carries its own summary rather than a What I Do body: Miles wrote
 // this one for the page at the push gate. His words, unedited.
+// Unused since the Nov 7 2026 kind flip (Cut by Me left #/work; Feed Edited door covers it). Kept until Miles OKs deletion.
 const CUT_BY_ME_INTRO = "I came up hands-on at the camera, shooting and editing short-form for Adobe's channels, and these are the videos I've cut myself. The NAB recap went out the same day, cut on site between sessions. The emoji reaction format I built and cut first, then it ran again at NAB and Summit.";
 const BUCKET_INTROS = {
-  [ROLE_CUT]: CUT_BY_ME_INTRO,
-  [ROLE_HOSTED]: capBody("On-Camera Hosting & Producing"),
-  [ROLE_PRODUCED]: "",  // Miles writes this line. BucketIntro renders nothing until then. Nov 7 2026.
-  [ROLE_INHOUSE]: "",   // Miles writes this line. BucketIntro renders nothing until then. Nov 7 2026.
-  [ROLE_OFF]: capBody("Staying Busy Off The Clock"),
+  [SHELF_HOSTING]: capBody("On-Camera Hosting & Producing"),          // carried over from Hosted on Camera
+  [typeLabel("Off the Clock")]: capBody("Staying Busy Off The Clock"), // carried over from Off the Clock
+  // Commercial Event Coverage, In-House Productions, Brand Partnerships: Miles writes these. Nov 7 2026.
 };
 
 // ===== DESIGN NORTH STAR (Aug 10 2026) — Miles's three words =====
@@ -2178,14 +2137,16 @@ const funReels = (() => {
 // The cap is a legibility floor, not a data limit: a card 158px wide on a phone
 // cannot show ten progress dashes, so a big group cycles its best six.
 const CARD_ROSTER_MIN = 4, CARD_ROSTER_MAX = 6;
-const roleRosters = Object.fromEntries(roleStats.map(b => {
+// Nov 7 2026: lazy, because it reads shelfStats() (see the TDZ note there).
+let _roleRosters = null;
+const roleRosters = () => _roleRosters || (_roleRosters = Object.fromEntries(shelfStats().map(b => {
   const reels = b.playlists.flatMap(ev => ev.reels);
   const roster = FUN_ROW_TITLES.map(t => reels.find(r => r.title === t)).filter(Boolean);
   [...reels].sort((x, y) => playsNum(y.plays) - playsNum(x.plays)).forEach(r => {
     if (roster.length < CARD_ROSTER_MIN && !roster.includes(r)) roster.push(r);
   });
   return [b.slug, roster.slice(0, CARD_ROSTER_MAX)];
-}));
+})));
 // Where each moment starts, in seconds — a card seeks here BEFORE it shows the
 // reel, so it opens on the fun beat instead of a title card. Keyed by IG
 // shortcode; anything missing uses the default. TUNABLE: Miles can change any
@@ -4133,7 +4094,7 @@ function RoleCardGrid() {
   const onScreen = useOnScreen(gridRef); // ...and stop cycling
   return (
     <div className="work-grid" ref={gridRef}>
-      {roleStats.map((b, i) => <BucketCard key={b.slug} b={b} i={i} onScreen={onScreen} />)}
+      {shelfStats().map((b, i) => <BucketCard key={b.slug} b={b} i={i} onScreen={onScreen} />)}
     </div>
   );
 }
@@ -4166,7 +4127,7 @@ const routeFromHash = () => {
   if (c && CASE_INDEX[c[1].toLowerCase()]) return { kind: "playlist", bucket: null };
   const m = h.match(/^#\/work(?:\/([^\/?#]+))?\/?$/);
   if (!m) return { kind: "home", bucket: null };
-  const bucket = m[1] ? ROLE_BY_SLUG[m[1].toLowerCase()] : null;
+  const bucket = m[1] ? shelfBySlug(m[1].toLowerCase()) : null;
   return bucket ? { kind: "bucket", bucket } : { kind: "work", bucket: null };
 };
 // ===== goPlay (Aug 11 2026) — "play this exact reel" from anywhere =====
@@ -4253,7 +4214,7 @@ function CardMoment({ reel, live }) {
 }
 
 function BucketCard({ b, i, onScreen }) {
-  const roster = roleRosters[b.slug] || [];
+  const roster = roleRosters()[b.slug] || [];
   const live = _finePointer;
   const [h, setH] = useState(false);
   // Two layers max, ever: the moment on screen and the one sliding in behind
@@ -4539,7 +4500,7 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
 }
 
 function BucketPage({ bucket }) {
-  const b = roleStats.find(x => x.name === bucket);
+  const b = shelfStats().find(x => x.name === bucket);
   // One open row for the WHOLE page = one <video> on the page, ever.
   const [openKey, setOpenKey] = useState(null);
   useEffect(() => { setOpenKey(null); }, [bucket]);
