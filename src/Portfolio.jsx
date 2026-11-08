@@ -1251,6 +1251,11 @@ const ROLE_CLASS_OF = {
   "Artist Spotlights": ROLE_INHOUSE,
   "Always-On": ROLE_INHOUSE,
   "Photoshop Archives": ROLE_INHOUSE,
+  // Nov 7 2026: the YAWA row landed on main from the cloud session while this split was on its branch; the gate
+  // caught it ("missing from ROLE_CLASS_OF"). Filed here on the same grounds as its BUCKET_OF line (In-House
+  // Production, his Nov 4 "Producer on YAWA credit") and his Nov 7 words grouping "the yawa stuff" with the
+  // in-house productions. Default placement; Miles may move it to Produced.
+  "You Asked We Answered Creative Cloud Series": ROLE_INHOUSE,
   // Off the Clock — unchanged three
   "Miles Music Media": ROLE_OFF,
   "Miles.Spearman": ROLE_OFF,
