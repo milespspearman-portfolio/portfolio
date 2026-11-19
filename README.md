@@ -1,41 +1,30 @@
-# Miles Spearman — Portfolio
+# Miles Spearman
 
-## Deploy to Vercel (5 minutes)
+I'm a social producer and content creator on Adobe's Social Creative Studio team in San Francisco.
+I direct on-location video at events like Adobe MAX and Summit, and work with influencer, celebrity talent, and C-suite. Every video or interview you see is produced by me end to end.
+I also host, present, and work in front of the camera.
 
-### Step 1: Create a GitHub repo
-1. Go to https://github.com/new
-2. Name it `portfolio` (or whatever you want)
-3. Set it to **Public** or **Private** — either works
-4. Click **Create repository**
+This repo is the code for my portfolio site: https://milesspearman.com
 
-### Step 2: Push this code
-Open Terminal on your Mac and run these commands one at a time:
+## What the site shows
 
-```bash
-cd ~/Downloads/miles-portfolio
-git init
-git add .
-git commit -m "initial portfolio"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/portfolio.git
-git push -u origin main
-```
+- Work (`/#/work`): every piece, on five shelves: Commercial Event Coverage, In-House Productions, Brand Partnerships, Hosting, Off the Clock.
+- What I Do (home page): the same kinds of work, one row each.
+- Timeline (`/#/timeline`): the work in order.
+- Feed (`/#/feed`): the reels as a vertical feed.
+- About (`/#about`): who I am, and Recognition: Global Marketing Organization: Be Genuine Award.
+- Off the clock: my jazz content at https://www.instagram.com/milesmusicmedia
+- Contact: https://www.linkedin.com/in/milesspearman/
 
-Replace `YOUR_USERNAME` with your actual GitHub username.
+## How this repo is laid out
 
-### Step 3: Deploy on Vercel
-1. Go to https://vercel.com and sign up with GitHub
-2. Click **Add New → Project**
-3. Import your `portfolio` repo
-4. Vercel auto-detects Vite — just click **Deploy**
-5. Done! Your site is live at `your-project.vercel.app`
+- `index.html`: page shell, title and link-preview text
+- `src/Portfolio.jsx`: the whole site
+- `src/main.jsx`: entry point
+- `public/`: favicon, logos, robots.txt, sitemap.xml
+- `scripts/check-kind-map.mjs`: build check
+- `vite.config.js`, `vercel.json`: build and hosting settings
 
-### Step 4: Customize the URL (optional)
-In Vercel dashboard → Settings → Domains → type `milesspearman` to get `milesspearman.vercel.app`
+## Run or deploy
 
-## Local Development
-```bash
-npm install
-npm run dev
-```
-Opens at http://localhost:5173
+See [docs/DEPLOY.md](docs/DEPLOY.md).
