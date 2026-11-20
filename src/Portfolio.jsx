@@ -89,7 +89,6 @@ const platformOf = (r) => r.postUrl?.includes("linkedin.com") ? "LinkedIn" : (r.
 const handleTag = (r) => r.sub.split(" · ")[0] + (r.postUrl?.includes("instagram.com") ? " IG" : "");
 const subTag = (r) => { const p = r.sub.split(" · "); return [handleTag(r), ...p.slice(1)].join(" · "); };
 const fmtPlays = (n) => n >= 1e6 ? `${+(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${+(n / 1e3).toFixed(1)}K` : String(Math.round(n));
-const fmtTime = (s) => { if (!isFinite(s)) return "0:00"; const m = Math.floor(s / 60); return `${m}:${String(Math.floor(s % 60)).padStart(2, "0")}`; };
 
 // What a watch-only row renders in place of the <video>: its real thumbnail,
 // with a mint watch button over it. Deliberately NOT dressed up as a broken
@@ -178,7 +177,6 @@ const EVENT_ROLES = {
   "’25 MAX LA": "Creative Director, Producer, Host",
   "’25 MAX London": "Creative Director, Producer, Host",
   "’25 NAB Vegas": "Producer", // Oct 11 2026, his words (was "Creative Directed, Hosted, & Produced"; videos are tagged Mine end to end, no host tag)
-  "Cannes": "Producer",
   "Employee Spotlights: Season 1": "Producer, Creative Director",
   "Employee Spotlights: Season 2": "Producer, Creative Director",
   "Employee Spotlights: Season 3": "Producer, Creative Director",
@@ -197,7 +195,6 @@ const EVENT_ROLES = {
   "Miles.Spearman": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles Music Media": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
   "Miles on YouTube": "Brainstormed, Researched, Shot, Scripted, Edited & Posted: 1-Person Production",
-  "Making B2B Social Friendly": "Pitched, Produced and Directed",
   // Nov 1 2026, his words for the Trevor Noah and Alysa Liu videos: "shot, edited, and creative directed" (first letter capped at the head of the line).
   "’26 Adobe For All": "Shot, edited, and creative directed",
   // Nov 4 2026, his words: "I was producer on YAWA credit, You Asked We Answered Creative Cloud Series."
@@ -529,28 +526,6 @@ const EVENT_BRANDS = {
   "Adobe MAX Product Demos": "Adobe GenStudio · Exec Thought Leadership",
   "’25 MAX Customer Stories": "Adobe × Intuit · Wyndham Hotels & Resorts",
 };
-// Per-album Workfront-brief lines shown when an album group unfolds in a drawer.
-// Restored Jul 5 — was accidentally dropped in commit 7175fb7, causing a runtime
-// crash (ReferenceError) when any album group expanded. Miles's lines verbatim.
-const ALBUM_BLURBS = {
-  "Emoji Reactions": "One format, three shows. Real creators react to a new AI feature in a single emoji. It pulled 1.5M at IBC 2024, then traveled to NAB and Summit.",
-  "Games & Activations": "Booth games and floor activations turned into social. The Acrobat Escape Room alone reached 2.6M plays.",
-  "Coolest Job": "A recurring series putting Adobe's most interesting roles on camera, from employees to Sneaks presenters, across Summit and MAX.",
-  "Coolest Job · MAX ’25": "The MAX 2025 deep dives: longer, narrative cuts of the Coolest Job format.",
-  "Coolest Job · Summit ’26": "The Summit 2026 class of Coolest Job, built to grow the series.",
-  "Employee Spotlights · Season 1": "Where the series started. Three employees, three creative lives outside work. Dave Werner's reached 1.9M plays.",
-  "Employee Spotlights · Season 2": "The punishment for good work is more work.",
-  "Employee Spotlights · Season 3": "Our approach to employee highlights has succeeded three times.",
-  "Always On": "Always-on demand content: product demos and seasonal moments that run year round.",
-  "In-House Production": "Employee stories, activations, and talent pieces produced end to end, in house.",
-  "Intern Day ’25": "A look inside Adobe's internship, made to recruit the next class of creatives.",
-  "’24 MAX Miami": "Adobe MAX 2024, Miami. Sneaks interviews, floor activations, and the show's trivia format.",
-  "’25 Summit Vegas": "Adobe Summit 2025, Las Vegas. The flagship hosting run: escape rooms, celebrity interviews, and hosted recaps.",
-  "’25 MAX LA": "Adobe MAX 2025, Los Angeles. Celebrity and talent on camera: James Gunn, Mark Rober, Kelley O'Hara, Jessica Williams.",
-  "’25 MAX London": "Adobe MAX London 2025. Interactive booth games and event recaps, including the 425K Fonts Creator game.",
-  "’25 NAB Vegas": "NAB 2025, Las Vegas. Premiere Pro release coverage and live feature demos for the video community.",
-  "’26 Summit": "Adobe Summit 2026, Las Vegas. The latest event recap work.",
-};
 const EVENT_PARTNERS = {
   "’24 MAX Miami": "T13",
   "’25 Summit Vegas": "T13",
@@ -759,9 +734,6 @@ const handlesOf = (ev) => [...new Set(ev.reels.map(r => handleTag(r)))].join(", 
 
 // Transport icons
 const IcPlay = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M4 1.5l10.5 6.5L4 14.5z" /></svg>;
-const IcPause = ({ s = 14, c = C.bg }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M3.5 2h3.2v12H3.5zM9.3 2h3.2v12H9.3z" /></svg>;
-const IcPrev = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M13 2.5v11L5.5 8zM3 2.5h2v11H3z" /></svg>;
-const IcNext = ({ s = 14, c = C.white }) => <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true"><path d="M3 2.5v11L10.5 8zM11 2.5h2v11h-2z" /></svg>;
 const IcVol = ({ s = 16, c = C.gray, muted = false }) => (
   <svg width={s} height={s} viewBox="0 0 16 16" style={{ fill: c }} aria-hidden="true">
     <path d="M2 6h2.5L8 3v10L4.5 10H2z" />
@@ -866,15 +838,6 @@ const portfolio = [
       { title: "’25 NAB: Event Coverage", sub: "@adobevideo · 155 likes · Apr 17, 2025", plays: "39.2K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2025/NAB-2025/NAB-General-Event-Coverage-Interviews_4.17.25.mp4", postUrl: "https://www.instagram.com/p/DIkB_V8STy1/" },
     ],
   },
-  // Cannes pulled Jul 4 per Miles ("just take out cannes for now, i post
-  // production producing on it but now it just looks weird") — restore by
-  // uncommenting when the story around it is right.
-  // {
-  //   event: "Cannes",
-  //   reels: [
-  //     { title: "Cannes Lions Firefly Feature", sub: "@adobefirefly · 243 likes · Jun 26, 2026", plays: "27.9K", mp4: "~/Downloads/Claude/miles-portfolio-reels/2026/Cannes/Cannes-Produced-but-not-Hosted_6.26.26.mp4", postUrl: "https://www.instagram.com/p/DaEAIkyDrdo/" },
-  //   ],
-  // },
   {
     event: "Employee Spotlights: Season 1",
     reels: [
@@ -1127,7 +1090,7 @@ const BUCKET_OF = {
   // Event Coverage — the on-location event runs
   "’24 MAX Miami": "Event Coverage", "’25 MAX LA": "Event Coverage", "’25 MAX London": "Event Coverage",
   "’25 Summit Vegas": "Event Coverage", "’24 NAB Vegas": "Event Coverage", "’25 NAB Vegas": "Event Coverage", "’26 NAB Vegas": "Event Coverage",
-  "’24 IBC Amsterdam": "Event Coverage", "’25 IBC Amsterdam": "Event Coverage", "’26 Summit": "Event Coverage", // Cannes pulled Jul 4 (Miles)
+  "’24 IBC Amsterdam": "Event Coverage", "’25 IBC Amsterdam": "Event Coverage", "’26 Summit": "Event Coverage",
   // In-House Production — evergreen producing, employee/always-on, side projects
   "Employee Spotlights: Season 1": "In-House Production", "Employee Spotlights: Season 2": "In-House Production", "Employee Spotlights: Season 3": "In-House Production",
   "Artist Spotlights": "In-House Production", "Always-On": "In-House Production", "Photoshop Archives": "In-House Production",
@@ -1254,6 +1217,42 @@ const ROW_CHAPTER = {
   "Cracking the Semaphore Code": { chapter: "In-House Productions", section: "San Jose Semaphore" },
 };
 const SECTION_NOTES = { "San Jose Semaphore": "Standalone, not part of a campaign." };
+// Tyler build pass 2 (Nov 20 2026): '25 MAX London folds into the '25 MAX LA
+// section, which shows as "’25 MAX". The event keys stay, so CASE_TEXTS,
+// EVENT_GOALS and EVENT_CREDITS still read '25 MAX LA; London rows keep their
+// own playlist's role line.
+const SECTION_MERGE = { "’25 MAX London": "’25 MAX LA" };
+const SECTION_TITLES = { "’25 MAX LA": "’25 MAX" };
+// Row order inside a section, top to bottom. head null = loose rows, no header.
+// Each pattern is a substring of a reel title; a row takes the first match.
+const SECTION_GROUPS = {
+  "’25 MAX LA": [
+    [null, ["Project Trace Erase", "Day in the Life"]],
+    ["Coolest Job Series", ["Firefly Feature", "Coolest Job: Eric", "Coolest Job: Tongyu"]],
+    ["Creator Assignments", ["Mark Rober", "Jessica Williams", "James Gunn"]],
+    ["Acrobat Booth", ["’25 MAX: Acrobat Booth", "PDF Spaces"]],
+    ["MAX London", ["’25 MAX London:"]],
+  ],
+};
+// Reorders a section's rows by SECTION_GROUPS and returns heads[n] = the header
+// that opens before row n (only on a group's first row). Unmatched rows go last, loose.
+const groupSection = (event, reels) => {
+  const spec = SECTION_GROUPS[event];
+  if (!spec) return { reels, heads: [] };
+  const used = new Set(), out = [], heads = [];
+  for (const [head, pats] of spec) {
+    let first = true;
+    for (const p of pats) for (const r of reels) {
+      if (used.has(r) || !r.title.includes(p)) continue;
+      used.add(r);
+      if (first && head) heads[out.length] = head;
+      first = false;
+      out.push(r);
+    }
+  }
+  for (const r of reels) if (!used.has(r)) out.push(r);
+  return { reels: out, heads };
+};
 {
   for (const v of Object.values(CHAPTER_OF)) if (!CHAPTER_NAMES.includes(v)) throw new Error(`CHAPTER_OF names unknown chapter "${v}".`);
   for (const ev of portfolio) if (!CHAPTER_OF[ev.event]) throw new Error(`CHAPTER_OF has no entry for playlist "${ev.event}".`);
@@ -1271,30 +1270,6 @@ const kindOf = (ev) => {
     if (!names.has(k)) throw new Error(`BUCKET_OF names "${k}", which is not a playlist in portfolio.`);
   }
 }
-
-// "Cut by Me" is a REEL-level collection, not a playlist. It mirrors every reel
-// Miles names as his own edit — his Aug-1 email (ROLE_CREDITS, keyed by
-// shortcode) plus every E / EE row from his Aug-10 tagging pass — grouped under
-// the playlist each reel actually lives in so provenance stays visible.
-// Aug 10: this is the group the tagging doc was written to grow, and it did:
-// the jazz library, '25 NAB, the Students Black Friday spot and @UofCincy all
-// join the IBC/NAB/MAX reels that were already here. Later the same day his
-// answer on the YouTube channel ("did everything it's the same as the jazz —
-// they join cut by me") added a ninth section, "Miles on YouTube", 12 more
-// reels: 36 becomes 48. Mirrors move no derived
-// total — TOTAL_REELS / TOTAL_PLAYS read `portfolio`, which this never joins.
-// Nov 7 2026: Cut by Me left #/work in the kind flip (the Feed's Edited door
-// covers it). Kept so one SHELF_ORDER line can bring it back as a mirror shelf.
-const cutByMeSections = eventStats.flatMap(ev => {
-  const reels = ev.reels.filter(cutByMeReel);
-  if (!reels.length) return [];
-  const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
-  return [{
-    ...ev, reels, cover: thumbOf(top),
-    totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0),
-    window: fmtWindow({ reels }),
-  }];
-});
 
 // Hosting is a MIRROR shelf (the Cut by Me pattern above): one section per home
 // playlist, holding only the reels Miles hosted. "Hosted" = reelRoleTabs(r)[3],
@@ -1346,10 +1321,22 @@ const shelfStats = () => {
     if (!sec) list.push(sec = { base: { ...ev, event: mv.section, role: "" }, reels: [] });
     sec.reels.push(r);
   }
+  for (const [from, into] of Object.entries(SECTION_MERGE)) {
+    const list = secs[CHAPTER_OF[into]] || [];
+    const src = list.find(x => x.base.event === from), dst = list.find(x => x.base.event === into);
+    if (!src || !dst) continue;
+    dst.reels.push(...src.reels);
+    list.splice(list.indexOf(src), 1);
+  }
+  for (const list of Object.values(secs)) for (const x of list) {
+    const g = groupSection(x.base.event, x.reels);
+    x.reels = g.reels; x.heads = g.heads;
+    if (SECTION_TITLES[x.base.event]) x.base = { ...x.base, title: SECTION_TITLES[x.base.event] };
+  }
   const out = CHAPTER_NAMES.map(name => {
     const mirror = name === SHELF_HOSTING;
     let playlists = mirror ? hostedSections()
-      : (secs[name] || []).filter(x => x.reels.length).map(x => sectionStats(x.base, x.reels));
+      : (secs[name] || []).filter(x => x.reels.length).map(x => ({ ...sectionStats(x.base, x.reels), heads: x.heads || [] }));
     if (!mirror && NEWEST_FIRST.has(name)) playlists = [...playlists].sort((a, b) => Math.max(0, ...b.reels.map(reelDate)) - Math.max(0, ...a.reels.map(reelDate)));
     else if (!mirror && name !== "Off the Clock") playlists = [...playlists].sort((a, b) => b.totalPlays - a.totalPlays);
     const reels = playlists.flatMap(ev => ev.reels);
@@ -1456,12 +1443,6 @@ const LIVE_WALL = _isPhone ? 3 : 14;
 // portfolio array; meta lines are Navin-style (events · years), facts only.
 const capabilities = [
   {
-    img: "/thumbs/2025/GenStudio-Customer-Stories/Intuit-Audrey-Timpe.jpg", imgPos: "50% 22%", title: "Making B2B Social Friendly",
-    meta: "Exec Leadership, Customer Stories & Hot Takes",
-    body: "My B2B social work at Adobe, end to end: hosting at Adobe Summit, customer stories with Intuit and Wyndham Hotels, executive thought leadership, and product releases. I pitch, produce, direct, and coach the talent, from concept to published. Making B2B social friendly.",
-    linkUrl: "https://www.linkedin.com/posts/intuits-audrey-timpe-shares-how-ai-has-become-ugcPost-7403901188343328768-lISN", linkLabel: "Play: Customer Story →",
-  },
-  {
     img: "/cards/on-camera-hosting.jpg", imgPos: "50% 27%", title: "On-Camera Hosting & Producing",
     meta: "Adobe MAX · Summit · NAB · 2024–Present",
     body: "One-off influencer posts don't scale, so I concepted a repeatable hosted sizzle format for Adobe's flagship events. Summit 2025 was a hosted run: I pitched the concepts, wrote the scripts, and hosted on camera. Created 9 posts over a 3 day event, published between March 20 and April 2, including a Ken Jeong interview and the Acrobat Escape Room at 2.6M plays.",
@@ -1502,14 +1483,10 @@ const capabilities = [
 // talent-marketing body -> the produced page; the concept-to-published body ->
 // Cut by Me, because the reels it names (the emoji-reaction format, 1.5M at IBC
 // 2024) are literally the reels on that page; off-the-clock body -> Off the
-// Clock. Three bodies render nowhere today: "Making B2B Social Friendly" (the
-// playlist it pointed at was retired Oct 11 2026), "Directing & On-Camera
-// Coaching", and "Content Strategy, Concept to Published" (Cut by Me uses its own intro below).
+// Clock. Two bodies render nowhere today: "Directing & On-Camera Coaching" and
+// "Content Strategy, Concept to Published". The "Making B2B Social Friendly"
+// card was deleted in the Tyler build (Nov 20 2026).
 const capBody = (t) => (capabilities.find(c => c.title === t) || {}).body || "";
-// Cut by Me carries its own summary rather than a What I Do body: Miles wrote
-// this one for the page at the push gate. His words, unedited.
-// Unused since the Nov 7 2026 kind flip (Cut by Me left #/work; Feed Edited door covers it). Kept until Miles OKs deletion.
-const CUT_BY_ME_INTRO = "I came up hands-on at the camera, shooting and editing short-form for Adobe's channels, and these are the videos I've cut myself. The NAB recap went out the same day, cut on site between sessions. The emoji reaction format I built and cut first, then it ran again at NAB and Summit.";
 const BUCKET_INTROS = {
   [SHELF_HOSTING]: capBody("On-Camera Hosting & Producing"),          // carried over from Hosted on Camera
   [typeLabel("Off the Clock")]: capBody("Staying Busy Off The Clock"), // carried over from Off the Clock
@@ -1525,24 +1502,7 @@ const BUCKET_INTROS = {
 // So this is the brief, not the copy. It is what every layout call on this site
 // should be measured against, and it must RENDER NOWHERE — nothing reads it,
 // and putting it back on screen reverses his decision.
-const DESIGN_NORTH_STAR = ["Creative.", "Organized.", "Easy to work with."];
-
-// ===== MEANING PICKS (Aug 10 2026) — Miles's Tyler-homework answer =====
-// Tyler's note was that a portfolio should say which pieces MATTER to the maker,
-// not just which ones performed. Asked for his, he named three. Recorded here
-// verbatim and keyed to the exact reel titles in the data, so the future
-// curation surface can look them up the same way every other surface does
-// (by title, never by hardcoded index).
-// RENDERS NOWHERE TONIGHT — on purpose. This is the answer captured before it
-// gets lost; the surface that shows it is a later decision, and inventing one
-// now would put copy on the site he has not seen. Oct 10 2026: the feed reads it
-// (feedDoors seeds each door with these first); no words from it render.
-// His note on the second pick, verbatim: "the IBC emoji format".
-const MEANING_PICKS = [
-  "’25 MAX: Mark Rober’s Creator Assignment",
-  "’24 IBC: Premiere Pro AI: Emoji Reactions",
-  "San Jose Semaphore",
-];
+// const DESIGN_NORTH_STAR = ["Creative.", "Organized.", "Easy to work with."];
 
 // Phase-1 deep-links: #/case/<slug> opens one reel playing. The slug is DERIVED
 // from the reel title (never hardcoded) so links track the data. First title wins
@@ -1636,7 +1596,6 @@ const REEL_DESCS = {
   "’25 NAB: Premiere Pro Releases": "Brewing groundbreaking innovations = our cup of tea. Steep yourself in all the NAB buzz as we recap your favorite new features.",
   "’25 NAB: Generative Extend Demo": "Adobe content producers, they're just like us. We all need a little Generative Extend sometimes.",
   "’25 NAB: Event Coverage": "Out: Scouring your media library for a misplaced shot. In: Empowering your editing workflow with Media Intelligence. Using casual language, you can search for filmed subject matter, video specs, and more.",
-  "Cannes Lions Firefly Feature": "Cannes we just take a moment? Take a look back at Firefly's Creator Beach at.",
   "Firefly Interview Demo": "Current office mood: excitedly experimenting with the new Firefly Video Model. Go behind the curtain as the team generates powerful outputs with Text-to-Video and Image-to-Video, coming soon to beta.",
   "Creative Cloud for Students Black Friday Discount": "Deal Alert! Unlock 70% OFF @AdobeCreativeCloud with your student email.",
   "Russell Preston Brown Employee Spotlight": "Meet Russell Preston Brown, Senior Principal Designer, who has worked at Adobe for 41 years! Outside the office, Russell is a costume maker, designer, and photographer.",
@@ -1702,8 +1661,8 @@ const REEL_WHY = {
 // be a case, so down there it is a link, not a claim.
 //
 // WHAT LEFT THIS SLOT: the full 23-playlist WorkPlayer and the four shelf
-// carousels. Neither was deleted — both still render at #/playlist, which is now
-// the only place the Spotify shell lives. The homepage had been showing the
+// carousels. Both were deleted in the Tyler build (Nov 20 2026); #/playlist now
+// redirects to #/work. The homepage had been showing the
 // entire library twice over before a reader had been given a reason to care
 // about any single piece of it.
 //
@@ -2460,427 +2419,6 @@ function EqBars() {
   );
 }
 
-function SideRow({ ev, active, isSourceOfAudio, onClick }) {
-  const [h, setH] = useState(false);
-  return (
-    <button className="sp-side-row" onClick={onClick} onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left",
-        padding: 8, borderRadius: 10, border: "none", cursor: "pointer", fontFamily: F,
-        background: active ? "rgba(var(--c-ink-rgb),0.08)" : h ? "rgba(var(--c-ink-rgb),0.04)" : "transparent",
-        transition: "background 0.15s",
-      }}>
-      <span style={{ width: 44, height: 44, borderRadius: 8, flexShrink: 0, background: gradFor(ev.idx), overflow: "hidden" }}>
-        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-      </span>
-      <span style={{ minWidth: 0, flex: 1 }}>
-        <span style={{ display: "block", fontSize: 13.5, fontWeight: 600, color: isSourceOfAudio ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-        <span style={{ display: "block", fontSize: 11.5, color: C.gray, marginTop: 2 }}>
-          {ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
-      </span>
-      {isSourceOfAudio && <EqBars />}
-    </button>
-  );
-}
-
-function TrackRow({ reel, i, active, playing, onPlay }) {
-  const [h, setH] = useState(false);
-  return (
-    <div role="button" tabIndex={0} onClick={onPlay} onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPlay(); } }}
-      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, alignItems: "center",
-        padding: "8px 12px", borderRadius: 8, cursor: "pointer",
-        background: h ? "rgba(var(--c-ink-rgb),0.07)" : active ? "rgba(var(--c-ink-rgb),0.06)" : "transparent",
-        transition: "background 0.15s",
-      }}>
-      <span style={{ fontFamily: F, fontSize: 13, color: C.gray, textAlign: "center" }}>
-        {active && playing ? <EqBars /> : h ? <IcPlay s={11} c={C.white} /> : i + 1}
-      </span>
-      <Thumb reel={reel} />
-      <span style={{ minWidth: 0 }}>
-        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: active ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
-        {/* Flex, not one nowrap span: the chips keep their full width and the
-            handle line ellipsizes around them (a clipped "Cut my" is a lie).
-            Wrapping (Aug 10): with up to four chips on a row, the handle line
-            takes the next line rather than collapsing to nothing. */}
-        <span style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, marginTop: 2, minWidth: 0 }}>
-          <CreditChip reel={reel} />
-          <span style={{ fontFamily: F, fontSize: 12, color: C.gray, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>{subTag(reel)}</span>
-        </span>
-      </span>
-      <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <a href={reel.postUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} title={`Open on ${platformOf(reel)}`} className="tracklist-ig"
-          style={{ fontFamily: F, fontSize: 12, color: C.gray, textDecoration: "none", padding: "6px", minWidth: 24, textAlign: "center", opacity: h ? 1 : 0, transition: "opacity 0.15s" }}
-          onMouseEnter={e => e.target.style.color = C.mint} onMouseLeave={e => e.target.style.color = C.gray}
-        >↗</a>
-        <span className="track-plays" style={{ fontFamily: F, fontSize: 13, color: active ? C.mint : C.gray, fontVariantNumeric: "tabular-nums", minWidth: 52, textAlign: "right" }}>{playsLabel(reel)}</span>
-      </span>
-    </div>
-  );
-}
-
-function PlayerBar({ cur, eventName, playing, prog, dur, muted, onToggle, onStep, onSeek, onMute }) {
-  const pct = dur ? (prog / dur) * 100 : 0;
-  return (
-    <div className="sp-bar" style={{ borderTop: `1px solid ${C.border}`, background: "rgba(var(--c-bg-rgb),0.85)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", padding: "10px 16px", display: "grid", gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)", alignItems: "center", gap: 12 }}>
-      {/* Left: track + "artist" */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-        {cur ? (
-          <>
-            <Thumb reel={cur} size={48} radius={8} />
-            <div style={{ minWidth: 0 }}>
-              <p style={{ fontFamily: F, fontSize: 13.5, fontWeight: 600, color: C.white, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{cur.title}</p>
-              <p style={{ fontFamily: F, fontSize: 11.5, color: C.gray, margin: "2px 0 0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{eventName}</p>
-            </div>
-          </>
-        ) : (
-          <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0 }}>Pick a video · {TOTAL_REELS} in the library</p>
-        )}
-      </div>
-      {/* Center: transport + progress */}
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <button onClick={() => onStep(-1)} disabled={!cur} aria-label="Previous reel" style={{ background: "none", border: "none", cursor: cur ? "pointer" : "default", opacity: cur ? 0.85 : 0.3, padding: 4 }}><IcPrev /></button>
-          <button onClick={onToggle} disabled={!cur} aria-label={playing ? "Pause" : "Play"}
-            style={{ width: 36, height: 36, borderRadius: "50%", background: cur ? C.mint : "rgba(var(--c-ink-rgb),0.15)", border: "none", cursor: cur ? "pointer" : "default", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.15s" }}
-            onMouseEnter={e => { if (cur) e.currentTarget.style.transform = "scale(1.08)"; }}
-            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
-            {playing ? <IcPause s={13} /> : <IcPlay s={13} />}
-          </button>
-          <button onClick={() => onStep(1)} disabled={!cur} aria-label="Next reel" style={{ background: "none", border: "none", cursor: cur ? "pointer" : "default", opacity: cur ? 0.85 : 0.3, padding: 4 }}><IcNext /></button>
-        </div>
-        <div className="sp-progress" style={{ display: "flex", alignItems: "center", gap: 8, width: "min(38vw, 420px)" }}>
-          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums", width: 30, textAlign: "right" }}>{fmtTime(prog)}</span>
-          <div onClick={cur ? onSeek : undefined} role="slider" aria-label="Seek" aria-valuemin={0} aria-valuemax={Math.round(dur || 0)} aria-valuenow={Math.round(prog || 0)}
-            style={{ flex: 1, height: 4, borderRadius: 2, background: "rgba(var(--c-ink-rgb),0.15)", cursor: cur ? "pointer" : "default", position: "relative" }}>
-            <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${pct}%`, borderRadius: 2, background: C.mint }} />
-          </div>
-          <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, fontVariantNumeric: "tabular-nums", width: 30 }}>{fmtTime(dur)}</span>
-        </div>
-      </div>
-      {/* Right: volume + IG */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 14 }}>
-        <button onClick={onMute} aria-label={muted ? "Unmute" : "Mute"} style={{ background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex" }}><IcVol muted={muted} /></button>
-        {cur && (
-          <a className="sp-ig-link" href={cur.postUrl} target="_blank" rel="noopener noreferrer"
-            style={{ fontFamily: F, fontSize: 11.5, fontWeight: 600, color: C.gray, textDecoration: "none", border: `1px solid ${C.border}`, padding: "6px 12px", borderRadius: 100, whiteSpace: "nowrap", transition: "color 0.15s, border-color 0.15s" }}
-            onMouseEnter={e => { e.target.style.color = C.mint; e.target.style.borderColor = "rgba(var(--c-ink-rgb),0.3)"; }}
-            onMouseLeave={e => { e.target.style.color = C.gray; e.target.style.borderColor = C.border; }}
-          ><span className="sp-ig-label">Open on {platformOf(cur)} </span>↗</a>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// The Work Playlist (on #/playlist only since Aug 11 2026). The old `bucket` prop that scoped this player to
-// one type bucket was RETIRED Aug 9 2026: #/work/<bucket> is now the Navin page
-// (BucketPage), which needs no sidebar, no second Now Playing pane and no
-// transport bar. This component is the single-page player and nothing else.
-function WorkPlayer() {
-  const rows = eventStats;
-  // Opening playlist, a derived rule (Sep 26 2026): open on the
-  // playlist with the MOST TOTAL PLAYS among events whose BUCKET_OF is not
-  // "Off the Clock". Never "newest first": adding a small new event must not
-  // change what the page opens on.
-  const [libIdx, setLibIdx] = useState(() => {
-    return eventStats.filter(ev => BUCKET_OF[ev.event] !== "Off the Clock")
-      .reduce((a, b) => (b.totalPlays > a.totalPlays ? b : a)).idx;
-  });
-  const [track, setTrack] = useState(null); // { e, r } indices into portfolio
-  const [playing, setPlaying] = useState(false);
-  const [prog, setProg] = useState(0);
-  const [dur, setDur] = useState(0);
-  // Start muted (Miles Jul 4): autoplay never surprises with sound; the bar unmutes and it sticks.
-  const [muted, setMuted] = useState(true);
-  const [vidErr, setVidErr] = useState(false);
-  const vidRef = useRef(null);
-  const shellRef = useRef(null);
-
-  const cur = track ? portfolio[track.e].reels[track.r] : null;
-  const viewing = eventStats[libIdx];
-  // "Your Library" totals describe what this sidebar actually holds (derived).
-  const sideReels = TOTAL_REELS;
-  const sidePlays = TOTAL_PLAYS;
-
-  const playTrack = (e, r) => { setVidErr(false); setProg(0); setDur(0); setTrack({ e, r }); };
-
-  // Hero carousel / capability cards dispatch ms-play to deep-link into the library
-  useEffect(() => {
-    const h = (ev) => { setLibIdx(ev.detail.e); setVidErr(false); setProg(0); setDur(0); setTrack({ e: ev.detail.e, r: ev.detail.r }); };
-    window.addEventListener("ms-play", h);
-    // A request parked by goPlay before this player existed (Aug 11): the link
-    // that fired it was on another route, so there was no listener to hear it.
-    // Consumed exactly once.
-    if (PENDING_PLAY) { const p = PENDING_PLAY; PENDING_PLAY = null; h({ detail: p }); }
-    return () => window.removeEventListener("ms-play", h);
-  }, []);
-
-  // #/case/<slug> deep-link: play the matching reel on initial load + on hash
-  // change, reusing the ms-play path. Unknown slug = no-op. Must sit AFTER the
-  // ms-play listener above so it's registered before the on-load dispatch.
-  useEffect(() => {
-    const open = () => {
-      const hit = caseFromHash();
-      if (!hit) return;
-      document.getElementById("work")?.scrollIntoView({ behavior: "smooth" });
-      window.dispatchEvent(new CustomEvent("ms-play", { detail: hit }));
-      // Cold load: images/videos above #work land AFTER this scroll and push the
-      // player down the page, so re-aim once everything has its real height.
-      window.addEventListener("load", () => document.getElementById("work")?.scrollIntoView(), { once: true });
-    };
-    open();
-    window.addEventListener("hashchange", open);
-    return () => window.removeEventListener("hashchange", open);
-  }, []);
-
-  // Reflect the open reel into the URL so the link is copy-pasteable.
-  // replaceState (not location.hash) => no hashchange loop, no history spam.
-  useEffect(() => {
-    if (!track) return;
-    const slug = slugify(portfolio[track.e].reels[track.r].title);
-    if (slug) history.replaceState(null, "", `#/case/${slug}`);
-  }, [track]);
-
-  // Single <video> is the source of truth; on track change, load + play.
-  useEffect(() => {
-    const v = vidRef.current;
-    if (!v || !cur) return;
-    v.load();
-    const p = v.play();
-    if (p && p.catch) p.catch(() => {});
-  }, [track]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const toggle = () => { const v = vidRef.current; if (!v || !cur) return; if (v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause(); };
-  const step = (d) => { if (!track) return; const list = portfolio[track.e].reels; const n = track.r + d; if (n >= 0 && n < list.length) playTrack(track.e, n); };
-  const seek = (ev) => { const v = vidRef.current; if (!v || !dur) return; const rect = ev.currentTarget.getBoundingClientRect(); v.currentTime = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width)) * dur; };
-  const openEvent = (i) => { setLibIdx(i); if (shellRef.current) shellRef.current.scrollIntoView({ behavior: "smooth", block: "start" }); };
-
-  return (
-    <>
-      {/* Player shell */}
-      <FadeIn>
-        <div ref={shellRef} className="sp-shell" style={{ border: `1px solid ${C.border}`, borderRadius: 18, overflow: "hidden", background: "var(--c-shell)", boxShadow: "0 24px 80px rgba(0,0,0,0.5)" }}>
-          <div className="sp-body">
-            {/* Sidebar — Your Library */}
-            <aside className="sp-side">
-              <div style={{ padding: "16px 16px 10px", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-                <span style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white }}>Your Library</span>
-                <span style={{ fontFamily: F, fontSize: 10.5, color: C.gray, whiteSpace: "nowrap" }}>{sideReels} videos · {fmtPlays(sidePlays)} plays</span>
-              </div>
-              <div className="sp-side-list">
-                {rows.map((ev, n) => (
-                  <Fragment key={ev.event}>
-                    {/* Type-bucket dividers (Miles's 4 buckets). */}
-                    {(n === 0 || BUCKET_OF[rows[n - 1].event] !== BUCKET_OF[ev.event]) && (
-                      <div className="sp-side-divider" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 8px 4px", flexShrink: 0 }}>
-                        <span style={{ fontFamily: F, fontSize: 10, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: 2, whiteSpace: "nowrap" }}>{typeLabel(BUCKET_OF[ev.event])}</span>
-                        <span style={{ flex: 1, height: 1, background: C.border }} />
-                      </div>
-                    )}
-                    <SideRow ev={ev} active={ev.idx === libIdx} isSourceOfAudio={!!track && track.e === ev.idx && playing} onClick={() => setLibIdx(ev.idx)} />
-                  </Fragment>
-                ))}
-              </div>
-            </aside>
-
-            {/* Detail panel — album view */}
-            <main className="sp-main">
-              <div style={{ padding: "28px 24px 20px", display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 20, background: `linear-gradient(180deg, color-mix(in srgb, ${GRADS[viewing.idx % GRADS.length][0]} var(--c-tint), transparent), rgba(13,13,13,0) 96%)` }}>
-                <span className="sp-cover" style={{ width: 120, height: 120, borderRadius: 12, flexShrink: 0, background: gradFor(viewing.idx), overflow: "hidden", boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>
-                  <img src={viewing.cover} alt="" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-                </span>
-                <div style={{ minWidth: 0 }}>
-                  <span style={{ fontFamily: F, fontSize: 10.5, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 2 }}>Playlist</span>
-                  <h3 style={{ fontFamily: F, fontSize: "clamp(24px, 3.4vw, 44px)", fontWeight: 800, color: C.white, margin: "4px 0 8px", letterSpacing: -1, lineHeight: 1.05 }}>{viewing.event}</h3>
-                  {viewing.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: "rgba(var(--c-ink-rgb),0.85)", margin: "0 0 5px" }}>{viewing.role} by Miles Spearman</p>}
-                  <p style={{ fontFamily: F, fontSize: 12.5, color: C.gray, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{viewing.event} · {viewing.reels.length} {viewing.reels.length === 1 ? "video" : "videos"}{viewing.totalPlays > 0 ? ` · ${fmtPlays(viewing.totalPlays)} plays` : ""}{viewing.window ? ` · ${viewing.window}` : ""}{EVENT_PARTNERS[viewing.event] ? ` · with ${EVENT_PARTNERS[viewing.event]}` : ""}</p>
-                  {viewing.reels.some(r => !r.plays) && (
-                    <p style={{ fontFamily: F, fontSize: 11, color: C.gray, margin: "6px 0 0" }}>LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
-                  )}
-                </div>
-                {/* The MAX split is a paragraph, not a caption: it gets the full
-                    header width (last child, 100% basis) instead of towering in
-                    the text column beside the cover. Never truncated. */}
-                {/* MAX render site 1 of 2. MAX_CASE_PARAS (Aug 11) = his goal
-                    clause + the split, so the clause opens the MAX case here
-                    exactly as it does on the role pages. */}
-                {MAX_SPLIT_PLAYLISTS.includes(viewing.event) && (
-                  <Prose text={MAX_CASE_PARAS} style={{ flexBasis: "100%", margin: "14px 0 0" }} />
-                )}
-              </div>
-              <div style={{ padding: "12px 24px 8px" }}>
-                <button onClick={() => playTrack(viewing.idx, 0)} aria-label={`Play ${viewing.event}`}
-                  style={{ width: 48, height: 48, borderRadius: "50%", background: C.mint, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 6px 24px ${alpha(C.mint, 21)}`, transition: "transform 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.transform = "scale(1.06)"}
-                  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}>
-                  <IcPlay s={17} />
-                </button>
-              </div>
-              {/* Track list */}
-              <div style={{ padding: "4px 12px 20px" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "26px 44px minmax(0,1fr) auto", gap: 12, padding: "4px 12px 8px", borderBottom: `1px solid ${C.border}`, marginBottom: 6 }}>
-                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, textAlign: "center" }}>#</span>
-                  <span />
-                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase" }}>Title</span>
-                  <span style={{ fontFamily: F, fontSize: 11, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase" }}>Plays</span>
-                </div>
-                {viewing.groupBy === "year-channel" ? (() => {
-                  // Miles's In-House layout: year (desc) -> channel sections,
-                  // all derived from each reel's sub string. Numbering restarts
-                  // per channel; original indices keep playback wiring intact.
-                  const byYear = new Map();
-                  viewing.reels.forEach((r, i) => {
-                    const y = new Date(reelDate(r)).getFullYear() || 0;
-                    const h = handleTag(r);
-                    if (!byYear.has(y)) byYear.set(y, new Map());
-                    const ch = byYear.get(y);
-                    if (!ch.has(h)) ch.set(h, []);
-                    ch.get(h).push({ r, i });
-                  });
-                  return [...byYear.entries()].sort((a, b) => b[0] - a[0]).map(([year, channels]) => (
-                    <div key={year}>
-                      <div style={{ fontFamily: F, fontSize: 13, fontWeight: 800, color: C.white, letterSpacing: 1, padding: "18px 12px 2px" }}>{year || "Undated"}</div>
-                      {[...channels.entries()].map(([handle, items]) => (
-                        <div key={handle}>
-                          <div style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.mint, letterSpacing: 1, padding: "10px 12px 4px" }}>{handle}</div>
-                          {items.map(({ r, i }, n) => (
-                            <TrackRow key={r.postUrl} reel={r} i={n}
-                              active={!!track && track.e === viewing.idx && track.r === i}
-                              playing={playing}
-                              onPlay={() => playTrack(viewing.idx, i)} />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  ));
-                })() : viewing.reels.map((r, i) => (
-                  <TrackRow key={r.postUrl} reel={r} i={i}
-                    active={!!track && track.e === viewing.idx && track.r === i}
-                    playing={playing}
-                    onPlay={() => playTrack(viewing.idx, i)} />
-                ))}
-              </div>
-            </main>
-
-            {/* Now Playing — the one real <video> */}
-            {cur && (
-              <div className="sp-now">
-                <p style={{ fontFamily: F, fontSize: 11, fontWeight: 600, color: C.gray, letterSpacing: 1.5, textTransform: "uppercase", margin: "0 0 10px" }}>Now Playing</p>
-                <div className={cur.landscape ? "sp-now-ls" : ""} style={{ position: "relative" }}>
-                  {/* A watch-only row has no file to mount, so the poster +
-                      watch button stands in for the player. The transport bar
-                      below keeps working on the rest of the playlist. */}
-                  {watchOnly(cur) ? <WatchFrame reel={cur} /> : (
-                  <video
-                    ref={vidRef}
-                    src={srcOf(cur)}
-                    poster={thumbOf(cur)}
-                    playsInline
-                    muted={muted}
-                    preload="metadata"
-                    onClick={toggle}
-                    onPlay={() => setPlaying(true)}
-                    onPause={() => setPlaying(false)}
-                    onTimeUpdate={e => setProg(e.target.currentTime)}
-                    onLoadedMetadata={e => setDur(e.target.duration)}
-                    onEnded={() => step(1)}
-                    onError={() => { setVidErr(true); setPlaying(false); }}
-                    style={{ width: "100%", aspectRatio: cur && cur.landscape ? "16 / 9" : "9 / 16", objectFit: cur && cur.landscape ? "contain" : "cover", borderRadius: 12, background: "#000", cursor: "pointer", display: "block" }}
-                  />
-                  )}
-                  {vidErr && !watchOnly(cur) && (
-                    <div style={{ position: "absolute", inset: 0, borderRadius: 12, background: "rgba(10,10,10,0.88)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 20, textAlign: "center" }}>
-                      <span style={{ fontSize: 26 }}>🎬</span>
-                      <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: 0, lineHeight: 1.5 }}>This file hasn't landed on the server yet.</p>
-                      <a href={cur.postUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", minHeight: 44, textDecoration: "none" }}><span style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.bg, background: C.mint, padding: "8px 18px", borderRadius: 100 }}>Watch on {platformOf(cur)} ↗</span></a>
-                    </div>
-                  )}
-                </div>
-                <p style={{ fontFamily: F, fontSize: 14, fontWeight: 700, color: C.white, margin: "12px 0 2px" }}>{cur.title}</p>
-                <p style={{ fontFamily: F, fontSize: 12, color: C.gray, margin: 0 }}><CreditChip reel={cur} big />{subTag(cur)}</p>
-                <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{cur.role || EVENT_ROLES[portfolio[track.e].event] || ""}</p>
-              </div>
-            )}
-          </div>
-
-          <PlayerBar
-            cur={cur}
-            eventName={cur ? `${handleTag(cur)} · ${portfolio[track.e].event}` : ""}
-            playing={playing} prog={prog} dur={dur} muted={muted}
-            onToggle={toggle} onStep={step} onSeek={seek} onMute={() => setMuted(m => !m)}
-          />
-        </div>
-      </FadeIn>
-    </>
-  );
-}
-
-// ===== PLAYLIST SHELF — Your Library as a Navin-style cover-card carousel =====
-// `inPage` = this shelf is rendered on the #/playlist PAGE rather than the
-// homepage. Same card, same select path (the ms-play event the player already
-// listens for); the only difference is that the anchor must NOT navigate. On
-// the homepage `href="#/work"` is a real in-page jump, but on a page route it
-// would set the hash to "#work", which routeFromHash reads as "home" and would
-// tear the player down mid-select. So in-page clicks preventDefault and scroll
-// the player into view by hand (the same path goPlay takes).
-function ShelfCard({ ev, inPage = false }) {
-  const [h, setH] = useState(false);
-  return (
-    <a href="#/work"
-      onClick={(e) => {
-        if (inPage) {
-          e.preventDefault();
-          (document.getElementById("playlist-player") || document.getElementById("work"))?.scrollIntoView({ behavior: "smooth" });
-        }
-        window.dispatchEvent(new CustomEvent("ms-play", { detail: { e: ev.idx, r: 0 } }));
-      }}
-      onMouseEnter={() => setH(true)} onMouseLeave={() => setH(false)}
-      style={{
-        textDecoration: "none", flexShrink: 0, width: 200, scrollSnapAlign: "start",
-        background: h ? "rgba(var(--c-ink-rgb),0.07)" : "rgba(var(--c-ink-rgb),0.03)",
-        border: `1px solid ${h ? "rgba(var(--c-ink-rgb),0.25)" : C.border}`, borderRadius: 14, padding: 14,
-        transform: h ? "translateY(-5px)" : "none", transition: "all 0.25s", display: "block",
-      }}>
-      <span style={{ display: "block", width: "100%", aspectRatio: "1", borderRadius: 10, overflow: "hidden", background: gradFor(ev.idx), position: "relative" }}>
-        <img src={ev.cover} alt="" loading="lazy" onError={e => { e.target.style.display = "none"; }} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 20%", display: "block" }} />
-        <span className="shelf-card-play" style={{ position: "absolute", right: 10, bottom: 10, width: 42, height: 42, borderRadius: "50%", background: C.mint, display: "flex", alignItems: "center", justifyContent: "center", opacity: h ? 1 : 0, transform: h ? "translateY(0)" : "translateY(6px)", transition: "all 0.25s", boxShadow: `0 6px 24px ${alpha(C.mint, 31)}` }}><IcPlay s={16} /></span>
-      </span>
-      <span style={{ display: "block", marginTop: 12, fontFamily: F, fontSize: 14.5, fontWeight: 700, color: C.white, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.event}</span>
-      <span style={{ display: "block", marginTop: 4, fontFamily: F, fontSize: 11.5, color: C.gray }}>{ev.reels.length} {ev.reels.length === 1 ? "video" : "videos"}{ev.totalPlays > 0 ? ` · ${fmtPlays(ev.totalPlays)} plays` : ""}</span>
-    </a>
-  );
-}
-
-function ShelfRow({ title, items, inPage = false }) {
-  const rowRef = useRef(null);
-  const scroll = (d) => rowRef.current && rowRef.current.scrollBy({ left: d * 600, behavior: "smooth" });
-  return (
-    <div style={{ marginBottom: 34 }}>
-      <FadeIn>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: "clamp(24px, 5vw, 80px)", marginBottom: 16 }}>
-          <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3 }}>{title}</span>
-          <div style={{ display: "flex", gap: 8 }}>
-            {[["‹", -1], ["›", 1]].map(([glyph, d]) => (
-              <button key={glyph} className="shelf-arrow" onClick={() => scroll(d)} aria-label={`Scroll ${title} ${d < 0 ? "left" : "right"}`}
-                style={{ width: 34, height: 34, borderRadius: "50%", border: `1px solid ${C.border}`, background: "rgba(var(--c-ink-rgb),0.04)", color: C.white, fontFamily: F, fontSize: 18, cursor: "pointer", lineHeight: 1, transition: "background 0.2s" }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(var(--c-ink-rgb),0.12)"}
-                onMouseLeave={e => e.currentTarget.style.background = "rgba(var(--c-ink-rgb),0.04)"}
-              >{glyph}</button>
-            ))}
-          </div>
-        </div>
-      </FadeIn>
-      <FadeIn delay={0.08}>
-        <div ref={rowRef} className="shelf-row" style={{ display: "flex", gap: 16, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 8, paddingRight: "clamp(24px, 5vw, 80px)" }}>
-          {items.map(ev => <ShelfCard key={ev.event} ev={ev} inPage={inPage} />)}
-        </div>
-      </FadeIn>
-    </div>
-  );
-}
-
 // ===== CAREER TIMELINE — vertical spine, newest first, tap a node to play in place =====
 // ── Timeline expand: poster carousel (won the 3-way prototype). Tap a project →
 // swipe its reels as 9:16 posters, tap ▶ to play one inline; "Expand" opens a
@@ -3173,7 +2711,7 @@ function CareerTimeline() {
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
         <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Timeline</span>
         <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>The Work, In Order</h1>
-        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 20px 0", maxWidth: 520 }}>Every event and in-house project on one scroll. Tap a milestone to play it. Newest first.</p>
+        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 20px 0", maxWidth: 520 }}>Tap a milestone to play it. Newest first.</p>
       </FadeIn>
 
       {/* ===== Role filter — BUILT Aug 10 (was the deferred mount point) =====
@@ -3289,21 +2827,6 @@ function CareerTimeline() {
   );
 }
 
-// ===== #/playlist — the Work Playlist player as its own page =====
-// The Work Playlist shell at its own address, the only copy since Aug 11 2026 (the homepage
-// player and shelves were removed). Only ONE player ever mounts, because the
-// homepage sections don't render on a page route (the #/work pages already work
-// this way), so the player's single <video> stays single. `id="work"` is kept so
-// the player's own #/case scroll-into-view target exists here too.
-// Aug 10 rider (Miles, with screenshots of the four homepage shelves): "also the
-// playlist — add these cards to the playlist only tab of the website." So the
-// four library carousels render here too, BELOW the player: the player stays the
-// page's opening act and the shelves are the browse layer under it. Same
-// components, same copy, same derived count lines — the shelf takes one boolean
-// and nothing else changes.
-// The shelf is a SIBLING of the section, not a child: it draws its own left
-// padding and bleeds its rows off the right edge, which double-padding inside
-// the section would undo.
 // ===== THE FEED (Oct 6 2026): #/feed, a hidden page. No nav link, no home link. =====
 // Miles, Sep 26 2026, 3:16 AM (verbatim): "i think there's also a possibility of
 // making something where it looks like a scrolling so it's like, if you'd prefer
@@ -3349,9 +2872,9 @@ const feedDoors = () => {
     // Edited role color, so two doors read as one on the chooser; green sits apart from the five.
     { id: "off-the-clock", label: "Off the Clock", hue: "#3DDC97", test: x => BUCKET_OF[x.ev] === "Off the Clock" },
   ];
-  // His picks (MEANING_PICKS + the Set List reels) go in first, one per playlist,
-  // highest plays first among themselves; the round-robin fills the rest.
-  const picks = new Set([...MEANING_PICKS, ...Object.keys(SET_LIST_DESCS)]);
+  // His Set List picks go in first, one per playlist, highest plays first
+  // among themselves; the round-robin fills the rest.
+  const picks = new Set(Object.keys(SET_LIST_DESCS));
   const openers = new Set(), built = {};
   _feedDoors = defs.map(({ test, ...door }) => {
     const all = rows.filter(test).sort(byPlays);
@@ -3947,239 +3470,6 @@ function FeedEnd({ door, doors }) {
   );
 }
 
-function PlaylistPage() {
-  return (
-    <>
-    <section id="work" className="m-playtop" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 32px" }}>
-      <FadeIn>
-        {/* 44px tap target: goes back to the Work page (#/work). */}
-        <a href="#/work" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
-          onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
-        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>Portfolio</span>
-        <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 4.4vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work Playlist</h1>
-        {/* Same line as the homepage section, same deletion (panel review Aug 10). */}
-        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 32px 0", maxWidth: 500 }}>Real content from real campaigns: {TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays. Pick a playlist, press play.</p>
-      </FadeIn>
-
-      {/* id is the scroll target a shelf card below aims at, so picking a
-          playlist lands on the player itself rather than the page heading. */}
-      <div id="playlist-player"><WorkPlayer /></div>
-    </section>
-    <PlaylistShelf inPage />
-    </>
-  );
-}
-
-function PlaylistShelf({ inPage = false }) {
-  return (
-    <section id="library" style={{ padding: "8px 0 40px clamp(24px, 5vw, 80px)" }}>
-      {BUCKET_ORDER.map(b => (
-        <ShelfRow key={b} title={`${typeLabel(b)} Library`} items={eventStats.filter(ev => BUCKET_OF[ev.event] === b)} inPage={inPage} />
-      ))}
-    </section>
-  );
-}
-
-// ===== THE TYPE CUT (Sep 4 2026) — What I Do, inverted the way Miles asked =====
-// Aug 26, his words: "the colors that you used for event coverage (add
-// commercial), in house productions, off the clock, brand partnerships, etc.
-// should be the ones at top and then it goes into produced directed, etc.
-// inside of those blocks after we push into them." Aug 27: "yes hosting/talent
-// should be its own tab." One row per TYPE of work in its band hue, a fifth
-// row for every hosted reel across the types, role chips inside each row.
-// A pressed chip DIMS the cards that role does not cover; it never hides,
-// reorders, or scrolls (his UI law, Aug 26). A pressed tab keeps that row alone
-// under the tabs; pressing it again brings the rest back. Every number is
-// derived from the same rows the player uses. The mock this is built from:
-// research/mock-2026-08-26-type-cut-floating.html (v5.1, his three rulings in).
-const TYPE_CUT_HOSTING = "Hosting / Talent";
-const TYPE_CUT_SHOW = 10; // newest ten per row on the page; the rest live at #/kind/<slug>
-const TYPE_CUT = [
-  { key: "Event Coverage", label: typeLabel("Event Coverage"), hue: C.gold },
-  { key: "In-House Production", label: typeLabel("In-House Production"), hue: "#4EA8DE" },
-  { key: "Brand Partnerships", label: "Brand Partnerships", hue: "#FF6A38" },
-  { key: "Off the Clock", label: "Off the Clock", hue: "#9B7BFF" },
-  { key: TYPE_CUT_HOSTING, label: TYPE_CUT_HOSTING, hue: "#E667C0" },
-];
-// Newest first in every row.
-const _typeReels = portfolio
-  .flatMap(ev => ev.reels.map(r => ({ reel: r, type: BUCKET_OF[ev.event], roles: reelRoleTabs(r) })))
-  .sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
-// Kind pages (Miles, Sep 22 2026: "these naming things should be tappable to go to a page of work,
-// and then it should be separated by event etc. or by year"). Slug per row; the page groups the
-// row's reels by the playlist they came from, newest first, with each playlist's date window.
-const KIND_BY_SLUG = Object.fromEntries(TYPE_CUT.map(t => [bucketSlug(t.key), t]));
-const EVENT_OF_REEL = new Map();
-portfolio.forEach(ev => ev.reels.forEach(r => EVENT_OF_REEL.set(r, ev)));
-// The ten a row shows are picked across its pressable chips (newest first
-// within each chip), then laid out newest first. Newest-ten alone left the
-// hosting row all Event reels, so its In-House chip dimmed every card: a press
-// that lights nothing reads as broken. This way every chip you can press lights
-// at least one card, and the mock's mixed hosting row falls out of the data.
-const pickShown = (items, chips, n) => {
-  const live = chips.filter(c => c.count > 0);
-  const cap = Math.min(n, items.length);
-  if (!live.length) return items.slice(0, cap);
-  // Slots in proportion to each chip's count, at least one each, the rest by
-  // largest remainder: "Hosted 43" now shows its share of the ten, not two.
-  const total = live.reduce((sum, c) => sum + c.count, 0);
-  const ideal = live.map(c => c.count / total * cap);
-  const slots = ideal.map(v => Math.max(1, Math.floor(v)));
-  let left = cap - slots.reduce((sum, v) => sum + v, 0);
-  const byRemainder = live.map((c, k) => k).sort((a, b) => (ideal[b] - slots[b]) - (ideal[a] - slots[a]));
-  for (let i = 0; left > 0 && byRemainder.length; i = (i + 1) % byRemainder.length, left--) slots[byRemainder[i]]++;
-  while (left < 0) { slots[slots.indexOf(Math.max(...slots))]--; left++; }
-  const chosen = new Set();
-  live.forEach((c, k) => { let want = slots[k]; for (const x of items) { if (want <= 0) break; if (!chosen.has(x) && c.test(x)) { chosen.add(x); want--; } } });
-  for (const x of items) { if (chosen.size >= cap) break; chosen.add(x); }
-  return [...chosen].sort((a, b) => reelDate(b.reel) - reelDate(a.reel));
-};
-const TYPE_CUT_ROWS = TYPE_CUT.map(t => {
-  const hosting = t.key === TYPE_CUT_HOSTING;
-  const items = hosting ? _typeReels.filter(x => x.roles[3]) : _typeReels.filter(x => x.type === t.key);
-  // Inside a type row the chips are the five roles. Inside the hosting row
-  // they are the four types, so the same press shows where the hosting happened.
-  const chips = hosting
-    ? TYPE_CUT.slice(0, 4).map(u => ({ id: u.key, label: u.label, hue: u.hue, count: items.filter(x => x.type === u.key).length, test: (x) => x.type === u.key }))
-    : ROLE_TABS.map((name, n) => ({ id: name, label: name, hue: ROLE_TAB_COLORS[name], count: items.filter(x => x.roles[n]).length, test: (x) => x.roles[n] }));
-  return { ...t, items, shown: pickShown(items, chips, TYPE_CUT_SHOW), count: items.length, plays: items.reduce((sum, x) => sum + playsNum(x.reel.plays), 0), chips };
-});
-
-// Render order (Miles, Sep 22 2026: "move hosted / talent up to the top"): the hosting row leads, the four types follow.
-const TYPE_CUT_ROWS_ORDERED = [...TYPE_CUT_ROWS.filter(t => t.key === TYPE_CUT_HOSTING), ...TYPE_CUT_ROWS.filter(t => t.key !== TYPE_CUT_HOSTING)];
-const TC_MASK = "linear-gradient(90deg, transparent, black 4%, black 96%, transparent)";
-function TypeCard({ item, dim, tilt, copy = 0 }) {
-  const { reel } = item;
-  return (
-    <a className="tc-card" data-card="" data-dim={dim ? "1" : "0"} tabIndex={dim || copy === 1 ? -1 : 0} aria-hidden={copy === 1 ? "true" : undefined} data-type={item.type || ""} data-roles={item.roles.map((on, n) => on ? ROLE_TABS[n] : null).filter(Boolean).join("|")} href={caseHref(reel)} aria-label={`Play ${reel.title}`}
-      style={{ flex: "none", width: 150, display: "block", background: "#FFFFFF" /* polaroid card */, padding: "5px 5px 4px", borderRadius: 8, boxShadow: "0 6px 18px rgba(0,0,0,0.45)", transform: `rotate(${tilt}deg)`, opacity: dim ? 0.14 : 1, pointerEvents: dim ? "none" : undefined, textDecoration: "none" }}>
-      <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
-        style={{ width: "100%", aspectRatio: "3 / 4", objectFit: "cover", borderRadius: 5, display: "block", background: "#e6e6e6" }}
-        onError={e => { e.currentTarget.style.visibility = "hidden"; }} />
-      <span style={{ display: "block", padding: "5px 3px 3px" }}>
-        <span className="tc-title" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", fontFamily: F, fontSize: 9.5, lineHeight: 1.25, color: "#111", fontWeight: 600 }}>{reel.title}</span>
-        <span className="tc-plays" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontFamily: F, fontSize: 9, color: "#555", marginTop: 3, fontWeight: 600, fontVariantNumeric: "tabular-nums" }}><IcPlay s={8} c="#555" />{playsLabel(reel)} plays</span>
-      </span>
-    </a>
-  );
-}
-
-function TypeRow({ row, hidden }) {
-  const [lens, setLens] = useState(null);
-  const ref = useRef(null);
-  useDriftScroll(ref, 70);
-  const show = row.shown;
-  const active = row.chips.find(c => c.id === lens) || null;
-  // Two copies only when one does not fit the screen: six Brand cards on a wide
-  // screen showed the same six twice (rambling + design checks, Sep 4 2026).
-  const copies = show.length * (150 + 18) > (typeof window !== "undefined" ? window.innerWidth : 1280) ? [0, 1] : [0];
-  // A pressed chip brings the first card it lights into the track's view, so
-  // the press shows its effect at once, on a phone that shows two cards at a time
-  // as much as on a desktop (his UI law). Inside the track only; the page never moves.
-  useEffect(() => {
-    const el = ref.current; if (!el || !lens) return;
-    const first = el.querySelector('[data-copy="0"] [data-card][data-dim="0"]');
-    if (!first) return;
-    const pad = parseFloat(getComputedStyle(el.firstElementChild).paddingLeft) || 0;
-    el.scrollLeft = Math.max(0, first.getBoundingClientRect().left - el.getBoundingClientRect().left + el.scrollLeft - pad);
-  }, [lens]);
-  return (
-    <div data-type-row={row.key} hidden={hidden} style={{ marginBottom: 30 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 12 }}>
-        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", minHeight: 44, margin: "-11.5px 0" }}><b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white, borderLeft: `10px solid ${row.hue}`, paddingLeft: 10 }}>{row.label}</b></a>
-        <span style={{ fontFamily: F, fontSize: 12, color: "var(--c-meta)", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays</span>
-        <span className="tc-chips" style={{ display: "flex", gap: 6, flexWrap: "wrap", marginLeft: "auto" }}>
-          {/* Only the roles he has on this type's reels: a "Hosted 0" chip on a
-              six-reel row advertised an absence (recruiter check, Sep 4 2026).
-              12px is the site's own floor for role words (see the track list). */}
-          {row.chips.filter(c => c.count > 0).map(c => {
-            const on = lens === c.id;
-            return (
-              <button key={c.id} type="button" data-role-chip={c.id} aria-pressed={on}
-                onClick={() => setLens(on ? null : c.id)}
-                style={{ fontFamily: F, fontSize: 12, fontWeight: 600, padding: "6px 10px", minHeight: 30, borderRadius: 999, cursor: "pointer",
-                  border: `1px solid ${on ? c.hue : "var(--c-chipLine)"}`, background: on ? c.hue : "var(--c-pop)", color: on ? "#111" : "var(--c-chipInk)" }}>
-                {c.label}<span style={{ marginLeft: 5, color: on ? "#111" : "var(--c-meta2)", fontVariantNumeric: "tabular-nums" }}>{c.count}</span>
-              </button>
-            );
-          })}
-        </span>
-      </div>
-      <div ref={ref} className="marquee-scroll" style={{ overflowX: "auto", overflowY: "hidden", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch", scrollbarWidth: "none", msOverflowStyle: "none", margin: "0 calc(-1 * clamp(24px, 5vw, 80px))", maskImage: TC_MASK, WebkitMaskImage: TC_MASK }}>
-        <div style={{ display: "flex", width: "max-content", padding: "8px clamp(24px, 5vw, 80px) 12px" }}>
-          {copies.map(copy => (
-            <div key={copy} data-copy={copy} style={{ display: "flex", gap: 18, paddingRight: 18 }}>
-              {show.map((item, i) => <TypeCard key={`${copy}-${item.reel.postUrl || item.reel.title}`} item={item} copy={copy} dim={!!active && !active.test(item)} tilt={i % 2 ? 1.4 : -1.6} />)}
-            </div>
-          ))}
-        </div>
-      </div>
-      {row.count > show.length ? (
-        <a href={`#/kind/${bucketSlug(row.key)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 12, color: "var(--c-meta2)", textDecoration: "none", margin: 0 }}>+ {row.count - show.length} more →</a>
-      ) : <span aria-hidden="true" style={{ display: "block", minHeight: 44 }} />}
-    </div>
-  );
-}
-
-// ===== KIND PAGE (Sep 22 2026) — one What I Do row, every reel, grouped by playlist, newest first =====
-function KindPage({ slug }) {
-  const t = KIND_BY_SLUG[slug];
-  const row = t ? TYPE_CUT_ROWS.find(r => r.key === t.key) : null;
-  useEffect(() => { if (!t) return; const old = document.title; document.title = `${t.label} | Miles Spearman`; return () => { document.title = old; }; }, [t && t.label]);
-  if (!t || !row) return null;
-  const groups = [];
-  row.items.forEach(x => {
-    const ev = EVENT_OF_REEL.get(x.reel); if (!ev) return;
-    let g = groups.find(g => g.ev === ev); if (!g) { g = { ev, items: [] }; groups.push(g); }
-    g.items.push(x);
-  });
-  return (
-    <section style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
-      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-        {/* 44px tap target, the Timeline back-link pattern (Sep 26 2026): back to
-            the homepage What I Do section, the row this page opened from. */}
-        <a href="#what-i-do" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
-          onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← Back</a>
-        <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>What I Do</span>
-        <h1 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5, borderLeft: `10px solid ${t.hue}`, paddingLeft: 14, lineHeight: 1.1 }}>{t.label}</h1>
-        <p style={{ fontFamily: F, fontSize: 13, color: "var(--c-meta)", margin: "0 0 10px 0", fontVariantNumeric: "tabular-nums" }}>{row.count} videos · {fmtPlays(row.plays)} plays · newest first</p>
-        {groups.map(g => (
-          <div key={g.ev.event} style={{ marginTop: 40 }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap", marginBottom: 14 }}>
-              <b style={{ fontFamily: F, fontSize: 17, fontWeight: 800, color: C.white }}>{g.ev.event}</b>
-              <span style={{ fontFamily: F, fontSize: 12, color: "var(--c-meta)", fontVariantNumeric: "tabular-nums" }}>{g.items.length} {g.items.length === 1 ? "video" : "videos"} · {fmtWindow({ reels: g.items.map(x => x.reel) })}</span>
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 18, padding: "6px 0 10px" }}>
-              {g.items.map((x, i) => <TypeCard key={x.reel.postUrl || x.reel.title} item={x} dim={false} tilt={(i % 2 ? 1 : -1) * 0.6} />)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function TypeCut() {
-  const [focus, setFocus] = useState(null);
-  return (
-    <div data-type-cut="">
-      <div className="tc-tabs" style={{ display: "flex", flexWrap: "wrap", gap: 12, marginBottom: 26 }}>
-        {TYPE_CUT_ROWS_ORDERED.map(t => {
-          const on = focus === t.key;
-          return (
-            <button key={t.key} type="button" className="tc-tab" data-type-tab={t.key} aria-pressed={on} onClick={() => setFocus(on ? null : t.key)}
-              style={{ fontFamily: F, textAlign: "left", cursor: "pointer", minHeight: 44, background: on ? `${t.hue}29` : "var(--c-card)", border: `1.5px solid ${on ? t.hue : "var(--c-line)"}`, borderLeft: `10px solid ${t.hue}`, borderRadius: 14, padding: "12px 16px", color: C.white }}>
-              <b style={{ display: "block", fontSize: 14.5, fontWeight: 700 }}>{t.label}</b>
-              <span style={{ fontSize: 11.5, color: "var(--c-meta)", fontVariantNumeric: "tabular-nums" }}>{t.count} videos · {fmtPlays(t.plays)}</span>
-            </button>
-          );
-        })}
-      </div>
-      {TYPE_CUT_ROWS_ORDERED.map(t => <TypeRow key={t.key} row={t} hidden={!!focus && focus !== t.key} />)}
-    </div>
-  );
-}
-
 function RoleCardGrid() {
   const gridRef = useRef(null);
   usePlayWhenVisible(gridRef);          // offscreen cards stop decoding
@@ -4196,16 +3486,14 @@ function RoleCardGrid() {
 // chapter's page, `#/work/<chapter-slug>/watch/<case-slug>` = that chapter's swipe
 // feed starting on that video, `#/case/<slug>` = one video's own page,
 // `#/timeline` = the career timeline, `#/feed(/door)` = the Feed.
-// Tyler build (Nov 20 2026): the Work Playlist player is gone, so `#/playlist`
-// and anything under it is rewritten to `#/work` (replaceState, so the back
-// button never lands on a dead address). An unknown case slug still falls
-// through to the homepage, never a 404.
-const legacyHash = (h) => /^#\/playlist(?:[\/?#].*)?$/.test(h);
+// Tyler build (Nov 20 2026): the Work Playlist player and the What I Do kind
+// pages are gone, so `#/playlist` and `#/kind`, and anything under either, are
+// rewritten to `#/work` (replaceState, so the back button never lands on a dead
+// address). An unknown case slug still falls through to the homepage, never a 404.
+const legacyHash = (h) => /^#\/(?:playlist|kind)(?:[\/?#].*)?$/.test(h);
 const routeFromHash = () => {
   const h = window.location.hash || "";
   if (legacyHash(h)) return { kind: "work", bucket: null };
-  const kp = h.match(/^#\/kind\/([^\/?#]+)\/?$/);
-  if (kp && KIND_BY_SLUG[kp[1].toLowerCase()]) return { kind: "kindpage", bucket: null, slug: kp[1].toLowerCase() };
   if (/^#\/timeline\/?$/.test(h)) return { kind: "timeline", bucket: null };
   // #/feed is the chooser, #/feed/<door-id> opens that door (an unknown id shows the chooser).
   const fd = h.match(/^#\/feed(?:\/([^\/?#]+))?\/?$/);
@@ -4225,7 +3513,6 @@ const routeFromHash = () => {
 };
 // ===== goPlay — "play this exact reel" from anywhere =====
 // Since the Tyler build (Nov 20 2026) it opens that video's own page.
-let PENDING_PLAY = null;
 const goPlay = (e, r) => {
   const reel = portfolio[e] && portfolio[e].reels[r];
   if (reel) window.location.hash = caseHref(reel);
@@ -4653,12 +3940,18 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false, chSlug }) 
       <div style={{ paddingTop: 8 }}>
         {ev.reels.map((r, n) => {
           const key = `${si}:${n}`;
+          const head = ev.heads && ev.heads[n];
+          // A merged row (London inside '25 MAX) keeps its own playlist's role.
+          const home = SECTION_MERGE[(REEL_HOME.get(r) || {}).event] ? REEL_HOME.get(r) : null;
           return (
-            <BucketTrackRow key={r.postUrl} reel={r} n={n}
-              open={openKey === key}
-              onToggle={() => onToggle(key)}
-              watchHref={chSlug ? `#/work/${chSlug}/watch/${slugify(r.title)}` : null}
-              roleLine={r.role || ev.role || (REEL_HOME.get(r) || {}).role || ""} />
+            <Fragment key={r.postUrl}>
+              {head && <h3 style={{ fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.14em", margin: "26px 0 6px" }}>{head}</h3>}
+              <BucketTrackRow reel={r} n={n}
+                open={openKey === key}
+                onToggle={() => onToggle(key)}
+                watchHref={chSlug ? `#/work/${chSlug}/watch/${slugify(r.title)}` : null}
+                roleLine={r.role || (home && home.role) || ev.role || (REEL_HOME.get(r) || {}).role || ""} />
+            </Fragment>
           );
         })}
       </div>
@@ -4759,7 +4052,7 @@ function Nav({ route }) {
               vs the player, each at its own address. The label matches the
               mobile tab bar's word for the same page (panel review Aug 10).
               Oct 11 2026: "What I Do" left the menu at his yes; four links now
-              (Work, About, Timeline, Feed). The #what-i-do section stays. */}
+              (Work, About, Timeline, Feed). The #what-i-do section left in the Tyler build (Nov 20 2026). */}
           {[["Home", "#", false], ["Work", "#/work", false], ["About", "#about", false], ["Timeline", "#/timeline", false], ["Feed", "#/feed", false]].map(([label, href, ext]) => (
             <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} {...(route && TAB_FOR_ROUTE[route.kind] === href ? { "aria-current": "page" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: route && TAB_FOR_ROUTE[route.kind] === href ? C.white : C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
@@ -4808,7 +4101,7 @@ function Nav({ route }) {
 // I Do left the menu (his yes); the section and its #/kind/* pages stay, and a
 // kind page lights Work. Home lights none.
 // The feed is hidden (no tab of its own), so it lights none.
-const TAB_FOR_ROUTE = { home: "#", work: "#/work", bucket: "#/work", case: "#/work", chapterfeed: "#/work", timeline: "#/timeline", playlist: null, kindpage: "#/work", feed: "#/feed" };
+const TAB_FOR_ROUTE = { home: "#", work: "#/work", bucket: "#/work", case: "#/work", chapterfeed: "#/work", timeline: "#/timeline", feed: "#/feed" };
 function MobileTabBar({ route }) {
   const tabs = [
     // "Work" = the #/work category grid (the top-bar links are hidden on phones,
@@ -4935,7 +4228,7 @@ export default function Portfolio() {
            find everything at once"). Only on phones, where the top links are hidden. */
         .mobile-tabbar { display: none; }
         /* section jumps land below the fixed top nav, not tucked under it */
-        #about, #what-i-do, #work, #timeline, #library { scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
+        #about, #work, #timeline { scroll-margin-top: calc(64px + env(safe-area-inset-top)); }
         .sp-shell { scroll-margin-top: 84px; }
         .shelf-row { scrollbar-width: none; }
         .shelf-row::-webkit-scrollbar { display: none; }
@@ -5004,7 +4297,7 @@ export default function Portfolio() {
           /* Horizontal strip: a bare word floats. The rule anchors it to the
              group of chips that follows it. */
           .sp-side-divider > span:first-child { border-left: 2px solid rgba(var(--c-ink-rgb),0.55); padding-left: 8px; font-size: 11px !important; }
-          /* Oct 6 2026 (mobile check): the category names are longer now ("Commercial Event Coverage"); let the label wrap so the first playlist still shows. */
+          /* Oct 6 2026 (mobile check): the category names are longer now; let the label wrap so the first row still shows. */
           .sp-side-divider > span:first-child { white-space: normal !important; max-width: 150px; line-height: 1.25; letter-spacing: 1.5px !important; }
           .spec-row-expand { padding: 10px 8px 18px 26px !important; }
           .tc-chips { margin-left: 0 !important; }
@@ -5105,8 +4398,6 @@ export default function Portfolio() {
         {route.kind === "chapterfeed" && <ChapterFeedPage bucket={route.bucket} slug={route.slug} />}
         {/* ===== #/timeline — the career timeline as its own page ===== */}
         {route.kind === "timeline" && <CareerTimeline />}
-        {/* ===== #/kind/<slug> — one What I Do row, every reel, by playlist ===== */}
-        {route.kind === "kindpage" && <KindPage slug={route.slug} />}
         {route.kind === "feed" && <FeedPage door={route.door} />}
 
         {/* ===== Default route: the single-page site, unchanged ===== */}
@@ -5193,7 +4484,7 @@ export default function Portfolio() {
           </FadeIn>
         </section>
 
-        {/* ===== HERO ROW — the playing cards, twin marquees between About and What I Do ===== */}
+        {/* ===== HERO ROW — the playing cards, twin marquees under About ===== */}
         <section className="m-herorow" style={{ padding: "12px clamp(24px, 5vw, 80px) 28px" }}>
           <FadeIn>
             <HeroRow />
@@ -5202,15 +4493,7 @@ export default function Portfolio() {
 
         {/* "What I'm Working On Now" removed Sep 22 2026 (Miles). */}
 
-        {/* ===== WHAT I DO — clickable cards ===== */}
-        <section id="what-i-do" className="m-whatido" style={{ padding: "80px clamp(24px, 5vw, 80px) 24px" }}>
-          <FadeIn>
-            <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 48px 0", letterSpacing: -0.5 }}>What I Do</h2>
-          </FadeIn>
-          <TypeCut />
-        </section>
-
-        {/* ===== FUN ROW — emotion picks bridging What I Do into the client strip ===== */}
+        {/* ===== FUN ROW — emotion picks above the client strip ===== */}
         <section className="m-funrow" style={{ padding: "12px clamp(24px, 5vw, 80px) 40px" }}>
           <FadeIn>
             <HeroRow reels={funReels} duration={90} />
@@ -5261,7 +4544,7 @@ export default function Portfolio() {
           <FadeIn delay={0.3}>
             {/* Sep 22 2026, Miles: "remove these arrows and clean up the bottom" — one stacked list, no glyphs. */}
             <p className="m-links" style={{ fontFamily: F, fontSize: 13, margin: "24px 0 0", display: "grid", gap: 0, justifyItems: "center" }}>
-              {[["Off the clock: @milesmusicmedia — my jazz content", "https://www.instagram.com/milesmusicmedia"],
+              {[["Off the clock: @milesmusicmedia. My jazz content.", "https://www.instagram.com/milesmusicmedia"],
                 ["Instagram · @miles.spearman", "https://www.instagram.com/miles.spearman/"],
                 ["YouTube · @MilesSpearman", "https://www.youtube.com/@MilesSpearman"]].map(([label, href]) => (
                 <a key={href} href={href} target="_blank" rel="noopener noreferrer"
