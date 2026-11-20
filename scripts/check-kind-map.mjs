@@ -1,6 +1,6 @@
 // Build gate (Nov 7 2026): every playlist in `portfolio` must have exactly one
-// line in BUCKET_OF (the kind map that sorts the #/work shelves), and the map
-// must name no playlist that does not exist.
+// line in BUCKET_OF and in CHAPTER_OF (Nov 20 2026), and neither map may name
+// a playlist that does not exist.
 // Plain Node, no dependencies, no JSX parsing. Runs as `prebuild`.
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -17,22 +17,21 @@ const slice = (startLine, endLine) => {
 };
 
 const portfolioText = slice("const portfolio = [", "];");
-const mapText = slice("const BUCKET_OF = {", "};");
 
 // Comment lines do not count on either side. A playlist row that is commented
 // out in `portfolio` (Cannes, pulled Jul 4 2026 on Miles's word) is not live,
 // and the browser-side check would throw on a map line for it.
 const live = (text) => text.split("\n").filter(l => !l.trim().startsWith("//")).join("\n");
-
 const playlists = new Set([...live(portfolioText).matchAll(/\bevent:\s*"([^"]*)"/g)].map(m => m[1]));
-const keys = new Set([...live(mapText).matchAll(/"([^"]*)"\s*:/g)].map(m => m[1]));
 
-const missing = [...playlists].filter(n => !keys.has(n));
-const extra = [...keys].filter(n => !playlists.has(n));
-
-if (missing.length || extra.length) {
-  for (const n of missing) console.error(`missing from BUCKET_OF: ${n}`);
-  for (const n of extra) console.error(`extra in BUCKET_OF (not a playlist): ${n}`);
-  process.exit(1);
+// Nov 20 2026 (Tyler build): CHAPTER_OF, the campaign-chapter map that sorts
+// #/work, gets the same two-way check as BUCKET_OF.
+let failed = false;
+for (const name of ["BUCKET_OF", "CHAPTER_OF"]) {
+  const mapText = slice(`const ${name} = {`, "};");
+  const keys = new Set([...live(mapText).matchAll(/"([^"]*)"\s*:/g)].map(m => m[1]));
+  for (const n of [...playlists].filter(n => !keys.has(n))) { console.error(`missing from ${name}: ${n}`); failed = true; }
+  for (const n of [...keys].filter(n => !playlists.has(n))) { console.error(`extra in ${name} (not a playlist): ${n}`); failed = true; }
 }
-console.log(`kind map OK: ${playlists.size} playlists`);
+if (failed) process.exit(1);
+console.log(`kind map OK: ${playlists.size} playlists (BUCKET_OF + CHAPTER_OF)`);

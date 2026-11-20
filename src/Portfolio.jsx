@@ -19,6 +19,8 @@ const alpha = (c, p) => `color-mix(in srgb, ${c} ${p}%, transparent)`;
 // takes goldInk, the others are deepened (--c-hue-ink) so they read on the light bed.
 const inkHue = (h) => h === C.gold ? C.goldInk : `color-mix(in srgb, ${h} var(--c-hue-ink), #000)`;
 const F = `'Outfit', sans-serif`;
+// Tyler build (Nov 20 2026): serif caps for page and chapter headings (the mock's face).
+const SERIF = `'Instrument Serif', 'Minion Pro Condensed', 'Minion Pro', Georgia, serif`;
 
 function useInView(t = 0.08) {
   const ref = useRef(null);
@@ -1149,7 +1151,7 @@ const BUCKET_ORDER = ["Event Coverage", "In-House Production", "Brand Partnershi
 // home page, "ON LOCATION" on the timeline and "Event Coverage" in the playlist.
 // One display name per bucket now, the home page's (What I Do rows), and every
 // surface prints it. The bucket keys above stay the data; only the label is shared.
-const TYPE_LABEL = { "Event Coverage": "Commercial Event Coverage", "In-House Production": "In-House Productions", "Brand Partnerships": "Brand Partnerships", "Off the Clock": "Off the Clock" };
+const TYPE_LABEL = { "Event Coverage": "Event Coverage", "In-House Production": "In-House Productions", "Brand Partnerships": "Brand Partnerships", "Off the Clock": "Off the Clock" };
 const typeLabel = (b) => TYPE_LABEL[b] || b;
 const bucketSlug = (b) => b.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
@@ -1202,13 +1204,60 @@ const TOTAL_LIKES = portfolio.reduce((s, ev) => s + ev.reels.reduce((a, r) => a 
 // A playlist with no BUCKET_OF line throws at module load and
 // scripts/check-kind-map.mjs fails `npm run build` with the same name.
 const SHELF_HOSTING = "Hosting"; // same label as the Feed door he approved Oct 11 2026
-const SHELF_ORDER = [
-  typeLabel("Event Coverage"),      // "Commercial Event Coverage"
-  typeLabel("In-House Production"), // "In-House Productions"
-  typeLabel("Brand Partnerships"),  // "Brand Partnerships"
-  SHELF_HOSTING,
-  typeLabel("Off the Clock"),       // "Off the Clock"
-];
+// ===== Tyler build (Nov 20 2026): #/work chapters = campaigns =====
+// Every playlist names its chapter here, one line each. scripts/check-kind-map.mjs
+// checks this map against portfolio the same way it checks BUCKET_OF, so a new
+// playlist with no chapter fails `npm run build`. BUCKET_OF stays: the timeline,
+// the Feed doors and the Off the Clock fence still read it.
+const CHAPTER_OF = {
+  "’24 MAX Miami": "MAX",
+  "’25 MAX LA": "MAX",
+  "’25 MAX London": "MAX",
+  "’25 Summit Vegas": "Summit",
+  "’26 Summit": "Summit",
+  "’24 NAB Vegas": "NAB",
+  "’25 NAB Vegas": "NAB",
+  "’26 NAB Vegas": "NAB",
+  "’24 IBC Amsterdam": "IBC",
+  "’25 IBC Amsterdam": "IBC",
+  "Employee Spotlights: Season 1": "Talent Spotlights",
+  "Employee Spotlights: Season 2": "Talent Spotlights",
+  "Employee Spotlights: Season 3": "Talent Spotlights",
+  "Artist Spotlights": "Talent Spotlights",
+  "You Asked We Answered Creative Cloud Series": "You Asked We Answered",
+  "Always-On": "In-House Productions",
+  "Photoshop Archives": "In-House Productions",
+  "Adobe MAX Product Demos": "In-House Productions",
+  "’25 MAX Customer Stories": "In-House Productions",
+  "’26 Adobe For All": "In-House Productions",
+  "Brand Partnerships": "Brand Collabs",
+  "Adobe × NFL": "Brand Collabs",
+  "Side Projects": "Brand Collabs",
+  "The College Tour": "Brand Collabs",
+  "Miles Music Media": "Off the Clock",
+  "Miles.Spearman": "Off the Clock",
+  "Miles on YouTube": "Off the Clock",
+};
+// The chapter names, in no order (the page sorts them by plays). Hosting is the
+// mirror chapter built from hostedSections(); the last two always sit at the end.
+const CHAPTER_NAMES = ["MAX", "Summit", "NAB", "IBC", "Talent Spotlights", "You Asked We Answered", "In-House Productions", SHELF_HOSTING, "Brand Collabs", "Off the Clock"];
+const CHAPTER_TAIL = ["Brand Collabs", "Off the Clock"];
+// Row-level moves (the playlist rows themselves stay where they are in portfolio).
+// section = the event header the row sits under inside its new chapter. A section
+// that names an existing playlist joins it; any other name is its own section.
+const ROW_CHAPTER = {
+  "’25 MAX: Navin’s Coolest Job": { chapter: "Talent Spotlights", section: "Sarah & Navin" },
+  "’25 MAX: Sarah Shen’s Coolest Job": { chapter: "Talent Spotlights", section: "Sarah & Navin" },
+  "Coolest Job: Eric": { chapter: "MAX", section: "’25 MAX LA" },
+  "Coolest Job: Tongyu": { chapter: "MAX", section: "’25 MAX LA" },
+  "San Jose Semaphore": { chapter: "In-House Productions", section: "San Jose Semaphore" },
+  "Cracking the Semaphore Code": { chapter: "In-House Productions", section: "San Jose Semaphore" },
+};
+const SECTION_NOTES = { "San Jose Semaphore": "Standalone, not part of a campaign." };
+{
+  for (const v of Object.values(CHAPTER_OF)) if (!CHAPTER_NAMES.includes(v)) throw new Error(`CHAPTER_OF names unknown chapter "${v}".`);
+  for (const ev of portfolio) if (!CHAPTER_OF[ev.event]) throw new Error(`CHAPTER_OF has no entry for playlist "${ev.event}".`);
+}
 
 const kindOf = (ev) => {
   const b = BUCKET_OF[ev.event];
@@ -1269,27 +1318,56 @@ const hostedSections = () => _hostedSections || (_hostedSections = eventStats.fl
 // rows the player uses, never hand-typed. Card art follows the playlist-cover
 // rule: the real frame from the shelf's top-played reel, never emoji/stock.
 // Lazy for the same TDZ reason as hostedSections.
-let _shelfStats = null;
-const shelfStats = () => _shelfStats || (_shelfStats = SHELF_ORDER.map(name => {
-  const mirror = name === SHELF_HOSTING;
-  const found = mirror ? hostedSections() : eventStats.filter(ev => typeLabel(kindOf(ev)) === name);
-  // Reach-first only where the shelf is a set of productions, not a run of shows.
-  const byReach = name === typeLabel("In-House Production") || name === typeLabel("Brand Partnerships");
-  const playlists = byReach ? [...found].sort((a, b) => b.totalPlays - a.totalPlays) : found;
-  const reels = playlists.flatMap(ev => ev.reels);
+// Tyler build (Nov 20 2026): the shelves ARE the campaign chapters now. Same
+// object shape as before ({name, slug, playlists, mirror, reelCount, totalPlays,
+// cover}) so BucketCard, roleRosters and BucketPage keep working unchanged.
+const REEL_HOME = new Map(eventStats.flatMap(ev => ev.reels.map(r => [r, ev])));
+const chapterOfReel = (r) => (ROW_CHAPTER[r.title] || {}).chapter || CHAPTER_OF[(REEL_HOME.get(r) || {}).event];
+const sectionStats = (base, reels) => {
   const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
-  return {
-    name, slug: bucketSlug(name), playlists, mirror,
-    reelCount: reels.length,
-    totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0),
-    cover: top ? thumbOf(top) : "",
-  };
-}).filter(g => g.playlists.length));
+  return { ...base, reels, cover: top ? thumbOf(top) : base.cover,
+    totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0), window: fmtWindow({ reels }) };
+};
+const NEWEST_FIRST = new Set(["MAX", "Summit", "NAB", "IBC"]);
+let _shelfStats = null;
+const shelfStats = () => {
+  if (_shelfStats) return _shelfStats;
+  const secs = {}; // chapter -> [{base, reels}]
+  for (const ev of eventStats) {
+    const ch = CHAPTER_OF[ev.event];
+    const keep = ev.reels.filter(r => !ROW_CHAPTER[r.title]);
+    (secs[ch] = secs[ch] || []).push({ base: ev, reels: keep });
+  }
+  for (const ev of eventStats) for (const r of ev.reels) {
+    const mv = ROW_CHAPTER[r.title];
+    if (!mv) continue;
+    const list = (secs[mv.chapter] = secs[mv.chapter] || []);
+    let sec = list.find(x => x.base.event === mv.section);
+    if (!sec) list.push(sec = { base: { ...ev, event: mv.section, role: "" }, reels: [] });
+    sec.reels.push(r);
+  }
+  const out = CHAPTER_NAMES.map(name => {
+    const mirror = name === SHELF_HOSTING;
+    let playlists = mirror ? hostedSections()
+      : (secs[name] || []).filter(x => x.reels.length).map(x => sectionStats(x.base, x.reels));
+    if (!mirror && NEWEST_FIRST.has(name)) playlists = [...playlists].sort((a, b) => Math.max(0, ...b.reels.map(reelDate)) - Math.max(0, ...a.reels.map(reelDate)));
+    else if (!mirror && name !== "Off the Clock") playlists = [...playlists].sort((a, b) => b.totalPlays - a.totalPlays);
+    const reels = playlists.flatMap(ev => ev.reels);
+    const top = [...reels].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))[0];
+    return {
+      name, slug: bucketSlug(name), playlists, mirror,
+      reelCount: reels.length,
+      totalPlays: reels.reduce((s, r) => s + playsNum(r.plays), 0),
+      cover: top ? thumbOf(top) : "",
+    };
+  }).filter(g => g.playlists.length);
+  const head = out.filter(g => !CHAPTER_TAIL.includes(g.name)).sort((a, b) => b.totalPlays - a.totalPlays);
+  const tail = CHAPTER_TAIL.map(n => out.find(g => g.name === n)).filter(Boolean);
+  return (_shelfStats = [...head, ...tail]);
+};
 const shelfBySlug = (slug) => (shelfStats().find(g => g.slug === slug) || {}).name || null;
-// The one derived count string every role surface prints, card and page. A
-// mirror group's "playlists" are the homes its reels were pulled from, not
-// collections of its own, so that segment is dropped rather than reworded.
-const groupCount = (g) => `${g.mirror ? "" : `${g.playlists.length} ${g.playlists.length === 1 ? "playlist" : "playlists"} · `}${g.reelCount} ${g.reelCount === 1 ? "video" : "videos"}${g.totalPlays > 0 ? ` · ${fmtPlays(g.totalPlays)} plays` : ""}`;
+// The one derived count string every chapter surface prints, card and page.
+const groupCount = (g) => `${g.reelCount} ${g.reelCount === 1 ? "video" : "videos"}${g.totalPlays > 0 ? ` · ${fmtPlays(g.totalPlays)} plays` : ""}`;
 
 // ===== CAREER TIMELINE data (professional work only; jazz/Off the Clock fenced out) =====
 const TL_CAT = {
@@ -1690,56 +1768,22 @@ const reelRoleTabs = (r) => {
 // every reel outside Off the Clock, ranked by its own play count,
 // dealt into the four groups in this order. A reel is taken by the FIRST group
 // it qualifies for, so it appears exactly once on the page.
-const SET_LIST_GROUP_SIZE = 3;
-const SET_LIST_GROUPS = (() => {
-  const pool = portfolio
-    .flatMap((ev, e) => (BUCKET_OF[ev.event] === "Off the Clock" ? [] : ev.reels.map((reel, r) => ({ e, r, reel }))))
-    .filter(x => playsNum(x.reel.plays) > 0 && (SET_LIST_DESCS[x.reel.title] || REEL_DESCS[x.reel.title]))
-    .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays));
-  const taken = new Set();
-  // idx = the slot in ROLE_TABS each label reads: Hosted, Edited, Produced, Directed.
-  const groups = [{ label: "Hosting", idx: 3 }, { label: "Edited", idx: 4 }, { label: "Produced", idx: 1 }, { label: "Directed", idx: 2 }]
-    .map(({ label, idx }) => {
-      const items = [];
-      for (const x of pool) {
-        if (items.length === SET_LIST_GROUP_SIZE) break;
-        if (taken.has(x.reel) || !reelRoleTabs(x.reel)[idx]) continue;
-        taken.add(x.reel);
-        items.push(x);
-      }
-      return { label, idx, items };
-    });
-  // Miles's meaning picks (Tyler's rule: what mattered, not only what performed) always hold a slot
-  // in their first matching group; that group's last plays-ranked tile makes room. Sep 22 2026, tyler-lens.
-  MEANING_PICKS.forEach(title => {
-    const x = pool.find(q => q.reel.title === title);
-    if (!x || taken.has(x.reel)) return;
-    const g = groups.find(g => reelRoleTabs(x.reel)[g.idx]);
-    if (!g) return;
-    if (g.items.length >= SET_LIST_GROUP_SIZE) { const out = g.items.pop(); taken.delete(out.reel); }
-    g.items.push(x); taken.add(x.reel);
-  });
-  return groups;
-})();
-const SET_LIST_FEATURED = SET_LIST_GROUPS.flatMap(g => g.items);
+// Tyler build (Nov 20 2026): the Set List is his five picks only, the
+// SET_LIST_DESCS keys, in the order he wrote them. The role groups and the
+// 15-tile catalog tier under them are gone (spec "Dies").
+const SET_LIST_FEATURED = Object.keys(SET_LIST_DESCS).flatMap(title => {
+  for (let e = 0; e < portfolio.length; e++) {
+    const r = portfolio[e].reels.findIndex(x => x.title === title);
+    if (r >= 0) return [{ e, r, reel: portfolio[e].reels[r] }];
+  }
+  return [];
+});
 
-// ===== TIER 2 — the catalog =====
-// The next 15 by plays, DERIVED: every reel in the table, minus the
-// featured five, sorted by its own play count. Nothing is hand-listed, so the
-// grid re-ranks itself the moment the data moves.
-const CATALOG_COUNT = 15;
-const CATALOG_ITEMS = portfolio
-  .flatMap((ev, e) => ev.reels.map((reel, r) => ({ e, r, reel })))
-  .filter(x => !SET_LIST_FEATURED.some(f => f.reel.title === x.reel.title))
-  .sort((a, b) => playsNum(b.reel.plays) - playsNum(a.reel.plays))
-  .slice(0, CATALOG_COUNT);
-
-// Where a tile goes. #/case/<slug> is the deep link this site already had, and
-// it now resolves to the full playlist with that reel selected and playing (see
-// routeFromHash) — which is literally his condition, "the links hyper link to
-// the full playlist". Slug is derived from the title by the same `slugify`
-// CASE_INDEX is built with, so a tile can only ever point at a real entry.
-const caseHref = (reel) => { const s = slugify(reel.title); return s && CASE_INDEX[s] ? `#/case/${s}` : "#/playlist"; };
+// Where a tile goes. #/case/<slug> is the deep link this site already had; since
+// the Tyler build (Nov 20 2026) it opens that video's own page (CasePage). Slug is
+// derived from the title by the same `slugify` CASE_INDEX is built with, so a tile
+// can only ever point at a real entry; anything else falls back to #/work.
+const caseHref = (reel) => { const s = slugify(reel.title); return s && CASE_INDEX[s] ? `#/case/${s}` : "#/work"; };
 
 // The play glyph + count that rides the bottom-left of every tile, both tiers.
 function TilePlays({ reel }) {
@@ -1808,27 +1852,6 @@ function SetListTile({ item, live, onActivate, innerRef }) {
   );
 }
 
-// Tier 2 tile: poster, count, and a title bar that comes up on hover (and stays
-// up on touch, where there is no hover to reveal it). No video, no chips, no
-// description — the demotion is the point.
-function CatalogTile({ reel }) {
-  return (
-    <a className="cat-tile" href={caseHref(reel)} aria-label={`Play ${reel.title}`}
-      style={{ position: "relative", display: "block", aspectRatio: "3 / 4", overflow: "hidden", background: "#111", textDecoration: "none" }}>
-      <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
-        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
-      <span style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.60))", pointerEvents: "none" }} />
-      <span className="cat-bar" style={{
-        position: "absolute", left: 0, right: 0, bottom: 0, padding: "24px 11px 32px",
-        fontFamily: F, fontSize: 12, fontWeight: 600, lineHeight: 1.3, color: "#FFFFFF" /* on media */,
-        background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.80))",
-        textShadow: "0 1px 3px rgba(0,0,0,0.7)", pointerEvents: "none",
-      }}>{reel.title}</span>
-      <TilePlays reel={reel} />
-    </a>
-  );
-}
-
 function SetList() {
   const [active, setActive] = useState(-1);
   const tiles = useRef([]);
@@ -1877,30 +1900,15 @@ function SetList() {
           line and reads as broken rather than as five write-ups. */}
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
         <FadeIn>
-          <h2 style={{ fontFamily: F, fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800, color: C.white, margin: "0 0 26px 0", letterSpacing: -0.5 }}>The Set List</h2>
+          <h2 className="serif-h chap-h" style={{ margin: "0 0 32px 0" }}>The Set List</h2>
         </FadeIn>
-        {/* One labelled grid per role group. `i` is the GLOBAL index across all
-            four groups (0-11) so the section's single <video> still moves
-            between tiles exactly as it did across the flat five. */}
-        {SET_LIST_GROUPS.map((g, gi) => {
-          const base = SET_LIST_GROUPS.slice(0, gi).reduce((s, x) => s + x.items.length, 0);
-          return (
-            <div key={g.label} style={{ marginTop: gi === 0 ? 0 : 44, borderTop: gi === 0 ? "none" : "1px solid rgba(var(--c-ink-rgb),0.08)", paddingTop: gi === 0 ? 0 : 24 }}>
-              <span style={{ fontFamily: F, fontSize: 12, fontWeight: 600, color: C.mint, textTransform: "uppercase", letterSpacing: 3, marginBottom: 12, display: "block" }}>{g.label}</span>
-              <div className="set-grid by-role">
-                {g.items.map((item, n) => (
-                  <SetListTile key={item.reel.title} item={item} live={base + n === active}
-                    onActivate={() => setActive(base + n)}
-                    innerRef={attach(base + n)} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-        <div className="cat-grid">
-          {CATALOG_ITEMS.map(x => <CatalogTile key={x.reel.postUrl} reel={x.reel} />)}
+        <div className="set-grid">
+          {SET_LIST_FEATURED.map((item, n) => (
+            <SetListTile key={item.reel.title} item={item} live={n === active}
+              onActivate={() => setActive(n)}
+              innerRef={attach(n)} />
+          ))}
         </div>
-        {/* The playlist door that closed the Set List is gone (web check, Sep 22 2026): Playlist is in the nav and the Work grid below carries the same totals. */}
       </div>
     </section>
   );
@@ -3398,9 +3406,9 @@ const THEME_CSS = `
   color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --c-bg: #F5F5F2; --c-white: #0A0A0A; --c-mint: #0A0A0A; --c-gray: #6B6B6B; --c-darkGray: #ECECEA;
+  --c-bg: #FFFFFF; --c-white: #0A0A0A; --c-mint: #0A0A0A; --c-gray: #6B6B6B; --c-darkGray: #ECECEA;
   --c-glass: rgba(0,0,0,0.04); --c-border: rgba(0,0,0,0.10); --c-goldInk: #A67C00;
-  --c-ink-rgb: 10,10,10; --c-surface-rgb: 255,255,255; --c-bg-rgb: 245,245,242; --c-hue-ink: 60%; --c-tint: 35%;
+  --c-ink-rgb: 10,10,10; --c-surface-rgb: 255,255,255; --c-bg-rgb: 255,255,255; --c-hue-ink: 60%; --c-tint: 35%;
   --c-pop: #FFFFFF; --c-shell: #FFFFFF; --c-card: #FFFFFF; --c-line: #DCDCD8; --c-lineHi: #B5B5B0;
   --c-chipLine: #D6D6D2; --c-chipInk: #3A3A3A; --c-meta: #6B6B6B; --c-meta2: #6B6B6B; --c-sub: #4A4A4A;
   color-scheme: light;
@@ -3568,6 +3576,85 @@ function FeedPage({ door }) {
   );
 }
 
+// Tyler build (Nov 20 2026): #/work/<chapter>/watch/<case> = that chapter's
+// videos as a swipe feed, in chapter-page order, starting on the tapped video
+// (the run wraps, so every video in the chapter is still in it). Back returns to
+// the chapter page. Same FeedRun as the Feed, so the one-video law, autoplay and
+// the swipe words are the Feed's own.
+const chapterDoor = (bucket, slug) => {
+  const g = shelfStats().find(x => x.name === bucket);
+  if (!g) return null;
+  const rows = g.playlists.flatMap(ev => ev.reels.map(reel => ({ reel, ev: (REEL_HOME.get(reel) || ev).event, roles: reelRoleTabs(reel) })));
+  const seen = new Set();
+  const uniq = rows.filter(x => !seen.has(reelKey(x.reel)) && seen.add(reelKey(x.reel)));
+  const at = Math.max(0, uniq.findIndex(x => slugify(x.reel.title) === slug));
+  const items = [...uniq.slice(at), ...uniq.slice(0, at)];
+  const hue = ROLE_TAB_COLORS.Hosted;
+  const plays = items.reduce((s, x) => s + playsNum(x.reel.plays), 0);
+  return { id: `ch-${g.slug}`, label: g.name, hue, items, count: items.length, plays, setPlays: plays, back: `#/work/${g.slug}` };
+};
+function ChapterFeedPage({ bucket, slug }) {
+  const door = chapterDoor(bucket, slug);
+  if (!door || !door.items.length) return <WorkGridPage />;
+  return (
+    <>
+      <style>{FEED_CSS}</style>
+      <FeedRun key={`${door.id}:${slug}`} door={door} doors={feedDoors()} />
+    </>
+  );
+}
+
+// Tyler build (Nov 20 2026): #/case/<slug> = one video's own page. The video
+// (autoplay, muted), title, credit, plays, his description when one is on file
+// (nothing when blank, never invented), and the link to the post.
+function CasePage({ slug }) {
+  const hit = CASE_INDEX[slug];
+  useEffect(() => { window.scrollTo(0, 0); }, [slug]);
+  if (!hit) return <WorkGridPage />;
+  const reel = portfolio[hit.e].reels[hit.r];
+  const tabs = reelRoleTabs(reel);
+  const on = ROLE_TABS.filter((_, n) => tabs[n]);
+  const paras = SET_LIST_DESCS[reel.title] || (REEL_DESCS[reel.title] ? [REEL_DESCS[reel.title]] : []);
+  const ch = chapterOfReel(reel);
+  const chSlug = ch ? bucketSlug(ch) : null;
+  const wide = !!reel.landscape;
+  return (
+    <section id="work" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px", maxWidth: 1180 + 160, margin: "0 auto" }}>
+      <a href={chSlug && shelfBySlug(chSlug) ? `#/work/${chSlug}` : "#/work"} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 8 }}>← {chSlug && shelfBySlug(chSlug) ? ch : "All work"}</a>
+      <div className={wide ? "case-wrap wide" : "case-wrap"}>
+        <div className="case-media">
+          {watchOnly(reel) ? (
+            <WatchFrame reel={reel} radius={0} />
+          ) : (
+            <video key={reel.postUrl || reel.title} src={srcOf(reel)} poster={thumbOf(reel)} autoPlay muted playsInline controls loop preload="metadata"
+              style={{ width: "100%", aspectRatio: wide ? "16 / 9" : "9 / 16", objectFit: wide ? "contain" : "cover", background: "#000", display: "block" }}
+              onError={e => { e.currentTarget.style.display = "none"; }} />
+          )}
+        </div>
+        <div style={{ minWidth: 0 }}>
+          <h1 className="serif-h" style={{ fontSize: "clamp(40px, 5vw, 68px)", lineHeight: 0.9, margin: "0 0 18px" }}>{reel.title}</h1>
+          {on.length > 0 && (
+            <p style={{ fontFamily: F, fontSize: 16, fontWeight: 500, margin: "0 0 6px", lineHeight: 1.4 }}>
+              {on.map((t, n) => (
+                <span key={t}>{n > 0 && <span style={{ color: C.gray }}> · </span>}<span style={{ color: inkHue(ROLE_TAB_COLORS[t]) }}>{t}</span></span>
+              ))}
+            </p>
+          )}
+          <p style={{ fontFamily: F, fontSize: 15, color: C.gray, margin: "0 0 22px", fontVariantNumeric: "tabular-nums" }}>{reel.plays ? `${reel.plays} plays` : "N/A"}</p>
+          {paras.map((p, n) => (
+            <p key={n} style={{ fontFamily: F, fontSize: 16, color: "var(--c-sub)", lineHeight: 1.6, margin: "0 0 14px", maxWidth: "60ch", textWrap: "pretty" }}>{p}</p>
+          ))}
+          {reel.postUrl && (
+            <a href={reel.postUrl} target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-block", fontFamily: F, fontSize: 15, fontWeight: 600, color: C.white, textDecoration: "underline", textUnderlineOffset: 3, marginTop: 8 }}>
+              Open on {platformOf(reel)} ↗</a>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // A door opened from the chooser goes Back with history.back(); one opened any
 // other way (a shared link, the end card) goes Back to #/feed.
 const markFromChooser = () => { try { sessionStorage.fdFromChooser = "1"; } catch (e) { /* storage off: Back uses #/feed */ } };
@@ -3715,7 +3802,7 @@ function FeedRun({ door, doors }) {
     const key = (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const tag = (e.target && e.target.tagName) || "";
-      if (e.key === "Escape") { window.location.hash = "#/feed"; return; }
+      if (e.key === "Escape") { window.location.hash = door.back || "#/feed"; return; }
       if ((e.key === "Enter" || e.key === " ") && (tag === "BUTTON" || tag === "A")) return;
       // Only the keys that move the feed take Auto off (Tab, 1 to 5 and the rest leave it alone).
       if (!["ArrowUp", "ArrowDown", "j", "k", "PageUp", "PageDown", " ", "Home", "End"].includes(e.key)) return;
@@ -3747,7 +3834,7 @@ function FeedRun({ door, doors }) {
       <div aria-hidden="true" style={{ height: "100svh" }} />
       <div ref={rootRef} className="fd-run" style={{ "--hue": door.hue }}>
         <div className="fd-bar">
-          <a className="fd-back" href="#/feed" onClick={e => { if (fromChooser) { e.preventDefault(); window.history.back(); } }}>← Back</a>
+          <a className="fd-back" href={door.back || "#/feed"} onClick={e => { if (fromChooser && !door.back) { e.preventDefault(); window.history.back(); } }}>← Back</a>
           <span className="fd-name"><i style={{ background: door.hue }} /><b>{door.label}</b>{idx < n && <small>{idx + 1} of {n}</small>}</span>
           <span className="fd-ctl">
             <button type="button" className="fd-tog" data-fd-auto="" aria-pressed={auto} disabled={_reduceMotion} onClick={() => setAuto(a => !a && !_reduceMotion)}><span><i className="fd-dot" />Auto</span></button>
@@ -3779,7 +3866,7 @@ function FeedCard({ x, i, n, near, paused, open, onOpen, onTap }) {
   const land = !!reel.landscape;
   const desc = SET_LIST_DESCS[reel.title] || REEL_DESCS[reel.title];
   const people = reelCreditsOf(reel).length ? reelCreditsOf(reel) : (EVENT_CREDITS[ev] || []);
-  const type = typeLabel(BUCKET_OF[ev]);
+  const type = chapterOfReel(reel) || typeLabel(BUCKET_OF[ev]); // Tyler build: the campaign chapter
   const ctx = [type, ev !== type ? ev : null, reelDateStr(reel) || null].filter(Boolean);
   const more = !!desc || people.length > 0; // nothing to pull up: the title is just a title
   const watchLabel = `Watch ${reel.title} on ${platformOf(reel)}`;
@@ -4105,61 +4192,52 @@ function RoleCardGrid() {
 }
 
 // ===== ROUTES (hash only, no router lib) =====
-// `#/work` = the category grid, `#/work/<bucket-slug>` = that bucket's page,
-// `#/timeline` = the career timeline, `#/playlist` = the Work Playlist player.
-// Everything else (including `#/case/<slug>` and plain #anchors) falls through
-// to the single-page site, so old links behave exactly as before. `#/case`
-// deep-links resolve to #/playlist below (the homepage player is gone).
+// `#/work` = Featured Work + the campaign chapters, `#/work/<chapter-slug>` = that
+// chapter's page, `#/work/<chapter-slug>/watch/<case-slug>` = that chapter's swipe
+// feed starting on that video, `#/case/<slug>` = one video's own page,
+// `#/timeline` = the career timeline, `#/feed(/door)` = the Feed.
+// Tyler build (Nov 20 2026): the Work Playlist player is gone, so `#/playlist`
+// and anything under it is rewritten to `#/work` (replaceState, so the back
+// button never lands on a dead address). An unknown case slug still falls
+// through to the homepage, never a 404.
+const legacyHash = (h) => /^#\/playlist(?:[\/?#].*)?$/.test(h);
 const routeFromHash = () => {
   const h = window.location.hash || "";
+  if (legacyHash(h)) return { kind: "work", bucket: null };
   const kp = h.match(/^#\/kind\/([^\/?#]+)\/?$/);
   if (kp && KIND_BY_SLUG[kp[1].toLowerCase()]) return { kind: "kindpage", bucket: null, slug: kp[1].toLowerCase() };
   if (/^#\/timeline\/?$/.test(h)) return { kind: "timeline", bucket: null };
-  if (/^#\/playlist\/?$/.test(h)) return { kind: "playlist", bucket: null };
   // #/feed is the chooser, #/feed/<door-id> opens that door (an unknown id shows the chooser).
   const fd = h.match(/^#\/feed(?:\/([^\/?#]+))?\/?$/);
   if (fd) return { kind: "feed", bucket: null, door: fd[1] ? fd[1].toLowerCase() : null };
-  // ===== #/case/<slug> (rewritten Aug 11 2026) =====
-  // A case link used to fall through to the homepage because the homepage was
-  // where the player lived. The Set List replaced that player, so the link now
-  // resolves to #/playlist — the same full player, at its own address, which
-  // then reads the very same hash and opens the reel (WorkPlayer's deep-link
-  // effect is untouched). Same destination it always had, one route over.
-  // A slug that resolves to NOTHING still falls through to the homepage exactly
-  // as before: an old or malformed link lands on the site, never on a 404 and
-  // never on an empty player. That fallthrough is the rule; this is not it.
   const c = h.match(/^#\/case\/(.+?)\/?$/);
-  if (c && CASE_INDEX[c[1].toLowerCase()]) return { kind: "playlist", bucket: null };
+  if (c && CASE_INDEX[c[1].toLowerCase()]) return { kind: "case", bucket: null, slug: c[1].toLowerCase() };
+  const w = h.match(/^#\/work\/([^\/?#]+)\/watch\/([^\/?#]+)\/?$/);
+  if (w) {
+    const bucket = shelfBySlug(w[1].toLowerCase());
+    if (bucket && CASE_INDEX[w[2].toLowerCase()]) return { kind: "chapterfeed", bucket, slug: w[2].toLowerCase() };
+    return bucket ? { kind: "bucket", bucket } : { kind: "work", bucket: null };
+  }
   const m = h.match(/^#\/work(?:\/([^\/?#]+))?\/?$/);
   if (!m) return { kind: "home", bucket: null };
   const bucket = m[1] ? shelfBySlug(m[1].toLowerCase()) : null;
   return bucket ? { kind: "bucket", bucket } : { kind: "work", bucket: null };
 };
-// ===== goPlay (Aug 11 2026) — "play this exact reel" from anywhere =====
-// The homepage links that used to scroll down to the player and fire ms-play
-// (the opening wall cards, the fun row, the trumpet line in the
-// About paragraph) have no player to scroll to now. They keep their exact
-// behaviour by going to the player's page instead: park the request, switch
-// route, and WorkPlayer picks it up the moment it mounts. Already on the
-// playlist page, it is the same ms-play dispatch it always was.
-// A parked request is deliberately NOT a case slug: {e, r} names the exact
-// playlist row, while a slug resolves to the reel's home playlist and would
-// bounce the sidebar off a mirror (the B2B playlist, retired Oct 11 2026).
+// ===== goPlay — "play this exact reel" from anywhere =====
+// Since the Tyler build (Nov 20 2026) it opens that video's own page.
 let PENDING_PLAY = null;
 const goPlay = (e, r) => {
-  if (routeFromHash().kind === "playlist") {
-    (document.getElementById("playlist-player") || document.getElementById("work"))?.scrollIntoView({ behavior: "smooth" });
-    window.dispatchEvent(new CustomEvent("ms-play", { detail: { e, r } }));
-    return;
-  }
-  PENDING_PLAY = { e, r };
-  window.location.hash = "#/playlist";
+  const reel = portfolio[e] && portfolio[e].reels[r];
+  if (reel) window.location.hash = caseHref(reel);
 };
 
 function useHashRoute() {
-  const [route, setRoute] = useState(routeFromHash);
+  const fix = () => {
+    if (legacyHash(window.location.hash || "")) history.replaceState(null, "", "#/work");
+  };
+  const [route, setRoute] = useState(() => { fix(); return routeFromHash(); });
   useEffect(() => {
-    const h = () => setRoute(routeFromHash());
+    const h = () => { fix(); setRoute(routeFromHash()); };
     window.addEventListener("hashchange", h);
     return () => window.removeEventListener("hashchange", h);
   }, []);
@@ -4303,17 +4381,89 @@ function BucketCard({ b, i, onScreen }) {
   );
 }
 
+// Tyler build (Nov 20 2026): each chapter on #/work shows its top 4 videos by
+// plays, and no video appears twice on the page. The Set List picks are claimed
+// first (they sit at the bottom but are the page's headline work), then the
+// campaign chapters in page order, then the Hosting mirror (whose rows all live
+// in some campaign too, so it only gets what the campaigns did not show).
+// "Additional (N)" = the chapter's videos not shown as tiles; links to its page.
+const reelKey = (r) => r.postUrl || r.title;
+let _workChapters = null;
+const workChapters = () => {
+  if (_workChapters) return _workChapters;
+  const seen = new Set(SET_LIST_FEATURED.map(x => reelKey(x.reel)));
+  const pick = (g) => {
+    const tiles = [];
+    const all = g.playlists.flatMap(ev => ev.reels);
+    for (const r of [...all].sort((a, b) => playsNum(b.plays) - playsNum(a.plays))) {
+      if (tiles.length >= 4) break;
+      if (seen.has(reelKey(r))) continue;
+      seen.add(reelKey(r)); tiles.push(r);
+    }
+    return tiles;
+  };
+  const groups = shelfStats();
+  const tilesOf = new Map();
+  groups.filter(g => !g.mirror).forEach(g => tilesOf.set(g.slug, pick(g)));
+  groups.filter(g => g.mirror).forEach(g => tilesOf.set(g.slug, pick(g)));
+  return (_workChapters = groups.map(g => {
+    const tiles = tilesOf.get(g.slug);
+    return { name: g.name, slug: g.slug, tiles, more: g.reelCount - tiles.length };
+  }));
+};
+
+// One chapter tile: picture, title, one credit line (the role words in their
+// own hues, the same words and colors the rest of the site uses), plays.
+function ChapterTile({ reel }) {
+  const tabs = reelRoleTabs(reel);
+  const on = ROLE_TABS.filter((_, n) => tabs[n]);
+  return (
+    <a href={caseHref(reel)} className="ch-tile" aria-label={reel.title} style={{ display: "block", minWidth: 0, textDecoration: "none", color: "inherit" }}>
+      <span style={{ position: "relative", display: "block", aspectRatio: "9 / 16", overflow: "hidden", background: "#111" }}>
+        <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async"
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+      </span>
+      <span style={{ display: "block", fontFamily: F, fontSize: 15.5, fontWeight: 500, lineHeight: 1.22, color: C.white, marginTop: 11 }}>{reel.title}</span>
+      {on.length > 0 && (
+        <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 500, lineHeight: 1.3, marginTop: 3 }}>
+          {on.map((t, n) => (
+            <span key={t}>{n > 0 && <span style={{ color: C.gray }}> · </span>}<span style={{ color: inkHue(ROLE_TAB_COLORS[t]) }}>{t}</span></span>
+          ))}
+        </span>
+      )}
+      <span style={{ display: "block", fontFamily: F, fontSize: 14, color: C.gray, marginTop: 3, fontVariantNumeric: "tabular-nums" }}>{reel.plays ? `${reel.plays} plays` : "N/A"}</span>
+    </a>
+  );
+}
+
 function WorkGridPage() {
+  const chapters = workChapters();
   return (
     <section id="work" className="m-workgrid" style={{ padding: "calc(104px + env(safe-area-inset-top)) clamp(24px, 5vw, 80px) 64px" }}>
-      <FadeIn>
-        {/* eyebrow dropped Sep 22 2026: the Set List below already says Portfolio (tyler-lens) */}
-        <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 800, color: C.white, margin: "0 0 8px 0", letterSpacing: -0.5 }}>Work</h1>
-        <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 36px 0", maxWidth: 560 }}>{TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays. Pick a category, press play.</p>
-      </FadeIn>
-      <FadeIn delay={0.08}>
-        <RoleCardGrid />
-      </FadeIn>
+      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        <FadeIn>
+          {/* eyebrow dropped Sep 22 2026: the Set List below already says Portfolio (tyler-lens) */}
+          <h1 className="serif-h" style={{ fontSize: "clamp(56px, 8vw, 104px)", margin: "0 0 12px 0" }}>Work</h1>
+          <p style={{ fontFamily: F, fontSize: 16, color: C.gray, margin: "0 0 48px 0", maxWidth: 560 }}>{TOTAL_REELS} videos · {fmtPlays(TOTAL_PLAYS)} plays.</p>
+        </FadeIn>
+        <FadeIn delay={0.08}>
+          <h2 className="serif-h chap-h" style={{ margin: "0 0 32px" }}>Featured Work</h2>
+          <RoleCardGrid />
+        </FadeIn>
+        {chapters.map(ch => (ch.tiles.length > 0 || ch.more > 0) && (
+          <section className="chap" key={ch.slug}>
+            <div className="chap-head">
+              <h2 className="serif-h chap-h" style={{ margin: 0 }}>{ch.name}</h2>
+              {ch.more > 0 && <a className="chap-more" href={`#/work/${ch.slug}`}>Additional ({ch.more})</a>}
+            </div>
+            {ch.tiles.length > 0 && (
+              <div className="ch-grid">
+                {ch.tiles.map(r => <ChapterTile key={reelKey(r)} reel={r} />)}
+              </div>
+            )}
+          </section>
+        ))}
+      </div>
     </section>
   );
 }
@@ -4338,7 +4488,7 @@ function BucketIntro({ bucket }) {
   );
 }
 
-function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
+function BucketTrackRow({ reel, n, open, onToggle, roleLine, watchHref }) {
   const [h, setH] = useState(false);
   const desc = REEL_DESCS[reel.title] || "";
   const why = REEL_WHY[reel.title] || null;
@@ -4387,7 +4537,18 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
                 <p key={line} style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: "0 0 2px", lineHeight: 1.45 }}>{line}</p>
               ))}
               <div style={{ height: 10 }} />
-              {watchOnly(reel) ? (
+              {/* Tyler build (Nov 20 2026): the open row's picture is the door to
+                  this chapter's swipe feed, starting on this video. The tap on
+                  the row itself still opens the description (spec default E). */}
+              {watchHref ? (
+                <a href={watchHref} aria-label={`Play ${reel.title}`}
+                  style={{ position: "relative", display: "block", width: reel.landscape ? "100%" : "min(100%, 240px)", aspectRatio: reel.landscape ? "16 / 9" : "9 / 16", borderRadius: 12, overflow: "hidden", background: "#000", boxShadow: "0 12px 40px rgba(0,0,0,0.5)" }}>
+                  <img src={thumbOf(reel)} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: reel.landscape ? "contain" : "cover", display: "block" }} onError={e => { e.currentTarget.style.display = "none"; }} />
+                  <span style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+                    <span style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(0,0,0,0.55)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}><IcPlay s={22} c="#FFFFFF" /></span>
+                  </span>
+                </a>
+              ) : watchOnly(reel) ? (
                 <div style={{ width: reel.landscape ? "100%" : "min(100%, 240px)", boxShadow: "0 12px 40px rgba(0,0,0,0.5)", borderRadius: 12 }}><WatchFrame reel={reel} /></div>
               ) : (
               <video src={srcOf(reel)} poster={thumbOf(reel)} controls autoPlay muted playsInline preload="metadata"
@@ -4425,7 +4586,7 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine }) {
 // so the playlist's case text is suppressed: those paragraphs describe the whole
 // run and name reels that are not on this page (the MAX draft cites the Rober
 // reel, which Cut by Me does not list). Header facts stay, the story does not.
-function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
+function PlaylistSection({ ev, openKey, onToggle, si, mirror = false, chSlug }) {
   const credits = EVENT_CREDITS[ev.event] || [];
   const handles = handlesOf(ev);
   return (
@@ -4440,10 +4601,10 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
           {/* Type identity survives the role re-map as one small word, read
               straight out of BUCKET_OF. Neutral, never mint: the mint in this
               block is the role line, and mint means one thing at a time. */}
-          {BUCKET_OF[ev.event] && (
-            <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 700, color: C.gray, textTransform: "uppercase", letterSpacing: "0.16em", marginBottom: 5 }}>{typeLabel(BUCKET_OF[ev.event])}</span>
-          )}
-          <h2 style={{ fontFamily: F, fontSize: "clamp(20px, 2.2vw, 28px)", fontWeight: 800, color: C.white, letterSpacing: -0.5, lineHeight: 1.15, margin: 0 }}>{ev.event}</h2>
+          {/* Tyler build (Nov 20 2026): the type eyebrow is gone; the page
+              heading above is the campaign chapter now. */}
+          <h2 style={{ fontFamily: F, fontSize: "clamp(20px, 2.2vw, 28px)", fontWeight: 800, color: C.white, letterSpacing: -0.5, lineHeight: 1.15, margin: 0 }}>{ev.title || ev.event}</h2>
+          {SECTION_NOTES[ev.event] && <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: "6px 0 0", lineHeight: 1.4 }}>{SECTION_NOTES[ev.event]}</p>}
           {ev.role && <p style={{ fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, margin: "6px 0 0", lineHeight: 1.4 }}>{ev.role} by Miles Spearman</p>}
           {/* The goal line: what this playlist was for, one quiet gray sentence
               under the role line. Only playlists Miles has written one for. */}
@@ -4496,7 +4657,8 @@ function PlaylistSection({ ev, openKey, onToggle, si, mirror = false }) {
             <BucketTrackRow key={r.postUrl} reel={r} n={n}
               open={openKey === key}
               onToggle={() => onToggle(key)}
-              roleLine={r.role || ev.role || ""} />
+              watchHref={chSlug ? `#/work/${chSlug}/watch/${slugify(r.title)}` : null}
+              roleLine={r.role || ev.role || (REEL_HOME.get(r) || {}).role || ""} />
           );
         })}
       </div>
@@ -4519,12 +4681,12 @@ function BucketPage({ bucket }) {
         <a href="#/work" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontFamily: F, fontSize: 13, color: C.gray, textDecoration: "none", minHeight: 44, padding: "10px 12px 10px 0", marginBottom: 2 }}
           onMouseEnter={e => e.currentTarget.style.color = C.mint} onMouseLeave={e => e.currentTarget.style.color = C.gray}>← All work</a>
         <span style={{ display: "block", fontFamily: F, fontSize: 12, fontWeight: 700, color: C.mint, textTransform: "uppercase", letterSpacing: "0.16em" }}>Work</span>
-        <h1 style={{ fontFamily: F, fontSize: "clamp(32px, 4.4vw, 56px)", fontWeight: 800, color: C.white, margin: "6px 0 10px", letterSpacing: -1, lineHeight: 1.05 }}>{b.name}</h1>
+        <h1 className="serif-h" style={{ fontSize: "clamp(48px, 7vw, 96px)", margin: "10px 0 14px" }}>{b.name}</h1>
         <p style={{ fontFamily: F, fontSize: 13, color: C.gray, margin: "0 0 26px", fontVariantNumeric: "tabular-nums" }}>{groupCount(b)}</p>
         <BucketIntro bucket={b.name} />
       </FadeIn>
       {b.playlists.map((ev, si) => (
-        <PlaylistSection key={ev.event} ev={ev} si={si} openKey={openKey} mirror={b.mirror}
+        <PlaylistSection key={ev.event} ev={ev} si={si} openKey={openKey} mirror={b.mirror} chSlug={b.slug}
           onToggle={(k) => setOpenKey(cur => (cur === k ? null : k))} />
       ))}
     </section>
@@ -4535,12 +4697,12 @@ function BucketPage({ bucket }) {
 // Day/night: the pick lives on <html data-theme> (set before paint in
 // index.html) and in localStorage.theme once he taps. No "system" third state.
 function useTheme() {
-  const [theme, setTheme] = useState(() => (typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "light") ? "light" : "dark");
+  const [theme, setTheme] = useState(() => (typeof document !== "undefined" && document.documentElement.getAttribute("data-theme") === "dark") ? "dark" : "light");
   const flip = () => {
     const next = theme === "light" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", next);
     const m = document.querySelector('meta[name="theme-color"]');
-    if (m) m.setAttribute("content", next === "light" ? "#F5F5F2" : "#0A0A0A");
+    if (m) m.setAttribute("content", next === "light" ? "#FFFFFF" : "#0A0A0A");
     try { localStorage.setItem("theme", next); } catch (e) { /* private mode: the flip still works for this visit */ }
     setTheme(next);
   };
@@ -4598,7 +4760,7 @@ function Nav({ route }) {
               mobile tab bar's word for the same page (panel review Aug 10).
               Oct 11 2026: "What I Do" left the menu at his yes; four links now
               (Work, About, Timeline, Feed). The #what-i-do section stays. */}
-          {[["Work", "#/work", false], ["About", "#about", false], ["Timeline", "#/timeline", false], ["Feed", "#/feed", false]].map(([label, href, ext]) => (
+          {[["Home", "#", false], ["Work", "#/work", false], ["About", "#about", false], ["Timeline", "#/timeline", false], ["Feed", "#/feed", false]].map(([label, href, ext]) => (
             <a key={label} href={href} {...(ext ? { target: "_blank", rel: "noopener noreferrer" } : {})} {...(route && TAB_FOR_ROUTE[route.kind] === href ? { "aria-current": "page" } : {})} style={{ fontFamily: F, fontSize: 13, fontWeight: 500, color: route && TAB_FOR_ROUTE[route.kind] === href ? C.white : C.gray, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => e.target.style.color = C.white}
               onMouseLeave={e => e.target.style.color = e.target.getAttribute("aria-current") ? C.white : C.gray}
@@ -4646,11 +4808,12 @@ function Nav({ route }) {
 // I Do left the menu (his yes); the section and its #/kind/* pages stay, and a
 // kind page lights Work. Home lights none.
 // The feed is hidden (no tab of its own), so it lights none.
-const TAB_FOR_ROUTE = { work: "#/work", bucket: "#/work", timeline: "#/timeline", playlist: null, kindpage: "#/work", feed: "#/feed" };
+const TAB_FOR_ROUTE = { home: "#", work: "#/work", bucket: "#/work", case: "#/work", chapterfeed: "#/work", timeline: "#/timeline", playlist: null, kindpage: "#/work", feed: "#/feed" };
 function MobileTabBar({ route }) {
   const tabs = [
     // "Work" = the #/work category grid (the top-bar links are hidden on phones,
     // so the new page needs a tab of its own to be reachable).
+    ["Home", "#", "M3 11l9-7 9 7v9a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1z"],
     ["Work", "#/work", "M4 7.5h16v12H4zM9 7.5V5.5a2 2 0 012-2h2a2 2 0 012 2v2"],
     ["About", "#about", "M12 11.5a3.4 3.4 0 100-6.8 3.4 3.4 0 000 6.8zM5.5 20c0-3.3 2.9-5.2 6.5-5.2s6.5 1.9 6.5 5.2"],
     ["Timeline", "#/timeline", "M12 3v18M6 7h10M6 12h8M6 17h6"],
@@ -4688,8 +4851,8 @@ export default function Portfolio() {
   // Keyed on the route object, which is rebuilt on every hashchange, so a
   // case-to-case or door-to-door hop re-titles the tab.
   useEffect(() => {
-    let name = route.kind === "bucket" ? route.bucket : ({ work: "Work", timeline: "Timeline", playlist: "Work Playlist", feed: "Feed" })[route.kind];
-    if (route.kind === "playlist") { const hit = caseFromHash(); if (hit) name = portfolio[hit.e].reels[hit.r].title; }
+    let name = (route.kind === "bucket" || route.kind === "chapterfeed") ? route.bucket : ({ work: "Work", timeline: "Timeline", feed: "Feed" })[route.kind];
+    if (route.kind === "case") { const hit = CASE_INDEX[route.slug]; if (hit) name = portfolio[hit.e].reels[hit.r].title; }
     if (route.kind === "feed" && route.door) { const d = feedDoors().find(x => x.id === route.door); if (d) name = `${d.label} Feed`; }
     if (!name) return;
     const old = document.title; document.title = `${name} | Miles Spearman`;
@@ -4699,7 +4862,7 @@ export default function Portfolio() {
     <>
       <style>{THEME_CSS}</style>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif&family=Outfit:wght@300;400;500;600;700;800&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { background: ${C.bg}; overflow-x: hidden; }
@@ -4731,6 +4894,27 @@ export default function Portfolio() {
            read as broken rather than as five write-ups. So the five-across only
            runs where the wrap is actually at full width. */
         .set-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; }
+        /* ===== TYLER BUILD (Nov 20 2026), from research/mock-2026-09-26-tyler-cut.html:
+           serif caps headings, chapter head with the Additional link on the
+           baseline right, four tiles across, one column on a phone. */
+        .serif-h { font-family: ${SERIF}; font-weight: 400; text-transform: uppercase; line-height: 0.82; letter-spacing: 0; color: ${C.white}; }
+        .chap-h { font-size: clamp(44px, 5.4vw, 68px); }
+        .chap { margin-top: 96px; }
+        .chap-head { display: flex; align-items: baseline; justify-content: space-between; gap: 30px; margin-bottom: 40px; }
+        .chap-more { font-family: ${SERIF}; font-size: 25px; color: ${C.white}; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+        .ch-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+        .ch-tile img { transition: transform .35s ease; }
+        .case-wrap { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); align-items: start; }
+        .case-wrap.wide { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+        @media (max-width: 760px) { .case-wrap, .case-wrap.wide { grid-template-columns: 1fr; } .case-media { max-width: 420px; } .case-wrap.wide .case-media { max-width: none; } }
+        .ch-tile:hover img { transform: scale(1.03); }
+        @media (max-width: 900px) { .ch-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; } }
+        @media (max-width: 640px) {
+          .ch-grid { grid-template-columns: 1fr; row-gap: 32px; }
+          .chap { margin-top: 56px; }
+          .chap-head { display: block; margin-bottom: 24px; }
+          .chap-more { display: inline-block; font-size: 22px; margin-top: 14px; }
+        }
         /* Role-grouped Set List (Sep 22 2026): three per group, and it mirrors
            the same responsive ladder .set-grid already steps down. */
         .set-grid.by-role { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -4915,12 +5099,14 @@ export default function Portfolio() {
         {route.kind === "work" && (<><WorkGridPage /><SetList /></>)}
         {/* ===== #/work/<bucket> — the bucket's own page ===== */}
         {route.kind === "bucket" && <BucketPage bucket={route.bucket} />}
+        {/* ===== #/case/<slug> — one video's own page (Tyler build, Nov 20 2026) ===== */}
+        {route.kind === "case" && <CasePage slug={route.slug} />}
+        {/* ===== #/work/<chapter>/watch/<slug> — that chapter's swipe feed ===== */}
+        {route.kind === "chapterfeed" && <ChapterFeedPage bucket={route.bucket} slug={route.slug} />}
         {/* ===== #/timeline — the career timeline as its own page ===== */}
         {route.kind === "timeline" && <CareerTimeline />}
         {/* ===== #/kind/<slug> — one What I Do row, every reel, by playlist ===== */}
         {route.kind === "kindpage" && <KindPage slug={route.slug} />}
-        {/* ===== #/playlist — the Work Playlist player as its own page ===== */}
-        {route.kind === "playlist" && <PlaylistPage />}
         {route.kind === "feed" && <FeedPage door={route.door} />}
 
         {/* ===== Default route: the single-page site, unchanged ===== */}
@@ -4953,8 +5139,7 @@ export default function Portfolio() {
                 <p style={{ margin: 0 }}>I also host, present, and work in front of the camera.</p>
                 <p style={{ margin: 0 }}>I studied Marketing and Music at UC.</p>
                 <p style={{ margin: 0 }}>The music background shows up in how I think about rhythm, pacing, and storytelling.</p>
-                <p style={{ margin: 0 }}>And yeah, I'm also a <a href="#/playlist"
-                  onClick={(ev) => { const e = portfolio.findIndex(x => x.event === "Miles Music Media"); if (e !== -1) { ev.preventDefault(); goPlay(e, 0); } }}
+                <p style={{ margin: 0 }}>And yeah, I'm also a <a href={(() => { const e = portfolio.findIndex(x => x.event === "Miles Music Media"); return e !== -1 && portfolio[e].reels[0] ? caseHref(portfolio[e].reels[0]) : "#/work"; })()}
                   style={{ color: C.mint, textDecoration: "none", borderBottom: `1px solid ${alpha(C.mint, 33)}`, cursor: "pointer" }}
                   onMouseEnter={ev => ev.target.style.borderBottomColor = C.mint}
                   onMouseLeave={ev => ev.target.style.borderBottomColor = alpha(C.mint, 33)}
@@ -4989,7 +5174,7 @@ export default function Portfolio() {
                   on his email as an inline link, and the nav Connect dropdown
                   and the closing "Let's make something." section both keep
                   email + LinkedIn. */}
-              <a href="#what-i-do"
+              <a href="#/work"
                 style={{
                   fontFamily: F, fontSize: 15, fontWeight: 600, color: C.bg, background: C.mint, textDecoration: "none",
                   display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28,
