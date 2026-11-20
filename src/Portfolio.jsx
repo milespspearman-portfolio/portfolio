@@ -2111,14 +2111,24 @@ const funReels = (() => {
 const CARD_ROSTER_MIN = 4, CARD_ROSTER_MAX = 6;
 // Nov 7 2026: lazy, because it reads shelfStats() (see the TDZ note there).
 let _roleRosters = null;
-const roleRosters = () => _roleRosters || (_roleRosters = Object.fromEntries(shelfStats().map(b => {
-  const reels = b.playlists.flatMap(ev => ev.reels);
-  const roster = FUN_ROW_TITLES.map(t => reels.find(r => r.title === t)).filter(Boolean);
-  [...reels].sort((x, y) => playsNum(y.plays) - playsNum(x.plays)).forEach(r => {
-    if (roster.length < CARD_ROSTER_MIN && !roster.includes(r)) roster.push(r);
-  });
-  return [b.slug, roster.slice(0, CARD_ROSTER_MAX)];
-})));
+const roleRosters = () => _roleRosters || (_roleRosters = (() => {
+  // Tyler build (Nov 20 2026): Hosting mirrors other chapters' videos, so two
+  // cards could open on the same clip. Each card's opening clip must be one no
+  // earlier card opens on; rotate the roster until it is.
+  const opened = new Set();
+  return Object.fromEntries(shelfStats().map(b => {
+    const reels = b.playlists.flatMap(ev => ev.reels);
+    const roster = FUN_ROW_TITLES.map(t => reels.find(r => r.title === t)).filter(Boolean);
+    [...reels].sort((x, y) => playsNum(y.plays) - playsNum(x.plays)).forEach(r => {
+      if (roster.length < CARD_ROSTER_MIN && !roster.includes(r)) roster.push(r);
+    });
+    let list = roster.slice(0, CARD_ROSTER_MAX);
+    const k = list.findIndex(r => !opened.has(r.mp4));
+    if (k > 0) list = [...list.slice(k), ...list.slice(0, k)];
+    if (list[0]) opened.add(list[0].mp4);
+    return [b.slug, list];
+  }));
+})());
 // Where each moment starts, in seconds — a card seeks here BEFORE it shows the
 // reel, so it opens on the fun beat instead of a title card. Keyed by IG
 // shortcode; anything missing uses the default. TUNABLE: Miles can change any
