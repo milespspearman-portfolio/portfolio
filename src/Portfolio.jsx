@@ -3179,7 +3179,7 @@ function CasePage({ slug }) {
           ))}
           {reel.postUrl && (
             <a href={reel.postUrl} target="_blank" rel="noopener noreferrer"
-              style={{ display: "inline-block", fontFamily: F, fontSize: 15, fontWeight: 600, color: C.white, textDecoration: "underline", textUnderlineOffset: 3, marginTop: 8 }}>
+              style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 15, fontWeight: 600, color: C.white, textDecoration: "underline", textUnderlineOffset: 3, marginTop: 8 }}>
               Open on {platformOf(reel)} ↗</a>
           )}
         </div>
@@ -3805,7 +3805,7 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine, watchHref }) {
         </span>
         <Thumb reel={reel} size={44} radius={8} />
         <span style={{ minWidth: 0 }}>
-          <span style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
+          <span className="bt-title" style={{ display: "block", fontFamily: F, fontSize: 14, fontWeight: 600, color: open ? C.white : "rgba(var(--c-ink-rgb),0.72)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{reel.title}</span>
           {/* Credit chip FIRST and always visible: "what was your role in the
               video" is the question, so it is never hover-gated and never lets
               the handle text push it out of frame. */}
@@ -3869,7 +3869,7 @@ function BucketTrackRow({ reel, n, open, onToggle, roleLine, watchHref }) {
                   LinkedIn and Instagram carousel posts don't publish view counts, so those show N/A.</p>
               )}
               <a href={reel.postUrl} target="_blank" rel="noopener noreferrer"
-                style={{ display: "inline-block", fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
+                style={{ display: "inline-flex", alignItems: "center", minHeight: 44, fontFamily: F, fontSize: 13, fontWeight: 600, color: C.mint, textDecoration: "none", marginTop: 10 }}>
                 Open on {platformOf(reel)} ↗</a>
             </div>
           )}
@@ -4216,7 +4216,7 @@ export default function Portfolio() {
           .ch-grid { grid-template-columns: 1fr; row-gap: 32px; }
           .chap { margin-top: 56px; }
           .chap-head { display: block; margin-bottom: 24px; }
-          .chap-more { display: inline-block; font-size: 22px; margin-top: 14px; }
+          .chap-more { display: inline-flex; align-items: center; min-height: 44px; font-size: 22px; margin-top: 6px; }
         }
         /* Role-grouped Set List (Sep 22 2026): three per group, and it mirrors
            the same responsive ladder .set-grid already steps down. */
@@ -4328,6 +4328,8 @@ export default function Portfolio() {
         /* Oct 6 2026 (mobile check): at 375 "IN-HOUSE PRODUCTIONS" fits one line on timeline cards with 1.5px tracking. */
         @media (max-width: 400px) { .tl-cat { letter-spacing: 1.5px !important; } }
         @media (max-width: 640px) {
+          .bt-title { white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.25; }
+          .case-wrap:not(.wide) .case-media { max-width: min(100%, calc(58svh * 9 / 16)); margin: 0 auto; }
           .set-grid { grid-template-columns: 1fr; row-gap: 28px; }
           .set-grid.by-role { grid-template-columns: 1fr; }
           .set-grid > * { grid-column: span 1 !important; }
